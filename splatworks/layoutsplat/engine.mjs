@@ -9,6 +9,19 @@ export const toPoints = (value, unit) => value * UNITS[unit];
 export const formatMeasure = (value, unit) => Number(fromPoints(value, unit).toFixed(unit === 'pt' || unit === 'px' ? 1 : 3));
 export const textStyle = () => ({ font: 'Arial', size: 12, weight: 'normal', color: '#25304b', align: 'left', direction: 'ltr', lineHeight: 1.45 });
 export function frame(storyId, x, y, w, h) { return { id: uid(), type: 'text', storyId, x, y, w, h, rotation: 0, padding: 6, locked: false }; }
+export const frameInsets = f => Object.fromEntries(['left','right','top','bottom'].map(edge => [edge, f.insets?.[edge] ?? f.padding ?? 0]));
+export function setStoryStyle(story, key, value) {
+  if (key === 'size') {
+    const ratio = value / story.style.size;
+    for (const mark of story.marks || []) if (mark.size) mark.size = Math.max(6, Math.min(120, mark.size * ratio));
+    for (const p of story.paragraphs || []) p.leading = Math.max(6, Math.min(360, p.leading * ratio));
+  }
+  if (['weight','italic','underline'].includes(key)) for (const mark of story.marks || []) delete mark[key === 'weight' ? 'bold' : key];
+  if (key === 'font' || key === 'color') for (const mark of story.marks || []) delete mark[key];
+  if (key === 'align') for (const p of story.paragraphs || []) p.align = value;
+  if (key === 'lineHeight') for (const p of story.paragraphs || []) { p.lineMultiple = value; p.leading = Math.max(6, Math.min(360, story.style.size * value)); }
+  story.style[key] = value;
+}
 export function shape(x, y, w, h, fill = '#7c3aed', kind = 'rect') { return { id: uid(), type: 'shape', kind, x, y, w, h, rotation: 0, fill, stroke: fill, strokeWidth: 0, opacity: 1, locked: false }; }
 export function newPublication(blank = false) {
   const doc = { app: 'LayoutSplat', version: VERSION, id: uid(), title: blank ? 'Untitled publication' : 'Our community newsletter', width: 612, height: 792, margin: 36, guides: { columns: 2, rows: 1, gap: 18, baseline: 14, vertical: [], horizontal: [] }, pages: [], stories: {}, assets: {}, createdAt: new Date().toISOString() };
@@ -129,7 +142,9 @@ export function validatePublication(input) {
       if (typeof o.id !== 'string' || ids.has(o.id) || !['text', 'shape', 'image', 'table'].includes(o.type)) fail(); ids.add(o.id);
       if (!number(o.x, -2000, 4000) || !number(o.y, -2000, 4000) || !number(o.w, o.type === 'text' ? 6 : .1, 2000) || !number(o.h, o.type === 'text' ? 6 : .1, 2000) || !number(o.rotation, -360, 360) || typeof o.locked !== 'boolean') fail();
       if (o.type === 'text') { if (!number(o.padding, 0, 36) || !Object.hasOwn(d.stories, o.storyId)) fail(); textFrames.add(o.id); }
+      if (o.insets !== undefined && (o.type !== 'text' || !o.insets || ['left','right','top','bottom'].some(edge => !number(o.insets[edge], 0, 36)))) fail();
       if (o.type === 'shape' && (!['rect', 'ellipse', 'line', 'triangle', 'hexagon', 'arrow', 'star', 'heart', 'callout', 'border', 'path'].includes(o.kind) || !/^#[0-9a-f]{6}$/i.test(o.fill) || !/^#[0-9a-f]{6}$/i.test(o.stroke) || !number(o.strokeWidth, 0, 20) || !number(o.opacity, 0, 1))) fail();
+      if(o.strokeDash!==undefined&&(typeof o.strokeDash!=='string'||o.strokeDash.length>100||!/^\d+(?:\.\d+)?(?:[ ,]+\d+(?:\.\d+)?)*$/.test(o.strokeDash)))fail();
       if (o.path !== undefined && (typeof o.path !== 'string' || o.path.length > 64000 || !/^[MmLlHhVvCcSsQqTtAaZz0-9+., eE\-\s]+$/.test(o.path))) fail();
       if (o.pathViewBox !== undefined && (!Array.isArray(o.pathViewBox) || o.pathViewBox.length !== 4 || o.pathViewBox.some(v => !number(v, -100000, 100000)) || o.pathViewBox[2] <= 0 || o.pathViewBox[3] <= 0)) fail();
       if (o.type === 'image' && (!Object.hasOwn(d.assets, o.assetId) || !['contain', 'cover', 'stretch'].includes(o.fit))) fail();
@@ -143,7 +158,7 @@ export function validatePublication(input) {
       if (o.baselineAlign !== undefined && typeof o.baselineAlign !== 'boolean') fail();
       if (o.readingOrder !== undefined && !number(o.readingOrder, 0, 10000)) fail();
       if (o.groupIds !== undefined && (!Array.isArray(o.groupIds) || o.groupIds.length > 20 || o.groupIds.some(id => typeof id !== 'string' || id.length > 64))) fail();
-      if (o.type === 'text' && o.columns > 1 && (o.w - 2 * o.padding - (o.columnGap || 12) * (o.columns - 1)) / o.columns < 6) fail();
+      if (o.type === 'text' && o.columns > 1 && (o.w - (o.insets?.left ?? o.padding) - (o.insets?.right ?? o.padding) - (o.columnGap ?? 12) * (o.columns - 1)) / o.columns < 6) fail();
     }
   }
   const used = new Set();
@@ -179,7 +194,10 @@ export function validatePublication(input) {
       if (!Array.isArray(story.paragraphs) || story.paragraphs.length > 10000) fail();
       let last = 0;
       for (const p of story.paragraphs) {
-        if (!Number.isInteger(p.from) || !Number.isInteger(p.to) || p.from < last || p.to <= p.from || p.to > story.text.length || !number(p.leading, 6, 360) || !['left', 'center', 'right', 'justify'].includes(p.align)) fail();
+        if (!Number.isInteger(p.from) || !Number.isInteger(p.to) || p.from < last || p.to < p.from || p.to > story.text.length || !number(p.leading, 6, 360) || !['left', 'center', 'right', 'justify'].includes(p.align)) fail();
+        for (const key of ['spaceBefore','spaceAfter','indentLeft','indentRight']) if (p[key] !== undefined && !number(p[key], 0, 360)) fail();
+        if (p.firstLineIndent !== undefined && !number(p.firstLineIndent, -360, 360)) fail();
+        if (p.lineMultiple !== undefined && !number(p.lineMultiple, .5, 6)) fail();
         last = p.to;
       }
     }

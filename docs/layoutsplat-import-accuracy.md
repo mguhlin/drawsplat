@@ -1,4 +1,4 @@
-# LayoutSplat import accuracy — v0.3
+# LayoutSplat import accuracy — v0.4
 
 Private user-provided samples were opened and compared locally. Source publications,
 reference PDFs, and screenshots are not distributed with the repository.
@@ -6,7 +6,8 @@ reference PDFs, and screenshots are not distributed with the repository.
 The two-page Publisher sample produced 37 editable text stories, 9 picture placements
 and 6 unique image assets. Fixes preserve bitmap fills, native JPEG/PNG bytes,
 OfficeArt crop fractions, arbitrary picture masks, paragraph leading/alignment,
-source horizontal scaling, and mixed paragraph font struts. The latest sample
+source horizontal scaling, mixed paragraph font struts, relative leading,
+blank paragraphs, paragraph spacing/indents, frame columns and asymmetric insets. The latest sample
 still has one detected overflowing story. Keep and inspect the source and conversion
 report rather than assuming a pixel-identical result.
 

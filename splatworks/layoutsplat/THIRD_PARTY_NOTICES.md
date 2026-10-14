@@ -41,3 +41,11 @@ LayoutSplat does not restrict use of modified builds.
 
 The legacy Pages XML parser and artwork import adapters are LayoutSplat source.
 They do not bundle Apple, Adobe, Quark, or Microsoft desktop applications.
+
+## Native suite merge (v0.4)
+
+HyperFormula 3.3.0 (GPL-3.0-only), Chevrotain 6.5.0 (Apache-2.0),
+regexp-to-ast 0.4.0 (MIT), and tiny-emitter 2.1.0 (MIT) calculate native
+GridSplat recipients. Matching source, license notices, pinned versions and
+rebuild instructions accompany `vendor/suite-data/BUILD.md`. ListSplat
+calculations use the ecosystem's GPL application sources.

@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.3.0** is the SplatWorks publication editor.
+LayoutSplat **v0.4.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -9,17 +9,30 @@ and its existing tools; SplatWorks is the ecosystem brand.
 ## Templates
 
 Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,
-business cards, or menus. There is one template library, with **305 editable designs**
+business cards, or menus. There is one template library, with **123 distinct editable compositions**
 and six publication-language editions. Filter by industry, publication type,
 orientation, palette, or search. Descriptive card titles identify the design;
 industry remains a filter. Download a filtered collection as JSON files in a ZIP.
 
-The library includes **42 menu presets across 12 composition families**, including
+The library includes **12 menu compositions**, including
 café, fine dining, diner, bistro, pizza, bakery, tapas, Asian, coastal, farm, buffet,
 and hotel layouts. Business cards have six compositions and replaceable logo
 examples. Other publications also include appropriate branding examples. The
 SplatWorks example logo can be replaced from its picture context menu.
-These are original templates, without StockLayouts artwork or copy.
+Each counted design has different object geometry. Color and industry variations
+are customizations, not additional designs. The catalog includes eight flyers
+(two with ten vertical name/phone tear-off tabs and dotted cutting lines), eight
+brochures (four trifold and four bifold), six newsletters, six resumes, six photo
+collages, and six document layouts. Fold guides distinguish equal Z-folds from
+roll folds with a narrower fold-in flap. Templates use editable original geometry;
+private Canva and StockLayouts references provided visual inspiration, without
+copying their artwork or distributing the supplied reference PDFs.
+
+**File → Templates → Whiteboard backgrounds & images** opens 96 shared classroom
+organizers, ScratchArt backgrounds, coloring pages and animal pictures. Place a
+locked page background, an ordinary picture, or fill a selected unlocked picture
+box. Images are embedded in saved projects and can be undone or replaced. The
+standalone package includes the collection for offline use.
 
 **29 Avery sheet geometries cover 127 product codes**, including US Letter and A4,
 address/shipping/return labels, file-folder labels, and insert/adhesive name badges.
@@ -35,6 +48,11 @@ new sheets. Print at actual size, without browser headers/footers or scaling.
 ruler origins, bleed, safe insets, and facing pages. Rulers support inches,
 centimeters, picas, points, and pixels. Units/zoom do not change physical geometry.
 Preview, Print / Save as PDF, and Design checker are also grouped under File.
+
+The **Edit story** window has bold, italic, underline and paragraph alignment
+buttons. Select words before applying inline formatting; drag the title bar to
+move the window. Applying edits preserves mixed fonts, paragraph spacing, blank
+paragraphs and indents, and supports undo.
 
 Text flows through linked boxes. Shift-select two or more boxes, right-click,
 and choose **Link text boxes**. Unlink splits the chain while retaining text and
@@ -105,7 +123,11 @@ isolated draft. Saving the LayoutSplat original remains the lossless backup.
 
 ## Merge, saving, and output
 
-Mail merge reads local CSV, TSV, and XLSX worksheets. Map fields, filter, preview,
+Mail merge reads local CSV, TSV, XLSX, and native GridSplat/ListSplat JSON.
+Choose a worksheet or table. GridSplat formulas and number formats use its actual
+calculation engine; ListSplat calculations use its own formula syntax, with hidden
+fields and archived records excluded. Formula errors stop that data source rather
+than printing incorrect recipients. Map fields, filter, preview,
 and check records before generation. Labels span sheets and skip used positions.
 Recipient source tables are not saved in generated templates. Batches are bounded.
 
@@ -142,3 +164,13 @@ large-document optimization, and external application validation still remaining
 [Progress](../splatworks/layoutsplat/PROGRESS.md) ·
 [Approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) ·
 [Library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).
+
+## Large documents and current verification
+
+Unchanged story layouts are reused, including after edits to another story.
+Font loads, frame changes, wrap images and text/style changes invalidate affected
+layouts. Page thumbnails render near the visible viewport; full print pages are
+built for printing, and preview pages only while preview is enabled. A 500-page
+regression confirms text conservation and reflow of one edited story rather than
+all 500. This is a controlled browser check, not a guarantee for every complex
+500-page publication or independent commercial-printer certification.

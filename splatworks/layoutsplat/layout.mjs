@@ -1,6 +1,10 @@
-import { findObject } from './engine.mjs';
+import { frameInsets } from './engine.mjs';
 import { appendRich } from './rich.mjs';
 export const PT_TO_PX = 96 / 72;
+const layoutCaches = new WeakMap();
+let fontEpoch = 0;
+globalThis.document?.fonts?.addEventListener('loadingdone', () => fontEpoch++);
+const segmenter = globalThis.Intl?.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 export function applyTextStyle(element, style) {
   Object.assign(element.style, { fontFamily: style.font, fontSize: `${style.size}pt`, fontWeight: style.weight, fontStyle: style.italic ? 'italic' : 'normal', textDecoration: style.underline ? 'underline' : 'none', textShadow: 'none', webkitTextStroke: '0', color: style.color, textAlign: style.align, direction: style.direction, lineHeight: String(style.lineHeight), whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', letterSpacing: `${style.tracking || 0}pt`, display: 'flow-root' });
   if (style.wordArt === 'shadow') element.style.textShadow = '1.5pt 1.5pt 0 #c7b5e7';
@@ -29,10 +33,10 @@ export function fitText(text, frame, style, measurer, story = null, offset = 0) 
     const prefix = text.slice(0, lo), match = /\s+\S*$/.exec(prefix);
     if (match && match.index > 0) lo = match.index + match[0].match(/^\s+/)[0].length;
   }
-  if (globalThis.Intl?.Segmenter && lo < text.length) {
+  if (segmenter && lo < text.length) {
     // Avoid slicing a combining sequence (Arabic marks, emoji, Devanagari).
     let boundary = 0;
-    for (const part of new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text.slice(0, Math.min(text.length, lo + 64)))) {
+    for (const part of segmenter.segment(text.slice(0, Math.min(text.length, lo + 64)))) {
       if (part.index > lo) break; boundary = part.index;
     }
     lo = boundary;
@@ -40,31 +44,43 @@ export function fitText(text, frame, style, measurer, story = null, offset = 0) 
   return lo;
 }
 export function layoutStories(doc, measurer) {
-  const fragments = new Map(), overflows = [], styles = new Map();
+  const fragments = new Map(), overflows = [], styles = new Map(), stats = { reflowed: 0, reused: 0 };
+  let cache = layoutCaches.get(measurer); if (!cache) layoutCaches.set(measurer, cache = new Map());
   const objects = new Map([...doc.pages, ...(doc.masters || [])].flatMap(page => page.objects.map(object => [object.id, { object, page }])));
+  const wraps = new Map([...doc.pages, ...(doc.masters || [])].map(page => [page, page.objects.filter(o => o.type === 'image' && o.wrap === 'square')]));
+  for (const id of cache.keys()) if (!Object.hasOwn(doc.stories, id)) cache.delete(id);
   for (const [storyId, story] of Object.entries(doc.stories)) {
+    // Content signatures also detect undo/redo, imported replacements, frame moves,
+    // image wrap edits, and font loads. One entry per story bounds retained memory.
+    const signature = JSON.stringify([fontEpoch, doc.margin, doc.guides.baseline, story, story.frames.map(id => { const f = objects.get(id); return f ? [f.object, wraps.get(f.page)] : null; })]);
+    const previous = cache.get(storyId);
+    if (previous?.signature === signature) {
+      previous.collected.forEach(([id, fragment]) => fragments.set(id, fragment)); styles.set(storyId, previous.style);
+      if (previous.overflow) overflows.push(previous.overflow); stats.reused++; continue;
+    }
+    stats.reflowed++;
     let offset = 0, style = { ...story.style }, collected;
     for (;;) {
       collected = []; offset = 0;
       for (const id of story.frames) {
         const found = objects.get(id), f = found?.object; if (!f) continue;
-        const start = offset, columns = [], count = f.columns || 1, gap = f.columnGap ?? 12;
-        const width = (f.w - 2 * f.padding - gap * (count - 1)) / count;
+        const start = offset, columns = [], count = f.columns || 1, gap = f.columnGap ?? 12, padding = frameInsets(f);
+        const width = (f.w - padding.left - padding.right - gap * (count - 1)) / count;
         let frameStyle = style, inset = 0;
         if (f.baselineAlign) {
           const leading = Math.ceil(style.size * style.lineHeight / doc.guides.baseline) * doc.guides.baseline;
           frameStyle = { ...style, lineHeight: leading / style.size };
-          const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'); ctx.font = `${style.size * PT_TO_PX}px ${style.font}`;
+          const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'); ctx.font = `${style.italic ? 'italic ' : ''}${style.weight} ${style.size * PT_TO_PX}px "${style.font}"`;
           const metrics = ctx.measureText('Hg'), ascent = (metrics.fontBoundingBoxAscent || style.size * PT_TO_PX * .8) / PT_TO_PX, descent = (metrics.fontBoundingBoxDescent || style.size * PT_TO_PX * .2) / PT_TO_PX;
-          const baseline = f.y + f.padding + (leading - ascent - descent) / 2 + ascent;
+          const baseline = f.y + padding.top + (leading - ascent - descent) / 2 + ascent;
           inset = ((doc.margin - baseline) % doc.guides.baseline + doc.guides.baseline) % doc.guides.baseline;
         }
         for (let col = 0; col < count; col++) {
-          const virtual = { ...f, w: width, h: f.h - 2 * f.padding - inset, padding: 0 };
-          const obstacles = found.page.objects.filter(o => o.type === 'image' && o.wrap === 'square' && o.x < f.x + f.w && o.x + o.w > f.x && o.y < f.y + f.h && o.y + o.h > f.y);
-          if (obstacles.length) { const wrapped = wrapAround(story, offset, { ...f, padding: f.padding + inset }, col, width, gap, frameStyle, obstacles, measurer); columns.push(...wrapped.columns.map(column => ({ ...column, style: frameStyle }))); offset = wrapped.offset; continue; }
+          const virtual = { ...f, w: width, h: f.h - padding.top - padding.bottom - inset, padding: 0 };
+          const obstacles = wraps.get(found.page).filter(o => o.x < f.x + f.w && o.x + o.w > f.x && o.y < f.y + f.h && o.y + o.h > f.y);
+          if (obstacles.length) { const wrapped = wrapAround(story, offset, { ...f, insets: { ...padding, top: padding.top + inset } }, col, width, gap, frameStyle, obstacles, measurer); columns.push(...wrapped.columns.map(column => ({ ...column, style: frameStyle }))); offset = wrapped.offset; continue; }
           const n = fitText(story.text.slice(offset), { ...virtual, w: virtual.w / (frameStyle.textScale || 1) }, frameStyle, measurer, story, offset);
-          columns.push({ text: story.text.slice(offset, offset + n), start: offset, end: offset + n, x: f.padding + col * (width + gap), y: f.padding + inset, w: width, h: virtual.h, style: frameStyle }); offset += n;
+          columns.push({ text: story.text.slice(offset, offset + n), start: offset, end: offset + n, x: padding.left + col * (width + gap), y: padding.top + inset, w: width, h: virtual.h, style: frameStyle }); offset += n;
         }
         collected.push([id, { text: story.text.slice(start, offset), start, end: offset, storyId, columns }]);
       }
@@ -72,9 +88,11 @@ export function layoutStories(doc, measurer) {
       style.size = Math.max(style.minSize || 8, style.size - 0.5);
     }
     collected.forEach(([id, fragment]) => fragments.set(id, fragment)); styles.set(storyId, style);
-    if (offset < story.text.length) overflows.push({ storyId, frameId: story.frames.at(-1), remaining: story.text.length - offset });
+    const overflow = offset < story.text.length ? { storyId, frameId: story.frames.at(-1), remaining: story.text.length - offset } : null;
+    if (overflow) overflows.push(overflow);
+    cache.set(storyId, { signature, collected, style, overflow });
   }
-  return { fragments, overflows, styles };
+  return { fragments, overflows, styles, stats };
 }
 export function designFindings(doc, layout) {
   const issues = layout.overflows.map(o => ({ id: o.frameId, key: 'overflow', count: o.remaining, severity: 'error' }));
@@ -94,10 +112,10 @@ export function designFindings(doc, layout) {
   return issues;
 }
 function wrapAround(story, offset, frame, col, width, gap, style, obstacles, measurer) {
-  const columns = [], x = frame.padding + col * (width + gap), maxHeight = frame.h - 2 * frame.padding;
+  const padding = frameInsets(frame), columns = [], x = padding.left + col * (width + gap), maxHeight = frame.h - padding.top - padding.bottom;
   const leading = Math.max(style.size, ...(story.marks || []).map(m => m.size || style.size)) * style.lineHeight;
   const lineStyle = { ...style, dropCap: 0 };
-  for (let y = frame.padding; y + leading <= frame.padding + maxHeight && offset < story.text.length; y += leading) {
+  for (let y = padding.top; y + leading <= padding.top + maxHeight && offset < story.text.length; y += leading) {
     let intervals = [[x, x + width]];
     for (const image of obstacles) {
       if (frame.y + y + leading <= image.y - 6 || frame.y + y >= image.y + image.h + 6) continue;

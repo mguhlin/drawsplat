@@ -17,12 +17,18 @@ export function parseDelimited(text, delimiter = ',') {
   return { fields, records: rows.map(row => Object.fromEntries(fields.map((name, i) => [name, row[i] || '']))) };
 }
 export function mergeFields(doc) { return [...new Set(Object.values(doc.stories).flatMap(story => [...story.text.matchAll(/\{\{([^{}]+)\}\}/g)].map(match => match[1].trim())))]; }
+export function mergeRows(rows) {
+  if (!Array.isArray(rows) || rows.length > 10001 || rows.some(row => !Array.isArray(row) || row.length > 100 || row.some(value => typeof value !== 'string' || value.length > 100000))) throw Error('Use at most 10,000 records and 100 columns.');
+  const fields = (rows[0] || []).map(value => value.replace(/^\uFEFF/, '').trim());
+  if (!fields.length || fields.some(value => !value || value.length > 200) || new Set(fields).size !== fields.length) throw Error('Use unique, nonempty column headings.');
+  return { fields, records: rows.slice(1).filter(row => row.some(value => value !== '')).map(row => Object.fromEntries(fields.map((name, i) => [name, row[i] || '']))) };
+}
 export function substituteStory(story, record, mapping = {}) {
   const matches = [...story.text.matchAll(/\{\{([^{}]+)\}\}/g)], replacements = matches.map(match => ({ from: match.index, to: match.index + match[0].length, value: record[mapping[match[1].trim()] || match[1].trim()] ?? match[0] }));
   let text = '', old = 0;
   for (const r of replacements) { text += story.text.slice(old, r.from) + String(r.value); old = r.to; } text += story.text.slice(old);
   const position = (offset, end = false) => { let shift = 0; for (const r of replacements) { if (offset <= r.from) break; if (offset < r.to) return r.from + shift + (end ? String(r.value).length : 0); shift += String(r.value).length - (r.to - r.from); } return offset + shift; };
-  return { ...clone(story), text, marks: (story.marks || []).map(mark => ({ ...mark, from: position(mark.from), to: position(mark.to, true) })).filter(mark => mark.to > mark.from), ...(story.paragraphs ? { paragraphs: story.paragraphs.map(p => ({ ...p, from: position(p.from), to: position(p.to, true) })).filter(p => p.to > p.from) } : {}) };
+  return { ...clone(story), text, marks: (story.marks || []).map(mark => ({ ...mark, from: position(mark.from), to: position(mark.to, true) })).filter(mark => mark.to > mark.from), ...(story.paragraphs ? { paragraphs: story.paragraphs.map(p => ({ ...p, from: position(p.from), to: position(p.to, true) })).filter(p => p.to >= p.from) } : {}) };
 }
 export function previewRecord(doc, record, mapping = {}) {
   const copy = clone(doc); for (const [id, story] of Object.entries(copy.stories)) copy.stories[id] = substituteStory(story, record, mapping); return copy;

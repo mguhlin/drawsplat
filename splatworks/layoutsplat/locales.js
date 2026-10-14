@@ -1,6 +1,19 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
+whiteboardCollection|Whiteboard backgrounds & images|Fondos e imágenes de la pizarra|Nền và ảnh bảng trắng|خلفيات وصور السبورة|白板背景与图片|व्हाइटबोर्ड पृष्ठभूमि और चित्र
+backgroundCollectionHelp|Use the whiteboard's classroom organizers, ScratchArt backgrounds, coloring pages, and animal photos. Pictures are embedded in your project.|Usa organizadores, fondos ScratchArt, páginas para colorear y fotos de animales de la pizarra. Las imágenes se guardan en el proyecto.|Dùng mẫu lớp học, nền ScratchArt, trang tô màu và ảnh động vật của bảng trắng. Ảnh được nhúng vào dự án.|استخدم منظمات الفصل وخلفيات ScratchArt وصفحات التلوين وصور الحيوانات. الصور مضمنة في المشروع.|使用白板的课堂图表、ScratchArt 背景、涂色页和动物照片。图片嵌入项目中。|कक्षा आयोजक, ScratchArt पृष्ठभूमि, रंग भरने के पृष्ठ और पशु फ़ोटो उपयोग करें। चित्र प्रोजेक्ट में शामिल होते हैं।
+collection|Collection|Colección|Bộ sưu tập|المجموعة|集合|संग्रह
+classroomBackgrounds|Classroom organizers|Organizadores de aula|Mẫu lớp học|منظمات الفصل|课堂图表|कक्षा आयोजक
+coloringPages|Coloring pages|Páginas para colorear|Trang tô màu|صفحات التلوين|涂色页|रंग भरने के पृष्ठ
+animalPhotos|Animal photos|Fotos de animales|Ảnh động vật|صور الحيوانات|动物照片|पशु फ़ोटो
+placement|Placement|Colocación|Vị trí|الموضع|放置|स्थान
+pageBackground|Page background|Fondo de página|Nền trang|خلفية الصفحة|页面背景|पृष्ठ पृष्ठभूमि
+selectedPictureBox|Selected picture box|Marco de imagen seleccionado|Khung ảnh đã chọn|إطار الصورة المحدد|所选图片框|चयनित चित्र फ़्रेम
+collectionCount|{count} backgrounds and images|{count} fondos e imágenes|{count} nền và ảnh|{count} خلفيات وصور|{count} 个背景和图片|{count} पृष्ठभूमि और चित्र
+resume|Resumes|Currículos|Hồ sơ nghề nghiệp|السير الذاتية|简历|रिज़्यूमे
+photo-collage|Photo collages|Collages de fotos|Ghép ảnh|صور مجمعة|照片拼贴|फ़ोटो कोलाज
+document|Documents|Documentos|Tài liệu|المستندات|文档|दस्तावेज़
 skip|Skip to publication|Ir a la publicación|Đến ấn phẩm|انتقل إلى المنشور|跳到出版物|प्रकाशन पर जाएँ
 publishingRelease|Publishing tools|Herramientas de publicación|Công cụ xuất bản|أدوات النشر|出版工具|प्रकाशन उपकरण
 shapes|Shapes|Formas|Hình dạng|أشكال|形状|आकृतियाँ
@@ -309,7 +322,7 @@ conversionReport|Import / conversion report|Informe de importación / conversió
 importingMedia|Importing media locally…|Importando medios localmente…|Đang nhập nội dung cục bộ…|جارٍ استيراد الوسائط محلياً…|正在本地导入媒体…|मीडिया स्थानीय रूप से आयात हो रहा है…
 mediaImportError|This file could not be imported. Your publication is unchanged.|No se pudo importar. La publicación sigue igual.|Không thể nhập tệp. Ấn phẩm không thay đổi.|تعذر الاستيراد. المنشور لم يتغير.|无法导入文件。出版物未更改。|फ़ाइल आयात नहीं हुई। प्रकाशन अपरिवर्तित है।
 returnToPages|Return from master editing before changing publication pages.|Sal de la maestra antes de cambiar páginas.|Thoát chỉnh sửa trang chủ trước khi đổi trang.|عُد من تحرير الرئيسية قبل تغيير الصفحات.|请先退出母版编辑再更改页面。|पृष्ठ बदलने से पहले मास्टर संपादन से लौटें।
-mergePrivacy|Choose local CSV, TSV, or Excel data. Recipient data stays in this browser and is not saved with the template.|Elige datos CSV, TSV o Excel locales. Los destinatarios quedan en este navegador y no se guardan en la plantilla.|Chọn CSV, TSV hoặc Excel cục bộ. Dữ liệu người nhận ở trong trình duyệt và không lưu trong mẫu.|اختر CSV أو TSV أو Excel محلياً. بيانات المستلمين تبقى في المتصفح ولا تُحفظ في القالب.|选择本地 CSV、TSV 或 Excel。收件人数据保留在此浏览器中，不随模板保存。|स्थानीय CSV, TSV या Excel चुनें। प्राप्तकर्ता डेटा ब्राउज़र में रहता है और टेम्पलेट में नहीं सहेजा जाता।
+mergePrivacy|Choose local CSV, TSV, Excel, GridSplat JSON, or ListSplat JSON data. Recipient data stays in this browser and is not saved with the template.|Elige CSV, TSV, Excel, GridSplat JSON o ListSplat JSON locales. Los destinatarios quedan en este navegador y no se guardan en la plantilla.|Chọn CSV, TSV, Excel, GridSplat JSON hoặc ListSplat JSON cục bộ. Dữ liệu người nhận ở trong trình duyệt và không lưu trong mẫu.|اختر CSV أو TSV أو Excel أو GridSplat JSON أو ListSplat JSON محلياً. بيانات المستلمين تبقى في المتصفح ولا تُحفظ في القالب.|选择本地 CSV、TSV、Excel、GridSplat JSON 或 ListSplat JSON。收件人数据保留在此浏览器中，不随模板保存。|स्थानीय CSV, TSV, Excel, GridSplat JSON या ListSplat JSON चुनें। प्राप्तकर्ता डेटा ब्राउज़र में रहता है और टेम्पलेट में नहीं सहेजा जाता।
 dataSource|Data source|Origen de datos|Nguồn dữ liệu|مصدر البيانات|数据源|डेटा स्रोत
 worksheet|Worksheet|Hoja de cálculo|Trang tính|ورقة العمل|工作表|वर्कशीट
 filterField|Filter column|Columna de filtro|Cột lọc|عمود التصفية|筛选列|फ़िल्टर कॉलम

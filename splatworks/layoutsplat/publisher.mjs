@@ -46,7 +46,10 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
   }
   function closeParagraph() {
     if (!text) return; const story = d.stories[text.storyId];
-    if (story.text.length > paragraphStart) story.paragraphs.push({ from: paragraphStart, to: story.text.length, leading: clamp(measure(paragraph, 'fo:line-height', story.style.size * 1.15), 6, 360), align: ['left', 'center', 'right', 'justify'].includes(value(paragraph, 'fo:text-align')) ? value(paragraph, 'fo:text-align') : 'left' });
+    const size = story.marks.find(m => m.from <= paragraphStart && m.to > paragraphStart)?.size || story.style.size;
+    const raw = value(paragraph, 'fo:line-height'), relative = paragraph['fo:line-height']?.unit === 1 || String(raw).endsWith('%');
+    const multiple = relative ? clamp(parseFloat(raw) / 100, .5, 6) : undefined;
+    story.paragraphs.push({ from: paragraphStart, to: story.text.length, leading: clamp(relative ? size * multiple : measure(paragraph, 'fo:line-height', size * 1.15), 6, 360), ...(relative ? { lineMultiple: multiple } : {}), align: ['left', 'center', 'right', 'justify'].includes(value(paragraph, 'fo:text-align')) ? value(paragraph, 'fo:text-align') : 'left', spaceBefore: clamp(measure(paragraph, 'fo:margin-top'), 0, 360), spaceAfter: clamp(measure(paragraph, 'fo:margin-bottom'), 0, 360), indentLeft: clamp(measure(paragraph, 'fo:margin-left'), 0, 360), indentRight: clamp(measure(paragraph, 'fo:margin-right'), 0, 360), firstLineIndent: clamp(measure(paragraph, 'fo:text-indent'), -360, 360) });
   }
   const geometry = p => ({ x: measure(p, 'svg:x'), y: measure(p, 'svg:y'), w: clamp(measure(p, 'svg:width', 200), 6, 2000), h: clamp(measure(p, 'svg:height', 100), 6, 2000), rotation: clamp(numeric(p, 'librevenge:rotate', numeric(p, 'draw:rotate')), -360, 360) });
   const add = o => { if (!page || page.objects.length >= 200) throw Error('Publisher pages support up to 200 objects.'); o.groupIds = [...groups]; page.objects.push(o); };
@@ -57,7 +60,7 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
     const story = d.stories[text.storyId], from = story.text.length; story.text += words; if (story.text.length > 100000) throw Error('Publisher story is too long.'); if (story.text.length === from) return;
     const originalFont = value(span, 'style:font-name', value(span, 'fo:font-family', story.style.font)), font = fontFamily(originalFont); fonts.add(originalFont);
     const mark = { from, to: story.text.length, font, size: clamp(measure(span, 'fo:font-size', story.style.size), 6, 120), color: color(value(span, 'fo:color'), story.style.color), bold: /bold|[6-9]00/.test(value(span, 'fo:font-weight')), italic: value(span, 'fo:font-style') === 'italic', underline: value(span, 'style:text-underline-style', 'none') !== 'none' };
-    story.marks.push(mark); if (from === 0) { story.style.font = font; story.style.size = mark.size; story.style.color = mark.color; story.style.weight = mark.bold ? 'bold' : 'normal'; story.style.lineHeight = clamp(measure(paragraph, 'fo:line-height', mark.size * 1.15) / mark.size, 1, 3); const rawScale = numeric(span, 'fo:text-scale', 100); story.style.textScale = clamp(rawScale > 1000 ? rawScale / 10000 : rawScale / 100, .5, 2); }
+    story.marks.push(mark); if (from === 0) { story.style.font = font; story.style.size = mark.size; story.style.color = mark.color; story.style.weight = mark.bold ? 'bold' : 'normal'; const rawLeading = value(paragraph, 'fo:line-height'), relativeLeading = paragraph['fo:line-height']?.unit === 1 || String(rawLeading).endsWith('%'); story.style.lineHeight = clamp(relativeLeading ? parseFloat(rawLeading) / 100 : measure(paragraph, 'fo:line-height', mark.size * 1.15) / mark.size, .5, 6); const rawScale = numeric(span, 'fo:text-scale', 100); story.style.textScale = clamp(rawScale > 1000 ? rawScale / 10000 : rawScale / 100, .5, 2); }
   }
   for (const event of events) {
     const p = event.data || {};
@@ -75,9 +78,12 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
       case 'openGroup': groups.push(uid()); break;
       case 'closeGroup': groups.pop(); break;
       case 'startTextObject': {
-        const g = geometry(p), key = uid(); text = frame(key, g.x, g.y, g.w, g.h); text.rotation = g.rotation; text.padding = clamp(measure(p, 'fo:padding-left'), 0, 36); d.stories[key] = { text: '', style: { ...textStyle(), lineHeight: 1.15 }, marks: [], paragraphs: [], frames: [text.id] }; add(text); paragraphCount = 0; paragraphStart = 0; break;
+        const g = geometry(p), key = uid(); text = frame(key, g.x, g.y, g.w, g.h); text.rotation = g.rotation; text.padding = clamp(measure(p, 'fo:padding-left'), 0, 36);
+        text.insets = Object.fromEntries(['left', 'right', 'top', 'bottom'].map(edge => [edge, clamp(measure(p, `fo:padding-${edge}`, text.padding), 0, 36)]));
+        text.columns = clamp(Math.round(numeric(p, 'fo:column-count', 1)), 1, 6); text.columnGap = clamp(measure(p, 'fo:column-gap', 12), 0, 72);
+        d.stories[key] = { text: '', style: { ...textStyle(), lineHeight: 1.15 }, marks: [], paragraphs: [], frames: [text.id] }; add(text); paragraphCount = 0; paragraphStart = 0; break;
       }
-      case 'endTextObject': { const story = d.stories[text?.storyId]; if (story?.paragraphs.length === 1 && story.paragraphs[0].leading > text.h - 2 * text.padding && story.paragraphs[0].leading <= text.h) { text.padding = 0; warnings.push('A tight Publisher headline uses zero frame padding to preserve its original leading.'); } text = null; break; }
+      case 'endTextObject': { const story = d.stories[text?.storyId]; if (story?.paragraphs.length === 1 && story.paragraphs[0].leading > text.h - 2 * text.padding && story.paragraphs[0].leading <= text.h) { text.padding = 0; text.insets = { left: 0, right: 0, top: 0, bottom: 0 }; warnings.push('A tight Publisher headline uses zero frame padding to preserve its original leading.'); } text = null; break; }
       case 'openParagraph': case 'openListElement': {
         paragraph = p; if (paragraphCount++ && (text || cell?.text)) append('\n'); if (text) { const s = d.stories[text.storyId].style, align = value(p, 'fo:text-align'); if (['left', 'center', 'right', 'justify'].includes(align)) s.align = align; if (value(p, 'style:writing-mode') === 'rl-tb' || value(p, 'fo:direction') === 'rtl') s.direction = 'rtl'; }
         if (text) paragraphStart = d.stories[text.storyId].text.length;

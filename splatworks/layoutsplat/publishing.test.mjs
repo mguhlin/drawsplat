@@ -4,8 +4,26 @@ import { TEMPLATE_CATALOG, catalogPublication } from './template-catalog.mjs';
 import { validatePublication } from './engine.mjs';
 import { parseDelimited, substituteStory, generateMerge } from './merge.mjs';
 import { makeTemplate } from './templates.mjs';
+import { textToRichDocument, richDocumentToText } from './rich.mjs';
+import { setStoryStyle } from './engine.mjs';
+test('each catalog entry has a distinct physical composition within its publication type', () => {
+  const groups = new Map();
+  for (const entry of TEMPLATE_CATALOG) {
+    const doc = catalogPublication(entry.id);
+    const geometry = JSON.stringify([doc.width, doc.height, doc.pages.map(p => p.objects.map(o => [o.type, o.kind, o.x, o.y, o.w, o.h, o.rotation, o.path, o.columns]))]);
+    const signatures = groups.get(entry.type) || new Set();
+    assert.ok(!signatures.has(geometry), `Duplicate composition: ${entry.id}`);
+    signatures.add(geometry); groups.set(entry.type, signatures);
+  }
+});
+test('rich editing preserves blank paragraphs, mixed fonts, tracking and paragraph spacing', () => {
+  const story = { text: 'Title\n\nBody', style: {size:20,lineHeight:1.2,align:'left',weight:'normal'}, marks:[{from:0,to:5,bold:true,size:20,font:'Georgia',tracking:.4},{from:7,to:11,size:10}], paragraphs:[{from:0,to:5,leading:24,align:'center',spaceAfter:6},{from:6,to:6,leading:12,align:'left'},{from:7,to:11,leading:14,align:'left',indentLeft:18,firstLineIndent:-6}] };
+  const output = richDocumentToText(textToRichDocument(story), story.style);
+  assert.equal(output.text,story.text); assert.deepEqual(output.paragraphs,story.paragraphs);assert.equal(output.marks[0].tracking,.4);assert.equal(output.marks[1].size,10);
+  setStoryStyle(story,'size',30);assert.equal(story.marks[1].size,15);assert.equal(story.paragraphs[2].leading,21);setStoryStyle(story,'align','right');assert.ok(story.paragraphs.every(p=>p.align==='right'));
+});
 test('every original template and its six language editions has a valid editable model', () => {
-  assert.equal(TEMPLATE_CATALOG.length, 305);
+  assert.equal(TEMPLATE_CATALOG.length, 123);
   for (const entry of TEMPLATE_CATALOG) for (const language of ['en', 'es', 'vi', 'ar', 'zh', 'uh']) {
     const doc = validatePublication(catalogPublication(entry.id, { language })); assert.equal(doc.templateId, entry.id); assert.ok(doc.pages.length); assert.ok(Object.keys(doc.stories).length);
     if (language === 'ar') assert.ok(Object.values(doc.stories).every(story => story.style.direction === 'rtl'));

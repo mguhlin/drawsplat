@@ -1,5 +1,38 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4 composition, editing and performance milestone
+
+123 distinct physical compositions replace color-counted variants, with 738 valid
+language models. Added bifold/trifold brochures, two ten-tab tear-off flyers,
+newspaper/magazine/bulletin newsletters, resumes, collages and document layouts.
+Industry remains a filter. All 29 Avery geometries and 127 codes remain available.
+Private visual reference PDFs informed original geometry and are not distributed.
+
+The draggable Edit story window now supports selected bold/italic/underline and
+paragraph alignment. Rich round trips retain blank paragraphs, mixed fonts,
+tracking, leading, paragraph spacing and indents. Publisher conversion now retains
+these paragraph metrics, asymmetric frame insets, columns and column gaps.
+
+Unchanged story layouts are cached; visible thumbnails are rendered lazily, and
+print/preview trees are built when needed. A controlled 500-page regression checks
+500 cached stories and exactly one reflow after editing one story, with all text
+preserved. Shared whiteboard artwork provides 96 embedded background/picture
+choices. Native GridSplat/ListSplat JSON becomes merge recipients using the suite's
+actual formula engines, formatting and archive filtering; errors stop that source.
+
+Verification: nine model tests; all 738 language compositions render without
+detected text overflow. Forty-two browser workflows passed across the full run
+and focused fixes. The independent PDF proof checks two exact Letter pages,
+eight conserved story paragraphs, selectable Arabic and embedded fonts. Catalog
+contact sheets were visually reviewed and overlapping decorations corrected.
+
+Remaining priorities: formatted DOCX/ODT insertion, browser legacy DOC feasibility,
+additional native import fidelity, independent printer preflight and target-app
+validation. WriteSplat DOCX numbering/spacing and page/ruler improvements requested
+in this session remain scheduled after this LayoutSplat milestone. Native INDD/QXP
+and modern Pages IWA are still unsupported; the private Publisher benchmark still
+reports one overflowing story. The roadmap remains open.
+
 ## October 14, 2026 — v0.3 templates, typography, imports, and packages
 
 305 templates (1,830 template/language models), 42 menu presets in 12 composition

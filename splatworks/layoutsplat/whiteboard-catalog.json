@@ -1,0 +1,637 @@
+[
+  {
+    "id": "kwl-chart",
+    "name": "KWL chart",
+    "group": "classroom",
+    "path": "assets/backgrounds/kwl-chart.svg"
+  },
+  {
+    "id": "frayer-model",
+    "name": "Frayer model",
+    "group": "classroom",
+    "path": "assets/backgrounds/frayer-model.svg"
+  },
+  {
+    "id": "t-chart",
+    "name": "T-chart",
+    "group": "classroom",
+    "path": "assets/backgrounds/t-chart.svg"
+  },
+  {
+    "id": "storyboard",
+    "name": "Storyboard",
+    "group": "classroom",
+    "path": "assets/backgrounds/storyboard.svg"
+  },
+  {
+    "id": "venn-diagram",
+    "name": "Venn diagram",
+    "group": "classroom",
+    "path": "assets/backgrounds/venn-diagram.svg"
+  },
+  {
+    "id": "timeline",
+    "name": "Timeline",
+    "group": "classroom",
+    "path": "assets/backgrounds/timeline.svg"
+  },
+  {
+    "id": "cornell-notes",
+    "name": "Cornell notes",
+    "group": "classroom",
+    "path": "assets/backgrounds/cornell-notes.svg"
+  },
+  {
+    "id": "exit-ticket",
+    "name": "Exit ticket",
+    "group": "classroom",
+    "path": "assets/backgrounds/exit-ticket.svg"
+  },
+  {
+    "id": "lab-notes",
+    "name": "Lab notes",
+    "group": "classroom",
+    "path": "assets/backgrounds/lab-notes.svg"
+  },
+  {
+    "id": "vocabulary-builder",
+    "name": "Vocabulary builder",
+    "group": "classroom",
+    "path": "assets/backgrounds/vocabulary-builder.svg"
+  },
+  {
+    "id": "coordinate-plane",
+    "name": "Coordinate plane",
+    "group": "classroom",
+    "path": "assets/backgrounds/coordinate-plane.svg"
+  },
+  {
+    "id": "reading-response",
+    "name": "Reading response",
+    "group": "classroom",
+    "path": "assets/backgrounds/reading-response.svg"
+  },
+  {
+    "id": "choice-board",
+    "name": "Choice board",
+    "group": "classroom",
+    "path": "assets/backgrounds/choice-board.svg"
+  },
+  {
+    "id": "blank-anchor-chart",
+    "name": "Blank anchor chart",
+    "group": "classroom",
+    "path": "assets/backgrounds/blank-anchor-chart.svg"
+  },
+  {
+    "id": "allosaurus",
+    "name": "Allosaurus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/allosaurus.jpg"
+  },
+  {
+    "id": "apatosaurus",
+    "name": "Apatosaurus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/apatosaurus.jpg"
+  },
+  {
+    "id": "archaopteryx",
+    "name": "Archaeopteryx",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/archaopteryx.jpg"
+  },
+  {
+    "id": "bear",
+    "name": "Bear",
+    "group": "coloring",
+    "category": "animals",
+    "path": "assets/coloring-book/bear.jpg"
+  },
+  {
+    "id": "brachiosaurus",
+    "name": "Brachiosaurus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/brachiosaurus.jpg"
+  },
+  {
+    "id": "ceratosaurus",
+    "name": "Ceratosaurus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/ceratosaurus.jpg"
+  },
+  {
+    "id": "copsognathus",
+    "name": "Compsognathus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/copsognathus.jpg"
+  },
+  {
+    "id": "diplodocus",
+    "name": "Diplodocus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/diplodocus.jpg"
+  },
+  {
+    "id": "elephant",
+    "name": "Elephant",
+    "group": "coloring",
+    "category": "animals",
+    "path": "assets/coloring-book/elephant.jpg"
+  },
+  {
+    "id": "pterosaur",
+    "name": "Pterosaur",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/pterosaur.jpg"
+  },
+  {
+    "id": "sauropod-eggs",
+    "name": "Sauropod Eggs",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/sauropod_eggs.jpg"
+  },
+  {
+    "id": "stegosaurus",
+    "name": "Stegosaurus",
+    "group": "coloring",
+    "category": "dinosaurs",
+    "path": "assets/coloring-book/stegosaurus.jpg"
+  },
+  {
+    "id": "wildlife-anteater",
+    "name": "Anteater",
+    "group": "coloring",
+    "category": "animals",
+    "path": "assets/coloring-book/wildlife-anteater.png"
+  },
+  {
+    "id": "space-lunar-rover",
+    "name": "Lunar Exploration",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-lunar-rover.png"
+  },
+  {
+    "id": "technology-robotics",
+    "name": "Robotics Lab",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-robotics.png"
+  },
+  {
+    "id": "energy-solar-wind",
+    "name": "Solar and Wind Energy",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-solar-wind.png"
+  },
+  {
+    "id": "nature-pollinator-garden",
+    "name": "Pollinator Garden",
+    "group": "coloring",
+    "category": "nature",
+    "path": "assets/coloring-book/nature-pollinator-garden.png"
+  },
+  {
+    "id": "ocean-coral-reef",
+    "name": "Coral Reef",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-coral-reef.png"
+  },
+  {
+    "id": "community-accessible-playground",
+    "name": "Inclusive Playground",
+    "group": "coloring",
+    "category": "community",
+    "path": "assets/coloring-book/community-accessible-playground.png"
+  },
+  {
+    "id": "sports-soccer",
+    "name": "Soccer Practice",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-soccer.png"
+  },
+  {
+    "id": "farming-rangelands",
+    "name": "Healthy Rangelands",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-rangelands.png"
+  },
+  {
+    "id": "science-space-telescope",
+    "name": "Space Telescope",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-space-telescope.png"
+  },
+  {
+    "id": "community-repair-cafe",
+    "name": "Repair and Reuse",
+    "group": "coloring",
+    "category": "community",
+    "path": "assets/coloring-book/community-repair-cafe.png"
+  },
+  {
+    "id": "nature-community-garden",
+    "name": "Community Garden",
+    "group": "coloring",
+    "category": "nature",
+    "path": "assets/coloring-book/nature-community-garden.png"
+  },
+  {
+    "id": "space-happy-rocket",
+    "name": "Rocket Adventure",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-happy-rocket.png"
+  },
+  {
+    "id": "space-astronaut-moon",
+    "name": "Astronaut on the Moon",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-astronaut-moon.png"
+  },
+  {
+    "id": "space-planet-parade",
+    "name": "Planet Parade",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-planet-parade.png"
+  },
+  {
+    "id": "space-sleepy-moon",
+    "name": "Sleepy Moon",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-sleepy-moon.png"
+  },
+  {
+    "id": "space-space-station",
+    "name": "Space Station",
+    "group": "coloring",
+    "category": "space",
+    "path": "assets/coloring-book/space-space-station.png"
+  },
+  {
+    "id": "technology-friendly-robot",
+    "name": "Friendly Robot",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-friendly-robot.png"
+  },
+  {
+    "id": "technology-computer-corner",
+    "name": "Computer Corner",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-computer-corner.png"
+  },
+  {
+    "id": "technology-build-a-bridge",
+    "name": "Build a Bridge",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-build-a-bridge.png"
+  },
+  {
+    "id": "technology-helpful-drone",
+    "name": "Helpful Drone",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-helpful-drone.png"
+  },
+  {
+    "id": "technology-inventors-workbench",
+    "name": "Inventors Workbench",
+    "group": "coloring",
+    "category": "technology",
+    "path": "assets/coloring-book/technology-inventors-workbench.png"
+  },
+  {
+    "id": "energy-water-wheel",
+    "name": "Water Wheel",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-water-wheel.png"
+  },
+  {
+    "id": "energy-solar-house",
+    "name": "Solar House",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-solar-house.png"
+  },
+  {
+    "id": "energy-windy-hill",
+    "name": "Windy Hill",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-windy-hill.png"
+  },
+  {
+    "id": "energy-pedal-power",
+    "name": "Pedal Power",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-pedal-power.png"
+  },
+  {
+    "id": "energy-electric-bus",
+    "name": "Electric Bus",
+    "group": "coloring",
+    "category": "energy",
+    "path": "assets/coloring-book/energy-electric-bus.png"
+  },
+  {
+    "id": "ocean-friendly-octopus",
+    "name": "Friendly Octopus",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-friendly-octopus.png"
+  },
+  {
+    "id": "ocean-dolphin-day",
+    "name": "Dolphin Day",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-dolphin-day.png"
+  },
+  {
+    "id": "ocean-sea-turtle",
+    "name": "Sea Turtle",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-sea-turtle.png"
+  },
+  {
+    "id": "ocean-seahorse-garden",
+    "name": "Seahorse Garden",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-seahorse-garden.png"
+  },
+  {
+    "id": "ocean-whale-waves",
+    "name": "Whale and Waves",
+    "group": "coloring",
+    "category": "ocean",
+    "path": "assets/coloring-book/ocean-whale-waves.png"
+  },
+  {
+    "id": "sports-basketball-friends",
+    "name": "Basketball Friends",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-basketball-friends.png"
+  },
+  {
+    "id": "sports-baseball-day",
+    "name": "Baseball Day",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-baseball-day.png"
+  },
+  {
+    "id": "sports-tennis-time",
+    "name": "Tennis Time",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-tennis-time.png"
+  },
+  {
+    "id": "sports-swimming-fun",
+    "name": "Swimming Fun",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-swimming-fun.png"
+  },
+  {
+    "id": "sports-bicycle-ride",
+    "name": "Bicycle Ride",
+    "group": "coloring",
+    "category": "sports",
+    "path": "assets/coloring-book/sports-bicycle-ride.png"
+  },
+  {
+    "id": "farming-tractor-day",
+    "name": "Tractor Day",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-tractor-day.png"
+  },
+  {
+    "id": "farming-vegetable-harvest",
+    "name": "Vegetable Harvest",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-vegetable-harvest.png"
+  },
+  {
+    "id": "farming-barnyard-friends",
+    "name": "Barnyard Friends",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-barnyard-friends.png"
+  },
+  {
+    "id": "farming-apple-orchard",
+    "name": "Apple Orchard",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-apple-orchard.png"
+  },
+  {
+    "id": "farming-growing-grain",
+    "name": "Growing Grain",
+    "group": "coloring",
+    "category": "farming",
+    "path": "assets/coloring-book/farming-growing-grain.png"
+  },
+  {
+    "id": "science-magnet-discovery",
+    "name": "Magnet Discovery",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-magnet-discovery.png"
+  },
+  {
+    "id": "science-seed-to-sprout",
+    "name": "Seed to Sprout",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-seed-to-sprout.png"
+  },
+  {
+    "id": "science-magnifier-bug",
+    "name": "Magnifier Bug",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-magnifier-bug.png"
+  },
+  {
+    "id": "science-weather-watch",
+    "name": "Weather Watch",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-weather-watch.png"
+  },
+  {
+    "id": "science-volcano-model",
+    "name": "Volcano Model",
+    "group": "coloring",
+    "category": "science",
+    "path": "assets/coloring-book/science-volcano-model.png"
+  },
+  {
+    "id": "smithsonian-clouded-leopard-cub",
+    "name": "Clouded leopard cub",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/clouded-leopard-cub.jpg"
+  },
+  {
+    "id": "smithsonian-african-lion-cub",
+    "name": "African lion cub",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/african-lion-cub.jpg"
+  },
+  {
+    "id": "smithsonian-asian-elephant",
+    "name": "Asian elephant",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/asian-elephant.jpg"
+  },
+  {
+    "id": "smithsonian-cheetah",
+    "name": "Cheetah",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/cheetah.jpg"
+  },
+  {
+    "id": "smithsonian-california-sea-lion",
+    "name": "California sea lion",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/california-sea-lion.jpg"
+  },
+  {
+    "id": "smithsonian-alpaca",
+    "name": "Alpaca",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/alpaca.jpg"
+  },
+  {
+    "id": "smithsonian-giant-panda",
+    "name": "Giant panda",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/giant-panda.jpg"
+  },
+  {
+    "id": "smithsonian-grevys-zebra",
+    "name": "Grevy's zebra",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/grevys-zebra.jpg"
+  },
+  {
+    "id": "smithsonian-elds-deer",
+    "name": "Eld's deer",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/elds-deer.jpg"
+  },
+  {
+    "id": "smithsonian-fennec-fox",
+    "name": "Fennec fox",
+    "group": "animals",
+    "path": "assets/smithsonian-animals/fennec-fox.jpg"
+  },
+  {
+    "id": "scratch-art-1",
+    "name": "ScratchArt Background 1",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd1.png"
+  },
+  {
+    "id": "scratch-art-2",
+    "name": "ScratchArt Background 2",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd2.png"
+  },
+  {
+    "id": "scratch-art-3",
+    "name": "ScratchArt Background 3",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd3.png"
+  },
+  {
+    "id": "scratch-art-4",
+    "name": "ScratchArt Background 4",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd4.png"
+  },
+  {
+    "id": "scratch-art-5",
+    "name": "ScratchArt Background 5",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd5.png"
+  },
+  {
+    "id": "scratch-art-6",
+    "name": "ScratchArt Background 6",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd6.png"
+  },
+  {
+    "id": "scratch-art-7",
+    "name": "ScratchArt Background 7",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd7.png"
+  },
+  {
+    "id": "scratch-art-8",
+    "name": "ScratchArt Background 8",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd8.png"
+  },
+  {
+    "id": "scratch-art-9",
+    "name": "ScratchArt Background 9",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd9.png"
+  },
+  {
+    "id": "scratch-art-10",
+    "name": "ScratchArt Background 10",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd10.png"
+  },
+  {
+    "id": "scratch-art-11",
+    "name": "ScratchArt Background 11",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd11.png"
+  },
+  {
+    "id": "scratch-art-12",
+    "name": "ScratchArt Background 12",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd12.png"
+  },
+  {
+    "id": "scratch-art-13",
+    "name": "ScratchArt Background 13",
+    "group": "scratch",
+    "path": "assets/scratch-art/scratch_bkgrnd13.png"
+  }
+]

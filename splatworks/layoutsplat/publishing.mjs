@@ -8,6 +8,7 @@ import { setupContextMenu } from './context-menu.mjs';
 import { setupTemplateLibrary } from './template-library.mjs';
 import { setupSuiteImport } from './suite-interchange.mjs';
 import { setupLabelSettings } from './label-settings.mjs';
+import { setupBackgroundLibrary } from './background-library.mjs';
 import { setupFontTools } from './local-fonts.mjs';
 export function setupPublishing(api) {
   const $ = id => document.getElementById(id), { t, mutate, render, status } = api;
@@ -16,6 +17,7 @@ export function setupPublishing(api) {
   const merge = setupMerge(api), exports = setupExports(api);
   const context = setupContextMenu({ ...api, members, selectedIds: () => new Set(selection) });
   const library = setupTemplateLibrary(api);
+  const backgrounds = setupBackgroundLibrary(api);
   const suite = setupSuiteImport(api);
   const labels = setupLabelSettings(api);
   const fontTools=setupFontTools(api);
@@ -98,7 +100,7 @@ export function setupPublishing(api) {
     if (template) { const next = makeTemplate(template.dataset.template, $('templateTheme').value); if (confirm(t('replaceConfirm'))) api.replaceDoc(next); $('templateDialog').close(); }
     const rich = event.target.closest('[data-rich]'); if (rich && richEditor) richEditor.toggle(rich.dataset.rich);
   });
-  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value()); mutate(() => { const story = getDoc().stories[id]; if (story.text !== value.text) delete story.paragraphs; Object.assign(story, value); }); $('richStoryDialog').close(); };
+  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value(), getDoc().stories[id].style); mutate(() => { const story = getDoc().stories[id]; Object.assign(story, value); }); $('richStoryDialog').close(); };
   $('richStoryDialog').addEventListener('close', () => { richEditor?.destroy(); richEditor = null; });
   $('richColor').onchange = () => richEditor?.style({ color: $('richColor').value });
   $('richSize').onchange = () => richEditor?.style({ size: Number($('richSize').value) });
@@ -141,6 +143,7 @@ export function setupPublishing(api) {
       try { mutate(() => { for (const target of boxes.slice(1)) if (target.storyId !== boxes[0].storyId) linkFrames(d, boxes[0].id, target.id); }); } catch (e) { api.showReport([e.message]); } return true;
     }
     if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
+    if (name === 'whiteboardBackgrounds') { await backgrounds.open(); return true; }
     if (name === 'importSuite') { suite.open(); return true; }
     if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu'}[name]); return true; }
     if(name==='labelSettings'){labels.open();return true;}
