@@ -120,3 +120,24 @@ GitHub Actions runs the LayoutSplat proof workflow. Production deployment and li
 - Fonts in editable projects currently use those available on the viewing computer; redistributable font packaging and deterministic cross-computer text metrics remain future work. Browser PDF output embeds the fonts actually used for the tested print proof.
 
 Serve the repository over HTTP(S), including a loopback server for offline use. Direct `file://` opening does not support this module-based editor. Native Publisher `.pub` conversion is a separate feasibility milestone.
+
+
+## Publication verification — October 14, 2026
+
+LayoutSplat v0.3.0 is live at both SplatWorks.org and DrawSplat.org. The SplatWorks
+Wiki header, official glossy logo, Avery/accuracy articles, and new download links
+are verified live. Release v3.1.35 publishes 16 rebuilt app/collection ZIPs and
+checksums; district-suite-v1.2.5 publishes the complete district ZIP and checksum.
+The installer skill ZIPs were rebuilt from current repository instructions.
+
+All 20 GitHub release assets matched local SHA-256 digests and byte sizes. Every
+ZIP passed CRC checks. All 16 app packages started in Chromium and Firefox with
+external requests blocked. The compact standalone LayoutSplat ZIP is 57.6 MB;
+ten import/font/template/link/merge workflows passed against the extracted package
+without internet. District archive structure, Quick Start, branding, version,
+starter SQL, and four installation-plan checks passed. MariaDB/MySQL and extracted
+installation CI passed. Production testing caught asynchronous template-selection
+test races; the tests now await the dialog closing after the new document loads.
+
+The roadmap remains open as described above; native proprietary formats and
+advanced print/typography validation are not claimed complete.
