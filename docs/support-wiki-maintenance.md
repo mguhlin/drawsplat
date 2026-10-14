@@ -34,6 +34,14 @@ Check local links, source-to-HTML consistency, mobile navigation, keyboard acces
 
 Commit generated files with their sources. Refresh downloadable packages after changing bundled setup instructions. Verify the public wiki, an old guide URL, a deep-linked search, download checksums, and the separately maintained mGuhlin.org article references after deployment.
 
+## Cached updates
+
+The whiteboard offline worker checks LayoutSplat modules and wiki CSS/index files
+against the network before using a cached copy. LayoutSplat also updates an existing
+root worker and offers a reload button; it never reloads an active publication
+automatically. Refreshing cached application code does not clear project storage.
+Use LayoutSplat File → Clear saved browser data separately when erasing a draft.
+
 ## Shared site navigation
 
 The five top-level items are Apps (including Whiteboard), SplatWorks, Blog, Guestbook, and Wiki. `scripts/site_navigation.py` defines the links; `scripts/build-site-navigation.py` applies them to public site headers. The Wiki builder runs this step automatically. Typing Games belongs in the Games directory. Educator resources belong in the Wiki’s For educators section. Do not add independent copies of the old Support, Technical, or For Educators top menus.

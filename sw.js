@@ -1,5 +1,5 @@
-/* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.34-files';
+/* DrawSplatTM offline shell. Caches the static app on first load. */
+const CACHE = 'drawsplat-v3.1.35-layout-refresh';
 const SHELL = [
   './',
   './index.html',
@@ -140,7 +140,7 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if(url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname === '/setup' || url.searchParams.has('open-file') || req.headers.has('Authorization') || req.cache === 'no-store') return;
   const isDiscoveryAsset = url.pathname.startsWith('/assets/js/tool-') || url.pathname === '/data/drawsplat-tools.json';
-  const isShellScript = url.pathname.startsWith('/solutions/pdfsplat/') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
+  const isShellScript = url.pathname.startsWith('/solutions/pdfsplat/') || url.pathname.startsWith('/splatworks/layoutsplat/') || url.pathname === '/assets/js/layoutsplat-cache-recovery.js' || url.pathname === '/assets/css/support-wiki.css' || url.pathname.startsWith('/assets/js/support-') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
   e.respondWith((async()=>{
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){
