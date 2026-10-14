@@ -311,6 +311,9 @@ copy_file() {
 }
 
 MODULE_EXCLUDES=(
+  ".tmp"
+  "tmp"
+  "audit_instructions.md"
   ".git"
   ".github"
   ".codex"

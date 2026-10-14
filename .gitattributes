@@ -1,0 +1,4 @@
+
+# Generated dependency code and verbatim upstream licenses contain intentional spaces.
+splatworks/layoutsplat/suite-data.mjs -whitespace linguist-generated
+splatworks/layoutsplat/vendor/suite-data/*.LICENSE -whitespace
