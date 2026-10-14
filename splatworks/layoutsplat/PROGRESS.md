@@ -1,5 +1,19 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — WriteSplat canvas and suite text follow-up
+
+WriteSplat v0.2.0 removes the bundled body heading from new documents, adds Letter
+page guides, units, draggable/keyboard indents and paragraph left tabs, plus Fit
+width zoom. Native JSON and DOCX preserve supported indents/tab stops; LayoutSplat
+suite import preserves WriteSplat's new tab atoms. ODT export no longer injects a
+metadata title into document content. Old starter-heading cleanup applies narrowly
+to exact bundled local drafts and does not remove imported headings.
+
+Validation: 49 unit checks, all 40 existing editor workflows across the full run
+and focused fixes, two physical-ruler/mobile/DOCX-round-trip browser checks and
+22 Wiki checks passed. The guides are a continuous canvas aid, not exact Word
+pagination; advanced tab alignment and ODT custom stops remain limited.
+
 ## October 14, 2026 — v0.4.2 binary Word compatibility
 
 Native binary DOC text now decodes locally in a bounded WebAssembly worker in

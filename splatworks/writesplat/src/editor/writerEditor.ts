@@ -1,3 +1,4 @@
+import { createTabPlugin, normalizeTabs, tabNode } from './tabPlugin';
 import { baseKeymap, setBlockType, toggleMark } from 'prosemirror-commands';
 import { createAnalysisPlugin, setAnalysisTargetGrade, toggleAnalysisDecorations } from './analysisPlugin';
 import { createBlockDragPlugin } from './blockDragPlugin';
@@ -25,7 +26,7 @@ import {
 } from 'prosemirror-tables';
 
 const paragraphDefaults = {
-  leading: {default:null}, lineMultiple:{default:null}, spaceBefore:{default:null}, spaceAfter:{default:null},
+  tabs:{default:null}, leading: {default:null}, lineMultiple:{default:null}, spaceBefore:{default:null}, spaceAfter:{default:null},
   indentLeft:{default:null}, indentRight:{default:null}, firstLineIndent:{default:null}, fontSize:{default:null}, fontFamily:{default:null},
 };
 function paragraphAttrs(node: Node | string): Record<string, unknown> {
@@ -35,6 +36,7 @@ function paragraphAttrs(node: Node | string): Record<string, unknown> {
   for(const [key,value] of Object.entries({spaceBefore:style.marginTop,spaceAfter:style.marginBottom,indentLeft:style.marginLeft,indentRight:style.marginRight,firstLineIndent:style.textIndent,fontSize:style.fontSize}))if(value)attrs[key]=pt(value);
   if(style.lineHeight){if(/pt|px/.test(style.lineHeight))attrs.leading=pt(style.lineHeight);else attrs.lineMultiple=Number(style.lineHeight);}
   if(style.fontFamily)attrs.fontFamily=style.fontFamily;
+  try{const raw=node.getAttribute('data-writer-tabs')||style.getPropertyValue('--writer-tabs');if(raw)attrs.tabs=normalizeTabs(JSON.parse(raw));}catch{}
   return attrs;
 }
 function paragraphDomAttrs(attrs:Record<string,unknown>): Record<string,string> {
@@ -42,7 +44,7 @@ function paragraphDomAttrs(attrs:Record<string,unknown>): Record<string,string> 
   for(const [key,name] of Object.entries({leading:'line-height',spaceBefore:'margin-top',spaceAfter:'margin-bottom',indentLeft:'margin-left',indentRight:'margin-right',firstLineIndent:'text-indent',fontSize:'font-size'})){const n=attrs[key];if(typeof n==='number'&&Number.isFinite(n)&&n>= (key==='firstLineIndent'?-360:0)&&n<=360)properties[name]=n+'pt';}
   if(typeof attrs.lineMultiple==='number'&&attrs.lineMultiple>=.5&&attrs.lineMultiple<=6)properties['line-height']=String(attrs.lineMultiple);
   if(typeof attrs.fontFamily==='string'&&/^[\w ,"'-]{1,120}$/.test(attrs.fontFamily))properties['font-family']=attrs.fontFamily;
-  const style=Object.entries(properties).map(([key,value])=>key+':'+value).join(';');return style?{style}:{};
+  const style=Object.entries(properties).map(([key,value])=>key+':'+value).join(';'),out:Record<string,string>=style?{style}:{};const tabs=normalizeTabs(attrs.tabs);if(tabs.length)out['data-writer-tabs']=JSON.stringify(tabs);return out;
 }
 const paragraphNode: NodeSpec = {
   attrs: {
@@ -130,6 +132,7 @@ const nodes = listNodes
   )
   .append({
     page_break: pageBreakNode,
+    tab: tabNode,
     teacher_only_block: teacherOnlyBlockNode,
   });
 const underlineMark: MarkSpec = {
@@ -291,6 +294,9 @@ export type EditorCommand =
 
 export interface WriterEditor {
   view: EditorView;
+  getParagraphLayout(): Record<string,unknown>;
+  setParagraphLayout(values: Record<string,unknown>): boolean;
+  insertTab(): boolean;
   run(command: EditorCommand): boolean;
   setLink(href: string): boolean;
   removeLink(): boolean;
@@ -339,6 +345,15 @@ export function createWriterEditor(
 
   return {
     view,
+    getParagraphLayout(){return {...view.state.selection.$from.parent.attrs};},
+    setParagraphLayout(values){
+      const attrs:Record<string,unknown>={};for(const key of ['indentLeft','indentRight','firstLineIndent']){const n=values[key];if(typeof n==='number'&&Number.isFinite(n))attrs[key]=Math.max(key==='firstLineIndent'?-468:0,Math.min(468,n));}if(values.tabs!==undefined)attrs.tabs=normalizeTabs(values.tabs);
+      const tr=view.state.tr,{from,to,$from,empty}=view.state.selection;
+      if(empty&&['paragraph','heading'].includes($from.parent.type.name))tr.setNodeMarkup($from.before(),undefined,{...$from.parent.attrs,...attrs});
+      else view.state.doc.nodesBetween(from,to,(node,pos)=>{if(['paragraph','heading'].includes(node.type.name))tr.setNodeMarkup(pos,undefined,{...node.attrs,...attrs});});
+      if(!tr.docChanged)return false;view.dispatch(tr);view.focus();return true;
+    },
+    insertTab(){const {state}=view;if(!['paragraph','heading'].includes(state.selection.$from.parent.type.name))return false;view.dispatch(state.tr.replaceSelectionWith(state.schema.nodes.tab.create()).scrollIntoView());view.focus();return true;},
     run(command: EditorCommand) {
       const handled = runCommand(command, view);
       view.focus();
@@ -733,6 +748,7 @@ function createStateFromDoc(doc: ProseMirrorNode): EditorState {
       history(),
       createAnalysisPlugin(6),
       createBlockDragPlugin(),
+      createTabPlugin(),
       createReadAloudPlugin(),
       createVocabularyPlugin(),
       tableEditing(),
@@ -743,7 +759,7 @@ function createStateFromDoc(doc: ProseMirrorNode): EditorState {
         'Mod-b': toggleMark(writeSplatSchema.marks.strong),
         'Mod-i': toggleMark(writeSplatSchema.marks.em),
         Enter: splitListItem(writeSplatSchema.nodes.list_item),
-        Tab: sinkListItem(writeSplatSchema.nodes.list_item),
+        Tab:(state,dispatch,view)=>{for(let depth=state.selection.$from.depth;depth>0;depth--)if(state.selection.$from.node(depth).type.name==='list_item')return sinkListItem(writeSplatSchema.nodes.list_item)(state,dispatch,view);if(!['paragraph','heading'].includes(state.selection.$from.parent.type.name))return false;if(dispatch)dispatch(state.tr.replaceSelectionWith(state.schema.nodes.tab.create()).scrollIntoView());return true;},
         'Shift-Tab': liftListItem(writeSplatSchema.nodes.list_item),
       }),
       keymap(baseKeymap),
@@ -755,6 +771,8 @@ function createStateFromDoc(doc: ProseMirrorNode): EditorState {
 function parseHtml(html: string) {
   const host = document.createElement('div');
   host.innerHTML = html;
+  const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT),texts:Text[]=[];let current:Node|null;while(current=walker.nextNode())if(current.textContent?.includes('\t')&&!current.parentElement?.closest('pre,code,span[data-writer-tab]'))texts.push(current as Text);
+  for(const text of texts){const fragment=document.createDocumentFragment();text.data.split('\t').forEach((part,i)=>{if(i){const tab=document.createElement('span');tab.dataset.writerTab='true';tab.textContent='\t';fragment.append(tab);}fragment.append(document.createTextNode(part));});text.replaceWith(fragment);}
   return DOMParser.fromSchema(writeSplatSchema).parse(host);
 }
 
@@ -762,6 +780,7 @@ function serializeDoc(view: EditorView): string {
   const fragment = DOMSerializer.fromSchema(writeSplatSchema).serializeFragment(view.state.doc.content);
   const host = document.createElement('div');
   host.appendChild(fragment);
+  const live=[...view.dom.querySelectorAll<HTMLElement>('.writer-tab')];host.querySelectorAll<HTMLElement>('.writer-tab').forEach((tab,index)=>{if(live[index]?.style.width)tab.style.cssText='display:inline-block;white-space:pre;width:'+live[index].style.width;});
   return host.innerHTML;
 }
 

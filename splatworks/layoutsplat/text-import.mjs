@@ -27,6 +27,7 @@ export async function importText(file,customFonts={}) {
     else { const xml = await read('content.xml'); if(!xml) throw Error('Invalid OpenDocument text.'); html = odtXmlToHtml(xml, await read('styles.xml')); }
     const story = officeHtmlToStory(html,customFonts);
     notes.push('Imported document text with supported inline formatting, list numbering, paragraph spacing and indents.');
+    if(html.includes('data-writer-tabs'))notes.push('Custom document tab stops are not retained in this text frame; review tab alignment.');
     if(html.includes('<table'))notes.push('Table cell text becomes paragraphs; table geometry is not placed in this frame.');
     if(/background-color|line-through/.test(html))notes.push('This document uses highlights or strike-through that LayoutSplat stories do not yet retain.');
     if(story.substitutedFonts.length)notes.push('Unavailable source fonts were matched to built-in families: '+story.substitutedFonts.join(', ')+'. Import the original font files first for closer metrics.');

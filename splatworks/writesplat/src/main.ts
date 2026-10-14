@@ -3,6 +3,8 @@ import { countDocumentStats } from './app/stats';
 import { analyzeWritingWarnings, type WritingWarnings } from './analysis/detectors';
 import { analyzeReadability, formatReadabilityGrade } from './analysis/scorer';
 import { parseVocabularyTerms } from './analysis/vocabulary';
+import { removeLegacyStarterHeading, removeLegacyStarterHtml } from './editor/starterCleanup';
+import { setupWriterRuler } from './editor/writerRuler';
 import { createWriterEditor, type EditorCommand } from './editor/writerEditor';
 import { formatCitation, type CitationStyle } from './educator/citations';
 import { pauseReadAloud, readTextAloud, stopReadAloud } from './educator/readAloud';
@@ -38,10 +40,7 @@ interface LibraryEntry {
   updatedAt: string;
 }
 
-const starterBody = `
-  <h1>Untitled Document</h1>
-  <p>Start writing in WriteSplatTM. Your work saves locally and the readability panel updates as you type.</p>
-`;
+const starterBody = '<p></p>';
 
 type IconName =
   | 'bold'
@@ -405,10 +404,26 @@ function zoomOptions(): string {
     ['1', '100%'],
     ['1.15', '115%'],
     ['1.3', '130%'],
+    ['fit', 'Fit width'],
   ]
     .map(([value, label]) => `<option value="${value}"${value === '1' ? ' selected' : ''}>${label}</option>`)
     .join('');
 }
+
+const rulerLanguageRows=`Letter page guides|Guías de página Carta|Hướng dẫn trang Letter|أدلة صفحة Letter|Letter 页面参考线|Letter पृष्ठ मार्गदर्शक
+Units|Unidades|Đơn vị|الوحدات|单位|इकाइयाँ
+Left indent|Sangría izquierda|Thụt lề trái|مسافة بادئة يسار|左缩进|बायाँ इंडेंट
+First line|Primera línea|Dòng đầu|السطر الأول|首行|पहली पंक्ति
+First-line indent|Sangría de primera línea|Thụt dòng đầu|مسافة السطر الأول|首行缩进|पहली पंक्ति इंडेंट
+Right indent|Sangría derecha|Thụt lề phải|مسافة بادئة يمين|右缩进|दायाँ इंडेंट
+Insert tab|Insertar tabulación|Chèn tab|إدراج علامة جدولة|插入制表符|टैब जोड़ें
+Clear tab stops|Borrar tabulaciones|Xóa điểm tab|مسح علامات الجدولة|清除制表位|टैब स्टॉप हटाएँ
+Inches|Pulgadas|Inch|بوصات|英寸|इंच
+Centimeters|Centímetros|Xentimét|سنتيمترات|厘米|सेंटीमीटर
+Points|Puntos|Điểm|نقاط|磅|पॉइंट
+Fit width|Ajustar al ancho|Vừa chiều rộng|ملاءمة العرض|适应宽度|चौड़ाई में फिट
+`;
+for(const row of rulerLanguageRows.trim().split('\n')){const[key,...values]=row.split('|');(['es','vi','ar','zh','uh'] as const).forEach((lang,index)=>{translations[lang][key]=values[index];});}
 
 function languageOptions(current: LanguageCode): string {
   return languages
@@ -1431,21 +1446,24 @@ function bootstrap(): void {
       answerKey = parsed.teacher.answerKey;
       studentView = parsed.teacher.studentView;
       if (parsed.document.format === 'html') {
-        initialHtml = parsed.document.body;
+        initialHtml = removeLegacyStarterHtml(parsed.document.body);
       }
     } catch {
       initialHtml = starterBody;
     }
   }
 
+  let ruler:ReturnType<typeof setupWriterRuler>|undefined;
   const writer = createWriterEditor(editorMount, initialHtml, refresh);
+  ruler=setupWriterRuler(editorMount,writer,text=>translateText(text,normalizeLanguage(languageSwitcher.value)));
+  if(innerWidth<780){zoomSelect.value='fit';editorMount.dataset.zoom='fit';ruler.update();}
 
   if (saved) {
     try {
       const parsed: unknown = JSON.parse(saved);
       assertWriteSplatFile(parsed);
       if (parsed.document.format === 'prosemirror-json') {
-        writer.setJson(parsed.document.content);
+        writer.setJson(removeLegacyStarterHeading(parsed.document.content));
       }
     } catch {
       writer.setHtml(starterBody);
@@ -1524,6 +1542,7 @@ function bootstrap(): void {
   }
 
   function refresh(): void {
+    ruler?.update();
     syncMarkdownFromEditor();
     scheduleStatsUpdate();
     autosave();
@@ -2358,10 +2377,11 @@ function bootstrap(): void {
   }
 
   function setEditorZoom(value: string): void {
-    const allowed = new Set(['0.85', '1', '1.15', '1.3']);
+    const allowed = new Set(['0.85', '1', '1.15', '1.3', 'fit']);
     const zoom = allowed.has(value) ? value : '1';
     editorMount.dataset.zoom = zoom;
-    editorMount.style.setProperty('--editor-zoom', zoom);
+    if(zoom!=='fit')editorMount.style.setProperty('--editor-zoom', zoom);
+    ruler?.update();
   }
 
   function refreshReadAloudVoices(): void {

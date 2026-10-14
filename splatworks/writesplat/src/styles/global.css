@@ -1420,3 +1420,47 @@ body.sidebar-collapsed .sidebar {
 .high-contrast .app-header { background: #000; }
 .high-contrast .icon-button, .high-contrast .menu-bar { color: #000; }
 .reduced-motion * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+
+/* Physical Letter guides share the document ruler's point coordinates. */
+.document-panel { grid-template-rows:auto auto minmax(0,1fr); }
+.writer-ruler-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; color:var(--muted); font-size:.78rem; }
+.writer-ruler-tools label { display:flex; align-items:center; gap:5px; }
+.writer-ruler-tools input { width:66px; padding:5px; border:1px solid var(--line); border-radius:6px; }
+.writer-ruler-tools select,.writer-ruler-tools button { padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); }
+.writer-canvas-viewport { overflow:auto; min-height:0; min-width:0; padding:0 10px 16px; background:#e9e5f2; border-radius:8px; }
+.writer-ruler { height:32px; position:sticky; top:0; margin:0 auto; background:#faf9fd; border-bottom:1px solid #b9aed4; z-index:3; touch-action:none; user-select:none; }
+.ruler-tick { position:absolute; bottom:0; height:6px; border-left:1px solid #b9aed4; font:10px Arial; padding-left:3px; }
+.ruler-tick.major { height:24px; padding-top:2px; color:#504469; }
+.ruler-marker { position:absolute; width:13px; height:10px; border:0; background:#6d28d9; padding:0; transform:translateX(-50%); cursor:ew-resize; }
+.ruler-marker.indentLeft { bottom:0; clip-path:polygon(0 100%,50% 0,100% 100%); }
+.ruler-marker.firstLineIndent { top:0; clip-path:polygon(0 0,100% 0,50% 100%); background:#f58220; }
+.ruler-marker.indentRight { bottom:0; clip-path:polygon(0 100%,50% 0,100% 100%); }
+.ruler-marker.tab { bottom:0; width:10px; background:#007e91; clip-path:polygon(0 0,25% 0,25% 75%,100% 75%,100% 100%,0 100%); }
+.writer-canvas-viewport .editor { width:calc(816px * var(--editor-zoom)); min-width:calc(816px * var(--editor-zoom)); min-height:calc(1056px * var(--editor-zoom)); height:auto; margin:0 auto; overflow:visible; position:relative; padding:calc(96px * var(--editor-zoom)); border-radius:0; border:0; font:12pt/1.45 Arial,sans-serif; box-shadow:0 3px 12px #37215618; }
+.writer-canvas-viewport .ProseMirror { width:468pt; min-height:648pt; white-space:pre-wrap; zoom:var(--editor-zoom); z-index:1; }
+.writer-canvas-viewport .ProseMirror[data-empty='true']::before { content:'Start writing…'; position:absolute; color:var(--muted); pointer-events:none; }
+.writer-page-guides { position:absolute; inset:0; pointer-events:none; z-index:0; }
+.writer-page-outline { position:absolute; left:0; right:0; border:1px solid #cec6dc; }
+.writer-page-outline::before { content:'Page ' attr(data-page); position:absolute; top:8px; right:12px; color:#8b819c; font:10px Arial; }
+.writer-tab { display:inline-block; width:36pt; white-space:pre; }
+body[data-markdown-mode='raw'] .writer-ruler-tools,body[data-markdown-mode='raw'] .writer-canvas-viewport { display:none; }
+body[data-markdown-mode='raw'] .document-panel { grid-template-rows:auto minmax(0,1fr); }
+body[data-markdown-mode='split'] .writer-ruler-tools { grid-column:1/-1; }
+@media print {
+ @page { size:letter; margin:1in; }
+ .writer-ruler-tools,.writer-ruler,.writer-page-guides { display:none!important; }
+ .writer-canvas-viewport { overflow:visible; padding:0; background:white; }
+ .writer-canvas-viewport .editor { width:100%; min-width:0; min-height:0; padding:0; box-shadow:none; }
+ .writer-canvas-viewport .ProseMirror { width:100%; min-height:0; zoom:1; }
+}
+@media (max-width:900px) {
+ .workspace,body.sidebar-collapsed .workspace { grid-template-columns:minmax(0,1fr); }
+ .document-meta { flex-wrap:wrap; }
+ .document-meta label { flex:1 1 240px; max-width:100%; }
+ .document-meta input { flex:1; width:auto; }
+ .writer-ruler-tools { gap:6px 8px; }
+ .writer-canvas-viewport { max-width:100%; }
+}
+
+body[data-markdown-mode='split'] .document-panel {grid-template-rows:auto auto minmax(0,1fr);}
+@media(max-width:900px){body[data-markdown-mode='split'] .document-panel {grid-template-rows:auto auto minmax(280px,1fr) minmax(220px,1fr);}}

@@ -22,7 +22,8 @@ export function writeSplatText(data) {
         if (mark.type === 'link' && /^https?:\/\/|^mailto:/i.test(mark.attrs?.href || '')) m.link = mark.attrs.href;
       }
       if (text.length > from && Object.keys(m).length > 2) marks.push(m);
-    } else if (node.type === 'hard_break') text += '\n';
+    } else if (node.type === 'tab') text += '\t';
+    else if (node.type === 'hard_break') text += '\n';
     else {
       if (['paragraph', 'heading', 'list_item', 'table_row'].includes(node.type) && text && !text.endsWith('\n')) text += '\n';
       if (node.type === 'image') text += `[${safeText(node.attrs?.alt || 'Picture')}]`;

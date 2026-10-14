@@ -24,8 +24,27 @@ layout remain limited. Short compound streams are normalized in memory. DOCX/ODT
 with bounded XML and entity declarations rejected.</p>
 <p>Block-drag handles sit outside text flow so they do not change paragraph wrapping
 or list alignment. Existing educator, readability, library and language features
-remain available. Page outlines, a tab/indent ruler, and removal of the old starter
-heading are the next requested editor improvements.</p>
+remain available.</p>
+<h2 id="page-canvas-tabs-and-indents">Page canvas, tabs and indents</h2>
+<p>New documents start with an empty paragraph. The title field supplies document
+metadata; it does not add a heading to the body. Existing local drafts lose the old
+“Untitled Document” heading only when the exact bundled starter paragraph follows
+it; imported documents and user headings are kept.</p>
+<p>The canvas shows Letter-size page outlines with one-inch margins. These are
+continuous-editor guides, rather than a complete Word pagination engine. Browser
+print output can break paragraphs differently from the on-screen guides. Use Print
+preview to check final pages.</p>
+<p>Choose inches, centimeters or points above the ruler. Drag the left, first-line
+and right indent markers, or enter their values. Click the ruler to add a left tab
+stop. Tab inserts a tab outside lists; inside lists it indents the list item.
+Drag a tab to move it, drag down or double-click to remove it, or use Clear tab
+stops. Focused markers support arrow keys (Shift changes by nine points), and
+Delete removes a focused tab. The Insert tab button also works on touch screens.</p>
+<p>Paragraph indents and tab stops survive native JSON saves and DOCX export/open.
+DOCX left tab stops are imported. Advanced right/center/decimal tabs remain
+limited. Fit width scales the whole page on smaller screens without changing
+font sizes or document content. HTML exports retain rendered tab widths; ODT
+exports retain tab characters, but not custom stop positions.</p>
 <h2 id="layoutsplat-text-boxes">LayoutSplat text boxes</h2>
 <p>In <a href="https://splatworks.org/layoutsplat">LayoutSplat</a>, right-click a text box and
 choose <strong>Import text</strong> or <strong>Append text</strong>. DOCX/ODT text retains supported character
@@ -35,4 +54,4 @@ page layout and embedded pictures are not placed by this text-box action.
 LayoutSplat reports unsupported highlighting/strike-through or substituted fonts
 when present. Import an original font first to match its family where available.
 Native JSON remains the editable backup for each application.</p>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#word-and-libreoffice-imports">Word and LibreOffice imports</a></li><li><a href="#layoutsplat-text-boxes">LayoutSplat text boxes</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 14 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#word-and-libreoffice-imports">Word and LibreOffice imports</a></li><li><a href="#page-canvas-tabs-and-indents">Page canvas, tabs and indents</a></li><li><a href="#layoutsplat-text-boxes">LayoutSplat text boxes</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 14 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

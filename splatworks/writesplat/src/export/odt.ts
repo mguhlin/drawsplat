@@ -3,7 +3,7 @@ import { buildStoredZip } from './zip';
 export function htmlToOdtBlob(title: string, html: string): Blob {
   const host = document.createElement('div');
   host.innerHTML = html;
-  const contentXml = createContentXml(title, host);
+  const contentXml = createContentXml(host);
   const zip = buildStoredZip([
     { name: 'mimetype', data: 'application/vnd.oasis.opendocument.text' },
     { name: 'META-INF/manifest.xml', data: manifestXml() },
@@ -17,14 +17,13 @@ export function htmlToOdtBlob(title: string, html: string): Blob {
   return new Blob([payload], { type: 'application/vnd.oasis.opendocument.text' });
 }
 
-function createContentXml(title: string, host: HTMLElement): string {
+function createContentXml(host: HTMLElement): string {
   const body = Array.from(host.childNodes).map(nodeToOdt).join('');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2">
   <office:body>
     <office:text>
-      <text:h text:outline-level="1">${escapeXml(title || 'Untitled Document')}</text:h>
       ${body || '<text:p />'}
     </office:text>
   </office:body>
@@ -141,6 +140,8 @@ function inlineOdt(element: HTMLElement): string {
       if (tag === 's') {
         return `<text:span text:style-name="Strike">${text}</text:span>`;
       }
+
+      if (node.dataset.writerTab === 'true') return '<text:tab />';
 
       if (tag === 'br') {
         return '<text:line-break />';

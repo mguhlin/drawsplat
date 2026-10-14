@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 test('loads the WriteSplat writing app shell', async ({ page }) => {
   await page.goto('/');
@@ -131,7 +132,7 @@ test('saves and reopens named browser documents', async ({ page }) => {
   await expect(page.locator('#statusSaved')).toHaveText('Saved to browser');
 
   await page.getByRole('button', { name: 'New' }).click();
-  await expect(editor).toContainText('Untitled Document');
+  await expect(page.locator('.ProseMirror')).toHaveText('');
 
   await page.getByRole('button', { name: 'Library' }).click();
   await page.locator('.library-item', { hasText: 'Local Essay' }).getByRole('button', { name: 'Open' }).click();
@@ -323,8 +324,8 @@ test('zooms the editor view without changing document text', async ({ page }) =>
 
   await expect(page.locator('#editor')).toHaveAttribute('data-zoom', '1.3');
   await expect(page.locator('#editor')).toHaveCSS('transform', 'none');
-  const fontSize = await page.locator('#editor').evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
-  expect(fontSize).toBeGreaterThan(18);
+  const paperWidth = await page.locator('#editor').evaluate((element) => element.getBoundingClientRect().width);
+  expect(paperWidth).toBeCloseTo(816 * 1.3, 0);
   await expect(editor).toHaveText(before);
 });
 
@@ -413,7 +414,7 @@ test('uses a larger document canvas on desktop', async ({ page }) => {
 
   const editorBox = await page.locator('#editor').boundingBox();
 
-  expect(editorBox?.width).toBeGreaterThan(1050);
+  expect(editorBox?.width).toBeCloseTo(816,0);
 });
 
 test('uses a sidebar drawer on tablet width', async ({ page }) => {
@@ -459,10 +460,10 @@ test('inserts uploaded images as embedded data', async ({ page }) => {
   const fileChooserPromise = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Choose image' }).click();
   const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles('tests/fixtures/purple-square.svg');
+  await fileChooser.setFiles(fileURLToPath(new URL('./fixtures/purple-square.svg', import.meta.url)));
 
-  await expect(page.locator('.ProseMirror img')).toHaveAttribute('alt', 'Purple square');
-  await expect(page.locator('.ProseMirror img')).toHaveAttribute('src', /data:image\/svg\+xml/);
+  await expect(page.locator('.ProseMirror img:not(.ProseMirror-separator)')).toHaveAttribute('alt', 'Purple square');
+  await expect(page.locator('.ProseMirror img:not(.ProseMirror-separator)')).toHaveAttribute('src', /data:image\/svg\+xml/);
 });
 
 test('inserts pasted images as embedded data', async ({ page }) => {
@@ -479,8 +480,8 @@ test('inserts pasted images as embedded data', async ({ page }) => {
     element.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData: dataTransfer }));
   });
 
-  await expect(page.locator('.ProseMirror img')).toHaveAttribute('alt', 'pasted-square.svg');
-  await expect(page.locator('.ProseMirror img')).toHaveAttribute('src', /data:image\/svg\+xml/);
+  await expect(page.locator('.ProseMirror img:not(.ProseMirror-separator)')).toHaveAttribute('alt', 'pasted-square.svg');
+  await expect(page.locator('.ProseMirror img:not(.ProseMirror-separator)')).toHaveAttribute('src', /data:image\/svg\+xml/);
 });
 
 test('inserts and adjusts a basic table', async ({ page }) => {

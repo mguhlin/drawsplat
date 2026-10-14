@@ -21,7 +21,7 @@ export const documentTemplates: DocumentTemplate[] = [
     title: 'Blank Document',
     description: 'Start from an empty page.',
     category: 'other',
-    html: '<h1>Untitled Document</h1><p></p>',
+    html: '<p></p>',
   },
   // ── Prose & stories ────────────────────────────────────────────────
   {

@@ -9,7 +9,7 @@ describe('OpenDocument support', () => {
     const html = await odtToHtml(await blob.arrayBuffer());
 
     const parsed=new DOMParser().parseFromString(html,'text/html');
-    expect(parsed.querySelector('h1')?.textContent).toBe('Lab Draft');
+    expect(parsed.querySelector('h1')).toBeNull();
     expect(parsed.querySelector('h2')?.textContent).toBe('Science Notes');
     expect(parsed.querySelector('span[style*="font-weight:bold"]')?.textContent).toBe('careful');
     expect([...parsed.querySelectorAll('ul li')].map(li=>li.textContent)).toEqual(['Question','Evidence']);

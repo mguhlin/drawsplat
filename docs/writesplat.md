@@ -29,8 +29,32 @@ with bounded XML and entity declarations rejected.
 
 Block-drag handles sit outside text flow so they do not change paragraph wrapping
 or list alignment. Existing educator, readability, library and language features
-remain available. Page outlines, a tab/indent ruler, and removal of the old starter
-heading are the next requested editor improvements.
+remain available.
+
+## Page canvas, tabs and indents
+
+New documents start with an empty paragraph. The title field supplies document
+metadata; it does not add a heading to the body. Existing local drafts lose the old
+“Untitled Document” heading only when the exact bundled starter paragraph follows
+it; imported documents and user headings are kept.
+
+The canvas shows Letter-size page outlines with one-inch margins. These are
+continuous-editor guides, rather than a complete Word pagination engine. Browser
+print output can break paragraphs differently from the on-screen guides. Use Print
+preview to check final pages.
+
+Choose inches, centimeters or points above the ruler. Drag the left, first-line
+and right indent markers, or enter their values. Click the ruler to add a left tab
+stop. Tab inserts a tab outside lists; inside lists it indents the list item.
+Drag a tab to move it, drag down or double-click to remove it, or use Clear tab
+stops. Focused markers support arrow keys (Shift changes by nine points), and
+Delete removes a focused tab. The Insert tab button also works on touch screens.
+
+Paragraph indents and tab stops survive native JSON saves and DOCX export/open.
+DOCX left tab stops are imported. Advanced right/center/decimal tabs remain
+limited. Fit width scales the whole page on smaller screens without changing
+font sizes or document content. HTML exports retain rendered tab widths; ODT
+exports retain tab characters, but not custom stop positions.
 
 ## LayoutSplat text boxes
 

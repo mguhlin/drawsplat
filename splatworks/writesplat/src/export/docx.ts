@@ -1,5 +1,6 @@
 import {
   AlignmentType,
+  Tab, TabStopType, LineRuleType, type IParagraphPropertiesOptions,
   Document,
   ExternalHyperlink,
   LevelFormat,
@@ -23,6 +24,7 @@ export async function htmlToDocxBlob(title: string, html: string): Promise<Blob>
   const doc = new Document({
     creator: 'WriteSplatTM',
     title,
+    styles:{default:{document:{run:{font:'Arial',size:24}}}},
     numbering:{config:[{reference:'writesplat-numbering',levels:[{level:0,format:LevelFormat.DECIMAL,text:'%1.',alignment:AlignmentType.LEFT}]}]},
     sections: [
       {
@@ -47,27 +49,27 @@ function nodeToDocx(node: ChildNode): Array<Paragraph | Table> {
   const tag = node.tagName.toLowerCase();
 
   if (tag === 'h1') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_1, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_1, children: inlineRuns(node) })];
   }
 
   if (tag === 'h2') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_2, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_2, children: inlineRuns(node) })];
   }
 
   if (tag === 'h3') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_3, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_3, children: inlineRuns(node) })];
   }
 
   if (tag === 'h4') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_4, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_4, children: inlineRuns(node) })];
   }
 
   if (tag === 'h5') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_5, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_5, children: inlineRuns(node) })];
   }
 
   if (tag === 'h6') {
-    return [new Paragraph({ alignment: docxAlignment(node), heading: HeadingLevel.HEADING_6, children: inlineRuns(node) })];
+    return [new Paragraph({ ...paragraphProperties(node), heading: HeadingLevel.HEADING_6, children: inlineRuns(node) })];
   }
 
   if (tag === 'hr') {
@@ -78,6 +80,7 @@ function nodeToDocx(node: ChildNode): Array<Paragraph | Table> {
     return Array.from(node.children).map(
       (child) =>
         new Paragraph({
+          ...paragraphProperties((child as HTMLElement).querySelector('p') || child as HTMLElement),
           bullet: tag === 'ul' ? { level: 0 } : undefined,
           numbering: tag === 'ol' ? { reference: 'writesplat-numbering', level: 0 } : undefined,
           children: inlineRuns(child as HTMLElement),
@@ -93,7 +96,7 @@ function nodeToDocx(node: ChildNode): Array<Paragraph | Table> {
     return [new Paragraph({ children: [new TextRun(`[Image: ${node.getAttribute('alt') || 'embedded image'}]`)] })];
   }
 
-  return [new Paragraph({ alignment: docxAlignment(node), children: inlineRuns(node) })];
+  return [new Paragraph({ ...paragraphProperties(node), children: inlineRuns(node) })];
 }
 
 function tableToDocx(table: HTMLElement): Table {
@@ -112,6 +115,12 @@ function tableToDocx(table: HTMLElement): Table {
   });
 }
 
+function paragraphProperties(element:HTMLElement):IParagraphPropertiesOptions {
+ const s=element.style,points=(value:string)=>{const n=parseFloat(value);return Number.isFinite(n)?n*(value.endsWith('px')?.75:1):undefined;},twips=(value:string,fallback=0)=>Math.round((points(value)??fallback)*20);
+ const first=points(s.textIndent)||0,line=s.lineHeight||'1.45',relative=!/pt|px/.test(line);let tabs:number[]=[];try{const raw=JSON.parse(element.getAttribute('data-writer-tabs')||'[]');if(Array.isArray(raw))tabs=raw.filter(n=>typeof n==='number'&&Number.isFinite(n)&&n>0&&n<=468).slice(0,32);}catch{}
+ return {alignment:docxAlignment(element),indent:{left:twips(s.marginLeft),right:twips(s.marginRight),...(first<0?{hanging:Math.round(-first*20)}:{firstLine:Math.round(first*20)})},spacing:{before:twips(s.marginTop),after:twips(s.marginBottom,12),line:relative?Math.round(Number(line)*240):twips(line),lineRule:relative?LineRuleType.AUTO:LineRuleType.EXACT},tabStops:tabs.map(position=>({type:TabStopType.LEFT,position:Math.round(position*20)})),run:{font:normalizeFontFamily(s.fontFamily)||undefined,size:cssPxToHalfPoints(s.fontSize)||undefined}};
+}
+
 function inlineRuns(element: HTMLElement): ParagraphChild[] {
   const runs = Array.from(element.childNodes).flatMap((node) => inlineNodeRuns(node));
   return runs.length > 0 ? runs : [new TextRun('')];
@@ -119,7 +128,7 @@ function inlineRuns(element: HTMLElement): ParagraphChild[] {
 
 function inlineNodeRuns(node: ChildNode, marks: Partial<TextRunOptions> = {}): ParagraphChild[] {
   if (node.nodeType === Node.TEXT_NODE) {
-    return [new TextRun({ text: node.textContent ?? '', ...marks })];
+    return (node.textContent??'').split('\t').flatMap((text,index)=>[...(index?[new TextRun({children:[new Tab()],...marks})]:[]),new TextRun({text,...marks})]);
   }
 
   if (!(node instanceof HTMLElement)) {
