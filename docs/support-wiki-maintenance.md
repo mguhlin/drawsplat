@@ -20,6 +20,14 @@ npx playwright test tests/support-wiki.spec.js tests/district-quickstart.spec.js
 
 The wiki generator writes shared static sidebar navigation, article outlines, generated technical pages, the policy packet, and `assets/js/support-index.js`. Search matches all entered words across titles, descriptions, and full article text, ranking title matches first. It runs in the browser without a search service, tracking, or API credentials. Articles and topic links remain readable without JavaScript. Markdown source is preserved for offline use and repository review.
 
+## Article illustrations
+
+Guide images preserve their complete aspect ratio on desktop and mobile. The
+generator adds the decorative `assets/brand/splatworks-school-guides.png` hero to
+wiki and guide articles that have no image, excluding licensing and privacy policy
+sections. Do not add that generated image to Markdown; rebuilding inserts it once.
+See [artwork provenance](splatworks-artwork.md) for its generation prompt.
+
 ## Verify and publish
 
 Check local links, source-to-HTML consistency, mobile navigation, keyboard access, search, and print. Keep licensing notices and agreement execution status accurate. Separate shipped behavior from proposals and district procedures; never label documentation or an unsigned template as a compliance certification.

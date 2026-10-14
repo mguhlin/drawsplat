@@ -186,3 +186,17 @@ test('ecosystem reference covers registry components, categories, and searchable
  await page.goto('/wiki/?q=multitrack');
  await expect(page.locator('.wiki-results a').filter({hasText:'Ecosystem tools, widgets and features'})).toBeVisible();
 });
+
+test('guide headers show complete illustrations and text-only guides get a hero',async({page})=>{
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});
+  for(const url of ['/guides/google-setup.html','/guides/mysql-setup.html','/wiki/district-classrooms.html']){
+   await page.goto(url);
+   const image=page.locator('main .guide-hero-image, main .wiki-guide-hero').first();
+   await expect(image).toBeVisible();
+   await expect.poll(()=>image.evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);
+   const metrics=await image.evaluate(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return{ratio:r.width/r.height,natural:el.naturalWidth/el.naturalHeight,fit:s.objectFit,overflow:document.documentElement.scrollWidth>innerWidth};});
+   expect(metrics.ratio).toBeCloseTo(metrics.natural,1);expect(metrics.fit).not.toBe('cover');expect(metrics.overflow).toBe(false);
+  }
+ }
+});

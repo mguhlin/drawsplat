@@ -2,7 +2,7 @@
 
 **LayoutSplat v0.3.0:** [Open the publication editor](https://splatworks.org/splatworks/layoutsplat/) · [Feature guide](https://splatworks.org/wiki/layoutsplat.html) · [Roadmap and progress](splatworks/layoutsplat/PROGRESS.md). Includes 305 editable designs, 29 Avery sheet layouts covering 127 product codes, name badges, descriptive business cards and distinct menus, the official SplatWorks logo, organized File/Templates/Import/Export menus, contextual text-box linking, embedded local fonts and kerning/spacing controls, improved native browser Publisher import, legacy Pages, PDF-compatible Illustrator and EPS artwork. Native INDD/QXP and modern Pages IWA remain unsupported. Rebuilt v3.1.35 downloads add a standalone LayoutSplat package and include all five apps in the suite. DrawSplat whiteboard/tools keep their names; database/service identifiers and existing school rosters are unchanged.
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review. Guide illustrations display in full, and 23 previously text-only wiki guides now include a classroom ecosystem hero.
 
 **Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).
 

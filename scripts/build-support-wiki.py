@@ -119,7 +119,13 @@ for group,items in GROUPS.items():
    s=re.sub(r'<body([^>]*)>',lambda m:'<body'+m.group(1)+' data-wiki="true">' if 'data-wiki' not in m.group(1) else m.group(0),s,count=1)
    match=re.search(r'<main\b.*?</main>',s,re.S)
    if not match:raise ValueError('Missing main '+path)
-   main=match.group(0);toc=[];used=set(re.findall(r'id="([^"]+)"',main))
+   main=match.group(0)
+   # Regenerated decoration never becomes part of canonical article content.
+   main=re.sub(r'<img[^>]*class="wiki-guide-hero"[^>]*>', '', main)
+   if path.startswith(('wiki/', 'guides/')) and group not in ['Privacy and district review', 'Licensing and pricing'] and not re.search(r'<img\b', main):
+    hero='<img class="wiki-guide-hero" src="'+relative('assets/brand/splatworks-school-guides.png',path)+'" alt="" decoding="async" width="1536" height="512">'
+    main=re.sub(r'(<main\b[^>]*>)',lambda m:m.group(1)+hero,main,count=1)
+   toc=[];used=set(re.findall(r'id="([^"]+)"',main))
    def heading(m):
     tag,attrs,label=m.groups();plain=Plain();plain.feed(label);text=' '.join(plain.parts)
     existing=re.search(r'id="([^"]+)"',attrs)

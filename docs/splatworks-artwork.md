@@ -60,3 +60,28 @@ central upper area without obscuring app windows, names, or descriptive text. Ke
 all five app windows, their content, positions, size, newsletter, lower icons, desk
 props, exact descriptions, wide composition, rounded styling and palette unchanged.
 Do not redesign the supplied logo, duplicate names, or add elements.
+
+## Wiki guide illustration — October 14, 2026
+
+`assets/brand/splatworks-school-guides.png` is the 1536 × 512 version of an
+original illustration generated with the built-in image generation tool.
+The wiki generator places it on guide articles that lack an illustration,
+including District classrooms and rosters. It is decorative; the actual headings
+and instructions remain accessible HTML. Existing guide images retain their
+complete aspect ratio instead of being cropped into a 210-pixel strip.
+
+### Generation prompt
+
+Use case: illustration-story. Create a polished wide website documentation hero
+illustration for the SplatWorks ecosystem school setup and teaching guides.
+Landscape aspect ratio about 3:1. Friendly hand-drawn colored pencil outlines with
+softly shaded glossy purple, teal, sky blue and orange details on warm white paper,
+matching classroom software guide illustrations. Show a balanced horizontal scene:
+a teacher's laptop showing a simple purple whiteboard and newsletter page, a small
+secure school server with padlock, a roster folder with abstract student avatar
+cards, and a student tablet displaying a colorful classroom assignment. Subtle
+purple curved arrows connect them, conveying school accounts, creative tools and
+sharing. All objects fully inside the frame with generous edge padding; light
+uncluttered composition. Do not include any text, letters, logos, trademarks,
+numbers, brand names, or watermark. This is an illustration accompanying real HTML
+headings, not a screenshot. Keep every major object visible at mobile width.
