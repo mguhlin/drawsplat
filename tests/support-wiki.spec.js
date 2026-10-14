@@ -64,8 +64,8 @@ test('Wiki brand returns readers to the main DrawSplat site',async({page})=>{
 test('SplatWorks has dedicated searchable guides and stays inside its article column',async({page})=>{
  await page.goto('/wiki/');
  const group=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'SplatWorks',exact:true})});
- await expect(group.getByRole('link')).toHaveCount(5);
- for(const name of ['WriteSplat','ListSplat','ShowSplat','GridSplat']){
+ await expect(group.getByRole('link')).toHaveCount(6);
+ for(const name of ['LayoutSplat','WriteSplat','ListSplat','ShowSplat','GridSplat']){
   await page.goto('/wiki/?q='+name);await expect(page.locator('.wiki-results a').filter({hasText:name}).first()).toBeVisible();
  }
  for(const width of [1636,1280,390]){

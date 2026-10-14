@@ -1,0 +1,37 @@
+const { test, expect } = require('@playwright/test');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const snapshot = page => page.evaluate(() => LayoutSplat.getPublication());
+async function ready(page) { await page.goto('/splatworks/layoutsplat/'); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); page.on('dialog', dialog => dialog.accept()); }
+test('template library filters 270 designs, opens a brochure, and preserves publication direction across interface changes', async ({ page }, info) => {
+  await ready(page); await page.locator('[data-action=browseTemplates]').click(); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(270); await expect(page.locator('#libraryCount')).toContainText('270');
+  await page.locator('#libraryType').selectOption('brochure'); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(18);
+  await page.locator('#librarySector').selectOption('education'); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(1);
+  await page.locator('#libraryLanguage').selectOption('ar'); await page.locator('[data-catalog-id=education-brochure]').click(); const doc = await snapshot(page); expect(doc.pages).toHaveLength(2); expect(doc.width).toBe(792); expect(doc.foldGuides).toEqual([264, 528]); expect(Object.values(doc.stories).every(s => s.style.direction === 'rtl')).toBe(true);
+  await page.locator('#i18nSwitcher').selectOption('es'); expect(await snapshot(page)).toEqual(doc); await page.locator('#i18nSwitcher').selectOption('en');
+  await page.screenshot({ path: info.outputPath('layoutsplat-template-desktop.png'), fullPage: true }); await page.setViewportSize({ width: 390, height: 844 }); await page.locator('[data-action=browseTemplates]').click(); await expect(page.locator('#templateLibraryDialog')).toBeVisible(); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true); await page.screenshot({ path: info.outputPath('layoutsplat-template-phone.png') });
+});
+test('object context actions import text and replace pictures without changing their frame geometry', async ({ page }) => {
+  await ready(page); let doc = await snapshot(page); const text = doc.pages[0].objects.find(o => o.type === 'text'), picture = doc.pages[0].objects.find(o => o.type === 'image');
+  await page.locator(`#pageSurface [data-object-id="${text.id}"]`).click({ button: 'right' }); await expect(page.locator('#objectContextMenu')).toBeVisible(); await page.locator('#objectContextMenu [data-action=importText]').click(); await page.locator('#textImportInput').setInputFiles({ name: 'story.txt', mimeType: 'text/plain', buffer: Buffer.from('A locally imported story.\nSecond paragraph.') });
+  await expect.poll(async () => (await snapshot(page)).stories[text.storyId].text).toContain('A locally imported story.'); expect((await snapshot(page)).pages[0].objects.find(o => o.id === text.id)).toEqual(text);
+  await page.locator(`#pageSurface [data-object-id="${picture.id}"]`).click({ button: 'right' }); await page.locator('#objectContextMenu [data-action=replaceMedia]').click(); await page.locator('#replaceMediaInput').setInputFiles(path.join(__dirname, 'fixtures/layoutsplat/sample.png'));
+  await expect.poll(async () => (await snapshot(page)).pages[0].objects.find(o => o.id === picture.id).assetId).not.toBe(picture.assetId); doc = await snapshot(page); const after = doc.pages[0].objects.find(o => o.id === picture.id); expect({ ...after, assetId: picture.assetId }).toEqual(picture);
+  await page.locator('#pageSurface').focus(); await page.keyboard.press('Shift+F10'); await expect(page.locator('#objectContextMenu')).toBeVisible(); await page.keyboard.press('Escape'); await expect(page.locator('#objectContextMenu')).toBeHidden();
+});
+test('native SplatWorks projects import locally and exported text opens in the real WriteSplat editor', async ({ page, context }) => {
+  await ready(page); const source = { app: 'WriteSplatTM', version: 1, metadata: { title: 'Suite interchange' }, document: { format: 'prosemirror-json', content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Preserve this formatted sentence.', marks: [{ type: 'strong' }, { type: 'em' }, { type: 'underline' }] }] }] } } };
+  await page.locator('#suiteImportInput').setInputFiles({ name: 'source.writesplat.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(source)) }); await expect.poll(async () => (await snapshot(page)).title).toBe('Suite interchange'); await page.locator('#importReportDialog button').click(); const doc = await snapshot(page), story = Object.values(doc.stories)[0]; expect(story.text).toBe('Preserve this formatted sentence.'); expect(story.marks[0]).toMatchObject({ bold: true, italic: true, underline: true });
+  await page.locator('[data-action=exports]').click(); await page.locator('#exportFormat').selectOption('writesplat'); const downloaded = page.waitForEvent('download'); await page.locator('#exportDownload').click(); const bytes = await fs.readFile(await (await downloaded).path()), native = JSON.parse(bytes); expect(native.app).toBe('WriteSplatTM');
+  const writer = await context.newPage(); await writer.goto('/splatworks/writesplat/'); await writer.locator('#fileInput').setInputFiles({ name: 'exported.writesplat.json', mimeType: 'application/json', buffer: bytes }); await expect(writer.locator('.ProseMirror')).toContainText('Preserve this formatted sentence.'); await expect(writer.locator('.ProseMirror strong em u, .ProseMirror u em strong, .ProseMirror strong u em, .ProseMirror em strong u')).toContainText('Preserve this formatted sentence.');
+});
+test('File contains page layout, preview, and checking; shapes and layer transparency survive saving', async ({ page }) => {
+  await ready(page); const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.locator('#fileMenu summary').click(); for (const action of ['pageSetup','preview','check']) await expect(page.locator(`#fileMenu [data-action=${action}]`)).toBeVisible();
+  await page.locator('#fileMenu [data-action=pageSetup]').click(); await expect(page.locator('#setupDialog')).toBeVisible(); await page.locator('#setupDialog [value=cancel]').last().click();
+  await page.locator('#shapesMenu summary').click(); for (const action of ['rect','ellipse','line','hexagon','triangle','arrow']) await expect(page.locator(`#shapesMenu [data-action=${action}]`)).toBeVisible();
+  await page.locator('#shapesMenu [data-action=hexagon]').click(); const object = (await snapshot(page)).pages[0].objects.at(-1); expect(object.kind).toBe('hexagon'); await expect(page.locator('#shapesMenu')).not.toHaveAttribute('open','');
+  await page.locator('#layersPanel summary').click(); const slider = page.locator(`[data-layer-transparency="${object.id}"]`); await slider.evaluate(el => { el.value = 60; el.dispatchEvent(new Event('input', { bubbles:true })); el.dispatchEvent(new Event('change', { bubbles:true })); });
+  expect((await snapshot(page)).pages[0].objects.find(o => o.id === object.id).opacity).toBeCloseTo(.4); await expect(page.locator(`#pageSurface [data-object-id="${object.id}"]`)).toHaveCSS('opacity','0.4');
+  await page.reload(); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); expect((await snapshot(page)).pages[0].objects.find(o => o.id === object.id).opacity).toBeCloseTo(.4); expect(errors).toEqual([]);
+});

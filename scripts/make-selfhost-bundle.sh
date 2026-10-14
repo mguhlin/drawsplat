@@ -533,6 +533,7 @@ for app_dir in gridsplat showsplat writesplat listsplat layoutsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
 copy_tree splatworks/shared "$SPLATWORKS_SUITE_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
+copy_tree solutions/mediasplat/ffmpeg "$SPLATWORKS_SUITE_ROOT/solutions/mediasplat/ffmpeg" "${MODULE_EXCLUDES[@]}"
 copy_tree assets "$SPLATWORKS_SUITE_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree vendor "$SPLATWORKS_SUITE_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/splatworks.html "$SPLATWORKS_SUITE_ROOT/pages/splatworks.html"
@@ -557,7 +558,7 @@ What's in this zip
 - splatworks/showsplat/ — presentation and WebDeck authoring app.
 - splatworks/writesplat/ — writing and classroom publishing app.
 - splatworks/listsplat/ — classroom database app.
-- splatworks/layoutsplat/ — publication editor; early layout and export proof.
+- splatworks/layoutsplat/ — publication editor, templates, browser Publisher import, merge, and file exchange.
 - pages/splatworks.html and app detail pages for a suite launcher.
 - assets/ shared by the public launcher pages.
 - vendor/ shared by ShowSplatTM import/export workflows.

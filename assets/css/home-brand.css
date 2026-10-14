@@ -10,3 +10,20 @@
   filter: drop-shadow(0 18px 25px rgb(70 35 165 / 20%));
   box-shadow: none;
 }
+
+.home-hero { padding-top: clamp(2rem, 5vw, 4rem); }
+.home-hero h1 sup { font-size: .22em; vertical-align: super; letter-spacing: 0; }
+.home-suite-description { max-width: 760px; margin: .75rem auto; color: var(--ink); }
+.home-suite-image { display: block; width: min(1120px, 100%); height: auto; margin: 2rem auto; border-radius: 18px; }
+.workspaces .workspace-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.workspaces .workspace-card.layout { grid-column: span 2; background: linear-gradient(120deg, #fff3e1, #fff); }
+.workspaces .workspace-card.whiteboard { grid-column: span 3; }
+@media (max-width: 900px) {
+  .workspaces .workspace-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workspaces .workspace-card.whiteboard { grid-column: span 2; }
+  .hero-actions { flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  .workspaces .workspace-grid { grid-template-columns: 1fr; }
+  .workspaces .workspace-card.layout, .workspaces .workspace-card.whiteboard { grid-column: auto; }
+}

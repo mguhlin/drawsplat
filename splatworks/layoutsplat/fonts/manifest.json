@@ -1,0 +1,30 @@
+{
+  "families": {
+    "Arial": "Liberation Sans",
+    "Georgia": "Liberation Serif",
+    "Verdana": "DejaVu Sans",
+    "LayoutSplat Arabic": "Noto Naskh Arabic",
+    "LayoutSplat Indic": "Noto Sans Devanagari",
+    "LayoutSplat CJK": "Noto Sans SC"
+  },
+  "files": [
+    "DejaVu-LICENSE.txt",
+    "DejaVuSans.ttf",
+    "LayoutSplatArabic.woff",
+    "LayoutSplatCJK.woff",
+    "LayoutSplatIndic.woff",
+    "Liberation-LICENSE.txt",
+    "LiberationSans-Bold.ttf",
+    "LiberationSans-BoldItalic.ttf",
+    "LiberationSans-Italic.ttf",
+    "LiberationSans-Regular.ttf",
+    "LiberationSerif-Bold.ttf",
+    "LiberationSerif-BoldItalic.ttf",
+    "LiberationSerif-Italic.ttf",
+    "LiberationSerif-Regular.ttf",
+    "NotoArabic-LICENSE.txt",
+    "NotoCJK-LICENSE.txt",
+    "NotoIndic-LICENSE.txt",
+    "fonts.css"
+  ]
+}

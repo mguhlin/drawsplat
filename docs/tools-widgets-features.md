@@ -137,7 +137,10 @@ Category: **Create** · 19 components
 - Continuous plain-text stories flow through linked frames across pages; overflow checking and keyboard placement.
 - Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
-- Local autosave/recovery, portable .layoutsplat project archives, fixed-layout HTML, and browser print-to-PDF.
+- Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
+- 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
+- Experimental native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
+- Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 
 ### MediaSplat
 
@@ -562,7 +565,10 @@ Category: **Writing** · 21 components
 - Continuous plain-text stories flow through linked frames across pages; overflow checking and keyboard placement.
 - Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
-- Local autosave/recovery, portable .layoutsplat project archives, fixed-layout HTML, and browser print-to-PDF.
+- Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
+- 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
+- Experimental native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
+- Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 
 ### ListSplat
 

@@ -1,0 +1,102 @@
+import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
+import { color, fontFamily, length } from './compatibility.mjs';
+import { importMedia, readData } from './media.mjs';
+const value = (p, key, fallback = '') => p?.[key]?.value ?? p?.[key] ?? fallback;
+const measure = (p, key, fallback = 0) => { const item = p?.[key]; if (!item) return fallback; if (typeof item === 'object' && Number.isFinite(item.number)) { if (item.unit === 0) return item.number * 72; if (item.unit === 2) return item.number; if (item.unit === 3) return item.number / 20; if (item.unit === 4) return item.number; } return length(value(p, key), fallback); };
+const numeric = (p, key, fallback = 0) => { const n = Number.parseFloat(value(p, key)); return Number.isFinite(n) ? n : fallback; };
+const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+const opacity = (p, key) => { const raw = value(p, key, '100%'); return clamp(parseFloat(raw) / (String(raw).endsWith('%') ? 100 : 1), 0, 1); };
+function pathGeometry(data) {
+  const segments = data['svg:d'] || data['svg:points'] || data['librevenge:path'] || [], commands = [];
+  for (const s of segments) {
+    const action = value(s, 'librevenge:path-action', value(s, 'svg:command', 'L')).toUpperCase(), x = measure(s, 'svg:x'), y = measure(s, 'svg:y');
+    if (action === 'M' || action === 'L') commands.push(`${action}${x} ${y}`);
+    if (action === 'C') commands.push(`C${measure(s, 'svg:x1')} ${measure(s, 'svg:y1')} ${measure(s, 'svg:x2')} ${measure(s, 'svg:y2')} ${x} ${y}`);
+    if (action === 'Q') commands.push(`Q${measure(s, 'svg:x1')} ${measure(s, 'svg:y1')} ${x} ${y}`);
+    if (action === 'A') commands.push(`A${measure(s, 'svg:rx')} ${measure(s, 'svg:ry')} ${numeric(s, 'librevenge:rotate')} ${value(s, 'librevenge:large-arc') === 'true' ? 1 : 0} ${value(s, 'librevenge:sweep') === 'true' ? 1 : 0} ${x} ${y}`);
+    if (action === 'Z') commands.push('Z');
+  }
+  if (!commands.length) return null; if (commands[0][0] !== 'M') commands[0] = 'M' + commands[0].slice(1); const path = commands.join(' '); if (path.length > 64000) throw Error('Publisher path is too complex.');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'), el = document.createElementNS(svg.namespaceURI, 'path'); el.setAttribute('d', path); svg.style.cssText = 'position:fixed;left:-30000px;top:0;visibility:hidden'; svg.append(el); document.body.append(svg);
+  try { const box = el.getBBox(); return { path, box: { x: box.x, y: box.y, w: Math.max(6, box.width), h: Math.max(6, box.height) } }; } finally { svg.remove(); }
+}
+export async function publicationFromPublisher(events, filename = 'Publisher publication') {
+  if (!Array.isArray(events) || events.length > 100000) throw Error('Invalid Publisher drawing data.');
+  const d = newPublication(true); d.pages = []; d.title = filename.replace(/\.pub$/i, '').slice(0, 200); const warnings = ['Native Publisher decoded inside this browser. Text and supported objects remain editable; verify fonts, text flow, effects, and page appearance before printing.'], fonts = new Set();
+  let page, style = {}, text, paragraph = {}, span = {}, table, cell, groups = [], paragraphCount = 0, masterMode = false;
+  const geometry = p => ({ x: measure(p, 'svg:x'), y: measure(p, 'svg:y'), w: clamp(measure(p, 'svg:width', 200), 6, 2000), h: clamp(measure(p, 'svg:height', 100), 6, 2000), rotation: clamp(numeric(p, 'librevenge:rotate', numeric(p, 'draw:rotate')), -360, 360) });
+  const add = o => { if (!page || page.objects.length >= 200) throw Error('Publisher pages support up to 200 objects.'); o.groupIds = [...groups]; page.objects.push(o); };
+  function append(words) {
+    if (table && cell) { cell.text += words; return; } if (!text) return;
+    const story = d.stories[text.storyId], from = story.text.length; story.text += words; if (story.text.length > 100000) throw Error('Publisher story is too long.'); if (story.text.length === from) return;
+    const originalFont = value(span, 'style:font-name', value(span, 'fo:font-family', story.style.font)), font = fontFamily(originalFont); fonts.add(originalFont);
+    const mark = { from, to: story.text.length, font, size: clamp(measure(span, 'fo:font-size', story.style.size), 6, 120), color: color(value(span, 'fo:color'), story.style.color), bold: /bold|[6-9]00/.test(value(span, 'fo:font-weight')), italic: value(span, 'fo:font-style') === 'italic', underline: value(span, 'style:text-underline-style', 'none') !== 'none' };
+    story.marks.push(mark); if (from === 0) { story.style.font = font; story.style.size = mark.size; story.style.color = mark.color; story.style.weight = mark.bold ? 'bold' : 'normal'; }
+  }
+  for (const event of events) {
+    const p = event.data || {};
+    if (event.op === 'startMasterPage') { masterMode = true; warnings.push('Publisher master backgrounds are converted into the emitted page objects.'); continue; }
+    if (event.op === 'endMasterPage') { masterMode = false; continue; }
+    if (masterMode) continue;
+    switch (event.op) {
+      case 'startPage': {
+        if (d.pages.length >= 500) throw Error('Publisher publications support up to 500 pages.'); const width = measure(p, 'svg:width', 612), height = measure(p, 'svg:height', 792);
+        if (!d.pages.length) { d.width = width; d.height = height; d.margin = Math.min(36, Math.min(width, height) / 8); }
+        else if (Math.abs(width - d.width) > .1 || Math.abs(height - d.height) > .1) warnings.push('Mixed Publisher page sizes use the first page size. Review page edges.');
+        page = { id: uid(), objects: [] }; d.pages.push(page); groups = []; break;
+      }
+      case 'setStyle': style = p; break;
+      case 'openGroup': groups.push(uid()); break;
+      case 'closeGroup': groups.pop(); break;
+      case 'startTextObject': {
+        const g = geometry(p), key = uid(); text = frame(key, g.x, g.y, g.w, g.h); text.rotation = g.rotation; text.padding = clamp(measure(p, 'fo:padding-left'), 0, 36); d.stories[key] = { text: '', style: { ...textStyle(), lineHeight: 1.15 }, marks: [], frames: [text.id] }; add(text); paragraphCount = 0; break;
+      }
+      case 'endTextObject': text = null; break;
+      case 'openParagraph': case 'openListElement': {
+        paragraph = p; if (paragraphCount++ && (text || cell?.text)) append('\n'); if (text) { const s = d.stories[text.storyId].style, align = value(p, 'fo:text-align'); if (['left', 'center', 'right', 'justify'].includes(align)) s.align = align; if (value(p, 'style:writing-mode') === 'rl-tb' || value(p, 'fo:direction') === 'rtl') s.direction = 'rtl'; }
+        if (event.op === 'openListElement') append('• '); break;
+      }
+      case 'openSpan': span = p; break;
+      case 'closeSpan': span = {}; break;
+      case 'insertText': append(typeof p === 'string' ? p : ''); break;
+      case 'insertSpace': append(' '); break;
+      case 'insertTab': append('\t'); break;
+      case 'insertLineBreak': append('\n'); break;
+      case 'insertField': append(value(p, 'librevenge:field-type', '[field]')); warnings.push('Review dynamic Publisher fields after conversion.'); break;
+      case 'drawRectangle': case 'drawEllipse': case 'drawPolygon': case 'drawPolyline': case 'drawPath': case 'drawConnector': {
+        let g = geometry(p), path;
+        if (['drawPath', 'drawPolygon', 'drawPolyline'].includes(event.op)) { path = pathGeometry(p); if (path) g = { ...path.box, rotation: 0 }; }
+        if (event.op === 'drawEllipse' && p['svg:cx']) { const rx = measure(p, 'svg:rx'), ry = measure(p, 'svg:ry'); g = { x: measure(p, 'svg:cx') - rx, y: measure(p, 'svg:cy') - ry, w: Math.max(6, rx * 2), h: Math.max(6, ry * 2), rotation: 0 }; }
+        const o = shape(g.x, g.y, g.w, g.h, color(value(style, 'draw:fill-color'), '#ede7fb'), path ? 'path' : event.op === 'drawEllipse' ? 'ellipse' : 'rect'); o.rotation = g.rotation; o.noFill = value(style, 'draw:fill') === 'none'; o.stroke = color(value(style, 'svg:stroke-color'), '#25304b'); o.strokeWidth = value(style, 'draw:stroke') === 'none' ? 0 : clamp(measure(style, 'svg:stroke-width'), 0, 20); o.opacity = opacity(style, 'draw:opacity');
+        if (path) { o.path = path.path; o.pathViewBox = [path.box.x, path.box.y, path.box.w, path.box.h]; }
+        if (value(style, 'draw:fill') && !['none', 'solid'].includes(value(style, 'draw:fill'))) warnings.push('Publisher gradients/patterns use simplified fills.'); add(o); break;
+      }
+      case 'drawGraphicObject': {
+        const g = geometry(p), binary = value(p, 'office:binary-data'), mime = value(p, 'librevenge:mime-type', 'image/png');
+        if (typeof binary !== 'string' || binary.length > 64000000 || !/^[A-Za-z0-9+/=\s]*$/.test(binary)) throw Error('Invalid embedded Publisher picture.');
+        try { const bytes = Uint8Array.from(atob(binary.replace(/\s/g, '')), c => c.charCodeAt(0)), ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/bmp': 'bmp', 'image/tiff': 'tiff', 'image/x-emf': 'emf', 'image/x-wmf': 'wmf' }[mime] || mime.split('/').at(-1), asset = await importMedia(new File([bytes], `Publisher picture.${ext}`, { type: mime })); warnings.push(...(asset.notes || [])); delete asset.notes; const id = uid(); d.assets[id] = asset; add({ id: uid(), type: 'image', assetId: id, ...g, fit: 'contain', locked: false }); }
+        catch { warnings.push(`An embedded ${mime} picture could not be decoded. Replace its placeholder; the original PUB is preserved.`); add(shape(g.x, g.y, g.w, g.h, '#eeeaf6')); }
+        break;
+      }
+      case 'startTableObject': table = { ...geometry(p), id: uid(), type: 'table', cells: [], header: false, fontSize: 10, locked: false }; break;
+      case 'openTableRow': if (table) table.cells.push([]); break;
+      case 'openTableCell': if (table) { if (!table.cells.length) table.cells.push([]); cell = { text: '' }; paragraphCount = 0; } break;
+      case 'closeTableCell': if (table && cell) table.cells.at(-1).push(cell.text); cell = null; break;
+      case 'endTableObject': if (table?.cells.length) { const cols = Math.max(...table.cells.map(r => r.length)); table.cells.forEach(r => { while (r.length < cols) r.push(''); }); if (cols) add(table); } table = null; cell = null; break;
+      case 'defineEmbeddedFont': warnings.push('Embedded Publisher fonts are not redistributed. LayoutSplat uses bundled font substitutes.'); break;
+    }
+  }
+  if (!d.pages.length) throw Error('The Publisher decoder produced no pages.'); d.importedFrom = 'Microsoft Publisher'; d.sourceFonts = [...fonts].filter(Boolean); warnings.push('Publisher fonts are mapped to bundled Arial/Georgia/Verdana substitutes. Older files may require a legacy text encoding. Linked frames and advanced Publisher effects should be reviewed.');
+  return { doc: validatePublication(d), warnings: [...new Set(warnings)] };
+}
+export async function importPublisher(file, { signal, onProgress = () => {}, encoding = 'auto' } = {}) {
+  if (!file.size || file.size > 32000000) throw Error('Choose a Publisher document smaller than 32 MB.');
+  const bytes = await file.arrayBuffer(); signal?.throwIfAborted(); onProgress('Loading the local Publisher decoder…');
+  const worker = new Worker(new URL('./publisher/worker.mjs', import.meta.url), { type: 'module' });
+  const data = await new Promise((resolve, reject) => {
+    const cleanup = () => { clearTimeout(timer); signal?.removeEventListener('abort', abort); worker.terminate(); }, abort = () => { cleanup(); reject(Error('Publisher import cancelled.')); }, timer = setTimeout(() => { cleanup(); reject(Error('Publisher decoding timed out. Try a smaller publication.')); }, 45000);
+    signal?.addEventListener('abort', abort, { once: true }); worker.onmessage = event => { cleanup(); event.data.error ? reject(Error(event.data.error)) : resolve(event.data); }; worker.onerror = event => { cleanup(); reject(Error(event.message || 'Publisher decoding failed.')); }; worker.postMessage({ bytes, encoding }, [bytes]);
+  });
+  signal?.throwIfAborted(); onProgress('Building editable Publisher pages…'); const result = await publicationFromPublisher(data.events, file.name);
+  result.doc.originalPublisher = { name: file.name.slice(0, 200), src: await readData(new Blob([file], { type: 'application/octet-stream' })) }; return result;
+}

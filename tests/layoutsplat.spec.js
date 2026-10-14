@@ -77,7 +77,7 @@ test('double-click editing, keyboard placement, dragging, resizing and custom gu
 });
 test('design checking finds overflow and small pictures; imported text stays inert', async ({ page }) => {
   await ready(page); await selectStory(page); await page.locator('[data-action=editStory]').click(); const content = '<img src=x onerror=alert(1)>\n' + 'Long text '.repeat(3000); await page.locator('#storyText').fill(content); await page.locator('#applyStory').click();
-  await page.locator('[data-action=check]').first().click(); await expect(page.locator('.finding.error').first()).toContainText('characters');
+  await page.locator('#fileMenu summary').click(); await page.locator('#fileMenu [data-action=check]').click(); await expect(page.locator('.finding.error').first()).toContainText('characters');
   expect(await page.locator('#pageSurface .text-content img').count()).toBe(0);
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=', 'base64');
   await page.locator('#pictureInput').setInputFiles({ name: 'tiny.png', mimeType: 'image/png', buffer: png }); await expect(page.locator('.finding.warning').filter({ hasText: 'resolution' })).toBeVisible();

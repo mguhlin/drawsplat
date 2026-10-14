@@ -22,6 +22,8 @@ GROUPS={
 }
 # Keep the search index complete while presenting a short audience-based sidebar.
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
+GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','270 templates, local Publisher import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
+GROUPS['Technical and updates'].insert(2, ('wiki/splatworks-domain.html','SplatWorks.org domain setup','Serve the same deployment on both domains and preserve access to existing browser drafts.'))
 GROUPS['Start here']=[row for row in GROUPS['Start here'] if row[0] not in ['docs/district-selfhost.html','guides/teacher-options-quick-start.html']]
 GROUPS['For educators'].insert(1,('guides/teacher-options-quick-start.html','Teacher Quick Start','Open a board, sign in at school, and save your lesson.'))
 GROUPS['For educators']=[row for row in GROUPS['For educators'] if row[0]!='parents/index.html']
@@ -37,7 +39,7 @@ EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.htm
 runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
 EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
 GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
-RENDER=['tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())
@@ -145,7 +147,7 @@ for group,items in GROUPS.items():
    header='<a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="'+relative('index.html',path)+'"><img src="'+relative('assets/brand/DrawSplat_logo.png',path)+'" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a>'+nav_html(path)+language_html(path)+'</header>'
    sidebar='<aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics">'+''.join(nav)+'</nav></div></details></aside>'
    toolbar='<div class="wiki-article-bar"><span>'+html.escape(group)+'</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/'+source_path+'">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section>'
-   outline='<aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul>'+''.join(toc)+'</ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="'+relative('pages/contact.html',path)+'">Report a documentation issue</a></aside>'
+   outline='<aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul>'+''.join(toc)+'</ul></nav><p class="wiki-note">Current documentation<br>Updated 14 October 2026</p><a href="'+relative('pages/contact.html',path)+'">Report a documentation issue</a></aside>'
    shell='<!-- wiki:start -->'+header+'<div class="wiki-layout">'+sidebar+'<div class="wiki-reading">'+toolbar+'<!-- wiki:main -->'+main+'<!-- wiki:end-main --></div>'+outline+'</div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="'+relative('wiki/licensing.html',path)+'">Licensing</a></footer><!-- wiki:end -->'
    s=s[:match.start()]+shell+s[match.end():]
    s=s.replace('</body>','<script src="'+relative('assets/js/support-index.js',path)+'" defer></script><script src="'+relative('assets/js/support-wiki.js',path)+'" defer></script></body>')

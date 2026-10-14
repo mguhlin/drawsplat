@@ -47,6 +47,7 @@ export function findObject(doc, id) {
     const object = doc.pages[pageIndex].objects.find(o => o.id === id);
     if (object) return { object, page: doc.pages[pageIndex], pageIndex };
   }
+  for (const master of doc.masters || []) { const object = master.objects.find(o => o.id === id); if (object) return { object, page: master, pageIndex: -1, masterId: master.id }; }
   return null;
 }
 export function guidePositions(doc, axis) {
@@ -81,6 +82,8 @@ export function linkFrames(doc, sourceId, targetId) {
   if (!source || !target || source.type !== 'text' || target.type !== 'text' || source.storyId === target.storyId) throw new Error('Choose a text frame from a different story.');
   const targetStoryId = target.storyId, a = doc.stories[source.storyId], b = doc.stories[targetStoryId];
   const separator = a.text && b.text ? '\n\n' : '';
+  const offset = a.text.length + separator.length;
+  a.marks = [...(a.marks || []), ...(b.text ? [{ from: offset, to: offset + b.text.length, font: b.style.font, size: b.style.size, color: b.style.color, bold: b.style.weight === 'bold' }] : []), ...(b.marks || []).map(mark => ({ ...mark, from: mark.from + offset, to: mark.to + offset }))];
   a.text += separator + b.text;
   a.frames.push(...b.frames);
   b.frames.forEach(id => { findObject(doc, id).object.storyId = source.storyId; });
@@ -91,31 +94,77 @@ export function validatePublication(input) {
   if (!input || input.app !== 'LayoutSplat' || input.version !== 1) fail();
   const d = clone(input), number = (v, min, max) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
   if (typeof d.id !== 'string' || typeof d.title !== 'string' || d.title.length > 200 || !number(d.width, 72, 2000) || !number(d.height, 72, 2000) || !number(d.margin, 0, Math.min(d.width, d.height) / 2 - 1)) fail();
-  if (!Array.isArray(d.pages) || !d.pages.length || d.pages.length > 50 || !d.stories || typeof d.stories !== 'object' || !d.assets || typeof d.assets !== 'object' || !d.guides) fail();
+  if (!Array.isArray(d.pages) || !d.pages.length || d.pages.length > 500 || !d.stories || typeof d.stories !== 'object' || !d.assets || typeof d.assets !== 'object' || !d.guides) fail();
   for (const key of ['columns', 'rows']) if (!Number.isInteger(d.guides[key]) || !number(d.guides[key], 1, 12)) fail();
   if (!number(d.guides.gap, 0, 72) || !number(d.guides.baseline, 4, 72)) fail();
   if ((d.width - 2 * d.margin - d.guides.gap * (d.guides.columns - 1)) / d.guides.columns <= 0 || (d.height - 2 * d.margin - d.guides.gap * (d.guides.rows - 1)) / d.guides.rows <= 0) fail();
   for (const key of ['vertical', 'horizontal']) if (!Array.isArray(d.guides[key]) || d.guides[key].length > 100 || d.guides[key].some(v => !number(v, 0, 2000))) fail();
+  if (d.masters !== undefined && (!Array.isArray(d.masters) || d.masters.length > 20)) fail();
+  if (d.bleed !== undefined && !number(d.bleed, 0, 36)) fail();
+  if (d.safeArea !== undefined && !number(d.safeArea, 0, Math.min(d.width, d.height) / 2 - 1)) fail();
+  if (d.facingPages !== undefined && typeof d.facingPages !== 'boolean') fail();
+  if (d.rulerOrigin !== undefined && (!number(d.rulerOrigin.x, -2000, 2000) || !number(d.rulerOrigin.y, -2000, 2000))) fail();
+  for (const key of ['locked', 'showHorizontal', 'showVertical']) if (d.guides[key] !== undefined && typeof d.guides[key] !== 'boolean') fail();
   const ids = new Set(), textFrames = new Set();
-  for (const p of d.pages) {
+  for (const p of [...d.pages, ...(d.masters || [])]) {
     if (typeof p.id !== 'string' || ids.has(p.id) || !Array.isArray(p.objects) || p.objects.length > 200) fail(); ids.add(p.id);
     for (const o of p.objects) {
-      if (typeof o.id !== 'string' || ids.has(o.id) || !['text', 'shape', 'image'].includes(o.type)) fail(); ids.add(o.id);
+      if (typeof o.id !== 'string' || ids.has(o.id) || !['text', 'shape', 'image', 'table'].includes(o.type)) fail(); ids.add(o.id);
       if (!number(o.x, -2000, 4000) || !number(o.y, -2000, 4000) || !number(o.w, 6, 2000) || !number(o.h, 6, 2000) || !number(o.rotation, -360, 360) || typeof o.locked !== 'boolean') fail();
       if (o.type === 'text') { if (!number(o.padding, 0, 36) || !Object.hasOwn(d.stories, o.storyId)) fail(); textFrames.add(o.id); }
-      if (o.type === 'shape' && (!['rect', 'ellipse', 'line'].includes(o.kind) || !/^#[0-9a-f]{6}$/i.test(o.fill) || !/^#[0-9a-f]{6}$/i.test(o.stroke) || !number(o.strokeWidth, 0, 20) || !number(o.opacity, 0, 1))) fail();
+      if (o.type === 'shape' && (!['rect', 'ellipse', 'line', 'triangle', 'hexagon', 'arrow', 'star', 'heart', 'callout', 'border', 'path'].includes(o.kind) || !/^#[0-9a-f]{6}$/i.test(o.fill) || !/^#[0-9a-f]{6}$/i.test(o.stroke) || !number(o.strokeWidth, 0, 20) || !number(o.opacity, 0, 1))) fail();
+      if (o.path !== undefined && (typeof o.path !== 'string' || o.path.length > 64000 || !/^[MmLlHhVvCcSsQqTtAaZz0-9+., eE\-\s]+$/.test(o.path))) fail();
+      if (o.pathViewBox !== undefined && (!Array.isArray(o.pathViewBox) || o.pathViewBox.length !== 4 || o.pathViewBox.some(v => !number(v, -100000, 100000)) || o.pathViewBox[2] <= 0 || o.pathViewBox[3] <= 0)) fail();
       if (o.type === 'image' && (!Object.hasOwn(d.assets, o.assetId) || !['contain', 'cover'].includes(o.fit))) fail();
+      if (o.type === 'table' && (!Array.isArray(o.cells) || !o.cells.length || o.cells.length > 200 || !Array.isArray(o.cells[0]) || !o.cells[0].length || o.cells[0].length > 20 || o.cells.some(row => !Array.isArray(row) || row.length !== o.cells[0].length || row.some(cell => typeof cell !== 'string' || cell.length > 5000)) || !number(o.fontSize, 6, 36) || typeof o.header !== 'boolean')) fail();
+      if (o.wrap !== undefined && !['none', 'square'].includes(o.wrap)) fail();
+      if (o.opacity !== undefined && !number(o.opacity, 0, 1)) fail();
+      if (o.columns !== undefined && (!Number.isInteger(o.columns) || !number(o.columns, 1, 6))) fail();
+      if (o.columnGap !== undefined && !number(o.columnGap, 0, 72)) fail();
+      if (o.baselineAlign !== undefined && typeof o.baselineAlign !== 'boolean') fail();
+      if (o.readingOrder !== undefined && !number(o.readingOrder, 0, 10000)) fail();
+      if (o.groupIds !== undefined && (!Array.isArray(o.groupIds) || o.groupIds.length > 20 || o.groupIds.some(id => typeof id !== 'string' || id.length > 64))) fail();
+      if (o.type === 'text' && o.columns > 1 && (o.w - 2 * o.padding - (o.columnGap || 12) * (o.columns - 1)) / o.columns < 6) fail();
     }
   }
   const used = new Set();
-  if (Object.keys(d.stories).length > 2000 || Object.keys(d.assets).length > 200) fail();
+  if (Object.keys(d.stories).length > 50000 || Object.keys(d.assets).length > 500) fail();
   for (const [id, story] of Object.entries(d.stories)) {
     const s = story.style;
     if (typeof story.text !== 'string' || story.text.length > 100000 || !Array.isArray(story.frames) || !story.frames.length || !s) fail();
     if (!['Arial', 'Georgia', 'Verdana'].includes(s.font) || !number(s.size, 6, 120) || !['normal', 'bold'].includes(s.weight) || !/^#[0-9a-f]{6}$/i.test(s.color) || !['left', 'center', 'right', 'justify'].includes(s.align) || !['ltr', 'rtl'].includes(s.direction) || !number(s.lineHeight, 1, 3)) fail();
     for (const frameId of story.frames) { if (!textFrames.has(frameId) || used.has(frameId) || findObject(d, frameId).object.storyId !== id) fail(); used.add(frameId); }
+    if (story.marks !== undefined) {
+      if (!Array.isArray(story.marks) || story.marks.length > 10000) fail();
+      for (const mark of story.marks) {
+        if (!Number.isInteger(mark.from) || !Number.isInteger(mark.to) || mark.from < 0 || mark.to > story.text.length || mark.to <= mark.from) fail();
+        if (mark.color !== undefined && !/^#[0-9a-f]{6}$/i.test(mark.color)) fail();
+        if (mark.size !== undefined && !number(mark.size, 6, 120)) fail();
+        if (mark.font !== undefined && !['Arial', 'Georgia', 'Verdana'].includes(mark.font)) fail();
+        if (mark.link !== undefined && (typeof mark.link !== 'string' || mark.link.length > 2000 || !/^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(mark.link))) fail();
+        for (const key of ['bold', 'italic', 'underline']) if (mark[key] !== undefined && typeof mark[key] !== 'boolean') fail();
+      }
+    }
+    if (s.dropCap !== undefined && (!Number.isInteger(s.dropCap) || !number(s.dropCap, 0, 5))) fail();
+    if (s.autoFit !== undefined && !['none', 'shrink', 'grow'].includes(s.autoFit)) fail();
+    if (s.minSize !== undefined && !number(s.minSize, 6, 120)) fail();
+    if (s.tracking !== undefined && !number(s.tracking, -2, 10)) fail();
+    if (s.wordArt !== undefined && !['none', 'shadow', 'outline', 'curve'].includes(s.wordArt)) fail();
+    for (const key of ['italic', 'underline']) if (s[key] !== undefined && typeof s[key] !== 'boolean') fail();
   }
   if (used.size !== textFrames.size) fail();
-  for (const a of Object.values(d.assets)) if (typeof a.name !== 'string' || !number(a.width, 1, 20000) || !number(a.height, 1, 20000) || typeof a.src !== 'string' || a.src.length > 16000000 || !(a.sample === true && a.src === 'sample-art.svg') && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(a.src)) fail();
+  if (d.originalPublisher && (typeof d.originalPublisher.name !== 'string' || d.originalPublisher.name.length > 200 || typeof d.originalPublisher.src !== 'string' || d.originalPublisher.src.length > 44000000 || !/^data:application\/octet-stream;base64,[A-Za-z0-9+/=]+$/.test(d.originalPublisher.src))) fail();
+  for (const p of d.pages) {
+    if (p.masterId && !(d.masters || []).some(m => m.id === p.masterId)) fail();
+    if (p.masterOverrides !== undefined && (!Array.isArray(p.masterOverrides) || p.masterOverrides.length > 200 || p.masterOverrides.some(id => typeof id !== 'string'))) fail();
+  }
+  for (const a of Object.values(d.assets)) {
+    if (typeof a.name !== 'string' || a.name.length > 2000 || a.alt !== undefined && (typeof a.alt !== 'string' || a.alt.length > 2000) || !number(a.width, 1, 20000) || !number(a.height, 1, 20000) || typeof a.src !== 'string' || a.src.length > 64000000 || !(a.sample === true && a.src === 'sample-art.svg') && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(a.src)) fail();
+    if (a.media) {
+      const m = a.media, types = m.kind === 'video' ? ['video/mp4', 'video/webm', 'video/ogg'] : m.kind === 'animation' ? ['image/gif', 'image/apng', 'image/png', 'image/webp'] : [];
+      if (!types.includes(m.mime) || typeof m.src !== 'string' || m.src.length > 128000000 || !m.src.startsWith(`data:${m.mime};base64,`) || !/^[A-Za-z0-9+/=]+$/.test(m.src.slice(m.src.indexOf(',') + 1))) fail();
+      if (m.duration !== undefined && !number(m.duration, 0, 86400)) fail();
+    }
+  }
   return d;
 }

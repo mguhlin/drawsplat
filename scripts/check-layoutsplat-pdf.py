@@ -18,6 +18,15 @@ for path in files:
         assert abs(float(page.mediabox.width) - 612) < 0.01 and abs(float(page.mediabox.height) - 792) < 0.01
         for font_ref in page['/Resources']['/Font'].values():
             font = font_ref.get_object()
+            if font.get('/Subtype') == '/Type3':
+                # Chromium embeds variable-font outlines as Type3 glyph streams.
+                # Verify the actual embedded glyph programs and Unicode mapping.
+                programs = font.get('/CharProcs')
+                assert programs is not None and len(programs.get_object()), 'Type3 glyphs must be embedded.'
+                assert all(ref.get_object().get_data() for ref in programs.get_object().values()), 'Empty Type3 glyph stream.'
+                assert font.get('/ToUnicode') is not None, 'Type3 text needs a Unicode mapping.'
+                embedded.append(str(font.get('/Name', 'embedded Type3 outlines')))
+                continue
             if '/DescendantFonts' in font:
                 font = font['/DescendantFonts'][0].get_object()
             descriptor = font.get('/FontDescriptor')

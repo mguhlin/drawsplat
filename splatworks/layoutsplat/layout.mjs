@@ -1,20 +1,24 @@
 import { findObject } from './engine.mjs';
+import { appendRich } from './rich.mjs';
 export const PT_TO_PX = 96 / 72;
 export function applyTextStyle(element, style) {
-  Object.assign(element.style, { fontFamily: style.font, fontSize: `${style.size}pt`, fontWeight: style.weight, color: style.color, textAlign: style.align, direction: style.direction, lineHeight: String(style.lineHeight), whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' });
+  Object.assign(element.style, { fontFamily: style.font, fontSize: `${style.size}pt`, fontWeight: style.weight, fontStyle: style.italic ? 'italic' : 'normal', textDecoration: style.underline ? 'underline' : 'none', textShadow: 'none', webkitTextStroke: '0', color: style.color, textAlign: style.align, direction: style.direction, lineHeight: String(style.lineHeight), whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', letterSpacing: `${style.tracking || 0}pt`, display: 'flow-root' });
+  if (style.wordArt === 'shadow') element.style.textShadow = '1.5pt 1.5pt 0 #c7b5e7';
+  if (style.wordArt === 'outline') { element.style.webkitTextStroke = `.5pt ${style.color}`; element.style.color = 'white'; }
   element.dir = style.direction;
+  element.style.fontFamily = `"${style.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`;
 }
 export function createMeasurer() {
   const el = document.createElement('div'); el.className = 'text-measure'; el.setAttribute('aria-hidden', 'true');
   Object.assign(el.style, { position: 'fixed', top: '-100000px', left: '0', height: 'auto', padding: '0', margin: '0', visibility: 'hidden', pointerEvents: 'none' });
   document.body.append(el); return el;
 }
-export function fitText(text, frame, style, measurer) {
+export function fitText(text, frame, style, measurer, story = null, offset = 0) {
   if (!text) return 0;
   const width = frame.w - frame.padding * 2, height = frame.h - frame.padding * 2;
   if (width <= 0 || height < style.size * style.lineHeight) return 0;
   applyTextStyle(measurer, style); measurer.style.width = `${width}pt`;
-  const fits = count => { measurer.textContent = text.slice(0, count); return measurer.getBoundingClientRect().height <= height * PT_TO_PX + 0.1; };
+  const fits = count => { measurer.replaceChildren(); if (story) appendRich(measurer, story, offset, offset + count, { first: offset === 0, style }); else measurer.textContent = text.slice(0, count); return measurer.getBoundingClientRect().height <= height * PT_TO_PX + 0.1; };
   if (fits(text.length)) return text.length;
   let lo = 0, hi = text.length;
   while (lo < hi) { const mid = Math.ceil((lo + hi) / 2); if (fits(mid)) lo = mid; else hi = mid - 1; }
@@ -35,17 +39,41 @@ export function fitText(text, frame, style, measurer) {
   return lo;
 }
 export function layoutStories(doc, measurer) {
-  const fragments = new Map(), overflows = [];
+  const fragments = new Map(), overflows = [], styles = new Map();
+  const objects = new Map([...doc.pages, ...(doc.masters || [])].flatMap(page => page.objects.map(object => [object.id, { object, page }])));
   for (const [storyId, story] of Object.entries(doc.stories)) {
-    let offset = 0;
-    for (const id of story.frames) {
-      const f = findObject(doc, id)?.object; if (!f) continue;
-      const count = fitText(story.text.slice(offset), f, story.style, measurer);
-      fragments.set(id, { text: story.text.slice(offset, offset + count), start: offset, end: offset + count, storyId }); offset += count;
+    let offset = 0, style = { ...story.style }, collected;
+    for (;;) {
+      collected = []; offset = 0;
+      for (const id of story.frames) {
+        const found = objects.get(id), f = found?.object; if (!f) continue;
+        const start = offset, columns = [], count = f.columns || 1, gap = f.columnGap ?? 12;
+        const width = (f.w - 2 * f.padding - gap * (count - 1)) / count;
+        let frameStyle = style, inset = 0;
+        if (f.baselineAlign) {
+          const leading = Math.ceil(style.size * style.lineHeight / doc.guides.baseline) * doc.guides.baseline;
+          frameStyle = { ...style, lineHeight: leading / style.size };
+          const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'); ctx.font = `${style.size * PT_TO_PX}px ${style.font}`;
+          const metrics = ctx.measureText('Hg'), ascent = (metrics.fontBoundingBoxAscent || style.size * PT_TO_PX * .8) / PT_TO_PX, descent = (metrics.fontBoundingBoxDescent || style.size * PT_TO_PX * .2) / PT_TO_PX;
+          const baseline = f.y + f.padding + (leading - ascent - descent) / 2 + ascent;
+          inset = ((doc.margin - baseline) % doc.guides.baseline + doc.guides.baseline) % doc.guides.baseline;
+        }
+        for (let col = 0; col < count; col++) {
+          const virtual = { ...f, w: width, h: f.h - 2 * f.padding - inset, padding: 0 };
+          const obstacles = found.page.objects.filter(o => o.type === 'image' && o.wrap === 'square' && o.x < f.x + f.w && o.x + o.w > f.x && o.y < f.y + f.h && o.y + o.h > f.y);
+          if (obstacles.length) { const wrapped = wrapAround(story, offset, { ...f, padding: f.padding + inset }, col, width, gap, frameStyle, obstacles, measurer); columns.push(...wrapped.columns.map(column => ({ ...column, style: frameStyle }))); offset = wrapped.offset; continue; }
+          const n = fitText(story.text.slice(offset), virtual, frameStyle, measurer, story, offset);
+          columns.push({ text: story.text.slice(offset, offset + n), start: offset, end: offset + n, x: f.padding + col * (width + gap), y: f.padding + inset, w: width, h: virtual.h, style: frameStyle }); offset += n;
+        }
+        collected.push([id, { text: story.text.slice(start, offset), start, end: offset, storyId, columns }]);
+      }
+      if (offset === story.text.length || style.autoFit !== 'shrink' || style.size <= (style.minSize || 8)) break;
+      style.size = Math.max(style.minSize || 8, style.size - 0.5);
     }
+    collected.forEach(([id, fragment]) => fragments.set(id, fragment)); styles.set(storyId, style);
     if (offset < story.text.length) overflows.push({ storyId, frameId: story.frames.at(-1), remaining: story.text.length - offset });
   }
-  return { fragments, overflows };
+  return { fragments, overflows, styles };
 }
 export function designFindings(doc, layout) {
   const issues = layout.overflows.map(o => ({ id: o.frameId, key: 'overflow', count: o.remaining, severity: 'error' }));
@@ -56,7 +84,31 @@ export function designFindings(doc, layout) {
       const a = doc.assets[o.assetId];
       const ppi = o.fit === 'cover' ? Math.min(a.width / (o.w / 72), a.height / (o.h / 72)) : Math.max(a.width / (o.w / 72), a.height / (o.h / 72));
       if (!a.sample && ppi < 150) issues.push({ id: o.id, key: 'lowResolution', count: Math.round(ppi), severity: 'warning' });
+      if (!a.alt && !a.sample) issues.push({ id: o.id, key: 'missingAlt', severity: 'warning' });
     }
+    if (o.type === 'table' && o.cells.length * (o.fontSize * 1.4 + 12) > o.h) issues.push({ id: o.id, key: 'tableOverflow', severity: 'error' });
+    if (o.type === 'text' && /\{\{[^{}]+\}\}/.test(doc.stories[o.storyId].text)) issues.push({ id: o.id, key: 'mergeUnresolved', severity: 'warning' });
+    if (o.type === 'text' && doc.stories[o.storyId].style.dropCap && p.objects.some(i => i.type === 'image' && i.wrap === 'square')) issues.push({ id: o.id, key: 'dropCapWrap', severity: 'warning' });
   }));
   return issues;
+}
+function wrapAround(story, offset, frame, col, width, gap, style, obstacles, measurer) {
+  const columns = [], x = frame.padding + col * (width + gap), maxHeight = frame.h - 2 * frame.padding;
+  const leading = Math.max(style.size, ...(story.marks || []).map(m => m.size || style.size)) * style.lineHeight;
+  const lineStyle = { ...style, dropCap: 0 };
+  for (let y = frame.padding; y + leading <= frame.padding + maxHeight && offset < story.text.length; y += leading) {
+    let intervals = [[x, x + width]];
+    for (const image of obstacles) {
+      if (frame.y + y + leading <= image.y - 6 || frame.y + y >= image.y + image.h + 6) continue;
+      const left = image.x - frame.x - 6, right = image.x + image.w - frame.x + 6;
+      intervals = intervals.flatMap(([a, b]) => right <= a || left >= b ? [[a, b]] : [[a, Math.min(b, left)], [Math.max(a, right), b]].filter(([a, b]) => b - a >= style.size));
+    }
+    if (style.direction === 'rtl') intervals.reverse();
+    for (const [a, b] of intervals) {
+      const remaining = story.text.slice(offset), newline = remaining.indexOf('\n'), n = fitText(remaining, { w: b - a, h: leading + .2, padding: 0 }, lineStyle, measurer, { ...story, style: lineStyle }, offset);
+      const consumed = newline >= 0 && newline < n ? newline + 1 : n;
+      columns.push({ text: story.text.slice(offset, offset + consumed), start: offset, end: offset + consumed, x: a, y, w: b - a, h: leading + .2, noDropCap: true }); offset += consumed;
+    }
+  }
+  return { columns, offset };
 }

@@ -2,13 +2,21 @@ import { UNITS, PAPER, uid, clone, newPublication, frame, shape, textStyle, find
 import { createMeasurer, layoutStories, designFindings, PT_TO_PX } from './layout.mjs';
 import { objectElement, publicationPage, exportHtml } from './render.mjs';
 import { consumeTransferredFile, routeFileToApp, workspaceStorage, isTransferredWorkspace } from '../shared/file-bridge.js';
+import { installPublishingUI } from './publishing-ui.mjs';
+import { setupPublishing } from './publishing.mjs';
+import { MEDIA_ACCEPT, importMedia } from './media.mjs';
+import { importSvg, importFabric } from './compatibility.mjs';
+import { readZip, importIdml, importSla } from './desktop-formats.mjs';
+import { portableHtml } from './fonts.mjs';
+import { importPublisher } from './publisher.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
 let undoStack = [], redoStack = [], saveTimer, pointer, editingStoryId, lastSaved, unsaved = false;
 const measurer = createMeasurer(); let layout, issues;
 const printStyle = document.createElement('style'); document.head.append(printStyle);
-const page = () => doc.pages[activePage], selectedObject = () => findObject(doc, selected)?.object;
+let publishing;
+const page = () => (doc.masters || []).find(m => m.id === publishing?.masterId()) || doc.pages[activePage], selectedObject = () => findObject(doc, selected)?.object;
 function status(key, vars) { lastStatus = key; statusVars = vars; $('statusText').textContent = t(key, vars); }
 function checkpoint(snapshot = doc) { undoStack.push(clone(snapshot)); if (undoStack.length > 40) undoStack.shift(); redoStack = []; }
 function remember() {
@@ -26,39 +34,43 @@ function mutate(fn) { checkpoint(); fn(); render(); remember(); }
 function label(object) {
   if (object.type === 'text') return doc.stories[object.storyId].text.replace(/\s+/g, ' ').slice(0, 30) || t('textFrame');
   if (object.type === 'image') return doc.assets[object.assetId].name;
+  if (object.type === 'table') return t('table');
   return t(object.kind === 'rect' ? 'rectangle' : object.kind);
 }
-function select(id) {
+function select(id, event = {}) {
   if (linking && id) {
     try { mutate(() => linkFrames(doc, linking, id)); linking = null; } catch { status('linkError'); }
   }
-  selected = id; render();
+  selected = publishing ? publishing.onSelect(id, event) : id; render();
 }
 function paintSelection() {
   $('pageSurface').querySelectorAll('.object').forEach(el => {
-    const active = el.dataset.objectId === selected; el.classList.toggle('selected', active); el.setAttribute('aria-pressed', String(active));
+    const active = publishing?.selectedIds().has(el.dataset.objectId) || el.dataset.objectId === selected; el.classList.toggle('selected', active); el.setAttribute('aria-pressed', String(active));
     el.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
     if (active && !selectedObject().locked) { const handle = document.createElement('div'); handle.className = 'resize-handle'; handle.setAttribute('aria-hidden', 'true'); el.append(handle); }
   });
-  renderProperties(); renderLayers();
+  renderProperties(); renderLayers(); publishing?.render();
 }
 function render() {
   layout = layoutStories(doc, measurer); issues = designFindings(doc, layout);
   $('publicationTitle').value = doc.title; document.title = `${doc.title} · LayoutSplat™`;
-  $('pageLabel').textContent = t('pageNumber', { page: activePage + 1, total: doc.pages.length });
+  $('pageLabel').textContent = publishing?.masterId() ? `${t('master')}: ${page().name}` : t('pageNumber', { page: activePage + 1, total: doc.pages.length });
   $('undoBtn').disabled = !undoStack.length; $('redoBtn').disabled = !redoStack.length;
   $('linkHint').hidden = !linking; $('linkBtn').classList.toggle('primary', !!linking);
+  publishing?.render();
   renderPage(); renderThumbnails(); renderProperties(); renderLayers(); renderChecker(); renderOutput();
-  $('statusText').textContent = t(lastStatus, statusVars); window.WidgetI18n.refresh();
+  publishing?.render(); $('statusText').textContent = t(lastStatus, statusVars); window.WidgetI18n.refresh();
 }
 function renderPage() {
   const surface = $('pageSurface'), wrap = $('sheetWrap'); surface.replaceChildren();
   if ($('zoomSelect').value === 'fit') zoom = Math.max(0.1, Math.min(1, ($('canvasScroll').clientWidth - 56) / (doc.width * PT_TO_PX), ($('canvasScroll').clientHeight - 75) / (doc.height * PT_TO_PX)));
   Object.assign(surface.style, { width: `${doc.width}pt`, height: `${doc.height}pt`, transform: `scale(${zoom})` });
   Object.assign(wrap.style, { width: `${doc.width * PT_TO_PX * zoom}px`, height: `${doc.height * PT_TO_PX * zoom}px` });
+  const master = (doc.masters || []).find(m => m.id === page().masterId);
+  for (const object of master?.objects || []) if (!(page().masterOverrides || []).includes(object.id)) { const el = objectElement(doc, object, layout); el.classList.add('master-object'); surface.append(el); }
   page().objects.forEach(object => {
     const el = objectElement(doc, object, layout); el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(object)); el.setAttribute('aria-pressed', String(selected === object.id));
-    if (selected === object.id) {
+    if (selected === object.id || publishing?.selectedIds().has(object.id)) {
       el.classList.add('selected');
       if (!object.locked) { const handle = document.createElement('div'); handle.className = 'resize-handle'; handle.setAttribute('aria-hidden', 'true'); el.append(handle); }
     }
@@ -95,9 +107,10 @@ function renderRulers() {
     const step = base * UNITS[unit];
     for (let i = 0, pos = 0; pos <= size; i++, pos = i * step) {
       const major = i % 4 === 0, tick = document.createElement('i'); tick.className = 'tick' + (major ? ' major' : ''); tick.style[axis === 'x' ? 'left' : 'top'] = `${pos * PT_TO_PX * zoom}px`; el.append(tick);
-      if (major) { const number = document.createElement('span'); number.textContent = formatMeasure(pos, unit); number.style[axis === 'x' ? 'left' : 'top'] = `${pos * PT_TO_PX * zoom + 2}px`; el.append(number); }
+      if (major) { const number = document.createElement('span'); number.textContent = formatMeasure(pos - (doc.rulerOrigin?.[axis] || 0), unit); number.style[axis === 'x' ? 'left' : 'top'] = `${pos * PT_TO_PX * zoom + 2}px`; el.append(number); }
     }
   }
+  $('rulerH').hidden = doc.guides.showHorizontal === false; $('rulerV').hidden = doc.guides.showVertical === false;
 }
 function renderThumbnails() {
   $('pageList').replaceChildren(); const width = innerWidth <= 780 ? 55 : innerWidth <= 1080 ? 98 : 126;
@@ -109,22 +122,24 @@ function renderThumbnails() {
   });
 }
 function renderProperties() {
-  const o = selectedObject(); $('emptySelection').hidden = !!o; $('objectProperties').hidden = !o; $('objectType').textContent = o ? t(o.type === 'text' ? 'textFrame' : o.type === 'image' ? 'picture' : o.kind === 'rect' ? 'rectangle' : o.kind) : '';
+  const o = selectedObject(); $('emptySelection').hidden = !!o; $('objectProperties').hidden = !o; $('objectType').textContent = o ? t(o.type === 'text' ? 'textFrame' : o.type === 'image' ? 'picture' : o.type === 'table' ? 'table' : o.kind === 'rect' ? 'rectangle' : o.kind) : '';
   $('editStoryBtn').disabled = !o || o.type !== 'text'; $('linkBtn').disabled = !o || o.type !== 'text' || o.locked;
   if (!o) return;
-  for (const [id, key] of [['propX', 'x'], ['propY', 'y'], ['propW', 'w'], ['propH', 'h']]) { $(id).value = formatMeasure(o[key], unit); $(id).disabled = o.locked; }
+  const geometry = publishing?.members().length > 1 ? publishing.bounds() : o;
+  for (const [id, key] of [['propX', 'x'], ['propY', 'y'], ['propW', 'w'], ['propH', 'h']]) { $(id).value = formatMeasure(geometry[key], unit); $(id).disabled = o.locked; }
   $('propRotation').value = o.rotation; $('propRotation').disabled = o.locked; $('propLocked').checked = o.locked;
+  $('propTransparency').value = Math.round((1 - (o.opacity ?? 1)) * 100); $('propTransparency').disabled = o.locked; $('transparencyValue').textContent = $('propTransparency').value + '%';
   $('textProperties').hidden = o.type !== 'text'; $('shapeProperties').hidden = o.type !== 'shape'; $('imageProperties').hidden = o.type !== 'image';
   if (o.type === 'text') {
     const story = doc.stories[o.storyId], s = story.style;
     $('propFont').value = s.font; $('propFontSize').value = s.size; $('propBold').checked = s.weight === 'bold'; $('propTextColor').value = s.color; $('propLineHeight').value = s.lineHeight; $('propAlign').value = s.align; $('propDirection').value = s.direction;
     $('storyInfo').textContent = t('linkedInfo', { count: story.frames.length });
   } else if (o.type === 'shape') { $('propFill').value = o.fill; $('propOpacity').value = o.opacity; }
-  else { $('propFit').value = o.fit; const a = doc.assets[o.assetId]; $('imageInfo').textContent = `${a.width} × ${a.height} px`; }
+  else if (o.type === 'image') { $('propFit').value = o.fit; const a = doc.assets[o.assetId]; $('imageInfo').textContent = `${a.width} × ${a.height} px`; }
   $('objectProperties').querySelectorAll('button').forEach(button => { button.disabled = o.locked; });
 }
 function renderLayers() {
-  $('layerList').replaceChildren(); [...page().objects].reverse().forEach(o => { const button = document.createElement('button'); button.className = 'layer-btn' + (selected === o.id ? ' active' : ''); button.dataset.selectObject = o.id; button.textContent = (o.locked ? '▣ ' : '') + label(o); $('layerList').append(button); });
+  $('layerList').replaceChildren(); [...page().objects].reverse().forEach(o => { const row = document.createElement('div'); row.className = 'layer-row'; const button = document.createElement('button'); button.className = 'layer-btn' + (selected === o.id ? ' active' : ''); button.dataset.selectObject = o.id; button.textContent = (o.locked ? '▣ ' : '') + label(o); const slider = document.createElement('input'); slider.type = 'range'; slider.min = 0; slider.max = 100; slider.step = 1; slider.value = Math.round((1 - (o.opacity ?? 1)) * 100); slider.disabled = o.locked; slider.dataset.layerTransparency = o.id; slider.setAttribute('aria-label', t('layerTransparency', { name: label(o) })); slider.title = `${t('transparency')}: ${slider.value}%`; row.append(button, slider); $('layerList').append(row); });
 }
 function renderChecker() {
   $('issueCount').textContent = issues.length; $('checkerResults').replaceChildren();
@@ -136,6 +151,7 @@ function renderOutput() {
   printStyle.textContent = `@page{size:${doc.width}pt ${doc.height}pt;margin:0}`;
   $('printPages').replaceChildren(...doc.pages.map(p => publicationPage(doc, p, layout)));
   if (preview) $('previewPages').replaceChildren(...doc.pages.map(p => publicationPage(doc, p, layout)));
+  $('previewPages').classList.toggle('facing', !!doc.facingPages);
 }
 function addObject(object) {
   if (page().objects.length >= 200) { status('pageLimit'); return; }
@@ -149,7 +165,7 @@ function editStory() {
 function continueStory() {
   const o = selectedObject(); if (!o || o.type !== 'text' || o.locked) return;
   const story = doc.stories[o.storyId], last = findObject(doc, story.frames.at(-1));
-  if (last.pageIndex === doc.pages.length - 1 && doc.pages.length >= 50) { status('pageLimit'); return; }
+  if (last.pageIndex === doc.pages.length - 1 && doc.pages.length >= 500) { status('pageLimit'); return; }
   if (doc.pages[last.pageIndex + 1]?.objects.length >= 200) { status('pageLimit'); return; }
   mutate(() => {
     if (!doc.pages[last.pageIndex + 1]) doc.pages.push({ id: uid(), objects: [] });
@@ -168,45 +184,60 @@ function download(blob, extension) {
 }
 async function saveProject() {
   try {
-    const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(doc, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nImages are embedded in publication.json. Font appearance follows fonts installed on the viewing computer.\n');
+    const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(doc, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose Export & share → Pack and Go.\n');
     const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }); download(blob, '.layoutsplat'); status('savedProject');
   } catch { status('saveFailed'); }
 }
-async function parseProject(file) {
-  if (file.size > 20000000) throw new Error('size');
+async function parseProject(file, options = {}) {
+  if (file.size > 192000000) throw new Error('size');
   let text;
-  if (/\.layoutsplat$/i.test(file.name)) {
-    const zip = await window.JSZip.loadAsync(file), entry = zip.file('publication.json');
-    if (!entry || entry._data?.uncompressedSize > 24000000) throw new Error('archive'); text = await entry.async('string');
-  } else text = await file.text();
-  if (text.length > 24000000) throw new Error('size');
-  const result = validatePublication(JSON.parse(text)); await rasterSample(result); return result;
+  let result, warnings = [];
+  if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value }));
+  else if (/\.(layoutsplat|idml|zip)$/i.test(file.name)) {
+    const zip = await readZip(file), entry = zip.file('publication.json') || zip.file('publication.layoutsplat.json') || zip.file('LayoutSplat/publication.json');
+    if (entry) { if (entry._data?.uncompressedSize > 256000000) throw new Error('archive'); result = validatePublication(JSON.parse(await entry.async('string'))); }
+    else if (zip.file('designmap.xml')) ({ doc: result, warnings } = await importIdml(zip));
+    else { const idml = Object.values(zip.files).find(f => /\.idml$/i.test(f.name)), sla = Object.values(zip.files).find(f => /\.sla$/i.test(f.name)); if (idml) ({ doc: result, warnings } = await importIdml(await readZip(await idml.async('blob')), zip)); else if (sla) ({ doc: result, warnings } = await importSla(await sla.async('string'), zip)); else throw Error('archive'); }
+  } else if (/\.svg$/i.test(file.name)) ({ doc: result, warnings } = importSvg(await file.text()));
+  else if (/\.html?$/i.test(file.name)) { const html = new DOMParser().parseFromString(await file.text(), 'text/html'), payload = html.querySelector('template#layoutsplat-document')?.content.textContent; if (!payload) throw Error('Open a LayoutSplat HTML publication, or import another program through SVG, IDML, SLA, or PDF.'); result = validatePublication(JSON.parse(payload)); }
+  else if (/\.sla$/i.test(file.name)) ({ doc: result, warnings } = await importSla(await file.text()));
+  else if (/\.pdf$/i.test(file.name)) {
+    const asset = await importMedia(file); result = newPublication(true); const id = uid(); result.assets[id] = asset; result.width = Math.max(72, Math.min(2000, asset.width * 72 / 300)); result.height = Math.max(72, Math.min(2000, asset.height * 72 / 300)); result.margin = Math.min(36, Math.min(result.width, result.height) / 8); result.pages[0].objects.push({ id: uid(), type: 'image', assetId: id, x: 0, y: 0, w: result.width, h: result.height, rotation: 0, fit: 'contain', locked: false }); warnings = asset.notes || []; delete asset.notes;
+  } else { text = await file.text(); if (text.length > 256000000) throw new Error('size'); const data = JSON.parse(text); if (Array.isArray(data.objects) && data.app !== 'LayoutSplat') ({ doc: result, warnings } = importFabric(data)); else result = validatePublication(data); }
+  await rasterSample(result); return { doc: result, warnings };
 }
 async function openProject(file, transferred = false) {
+  const controller = new AbortController(), publisher = /\.pub$/i.test(file.name);
   try {
-    if (!transferred && await routeFileToApp(file, 'layoutsplat')) return;
-    const next = await parseProject(file);
+    if (!transferred && !/\.(layoutsplat|pub|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
+    if (publisher) { $('mediaProgress').textContent = t('publisherDecoding'); $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
+    const imported = await parseProject(file, { signal: controller.signal, onProgress: text => $('mediaProgress').textContent = text }), next = imported.doc;
+    if (publisher) $('mediaImportDialog').close();
     if (!transferred && !confirm(t('replaceConfirm'))) return;
-    checkpoint(); doc = next; activePage = 0; selected = null; linking = null; render(); remember(); status(transferred ? 'isolatedDraft' : 'opened');
-  } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); }
+    checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); status(transferred ? 'isolatedDraft' : 'opened');
+    if (imported.warnings.length) showImportReport(imported.warnings);
+  } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); if (publisher && !controller.signal.aborted) showImportReport([t('mediaImportError'), error.message]); }
+  finally { if (publisher) $('mediaImportDialog').close(); }
 }
-async function importPicture(file) {
-  if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 8000000 || page().objects.length >= 200) { status('imageError'); return; }
+async function importPicture(file, replaceId = null) {
+  if (!replaceId && page().objects.length >= 200) { status('pageLimit'); return; }
+  const controller = new AbortController(); $('mediaCancel').onclick = () => controller.abort(); $('mediaProgress').textContent = t('importingMedia'); $('mediaImportDialog').showModal();
   try {
-    const src = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
-    const image = new Image(); image.src = src; await image.decode();
-    if (image.naturalWidth > 20000 || image.naturalHeight > 20000 || !image.naturalWidth) throw new Error('image');
-    mutate(() => { const assetId = uid(); doc.assets[assetId] = { name: file.name, width: image.naturalWidth, height: image.naturalHeight, src }; const w = Math.min(300, doc.width - doc.margin * 2), h = Math.max(6, Math.min(doc.height - doc.margin * 2, w * image.naturalHeight / image.naturalWidth)); const o = { id: uid(), type: 'image', assetId, x: doc.margin, y: doc.margin, w, h, rotation: 0, fit: 'contain', locked: false }; page().objects.push(o); selected = o.id; });
-  } catch { status('imageError'); }
+    const asset = await importMedia(file, { signal: controller.signal, onStatus: text => $('mediaProgress').textContent = text }), notes = asset.notes || []; delete asset.notes; controller.signal.throwIfAborted();
+    const existing = replaceId ? findObject(doc, replaceId)?.object : null; if (replaceId && (!existing || existing.type !== 'image' || existing.locked)) throw Error(t('lockedNotice'));
+    mutate(() => { const assetId = uid(); doc.assets[assetId] = asset; if (existing) { existing.assetId = assetId; selected = existing.id; } else { const w = Math.min(300, doc.width - doc.margin * 2), h = Math.max(6, Math.min(doc.height - doc.margin * 2, w * asset.height / asset.width)); const o = { id: uid(), type: 'image', assetId, x: doc.margin, y: doc.margin, w, h, rotation: 0, fit: 'contain', locked: false }; page().objects.push(o); selected = o.id; } });
+    $('mediaImportDialog').close(); if (notes.length) showImportReport(notes);
+  } catch (error) { $('mediaImportDialog').close(); if (!controller.signal.aborted) showImportReport([t('mediaImportError'), error?.message || String(error)]); }
 }
+function showImportReport(lines) { $('importReportText').textContent = [...new Set(lines)].join('\n\n'); $('importReportDialog').showModal(); }
 function duplicatePage() {
-  if (doc.pages.length >= 50) { status('pageLimit'); return; }
+  if (doc.pages.length >= 500) { status('pageLimit'); return; }
   mutate(() => {
     const copy = clone(page()); copy.id = uid(); const stories = new Map();
     copy.objects.forEach(o => {
       o.id = uid(); if (o.type === 'text') {
         const original = doc.stories[o.storyId], old = o.storyId;
-        if (!stories.has(old)) { const storyId = uid(); stories.set(old, storyId); doc.stories[storyId] = { text: original.text, style: clone(original.style), frames: [] }; }
+        if (!stories.has(old)) { const storyId = uid(); stories.set(old, storyId); doc.stories[storyId] = { ...clone(original), frames: [] }; }
         o.storyId = stories.get(old); doc.stories[o.storyId].frames.push(o.id);
       }
     });
@@ -215,35 +246,38 @@ function duplicatePage() {
 }
 function openSetup() {
   const dimensions = [Math.min(doc.width, doc.height), Math.max(doc.width, doc.height)];
-  $('paperSize').value = Object.keys(PAPER).find(key => PAPER[key].every((n, i) => Math.abs(n - dimensions[i]) < 1)) || 'letter';
+  $('paperSize').value = Object.keys(PAPER).find(key => PAPER[key].every((n, i) => Math.abs(n - dimensions[i]) < 1)) || 'custom';
+  $('customPageW').value = doc.width; $('customPageH').value = doc.height; $('pageBleed').value = doc.bleed || 0; $('pageSafe').value = doc.safeArea ?? 18; $('rulerOriginX').value = doc.rulerOrigin?.x || 0; $('rulerOriginY').value = doc.rulerOrigin?.y || 0; $('facingPages').checked = !!doc.facingPages; $('lockGuides').checked = !!doc.guides.locked; $('showRulerH').checked = doc.guides.showHorizontal !== false; $('showRulerV').checked = doc.guides.showVertical !== false;
   $('landscape').checked = doc.width > doc.height; $('pageMargin').value = doc.margin; $('guideColumns').value = doc.guides.columns; $('guideRows').value = doc.guides.rows; $('guideGap').value = doc.guides.gap; $('guideBaseline').value = doc.guides.baseline; $('baselineToggle').checked = baseline; $('setupDialog').showModal();
 }
 async function action(name) {
   const o = selectedObject();
+  if (await publishing?.action(name)) { document.querySelectorAll('.more-tools[open]').forEach(menu => menu.open = false); return; }
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
     case 'save': await saveProject(); break;
     case 'open': $('projectInput').click(); break;
     case 'blank': case 'sample': {
       if (!confirm(t('replaceConfirm'))) break;
-      const next = newPublication(name === 'blank'); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; render(); remember(); break;
+      const next = newPublication(name === 'blank'); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
     }
-    case 'undo': if (undoStack.length) { redoStack.push(clone(doc)); doc = undoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; render(); remember(); } break;
-    case 'redo': if (redoStack.length) { undoStack.push(clone(doc)); doc = redoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; render(); remember(); } break;
+    case 'undo': if (undoStack.length) { redoStack.push(clone(doc)); doc = undoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
+    case 'redo': if (redoStack.length) { undoStack.push(clone(doc)); doc = redoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
     case 'text': {
       if (page().objects.length >= 200) { status('pageLimit'); break; }
       const storyId = uid(), object = frame(storyId, doc.margin + 12, doc.margin + 12, Math.min(240, doc.width - 2 * doc.margin), 110);
       mutate(() => { doc.stories[storyId] = { text: t('newText'), style: textStyle(), frames: [object.id] }; page().objects.push(object); selected = object.id; }); break;
     }
     case 'image': $('pictureInput').click(); break;
+    case 'video': $('videoInput').click(); break;
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#7c3aed', name)); break;
     case 'editStory': editStory(); break;
     case 'continue': continueStory(); break;
     case 'link': if (o?.type === 'text') { linking = linking ? null : o.id; render(); } break;
-    case 'addPage': if (doc.pages.length >= 50) status('pageLimit'); else mutate(() => { doc.pages.push({ id: uid(), objects: [] }); activePage = doc.pages.length - 1; selected = null; }); break;
+    case 'addPage': if (doc.pages.length >= 500) status('pageLimit'); else mutate(() => { doc.pages.push({ id: uid(), objects: [] }); activePage = doc.pages.length - 1; selected = null; }); break;
     case 'duplicatePage': duplicatePage(); break;
     case 'deletePage': if (doc.pages.length > 1 && confirm(t('deletePageConfirm'))) mutate(() => { [...page().objects].forEach(object => removeObject(doc, object.id)); doc.pages.splice(activePage, 1); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; }); break;
-    case 'duplicateObject': if (o && page().objects.length < 200) mutate(() => { const copy = clone(o); copy.id = uid(); copy.x += 12; copy.y += 12; if (copy.type === 'text') { const story = doc.stories[copy.storyId]; copy.storyId = uid(); doc.stories[copy.storyId] = { text: story.text, style: clone(story.style), frames: [copy.id] }; } page().objects.push(copy); selected = copy.id; }); break;
+    case 'duplicateObject': if (o && page().objects.length < 200) mutate(() => { const copy = clone(o); copy.id = uid(); copy.x += 12; copy.y += 12; if (copy.type === 'text') { const story = doc.stories[copy.storyId]; copy.storyId = uid(); doc.stories[copy.storyId] = { ...clone(story), frames: [copy.id] }; } page().objects.push(copy); selected = copy.id; }); break;
     case 'deleteObject': if (o) mutate(() => { removeObject(doc, o.id); selected = null; }); break;
     case 'front': case 'back': if (o) mutate(() => { page().objects = page().objects.filter(item => item.id !== o.id); name === 'front' ? page().objects.push(o) : page().objects.unshift(o); }); break;
     case 'pageSetup': openSetup(); break;
@@ -251,18 +285,18 @@ async function action(name) {
     case 'preview': preview = !preview; linking = null; document.body.classList.toggle('preview-mode', preview); $('exitPreview').hidden = !preview; render(); break;
     case 'help': $('helpDialog').showModal(); break;
     case 'print': await document.fonts.ready; render(); status('printReady'); window.print(); break;
-    case 'html': await document.fonts.ready; render(); download(new Blob([exportHtml(doc, layout)], { type: 'text/html;charset=utf-8' }), '.html'); status('exported'); break;
+    case 'html': await document.fonts.ready; render(); download(new Blob([await portableHtml(exportHtml(doc, layout, { interactive: true }), doc)], { type: 'text/html;charset=utf-8' }), '.html'); status('exported'); break;
   }
 }
 document.addEventListener('click', event => {
   const button = event.target.closest('[data-action]');
-  if (button) { $('fileMenu').open = false; action(button.dataset.action).catch(error => { console.error(error); status('saveFailed'); }); return; }
-  const thumb = event.target.closest('[data-page]'); if (thumb) { activePage = Number(thumb.dataset.page); selected = null; render(); return; }
-  const layer = event.target.closest('[data-select-object]'); if (layer) { const found = findObject(doc, layer.dataset.selectObject); activePage = found.pageIndex; select(found.object.id); }
+  if (button) { $('fileMenu').open = false; document.querySelectorAll('.toolbar details[open]').forEach(menu => menu.open = false); action(button.dataset.action).catch(error => { console.error(error); status('saveFailed'); }); return; }
+  const thumb = event.target.closest('[data-page]'); if (thumb) { activePage = Number(thumb.dataset.page); selected = null; publishing?.reset(); render(); return; }
+  const layer = event.target.closest('[data-select-object]'); if (layer) { const found = findObject(doc, layer.dataset.selectObject); if (found.pageIndex >= 0) activePage = found.pageIndex; select(found.object.id, event); }
 });
 $('pageSurface').addEventListener('dblclick', event => {
   const guide = event.target.closest('.guide.custom');
-  if (guide) { const key = guide.dataset.guideAxis === 'x' ? 'vertical' : 'horizontal'; mutate(() => { doc.guides[key] = doc.guides[key].filter(n => n !== Number(guide.dataset.guidePosition)); }); return; }
+  if (guide) { if (doc.guides.locked) return; const key = guide.dataset.guideAxis === 'x' ? 'vertical' : 'horizontal'; mutate(() => { doc.guides[key] = doc.guides[key].filter(n => n !== Number(guide.dataset.guidePosition)); }); return; }
   // Pointer capture retargets the double-click to the page surface.
   if (selected) editStory();
 });
@@ -271,10 +305,10 @@ $('pageSurface').addEventListener('pointerdown', event => {
   const el = event.target.closest('[data-object-id]'); if (!el) { select(null); return; }
   const id = el.dataset.objectId, resizing = event.target.classList.contains('resize-handle');
   if (linking) { select(id); return; }
-  selected = id; const object = selectedObject(), before = clone(doc);
+  selected = publishing ? publishing.onSelect(id, event) : id; const object = selectedObject(), before = clone(doc);
   paintSelection(); $('pageSurface').focus({ preventScroll: true });
-  if (object.locked) return;
-  pointer = { id, resize: resizing, before, startX: event.clientX, startY: event.clientY, x: object.x, y: object.y, w: object.w, h: object.h, changed: false, pointerId: event.pointerId };
+  if (!object || object.locked) return;
+  pointer = { id, resize: resizing, before, startX: event.clientX, startY: event.clientY, x: object.x, y: object.y, w: object.w, h: object.h, changed: false, pointerId: event.pointerId, members: (publishing?.members() || [object]).map(clone) };
   $('pageSurface').setPointerCapture(event.pointerId); event.preventDefault();
 });
 $('pageSurface').addEventListener('pointermove', event => {
@@ -292,6 +326,8 @@ $('pageSurface').addEventListener('pointermove', event => {
     o.x = Math.max(-2000, Math.min(4000, x)); o.y = Math.max(-2000, Math.min(4000, y));
   }
   pointer.changed = true; renderPage(); renderProperties();
+  for (const original of pointer.members) if (original.id !== o.id && !original.locked) { const other = findObject(doc, original.id)?.object; if (!other) continue; if (pointer.resize) { const sx = o.w / pointer.w, sy = o.h / pointer.h; other.x = pointer.x + (original.x - pointer.x) * sx; other.y = pointer.y + (original.y - pointer.y) * sy; other.w = Math.max(6, original.w * sx); other.h = Math.max(6, original.h * sy); } else { other.x = original.x + o.x - pointer.x; other.y = original.y + o.y - pointer.y; } }
+  renderPage();
 });
 function endPointer(event) {
   if (!pointer || event.pointerId !== pointer.pointerId) return;
@@ -302,6 +338,7 @@ function endPointer(event) {
 }
 $('pageSurface').addEventListener('pointerup', endPointer); $('pageSurface').addEventListener('pointercancel', endPointer);
 for (const [id, axis] of [['rulerH', 'x'], ['rulerV', 'y']]) $(id).addEventListener('pointerdown', event => {
+  if (doc.guides.locked) return;
   event.preventDefault(); const ruler = $(id); ruler.setPointerCapture(event.pointerId);
   const finish = end => {
     ruler.removeEventListener('pointerup', finish); const rect = $('pageSurface').getBoundingClientRect();
@@ -321,18 +358,19 @@ $('objectProperties').addEventListener('change', event => {
   }
   if (id === 'propFontSize' || id === 'propLineHeight') { value = Number(value); if (!Number.isFinite(value) || value < (id === 'propFontSize' ? 6 : 1) || value > (id === 'propFontSize' ? 120 : 3)) { status('invalidMeasure'); renderProperties(); return; } }
   mutate(() => {
-    if (geometry[id]) o[geometry[id]] = value;
+    if (geometry[id]) { if (publishing?.members().length > 1) publishing.transformSelection(geometry[id], value); else o[geometry[id]] = value; }
     else if (styles[id] && o.type === 'text') doc.stories[o.storyId].style[styles[id]] = value;
     else if (id === 'propBold') doc.stories[o.storyId].style.weight = event.target.checked ? 'bold' : 'normal';
-    else if (id === 'propLocked') o.locked = event.target.checked;
+    else if (id === 'propLocked') (publishing?.members() || [o]).forEach(member => member.locked = event.target.checked);
     else if (id === 'propFill') { o.fill = value; o.stroke = value; }
     else if (id === 'propOpacity') o.opacity = Number(value);
     else if (id === 'propFit') o.fit = value;
   });
 });
-$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) mutate(() => { doc.stories[id].text = $('storyText').value; }); $('storyDialog').close(); });
+$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) mutate(() => { const s = doc.stories[id]; if (s.text !== $('storyText').value) s.marks = []; s.text = $('storyText').value; }); $('storyDialog').close(); });
 $('applySetup').addEventListener('click', () => {
-  const next = clone(doc), dims = [...PAPER[$('paperSize').value]]; if ($('landscape').checked) dims.reverse(); [next.width, next.height] = dims;
+  const next = clone(doc), dims = $('paperSize').value === 'custom' ? [Number($('customPageW').value), Number($('customPageH').value)] : [...PAPER[$('paperSize').value]]; if ($('paperSize').value !== 'custom' && $('landscape').checked) dims.reverse(); [next.width, next.height] = dims;
+  next.bleed = Number($('pageBleed').value); next.safeArea = Number($('pageSafe').value); next.facingPages = $('facingPages').checked; next.rulerOrigin = { x: Number($('rulerOriginX').value), y: Number($('rulerOriginY').value) }; next.guides.locked = $('lockGuides').checked; next.guides.showHorizontal = $('showRulerH').checked; next.guides.showVertical = $('showRulerV').checked;
   next.margin = Number($('pageMargin').value); next.guides.columns = Number($('guideColumns').value); next.guides.rows = Number($('guideRows').value); next.guides.gap = Number($('guideGap').value); next.guides.baseline = Number($('guideBaseline').value);
   try { validatePublication(next); } catch { status('invalidSetup'); return; }
   checkpoint(); doc = next; baseline = $('baselineToggle').checked; $('setupDialog').close(); render(); remember();
@@ -356,7 +394,7 @@ document.addEventListener('keydown', event => {
   if (o.locked) return;
   if (event.key === 'Delete' || event.key === 'Backspace') { event.preventDefault(); action('deleteObject'); return; }
   const move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];
-  if (move) { event.preventDefault(); mutate(() => { o.x = Math.max(-2000, Math.min(4000, o.x + move[0] * (event.shiftKey ? 10 : 1))); o.y = Math.max(-2000, Math.min(4000, o.y + move[1] * (event.shiftKey ? 10 : 1))); }); $('pageSurface').focus({ preventScroll: true }); }
+  if (move) { event.preventDefault(); mutate(() => { for (const item of publishing?.members() || [o]) if (!item.locked) { item.x = Math.max(-2000, Math.min(4000, item.x + move[0] * (event.shiftKey ? 10 : 1))); item.y = Math.max(-2000, Math.min(4000, item.y + move[1] * (event.shiftKey ? 10 : 1))); } }); $('pageSurface').focus({ preventScroll: true }); }
 });
 window.addEventListener('widget-i18n:changed', render);
 window.addEventListener('resize', () => { renderThumbnails(); if ($('zoomSelect').value === 'fit') renderPage(); });
@@ -374,12 +412,35 @@ async function boot() {
   } catch {
     try { doc = validatePublication(JSON.parse(workspaceStorage().getItem(BACKUP))); loaded = true; lastStatus = 'recovered'; } catch { doc = newPublication(); loaded = true; lastStatus = 'storageUnavailable'; }
   }
-  await rasterSample(doc); await document.fonts.ready;
+  installPublishingUI();
+  $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.html,.htm,.pub';
+  document.body.insertAdjacentHTML('beforeend', '<input id="videoInput" type="file" accept="video/*,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp" hidden><dialog id="mediaImportDialog"><p id="mediaProgress" role="status"></p><button type="button" id="mediaCancel" data-i18n="cancel">Cancel</button></dialog><dialog id="importReportDialog"><form method="dialog"><h2 data-i18n="conversionReport">Import / conversion report</h2><p id="importReportText" style="white-space:pre-wrap"></p><button data-i18n="close">Close</button></form></dialog>');
+  $('videoInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
+  $('mediaImportDialog').addEventListener('cancel', event => { event.preventDefault(); $('mediaCancel').click(); });
+  publishing = setupPublishing({ getDoc: () => doc, currentPage: page, getSelected: () => selected, setSelected: id => selected = id, getSelectedObject: selectedObject, getLayout: () => layout, getIssues: () => issues, mutate, render, status, t, addObject, download, select, importPicture, mediaAccept: MEDIA_ACCEPT, showReport: showImportReport, replaceDoc: async next => { await rasterSample(next); checkpoint(); doc = validatePublication(next); activePage = 0; selected = null; publishing.reset(); render(); remember(); } });
+  function transparency(event, commit) {
+    const target = event.target, id = target.dataset.layerTransparency;
+    if (!id && target.id !== 'propTransparency') return;
+    const object = id ? findObject(doc, id)?.object : selectedObject(); if (!object || object.locked) return;
+    const amount = Number(target.value); if (!Number.isFinite(amount) || amount < 0 || amount > 100) return;
+    const objects = id ? [object] : publishing.members(), opacity = 1 - amount / 100;
+    if (commit) mutate(() => objects.filter(o => !o.locked).forEach(o => o.opacity = opacity));
+    else { for (const o of objects) { const el = $('pageSurface').querySelector(`[data-object-id="${CSS.escape(o.id)}"]`); if (el && !o.locked) el.style.opacity = opacity; } target.title = `${t('transparency')}: ${amount}%`; if (!id) $('transparencyValue').textContent = amount + '%'; }
+  }
+  $('propTransparency').oninput = event => transparency(event, false);
+  $('propTransparency').onchange = event => { event.stopPropagation(); transparency(event, true); };
+  $('layerList').oninput = event => transparency(event, false);
+  $('layerList').onchange = event => transparency(event, true);
+  await rasterSample(doc);
+  await Promise.all(['12pt Arial', 'bold 12pt Arial', '12pt Georgia', '12pt Verdana'].map(font => document.fonts.load(font)));
+  await document.fonts.ready;
+  let fontRefresh;
+  document.fonts.addEventListener('loadingdone', () => { clearTimeout(fontRefresh); fontRefresh = setTimeout(() => { if (!matchMedia('print').matches) render(); }, 50); });
   if (innerWidth <= 780) $('zoomSelect').value = 'fit';
   render();
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.1.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.2.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

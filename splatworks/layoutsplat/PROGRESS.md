@@ -1,5 +1,57 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.2 publishing release
+
+The next substantial update adds 270 original templates (18 industries × 15 types),
+six publication-language editions, rich editing and ordinary bold/italic/underline,
+columns, drop caps, AutoFit, WordArt, tables, groups, alignment/distribution,
+paths/shapes/borders, cropping, watermarks, format painter, masters and overrides,
+facing-page preview, and expanded page setup. Right-click, Mac modifier-click,
+and keyboard menus offer contextual text import and picture/video replacement.
+
+Native Publisher `.pub` decoding now runs in a bundled browser WebAssembly worker.
+No LibreOffice, desktop bridge, or conversion upload is required. Supported objects
+are editable; original PUB bytes are preserved. Legacy encoding settings address
+older text. This remains experimental interchange, with explicit conversion reports.
+JSON/SVG/IDML/SLA/HTML and PDF picture imports, native SplatWorks content import/export,
+TIFF/HEIC/Photoshop image decoding, local video conversion, and motion posters are added.
+
+CSV/TSV/Excel merge includes mapping, filtering, previews, record checking,
+personalization, and label sheets. Outputs add high-resolution PNG/JPEG/PDF,
+HTML reading editions, sharing, Email preview, Pack and Go, bundled fonts,
+bleed/crop/trim boxes, ICC output intents, and an optional Ghostscript PDF/X-3 helper
+with independent structural checks. The downloadable PDF proof is flattened;
+Print / Save as PDF retains selectable text and vectors. PDF/X is not exhaustively
+certified by the browser or helper.
+
+### Verification
+
+Model checks validate all 1,620 template/language combinations and exercise merge
+formatting ranges, multiline CSV, leading zeros, and labels spanning sheets.
+Browser checks cover the original proof and new publishing tools, a real native PUB
+opening with Cyrillic encoding and source retention, invalid PUB preservation,
+gallery filters and Arabic content, contextual frame imports, supported media
+fixtures, native JSON and layout-package round trips, and real WriteSplat reopening.
+Publisher language-data rebuilding reproduces the shipped SHA-256 exactly.
+
+The PDF/X-3 helper independently checked a Ghostscript-converted bleed proof with a
+test CMYK profile: page geometry and boxes were preserved and structural checks
+passed. A test profile does not replace a printer-supplied production profile.
+All 26 LayoutSplat browser workflows passed locally after the File/Shapes/transparency changes. The independent two-page PDF check confirms all eight story paragraphs, selectable Arabic, exact Letter dimensions, and embedded font programs. The 35 existing homepage, wiki, navigation, and district setup checks passed (the suite guide count now includes LayoutSplat). Production verification is recorded after deployment.
+
+### Remaining work
+
+- External InDesign/Scribus and broader Publisher fidelity checks; additional proprietary layout formats.
+- More precise typography/wrapping combinations, dynamic page numbers, and editable reading order controls.
+- Native GridSplat/ListSplat sources directly in mail merge, richer suite media/content exchange.
+- Larger-document optimization, advanced preflight/exhaustive PDF/X validation, and refreshed downloadable district release ZIPs.
+
+The live application and source receive this feature update first. Previously
+published package ZIPs keep their published contents. Current package-building code
+includes LayoutSplat and its shared media converter for the suite.
+
+[Feature guide](../../docs/layoutsplat.md) · [Third-party notices](THIRD_PARTY_NOTICES.md).
+
 ## October 13 2026 initial layout proof
 
 Version 0.1.0 completes the first development milestone from the [approved plan](IMPLEMENTATION_PLAN.md). [SplatWorks future work](../ROADMAP.md) tracks the remaining publication features.
@@ -22,7 +74,7 @@ The independently parsed PDF has exactly two 612 × 792 point Letter pages. All 
 
 GitHub Actions runs the LayoutSplat proof workflow. Production deployment and live verification are recorded below after publication.
 
-### Remaining milestones
+### Remaining milestones recorded at v0.1
 
 - Six publication-template categories, fuller editing tools, tables, alignment/distribution, grouped objects, image export, and broader recovery controls.
 - Rich-text story editing, AutoFit choices, advanced wrapping, masters, facing pages, drop caps, WordArt, border art, format painter, folding, and expanded templates.

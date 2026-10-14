@@ -1,10 +1,12 @@
 # DrawSplatTM
 
-**LayoutSplat development:** [Open the publication editor](https://drawsplat.org/splatworks/layoutsplat/) · [SplatWorks roadmap](splatworks/ROADMAP.md) · [Approved LayoutSplat plan](splatworks/layoutsplat/IMPLEMENTATION_PLAN.md). The first release provides precise pages, linked text, images, shapes, rulers/guides, local recovery, portable saves, HTML, and browser print-to-PDF. Advanced publishing features follow the roadmap.
+**LayoutSplat v0.2:** [Open the publication editor](https://drawsplat.org/splatworks/layoutsplat/) · [Feature and file guide](https://drawsplat.org/wiki/layoutsplat.html) · [Release progress](splatworks/layoutsplat/PROGRESS.md). Adds 270 original templates, experimental native Publisher import inside the browser without LibreOffice, JSON/SVG/IDML/SLA exchange, SplatWorks content import/export, rich formatting and bold/italic/underline, masters, tables/groups, context imports, broad local media decoding, Excel/CSV merge, image/PDF/HTML exports, sharing, and Pack and Go. Conversion and print limits are documented in the guide; [further milestones](splatworks/ROADMAP.md) remain.
 
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 **Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).
+
+**SplatWorks homepage — October 14, 2026:** The shared homepage leads with SplatWorks™ and all five office apps, with the DrawSplat whiteboard and existing tools still available. SplatWorks.org is being connected to the existing Cloudflare deployment; DrawSplat.org continues to work. [Domain setup and verification](docs/splatworks-domain.md).
 
 
 **District installation:** Download the [complete DrawSplat + SplatWorks suite](https://drawsplat.org/pages/download#district-suite), extract it, and open **start-here.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).

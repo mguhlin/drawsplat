@@ -9,7 +9,7 @@ test("homepage routes natural-language intent to the right tools", async ({
   });
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "DrawSplat", exact: true }),
+    page.getByRole("heading", { name: "SplatWorks™", exact: true }),
   ).toBeVisible();
   await page.locator("#homeSearch").fill("I need to make slides");
   await expect(page.locator("#homeSearchResults")).toBeVisible();

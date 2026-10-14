@@ -2,6 +2,10 @@
 
 Approved October 13, 2026. LayoutSplat is SplatWorks' browser publication-design application: precise pages, editable templates, reusable branding, personalized publications, and dependable export. It uses `/splatworks/layoutsplat/` alongside WriteSplat, ShowSplat, GridSplat, and ListSplat.
 
+The user subsequently authorized continuing through all milestones and requested maximum compatibility with other layout applications. JSON save/open must be explicit. Add editable SVG, InDesign IDML, Scribus SLA packages, HTML/PDF exchange, and documented conversion paths for proprietary formats. Preserve a lossless native payload in supported exchange files where possible, and report converted or unsupported features. Bold, italic, and underline belong in both the rich-text editor and ordinary formatting controls.
+
+Additional approved scope: broad local image/video decoding and conversion, printable video posters, object-specific context menus (right-click, Mac Control/Command-click, keyboard), text import into an existing frame, media replacement without changing frame geometry, and a large original template library inspired by the publication types/industry breadth of StockLayouts. The user explicitly requested native `.pub` import and subsequently required browser-contained decoding without LibreOffice. This supersedes the earlier desktop-bridge proposal. v0.2 bundles libmspub as WebAssembly with experimental editable conversion and source retention. Import/export native content from WriteSplat, ShowSplat, GridSplat, and ListSplat as well as routing files to their original applications. Clearly distinguish editable native imports from PDF backgrounds and preserve/report conversion limitations. Update README/wiki/release documentation, commit, push, deploy the next substantial update, and verify production.
+
 ## Interface and language
 
 Reuse SplatWorks purple (`#7c3aed`), orange (`#ff9f2f`), white panels, dark text (`#1f2937`), pale purple surfaces (`#f7f4ff`), and subtle borders (`#d8d2ff`). Follow the existing system-font stack and line-icon vocabulary. Publication pages remain white against a quiet workspace. Left-align controls; reserve strong color for selection and primary actions.
@@ -47,7 +51,7 @@ Store all geometry in points. Ruler units, screen pixels, and zoom are conversio
 
 Reuse suitable ProseMirror components from WriteSplat for rich editing; custom frame flow/pagination remains LayoutSplat's responsibility. [ProseMirror's structured document/transaction model](https://prosemirror.net/docs/guide/) does not itself provide a desktop publication engine. The first proof can use plain-text story editing and browser-shaped lines, preserving a migration path to rich stories. Evaluate font metrics, multilingual shaping, line breaking, and print consistency before advanced typography.
 
-Basic editing, ordinary exports, and merge work run locally. Bundle runtime assets for district use. Integrate the Apps launcher, component registry, file handoff, documentation, and installer inventory. Publisher `.pub` import has a separate feasibility/fidelity milestone. Initially support rebuilding publications and, later, imported PDF backgrounds; do not promise editable `.pub` conversion.
+Basic editing, ordinary exports, and merge work run locally. Bundle runtime assets for district use. Integrate the Apps launcher, component registry, file handoff, documentation, and installer inventory. Publisher `.pub` import is experimental browser interchange: supported objects become editable, while advanced fidelity requires comparison with the source. Retain original bytes and include source/build/license notices for the bundled decoder.
 
 ## Milestones and acceptance
 

@@ -20,4 +20,5 @@ async function createLauncher() {
   launcher.openLauncher = () => { input.value = ""; render(); launcher.showModal(); requestAnimationFrame(() => input.focus()); };
   return launcher;
 }
-for (const trigger of document.querySelectorAll("[data-ds-app-launcher]")) trigger.addEventListener("click", async () => (await createLauncher()).openLauncher());
+export async function openLauncher() { (await createLauncher()).openLauncher(); }
+document.addEventListener('click', event => { if (event.target.closest('[data-ds-app-launcher]')) openLauncher().catch(console.error); });
