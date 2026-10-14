@@ -4,6 +4,8 @@
 
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
+**Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).
+
 
 **District installation:** Download the [complete DrawSplat + SplatWorks suite](https://drawsplat.org/pages/download#district-suite), extract it, and open **start-here.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).
 
