@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
   <channel>
-    <title>DrawSplat Blog</title>
+    <title>SplatWorks Blog</title>
     <link>https://drawsplat.org/blog/</link>
-    <description>DrawSplat project updates and published articles from MGuhlin.org.</description>
+    <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
       <title>DrawSplat.org: Making Data Privacy Agreements Easier for Schools</title>

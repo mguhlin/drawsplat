@@ -1,4 +1,4 @@
-/* Render the DrawSplat blog page from its automatically refreshed RSS snapshot.
+/* Render the SplatWorks blog page from its automatically refreshed RSS snapshot.
    No external network requests; CSP-friendly.
 
    The hourly publication sync preserves local updates and imports published

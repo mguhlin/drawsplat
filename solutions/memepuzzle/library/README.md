@@ -1,6 +1,6 @@
 # PuzzleMaker Library authoring guide
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Use these requirements for every activity added to the PuzzleMaker Library.

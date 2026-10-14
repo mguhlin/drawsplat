@@ -23,5 +23,5 @@ export function setupExports(api) {
   $('emailPreview').onclick = () => { const doc = api.getDoc(), text = `${t('emailSubject')}: ${doc.title}\n${t('emailAttachment')}: ${$('exportFormat').selectedOptions[0].text}\n${t('emailAttachHint')}`; $('emailPreviewContent').hidden = false; $('emailPreviewText').textContent = text; $('emailDraft').href = `mailto:?subject=${encodeURIComponent(doc.title)}&body=${encodeURIComponent(t('emailAttachHint'))}`; };
   $('exportDialog').addEventListener('change', () => pending = null);
   $('exportDialog').addEventListener('cancel', event => { if (busy) event.preventDefault(); });
-  return { open() { pending = null; $('exportBleed').value = api.getDoc().bleed || 0; $('exportSummary').textContent = ''; $('emailPreviewContent').hidden = true; WidgetI18n.refresh(); $('exportDialog').showModal(); } };
+  return { open(format) { pending = null; if(format)$('exportFormat').value=format; $('exportBleed').value = api.getDoc().bleed || 0; $('exportSummary').textContent = ''; $('emailPreviewContent').hidden = true; WidgetI18n.refresh(); $('exportDialog').showModal(); } };
 }

@@ -1,5 +1,36 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.3 templates, typography, imports, and packages
+
+305 templates (1,830 template/language models), 42 menu presets in 12 composition
+families, six business-card compositions, replaceable official SplatWorks logo
+examples, and 29 Avery sheet geometries / 127 product codes. Labels include two
+name-badge stocks, physical geometry, printer offsets, and used-label skipping.
+File has grouped Templates, alphabetical Import, page/print controls, and Export
+with HTML. Context menus link selected boxes and unlink while retaining text.
+
+Serif/sans selection, kerning, tracking, word spacing, horizontal scale, ligatures,
+and local TTF/OTF/WOFF/WOFF2 font embedding are available. Publisher gains bitmap
+fills, masks/crops, paragraph styles, gradient fallback, and source text scale.
+Legacy Pages XML, PDF-compatible AI, all-page PDF artwork, and EPS/PS conversion run
+locally. Native INDD/QXP and modern Pages IWA remain explicit unsupported paths.
+The private Publisher benchmark retains one detected overflowing story; see the
+[accuracy report](../../docs/layoutsplat-import-accuracy.md).
+
+The website/Wiki/blog use SplatWorks ecosystem branding and the supplied glossy logo.
+DrawSplat whiteboard/tools and technical database/service names remain unchanged.
+The refreshed v3.1.35 packages add standalone LayoutSplat and include it in the full
+SplatWorks suite; district-suite-v1.2.5 refreshes complete installation sources.
+Verification: 35 LayoutSplat browser workflows passed across the full run and
+focused reruns after menu/logo changes; synthetic Pages and Publisher regressions
+cover editable text, picture bytes/crops, source scale, and paragraph metrics.
+Model checks validate all 1,830 template/language combinations. The independent
+Letter PDF check verified two exact pages, all eight paragraphs, selectable Arabic,
+and embedded fonts. All 35 homepage/Wiki/navigation/school-setup checks passed.
+The official-logo business card and distinct café/fine-dining layouts were visually
+inspected. Production and package verification are recorded after publication.
+
+
 ## October 14, 2026 — v0.2 publishing release
 
 Follow-up: File → Clear saved browser data removes the current workspace's draft

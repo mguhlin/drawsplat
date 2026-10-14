@@ -1,6 +1,6 @@
 # SplatWorks Desktop PWA Plan
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 ## Purpose

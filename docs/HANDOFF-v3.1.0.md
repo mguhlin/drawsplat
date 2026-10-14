@@ -1,6 +1,6 @@
 # Handoff after v3.1.0 — 2026-05-24
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 > If you're an AI assistant picking up this repo, **read this file first**. It explains what's freshly shipped, what's intentionally deferred, and where the canonical references live.

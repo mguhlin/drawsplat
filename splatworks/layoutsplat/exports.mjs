@@ -74,6 +74,7 @@ export async function exportPublication(kind, doc, layout, options = {}) {
     if (options.profile) zip.file(`profiles/${options.profile.name.replace(/[^\w.-]/g, '_')}`, options.profile);
     const manifest = await fetch('fonts/manifest.json').then(r => r.ok ? r.json() : null).catch(() => null);
     if (manifest) { zip.file('fonts/manifest.json', JSON.stringify(manifest, null, 2)); for (const file of manifest.files) { const response = await fetch(`fonts/${file}`); if (!response.ok) throw Error(`Font asset missing: ${file}`); zip.file(`fonts/${file}`, await response.arrayBuffer()); } }
+    for(const[id,f]of Object.entries(doc.customFonts||{}))zip.file(`fonts/imported/${id}.${f.format}`,f.src.split(',')[1],{base64:true});
     const helper = await fetch('printer/pdfx.py'); if (helper.ok) zip.file('printer/pdfx.py', await helper.text());
     zip.file('README.txt', 'LayoutSplat Pack and Go\nOpen publication.layoutsplat.json for editable content. The HTML edition plays imported motion media; printed proofs contain posters.\nThe proof PDF preserves appearance as high-resolution pixels; it is not PDF/X certified. For selectable text/vector output, open the project and use Print / Save as PDF.\nUse a printer-provided ICC profile and printer/pdfx.py with Ghostscript for PDF/X-3 preparation; review the report and obtain printer approval. No fonts from the operating system are redistributed. Bundled fonts have their own licenses in fonts/.\n');
   } else if (!['svg', 'png', 'jpeg'].includes(kind)) throw Error('Unknown export format.');

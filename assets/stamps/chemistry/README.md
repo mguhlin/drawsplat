@@ -1,6 +1,6 @@
 # Chemistry stamps
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 26 original SVG stamps: 12 symbol-labeled atoms, ten covalent molecules, one sodium chloride ionic lattice, and three subatomic particles. SVGs use symbols as well as colors so color is not the only way to distinguish atoms. Saved board stamps embed their SVG source and record the formula and model shape. They work with repeated stamping, resizing, rotation, flip, undo, recent stamps, and image permissions. Chemistry stamps start at 160 pixels for legible formulas.

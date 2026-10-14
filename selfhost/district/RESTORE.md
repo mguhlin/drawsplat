@@ -1,6 +1,6 @@
 # Restore a district backup
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 The provided backup launchers export the **bundled** database and installed configuration. When the web wizard points to an external database, use that database host's backup/restore tools instead; the bundled database export does not contain external records. Save the matching `/data/config.json` privately in either case.

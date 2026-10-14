@@ -1,6 +1,6 @@
 # DrawSplat public destination inventory
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 This inventory is the source audit behind `data/drawsplat-tools.json`. It records discovery destinations, not every internal route or alternate build file. Existing URLs remain unchanged.

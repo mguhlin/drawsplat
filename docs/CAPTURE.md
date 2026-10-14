@@ -1,6 +1,6 @@
 # DrawSplat&trade; District Reviewer Evidence Capture Guide
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 This file is the operator checklist for replacing the placeholders in [legal/ndpa-packet.html &sect; 12 — Evidence gallery](../legal/ndpa-packet.html#section-12) with real screenshots from your DrawSplat&trade; deployment.

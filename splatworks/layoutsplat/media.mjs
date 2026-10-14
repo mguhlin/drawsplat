@@ -1,6 +1,6 @@
 // Local media import: browser decoders first, then bundled HEIF/FFmpeg/PDF decoders.
 // A raster poster always accompanies motion media so print never has an empty frame.
-export const MEDIA_ACCEPT = 'image/*,video/*,.tif,.tiff,.heic,.heif,.avif,.psd,.psb,.tga,.dds,.exr,.hdr,.jp2,.j2k,.jxl,.ico,.pcx,.ppm,.pgm,.pbm,.pdf,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp';
+export const MEDIA_ACCEPT = 'image/*,video/*,.tif,.tiff,.heic,.heif,.avif,.psd,.psb,.tga,.dds,.exr,.hdr,.jp2,.j2k,.jxl,.ico,.pcx,.ppm,.pgm,.pbm,.pdf,.ai,.eps,.ps,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp';
 export const readData = blob => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(blob); });
 export const loadScript = (src, global) => window[global] ? Promise.resolve() : new Promise((resolve, reject) => { const el = document.createElement('script'); el.src = src; el.onload = resolve; el.onerror = () => reject(Error('The local decoder could not load.')); document.head.append(el); });
 const extension = file => file.name.split('.').at(-1).toLowerCase();
@@ -89,7 +89,8 @@ export async function importMedia(file, { onStatus = () => {}, signal, choosePag
     try { if (!['mp4', 'webm', 'ogv', 'ogg'].includes(ext)) throw Error('Convert container.'); result = await videoPoster(playable, signal); }
     catch { signal?.throwIfAborted(); playable = await convert(file, true, onStatus, signal); result = await videoPoster(playable, signal); notes.push('Converted locally to MP4/H.264 for wider playback compatibility.'); }
     result.media = { kind: 'video', mime: playable.type, src: await readData(playable), duration: result.duration }; delete result.duration; notes.push('Videos play in HTML. Print, PDF, SVG, and layout exchange use the poster picture.');
-  } else if (ext === 'pdf' || file.type === 'application/pdf') result = await pdfPicture(file, choosePage);
+  } else if (['eps', 'ps'].includes(ext)) { const { convertPostscript } = await import('./postscript.mjs'); result = await raster((await convertPostscript(file, { signal, onStatus })).blob); notes.push('EPS/PostScript rendered locally as a picture. Text, paths, spot colors, and overprint settings are flattened.'); }
+  else if (['pdf', 'ai'].includes(ext) || file.type === 'application/pdf') result = await pdfPicture(file, choosePage);
   else if (['heic', 'heif'].includes(ext)) { onStatus('Decoding HEIC locally…'); result = await heif(file); }
   else if (['psd', 'psb'].includes(ext)) result = await photoshop(file);
   else if (ext === 'svg' || file.type === 'image/svg+xml') { result = await raster(sanitizedSvg(await file.text())); notes.push('SVG placed as a picture. Use Open for editable SVG objects.'); }

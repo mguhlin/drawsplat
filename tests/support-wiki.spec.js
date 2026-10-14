@@ -8,7 +8,7 @@ test('search covers article text, supports deep links and browser history',async
  await expect(page).toHaveURL(/q=bundled\+autofilled/);
  await page.reload();await expect(page.locator('.wiki-results')).toBeVisible();
  await page.getByRole('button',{name:'Back to article'}).click();
- await expect(page.locator('main h1')).toHaveText('DrawSplat Wiki');
+ await expect(page.locator('main h1')).toHaveText('SplatWorks Wiki');
  await page.goBack();await expect(page.locator('.wiki-results')).toBeVisible();
 });
 for(const query of ['NDPA','OAuth','AGPL','native','feedback','retention']){
@@ -173,7 +173,7 @@ test('ecosystem reference covers registry components, categories, and searchable
  const registry=require('../data/drawsplat-tools.json');
  const components=registry.tools.filter(t=>['tool','widget','game','workspace'].includes(t.type));
  await page.goto('/wiki/');
- await expect(page.locator('main')).toContainText('whole DrawSplat ecosystem');
+ await expect(page.locator('main')).toContainText('whole SplatWorks ecosystem');
  await page.locator('main').getByRole('link',{name:'Explore tools, widgets, and features by category'}).click();
  for(const category of registry.categories)await expect(page.locator('main h2').filter({hasText:category.name})).toHaveCount(1);
  for(const component of components){

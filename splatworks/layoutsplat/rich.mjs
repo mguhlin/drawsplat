@@ -1,5 +1,23 @@
 // Rich stories remain text plus validated inline ranges, never imported HTML.
 export function appendRich(element, story, start, end, { first = false, style = story.style } = {}) {
+  if (story.paragraphs?.length) {
+    let offset = start;
+    for (const p of story.paragraphs.filter(p => p.from < end && p.to > start)) {
+      const from = Math.max(start, p.from), to = Math.min(end, p.to);
+      // Paragraph separators are represented by blocks, not an extra empty line.
+      if (from > offset && story.text.slice(offset, from).replace(/\n/g, '')) appendRich(element, { ...story, paragraphs: undefined }, offset, from, { first: first && offset === start, style });
+      const block = document.createElement('div'); block.style.lineHeight = `${p.leading * style.size / story.style.size}pt`; block.style.textAlign = p.align; block.style.minHeight = block.style.lineHeight;
+      // Each paragraph needs its own font strut. Keeping a large headline's font
+      // on later small-print paragraphs can enlarge their line boxes and overflow.
+      const run = (story.marks || []).find(m=>m.from<=from&&m.to>from);
+      if(run?.size)block.style.fontSize=`${run.size * style.size / story.style.size}pt`;
+      if(run?.font)block.style.fontFamily=`"${run.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`;
+      if(run?.bold!==undefined)block.style.fontWeight=run.bold?'bold':'normal';
+      appendRich(block, { ...story, paragraphs: undefined }, from, to, { first: first && from === start, style }); element.append(block); offset = to;
+    }
+    if (offset < end && story.text.slice(offset, end).replace(/\n/g, '')) appendRich(element, { ...story, paragraphs: undefined }, offset, end, { first: false, style });
+    return;
+  }
   const text = story.text.slice(start, end), ranges = (story.marks || []).filter(m => m.from < end && m.to > start);
   const edges = [...new Set([start, end, ...ranges.flatMap(m => [Math.max(start, m.from), Math.min(end, m.to)])])].sort((a, b) => a - b);
   const firstLength = first && style.dropCap ? ([...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text)][0]?.segment.length || 0) : 0;
@@ -11,6 +29,7 @@ export function appendRich(element, story, start, end, { first = false, style = 
     if (attrs.bold !== undefined) span.style.fontWeight = attrs.bold ? 'bold' : 'normal';
     if (attrs.italic !== undefined) span.style.fontStyle = attrs.italic ? 'italic' : 'normal'; if (attrs.underline !== undefined) span.style.textDecoration = attrs.underline ? 'underline' : 'none';
     if (attrs.color) span.style.color = attrs.color; if (attrs.font) span.style.fontFamily = `"${attrs.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`; if (attrs.size) span.style.fontSize = `${attrs.size * style.size / story.style.size}pt`;
+    if (attrs.tracking !== undefined) span.style.letterSpacing = `${attrs.tracking * style.size / story.style.size}pt`;
     if (attrs.link) { span.href = attrs.link; span.rel = 'noopener noreferrer'; }
     if (firstLength && from === start) { span.style.cssFloat = style.direction === 'rtl' ? 'right' : 'left'; span.style.fontSize = `${style.size * style.lineHeight * style.dropCap}pt`; span.style.lineHeight = '0.85'; span.style.marginInlineEnd = '5pt'; }
     element.append(span);

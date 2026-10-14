@@ -53,7 +53,7 @@ test('portable project archives and HTML exports preserve text and embedded pict
   expect(download.suggestedFilename()).toMatch(/\.layoutsplat$/); expect(bytes.subarray(0, 2).toString()).toBe('PK');
   page.on('dialog', d => d.accept()); await page.locator('[data-action=text]').click(); await page.locator('#projectInput').setInputFiles({ name: 'publication.layoutsplat', mimeType: 'application/zip', buffer: bytes });
   await expect.poll(async () => JSON.stringify(await snapshot(page))).toBe(JSON.stringify(before));
-  const htmlDownload = page.waitForEvent('download'); await page.locator('#fileMenu summary').click(); await page.locator('[data-action=html]').click(); const html = await fs.readFile(await (await htmlDownload).path(), 'utf8');
+  const htmlDownload = page.waitForEvent('download'); await page.locator('#fileMenu > summary').click(); await page.locator('#fileExport > summary').click(); await page.locator('[data-action=export-html]').click(); await page.locator('#exportDownload').click(); const html = await fs.readFile(await (await htmlDownload).path(), 'utf8');
   expect(html).toContain('data:image/png;base64,'); expect(html).toContain('مرحباً'); expect(html).not.toContain('<script');
   const viewer = await context.newPage(); await viewer.setContent(html); await expect(viewer.locator('.publication-page')).toHaveCount(2);
   expect(await viewer.locator('.object-image').evaluate(el => el.complete && el.naturalWidth > 0)).toBe(true);
@@ -77,7 +77,7 @@ test('double-click editing, keyboard placement, dragging, resizing and custom gu
 });
 test('design checking finds overflow and small pictures; imported text stays inert', async ({ page }) => {
   await ready(page); await selectStory(page); await page.locator('[data-action=editStory]').click(); const content = '<img src=x onerror=alert(1)>\n' + 'Long text '.repeat(3000); await page.locator('#storyText').fill(content); await page.locator('#applyStory').click();
-  await page.locator('#fileMenu summary').click(); await page.locator('#fileMenu [data-action=check]').click(); await expect(page.locator('.finding.error').first()).toContainText('characters');
+  await page.locator('#fileMenu > summary').click(); await page.locator('#fileMenu [data-action=check]').click(); await expect(page.locator('.finding.error').first()).toContainText('characters');
   expect(await page.locator('#pageSurface .text-content img').count()).toBe(0);
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=', 'base64');
   await page.locator('#pictureInput').setInputFiles({ name: 'tiny.png', mimeType: 'image/png', buffer: png }); await expect(page.locator('.finding.warning').filter({ hasText: 'resolution' })).toBeVisible();
@@ -108,7 +108,7 @@ test('a LayoutSplat archive chosen in ShowSplat opens an isolated LayoutSplat dr
   await page.evaluate(() => localStorage.setItem('layoutsplat.autosave.v1', 'keep-the-original-layout-draft'));
   const show = await context.newPage(); await show.goto('/splatworks/showsplat/'); await expect(show.locator('#slideCanvas')).toBeVisible(); const source = await show.evaluate(() => localStorage.getItem('showsplat.deck.v1'));
   const pending = show.waitForEvent('popup'); await show.locator('#deckFileInput').setInputFiles({ name: 'newsletter.layoutsplat', mimeType: 'application/zip', buffer: bytes }); const target = await pending;
-  await expect.poll(() => target.evaluate(() => !!window.LayoutSplat)).toBe(true); expect(await snapshot(target)).toEqual(before);
+  await target.waitForURL(/\/splatworks\/layoutsplat\//); await expect.poll(() => target.evaluate(() => !!window.LayoutSplat)).toBe(true); expect(await snapshot(target)).toEqual(before);
   expect(await target.evaluate(() => localStorage.getItem('layoutsplat.autosave.v1'))).toBe('keep-the-original-layout-draft'); expect(await show.evaluate(() => localStorage.getItem('showsplat.deck.v1'))).toBe(source);
   await expect(target.locator('#statusText')).toContainText('separate draft');
 });

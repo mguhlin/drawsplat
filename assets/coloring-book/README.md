@@ -1,6 +1,6 @@
 # DrawSplat Coloring Book Assets
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 The curated picker contains **59 pages**: 12 retained JPG illustrations and 47 PNG illustrations generated on September 15 and 17, 2026 using the built-in image_gen tool. New pages are 1024 × 1536 pixels. The existing project CC0 dedication applies to these assets to the extent rights exist.

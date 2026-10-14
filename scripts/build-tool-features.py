@@ -7,7 +7,7 @@ features = json.loads((ROOT/'data/tool-features.json').read_text())
 tools = [t for t in registry['tools'] if t['type'] in ('tool', 'widget', 'game', 'workspace')]
 assert set(features) == {t['id'] for t in tools}, 'Update tool-features.json for registry additions/removals'
 assert all(len(features[t['id']]) >= 3 for t in tools), 'Each component needs at least three features'
-lines = ['# DrawSplat ecosystem: tools, widgets, and features', '',
+lines = ['# SplatWorks ecosystem: tools, widgets, and features', '',
  'DrawSplat is an ecosystem of creative tools, classroom widgets, games, and SplatWorks applications. The whiteboard is one component. Open any linked component directly, or browse [Studio](../studio/index.html).', '',
  'This reference follows the same categories as Studio. Components appear in every category they support. Each entry links to the application and lists its main features. The complete suite installation includes these components; selected tools keep their own saving and integration behavior.', '',
  '[Install the complete ecosystem](district-selfhost.html) · [Download packages](../pages/download.html) · [Whiteboard classroom guide](../guides/project-reference.html)', '',

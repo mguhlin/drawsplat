@@ -1,6 +1,6 @@
-# Maintaining the DrawSplat Wiki
+# Maintaining the SplatWorks Wiki
 
-The [DrawSplat Wiki](https://drawsplat.org/wiki/) is the public current documentation reference. Original guide and policy URLs remain valid and use the shared wiki navigation.
+The [SplatWorks Wiki](https://drawsplat.org/wiki/) is the public current documentation reference. Original guide and policy URLs remain valid and use the shared wiki navigation.
 
 ## Edit the source, then rebuild
 

@@ -1,6 +1,6 @@
 # Browser Publisher decoder
 
-LayoutSplat v0.2 reads Microsoft Publisher files inside a dedicated browser worker.
+LayoutSplat v0.3 reads Microsoft Publisher files inside a dedicated browser worker.
 There is no LibreOffice installation, server process, or external conversion upload.
 The decoder produces bounded drawing events; `publisher.mjs` converts those events
 to the validated publication model. The original PUB bytes remain in the project.
@@ -21,9 +21,16 @@ is provided.
   Their notices are included in this directory. `SHA256.json` pins the distributed
   source archives, worker, Unicode data, and generated decoder artifacts.
 
-The only libmspub source change adds `layoutsplat_pub_encoding()` to the beginning
-of `MSPUBCollector::getCalculatedEncoding()`, allowing the explicit encoding option.
-The build script applies this small patch to the supplied source automatically.
+The build script applies three source changes to the supplied libmspub archive:
+
+- `layoutsplat_pub_encoding()` overrides legacy encoding selection when requested.
+- OfficeArt picture crop properties (0x0100–0x0103, signed 16.16 fractions) are
+  collected and emitted as `layoutsplat:crop-*` attributes for bitmap-filled shapes.
+- Empty complex gradient stop arrays fall back to the recorded endpoint colors.
+
+Both `scripts/build-layoutsplat-publisher.py` and the distributed `build.py` contain
+these patches. The upstream source archives remain unchanged. Crop fields follow
+[Microsoft's OfficeArt format](https://learn.microsoft.com/en-us/openspecs/office_file_formats/ms-odraw/ef3b1918-4b34-45d2-9b3c-ee1776669c49).
 
 ## Rebuild from the repository
 

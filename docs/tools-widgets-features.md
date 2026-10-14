@@ -1,4 +1,4 @@
-# DrawSplat ecosystem: tools, widgets, and features
+# SplatWorks ecosystem: tools, widgets, and features
 
 DrawSplat is an ecosystem of creative tools, classroom widgets, games, and SplatWorks applications. The whiteboard is one component. Open any linked component directly, or browse [Studio](../studio/index.html).
 

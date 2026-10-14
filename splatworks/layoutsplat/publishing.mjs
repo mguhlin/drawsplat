@@ -1,4 +1,4 @@
-import { uid, clone, frame, shape, textStyle, findObject, removeObject, validatePublication } from './engine.mjs';
+import { uid, clone, frame, shape, textStyle, findObject, removeObject, validatePublication, linkFrames, unlinkFrame } from './engine.mjs';
 import { TEMPLATE_TYPES, THEMES, makeTemplate } from './templates.mjs';
 import { textToRichDocument, richDocumentToText } from './rich.mjs';
 import { createRichEditor } from './rich-editor.mjs';
@@ -7,6 +7,8 @@ import { setupExports } from './export-ui.mjs';
 import { setupContextMenu } from './context-menu.mjs';
 import { setupTemplateLibrary } from './template-library.mjs';
 import { setupSuiteImport } from './suite-interchange.mjs';
+import { setupLabelSettings } from './label-settings.mjs';
+import { setupFontTools } from './local-fonts.mjs';
 export function setupPublishing(api) {
   const $ = id => document.getElementById(id), { t, mutate, render, status } = api;
   let editingMasterId = null, selection = new Set(), painter = null, richEditor = null, drawing = false, trace = null;
@@ -15,6 +17,8 @@ export function setupPublishing(api) {
   const context = setupContextMenu({ ...api, members, selectedIds: () => new Set(selection) });
   const library = setupTemplateLibrary(api);
   const suite = setupSuiteImport(api);
+  const labels = setupLabelSettings(api);
+  const fontTools=setupFontTools(api);
   const bounds = () => { const list = members(); if (!list.length) return null; const x = Math.min(...list.map(o => o.x)), y = Math.min(...list.map(o => o.y)); return { x, y, w: Math.max(...list.map(o => o.x + o.w)) - x, h: Math.max(...list.map(o => o.y + o.h)) - y }; };
   function onSelect(id, event = {}) {
     if (!id) { selection.clear(); return null; }
@@ -69,11 +73,14 @@ export function setupPublishing(api) {
     if ($('masterModeNotice')) { $('masterModeNotice').hidden = !editingMasterId; $('masterModeNotice').textContent = editingMasterId ? `${t('editingMaster')} ${p.name}` : ''; }
     const override = $('masterObjectOverride'); if (override) { const old = override.value; override.replaceChildren(new Option(t('chooseMasterObject'), '')); const master = (d.masters || []).find(m => m.id === p.masterId); for (const o of master?.objects || []) override.add(new Option(o.type === 'text' ? d.stories[o.storyId].text.slice(0, 30) : t(o.type === 'image' ? 'picture' : 'rectangle'), o.id)); override.value = old; }
     const o = api.getSelectedObject();
+    document.querySelectorAll('[data-action="labelSettings"]').forEach(b=>b.disabled=!d.labelLayout?.stock);
+    document.querySelectorAll('#fileMenu [data-action="importText"]').forEach(b=>b.disabled=o?.type!=='text'||o.locked);
     if (o?.type === 'text') {
       const s = d.stories[o.storyId].style;
-      const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none' };
+      const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none',propKerning:s.kerning||'auto',propWordSpacing:s.wordSpacing||0,propTextScale:(s.textScale||1)*100 };
       for (const [id, value] of Object.entries(controls)) if ($(id)) $(id).value = value;
       $('propBaselineAlign').checked = !!o.baselineAlign;
+      $('propLigatures').checked=s.ligatures!==false;fontTools.render();
       if ($('autoFitInfo')) $('autoFitInfo').textContent = `${t('fontSize')}: ${api.getLayout().styles.get(o.storyId)?.size ?? s.size}`;
     }
     for (const key of ['bold', 'italic', 'underline']) { const button = document.querySelector(`[data-action="text-${key}"]`); button.disabled = o?.type !== 'text' || o.locked; button.setAttribute('aria-pressed', String(o?.type === 'text' && (key === 'bold' ? d.stories[o.storyId].style.weight === 'bold' : !!d.stories[o.storyId].style[key]))); }
@@ -91,16 +98,18 @@ export function setupPublishing(api) {
     if (template) { const next = makeTemplate(template.dataset.template, $('templateTheme').value); if (confirm(t('replaceConfirm'))) api.replaceDoc(next); $('templateDialog').close(); }
     const rich = event.target.closest('[data-rich]'); if (rich && richEditor) richEditor.toggle(rich.dataset.rich);
   });
-  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value()); mutate(() => Object.assign(getDoc().stories[id], value)); $('richStoryDialog').close(); };
+  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value()); mutate(() => { const story = getDoc().stories[id]; if (story.text !== value.text) delete story.paragraphs; Object.assign(story, value); }); $('richStoryDialog').close(); };
   $('richStoryDialog').addEventListener('close', () => { richEditor?.destroy(); richEditor = null; });
   $('richColor').onchange = () => richEditor?.style({ color: $('richColor').value });
   $('richSize').onchange = () => richEditor?.style({ size: Number($('richSize').value) });
   $('richLink').onclick = () => { const href = prompt(t('linkPrompt'), 'https://'); if (href) try { richEditor.link(href); } catch { status('linkError'); } };
-  const propertyMap = { propDropCap: ['dropCap', true], propAutoFit: ['autoFit', false], propMinSize: ['minSize', true], propTracking: ['tracking', true], propWordArt: ['wordArt', false] };
+  const propertyMap = { propDropCap: ['dropCap', true], propAutoFit: ['autoFit', false], propMinSize: ['minSize', true], propTracking: ['tracking', true], propWordArt: ['wordArt', false],propKerning:['kerning',false],propWordSpacing:['wordSpacing',true],propTextScale:['textScale',true] };
+  $('propLigatures').onchange=e=>{e.stopImmediatePropagation();const o=api.getSelectedObject();if(o?.type==='text'&&!o.locked)mutate(()=>getDoc().stories[o.storyId].style.ligatures=e.target.checked);};
   $('propBaselineAlign').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'text' && !o.locked) mutate(() => o.baselineAlign = event.target.checked); });
   for (const [id, [key, numeric]] of Object.entries(propertyMap)) $(id).addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type !== 'text' || o.locked) return;
     const next = clone(getDoc()); next.stories[o.storyId].style[key] = numeric ? Number(event.target.value) : event.target.value;
-    try { validatePublication(next); mutate(() => getDoc().stories[o.storyId].style[key] = next.stories[o.storyId].style[key]); } catch { status('invalidMeasure'); render(); }
+    if(id==='propTextScale')next.stories[o.storyId].style[key]/=100;
+    try { validatePublication(next); mutate(() => {getDoc().stories[o.storyId].style[key] = next.stories[o.storyId].style[key];if(id==='propTracking')for(const m of getDoc().stories[o.storyId].marks||[])delete m.tracking;}); } catch { status('invalidMeasure'); render(); }
   });
   for (const [id, key] of [['propColumns', 'columns'], ['propColumnGap', 'columnGap']]) $(id).addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type !== 'text' || o.locked) return; const next = clone(getDoc()); findObject(next, o.id).object[key] = Number(event.target.value); try { validatePublication(next); mutate(() => o[key] = Number(event.target.value)); } catch { status('invalidMeasure'); render(); } });
   $('propImageOpacity').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'image' && !o.locked) mutate(() => o.opacity = Number(event.target.value)); });
@@ -124,13 +133,23 @@ export function setupPublishing(api) {
   async function action(name) {
     const d = getDoc(), p = api.currentPage(), o = api.getSelectedObject(), list = members();
     if (await context.action(name)) return true;
+    if(name==='importFont'){fontTools.open();return true;}
+    if (name === 'contextLink') {
+      const boxes = list.filter(o => o.type === 'text').sort((a,b) => a.y - b.y || a.x - b.x);
+      if (boxes.length < 2) return false; // The existing Link action chooses a destination.
+      if (boxes.length !== list.length || boxes.some(o => o.locked)) return true;
+      try { mutate(() => { for (const target of boxes.slice(1)) if (target.storyId !== boxes[0].storyId) linkFrames(d, boxes[0].id, target.id); }); } catch (e) { api.showReport([e.message]); } return true;
+    }
+    if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
     if (name === 'importSuite') { suite.open(); return true; }
-    if (name === 'templateLibrary' || name === 'browseTemplates') { if ($('templateDialog').open) $('templateDialog').close(); library.open(); return true; }
+    if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu'}[name]); return true; }
+    if(name==='labelSettings'){labels.open();return true;}
     if (name === 'publisherSettings') { $('publisherSettingsDialog').showModal(); return true; }
     if (name === 'merge') { merge.open(); return true; }
     if (name === 'exports' || name === 'shareExports') { exports.open(); return true; }
+    if(name.startsWith('export-')){exports.open(name.slice(7));return true;}
     if (name === 'previewMedia' && o?.type === 'image' && d.assets[o.assetId]?.media) { const a = d.assets[o.assetId]; let dialog = $('mediaPreviewDialog'); if (!dialog) { dialog = document.createElement('dialog'); dialog.id = 'mediaPreviewDialog'; document.body.append(dialog); dialog.addEventListener('close', () => { dialog.querySelector('video')?.pause(); dialog.replaceChildren(); }); } const player = document.createElement(a.media.kind === 'video' ? 'video' : 'img'); player.src = a.media.src; player.style.maxWidth = '100%'; player.style.maxHeight = '65vh'; if (a.media.kind === 'video') { player.controls = true; player.poster = a.src; } else player.alt = a.alt || a.name; const close = document.createElement('button'); close.textContent = t('close'); close.onclick = () => dialog.close(); dialog.replaceChildren(player, close); dialog.showModal(); return true; }
-    if (name.startsWith('text-') && ['bold', 'italic', 'underline'].includes(name.slice(5))) { if (o?.type === 'text' && !o.locked) mutate(() => { const key = name.slice(5), s = d.stories[o.storyId].style; if (key === 'bold') s.weight = s.weight === 'bold' ? 'normal' : 'bold'; else s[key] = !s[key]; }); return true; }
+    if (name.startsWith('text-') && ['bold', 'italic', 'underline'].includes(name.slice(5))) { if (o?.type === 'text' && !o.locked) mutate(() => { const key = name.slice(5), s = d.stories[o.storyId].style; if (key === 'bold') s.weight = s.weight === 'bold' ? 'normal' : 'bold'; else s[key] = !s[key]; for (const mark of d.stories[o.storyId].marks || []) delete mark[key]; }); return true; }
     if (editingMasterId && ['addPage', 'deletePage', 'duplicatePage', 'createMaster', 'applyMaster', 'applyMasterAll', 'applyMasterLeft', 'applyMasterRight', 'pageNumbers'].includes(name)) { status('returnToPages'); return true; }
     if (name === 'templates') { renderExtras(); $('templateDialog').showModal(); return true; }
     if (name === 'richStory') { editRichStory(); return true; }

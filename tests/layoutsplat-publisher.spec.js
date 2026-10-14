@@ -14,7 +14,7 @@ test('native Publisher bytes decode entirely in a browser worker, without a desk
 });
 test('native Publisher opening preserves its original bytes and decodes explicit legacy Cyrillic', async ({ page }) => {
   test.setTimeout(120000); await page.goto('/splatworks/layoutsplat/'); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true);
-  page.on('dialog', dialog => dialog.accept()); await page.locator('#fileMenu summary').click(); await page.locator('[data-action=publisherSettings]').click(); await page.locator('#pubEncoding').selectOption('windows-1251'); await page.locator('#publisherSettingsDialog button').click();
+  page.on('dialog', dialog => dialog.accept()); await page.locator('#fileMenu > summary').click(); await page.locator('#fileImport > summary').click(); await page.locator('[data-action=publisherSettings]').click(); await page.locator('#pubEncoding').selectOption('windows-1251'); await page.locator('#publisherSettingsDialog button').click();
   await page.locator('#projectInput').setInputFiles(path.join(__dirname, 'fixtures/layoutsplat/native-publisher.pub'));
   await expect.poll(() => page.evaluate(() => LayoutSplat.getPublication().importedFrom), { timeout: 60000 }).toBe('Microsoft Publisher');
   const doc = await page.evaluate(() => LayoutSplat.getPublication()); expect(doc.pages).toHaveLength(2); expect(Object.values(doc.stories).map(s => s.text).join('')).toContain('Русский текст'); expect(doc.originalPublisher.src).toMatch(/^data:application\/octet-stream;base64,/);

@@ -55,6 +55,7 @@ GRID_ROOT="$STAGE_DIR/splatworks-gridsplat-selfhost-$VERSION_LABEL"
 SHOW_ROOT="$STAGE_DIR/splatworks-showsplat-selfhost-$VERSION_LABEL"
 WRITE_ROOT="$STAGE_DIR/splatworks-writesplat-selfhost-$VERSION_LABEL"
 LIST_ROOT="$STAGE_DIR/splatworks-listsplat-selfhost-$VERSION_LABEL"
+LAYOUT_ROOT="$STAGE_DIR/splatworks-layoutsplat-selfhost-$VERSION_LABEL"
 SPLATWORKS_SUITE_ROOT="$STAGE_DIR/splatworks-suite-selfhost-$VERSION_LABEL"
 TOOLS_ROOT="$STAGE_DIR/drawsplat-tools-selfhost-$VERSION_LABEL"
 WIDGETS_ROOT="$STAGE_DIR/drawsplat-widgets-selfhost-$VERSION_LABEL"
@@ -68,6 +69,7 @@ GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
 SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
 WRITE_OUT_NAME="splatworks-writesplat-selfhost-$VERSION_LABEL.zip"
 LIST_OUT_NAME="splatworks-listsplat-selfhost-$VERSION_LABEL.zip"
+LAYOUT_OUT_NAME="splatworks-layoutsplat-selfhost-$VERSION_LABEL.zip"
 SPLATWORKS_SUITE_OUT_NAME="splatworks-suite-selfhost-$VERSION_LABEL.zip"
 TOOLS_OUT_NAME="drawsplat-tools-selfhost-$VERSION_LABEL.zip"
 WIDGETS_OUT_NAME="drawsplat-widgets-selfhost-$VERSION_LABEL.zip"
@@ -82,6 +84,7 @@ GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
 SHOW_OUT_PATH="$OUT_DIR/$SHOW_OUT_NAME"
 WRITE_OUT_PATH="$OUT_DIR/$WRITE_OUT_NAME"
 LIST_OUT_PATH="$OUT_DIR/$LIST_OUT_NAME"
+LAYOUT_OUT_PATH="$OUT_DIR/$LAYOUT_OUT_NAME"
 SPLATWORKS_SUITE_OUT_PATH="$OUT_DIR/$SPLATWORKS_SUITE_OUT_NAME"
 TOOLS_OUT_PATH="$OUT_DIR/$TOOLS_OUT_NAME"
 WIDGETS_OUT_PATH="$OUT_DIR/$WIDGETS_OUT_NAME"
@@ -92,8 +95,8 @@ MEDIASPLAT_OUT_PATH="$OUT_DIR/$MEDIASPLAT_OUT_NAME"
 PDFSPLAT_OUT_PATH="$OUT_DIR/$PDFSPLAT_OUT_NAME"
 CHECKSUM_OUT_PATH="$OUT_DIR/$CHECKSUM_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$VIDEOSPLAT_OUT_PATH" "$MEDIASPLAT_OUT_PATH" "$PDFSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$LAYOUT_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$LAYOUT_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$VIDEOSPLAT_OUT_PATH" "$MEDIASPLAT_OUT_PATH" "$PDFSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -124,6 +127,7 @@ EXCLUDES=(
   "splatworks-showsplat-selfhost-*.zip"
   "splatworks-writesplat-selfhost-*.zip"
   "splatworks-listsplat-selfhost-*.zip"
+  "splatworks-layoutsplat-selfhost-*.zip"
   "splatworks-suite-selfhost-*.zip"
   "drawsplat-tools-selfhost-*.zip"
   "drawsplat-widgets-selfhost-*.zip"
@@ -529,6 +533,29 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
+# LayoutSplat is also a standalone module; keep its local codecs and shared runtime.
+copy_tree splatworks/layoutsplat "$LAYOUT_ROOT/splatworks/layoutsplat" "${SPLATWORKS_EXCLUDES[@]}"
+copy_tree splatworks/shared "$LAYOUT_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
+copy_tree assets "$LAYOUT_ROOT/assets" "${MODULE_EXCLUDES[@]}"
+copy_tree vendor "$LAYOUT_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/mediasplat/ffmpeg "$LAYOUT_ROOT/solutions/mediasplat/ffmpeg" "${MODULE_EXCLUDES[@]}"
+for guide in layoutsplat.md layoutsplat-labels.md layoutsplat-import-accuracy.md; do
+  copy_file "docs/$guide" "$LAYOUT_ROOT/docs/$guide"
+done
+copy_file wiki/layoutsplat.html "$LAYOUT_ROOT/wiki/layoutsplat.html"
+cat > "$LAYOUT_ROOT/LAYOUTSPLAT-README.txt" <<EOF
+LayoutSplat / SplatWorks standalone publication editor
+Version: $VERSION_LABEL
+Source: $SHORT_SHA
+Extract the entire archive and open START-HERE.html for the local launcher.
+For static hosting, upload the folders unchanged and open /splatworks/layoutsplat/.
+Includes 305 templates, Avery labels/name badges, embedded fonts, Publisher/legacy
+Pages imports, EPS/AI/PDF artwork, file exchange, rich text, merge and print tools.
+Keep shared assets, decoder source/license files, and MediaSplat FFmpeg together.
+Native INDD/QXP and modern Pages IWA require interchange exports.
+See docs/layoutsplat.md and splatworks/layoutsplat/THIRD_PARTY_NOTICES.md.
+EOF
+
 for app_dir in gridsplat showsplat writesplat listsplat layoutsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
@@ -542,6 +569,10 @@ copy_file pages/showsplat.html "$SPLATWORKS_SUITE_ROOT/pages/showsplat.html"
 copy_file pages/writesplat.html "$SPLATWORKS_SUITE_ROOT/pages/writesplat.html"
 copy_file pages/listsplat.html "$SPLATWORKS_SUITE_ROOT/pages/listsplat.html"
 copy_file pages/download.html "$SPLATWORKS_SUITE_ROOT/pages/download.html"
+copy_file wiki/layoutsplat.html "$SPLATWORKS_SUITE_ROOT/wiki/layoutsplat.html"
+for guide in layoutsplat.md layoutsplat-labels.md layoutsplat-import-accuracy.md; do
+  copy_file "docs/$guide" "$SPLATWORKS_SUITE_ROOT/docs/$guide"
+done
 copy_file splatworks/ROADMAP.md "$SPLATWORKS_SUITE_ROOT/splatworks/ROADMAP.md"
 
 cat > "$SPLATWORKS_SUITE_ROOT/SPLATWORKS-SUITE-README.txt" <<EOF
@@ -871,6 +902,7 @@ python3 scripts/add-offline-launcher.py "${GRID_ROOT}" GridSplat "splatworks/gri
 python3 scripts/add-offline-launcher.py "${SHOW_ROOT}" ShowSplat "splatworks/showsplat/"
 python3 scripts/add-offline-launcher.py "${WRITE_ROOT}" WriteSplat "splatworks/writesplat/"
 python3 scripts/add-offline-launcher.py "${LIST_ROOT}" ListSplat "splatworks/listsplat/"
+python3 scripts/add-offline-launcher.py "${LAYOUT_ROOT}" LayoutSplat "splatworks/layoutsplat/"
 python3 scripts/add-offline-launcher.py "${SPLATWORKS_SUITE_ROOT}" SplatWorks "pages/splatworks.html"
 python3 scripts/add-offline-launcher.py "${TOOLS_ROOT}" Tools "pages/tools.html"
 python3 scripts/add-offline-launcher.py "${WIDGETS_ROOT}" Widgets "pages/tools.html#widgets"
@@ -892,6 +924,7 @@ if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$SHOW_OUT_PATH" "splatworks-showsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WRITE_OUT_PATH" "splatworks-writesplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$LIST_OUT_PATH" "splatworks-listsplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$LAYOUT_OUT_PATH" "splatworks-layoutsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$SPLATWORKS_SUITE_OUT_PATH" "splatworks-suite-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$TOOLS_OUT_PATH" "drawsplat-tools-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WIDGETS_OUT_PATH" "drawsplat-widgets-selfhost-$VERSION_LABEL"
@@ -1004,13 +1037,13 @@ from pathlib import Path
 import sys
 version=sys.argv[1]
 packages=sorted(Path('dist').glob(f'*-{version}.zip')) + [Path('solutions/CipherSplat/downloads/CipherSplat-offline.zip')]
-if len(packages)!=15:
-    raise SystemExit(f'Expected 15 ZIP downloads, found {len(packages)}')
+if len(packages)!=16:
+    raise SystemExit(f'Expected 16 ZIP downloads, found {len(packages)}')
 lines=[]
 for package in packages:
     with package.open('rb') as stream:
         digest=hashlib.file_digest(stream,'sha256').hexdigest()
     lines.append(f'{digest}  {package.name}\n')
 Path(f'dist/SHA256SUMS-{version}.txt').write_text(''.join(lines))
-print(f'Portable checksums: dist/SHA256SUMS-{version}.txt (all 15 ZIPs)')
+print(f'Portable checksums: dist/SHA256SUMS-{version}.txt (all 16 ZIPs)')
 PY

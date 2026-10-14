@@ -1,13 +1,14 @@
 import { newPublication, validatePublication, uid, clone, frame, shape, textStyle } from './engine.mjs';
 import { xml, parseXml, color, fontFamily } from './compatibility.mjs';
 import { importMedia } from './media.mjs';
+import { fontName as publicationFontName } from './local-fonts.mjs';
 const NS = 'http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging', header = '<?xml version="1.0" encoding="UTF-8"?>\n';
 const attrs = object => Object.entries(object).map(([key, value]) => `${key}="${xml(value)}"`).join(' ');
 const points = (w, h) => [[0, 0], [w, 0], [w, h], [0, h]];
 const path = (w, h) => `<Properties><PathGeometry><GeometryPathType PathOpen="false"><PathPointArray>${points(w, h).map(([x, y]) => `<PathPointType Anchor="${x} ${y}" LeftDirection="${x} ${y}" RightDirection="${x} ${y}"/>`).join('')}</PathPointArray></GeometryPathType></PathGeometry></Properties>`;
 function runs(story, start = 0, end = story.text.length) {
   const marks = story.marks || [], edges = [...new Set([start, end, ...marks.flatMap(m => [Math.max(start, Math.min(end, m.from)), Math.max(start, Math.min(end, m.to))])])].sort((a, b) => a - b);
-  return edges.slice(0, -1).map((from, i) => { const to = edges[i + 1], style = Object.assign({ bold: story.style.weight === 'bold', italic: !!story.style.italic, underline: !!story.style.underline, font: story.style.font, size: story.style.size, color: story.style.color }, ...marks.filter(m => m.from <= from && m.to >= to)); return { text: story.text.slice(from, to), style }; });
+  return edges.slice(0, -1).map((from, i) => { const to = edges[i + 1], style = Object.assign({ bold: story.style.weight === 'bold', italic: !!story.style.italic, underline: !!story.style.underline, font: story.style.font, size: story.style.size, color: story.style.color, tracking:story.style.tracking||0 }, ...marks.filter(m => m.from <= from && m.to >= to)); return { text: story.text.slice(from, to), style }; });
 }
 function flattened(doc) {
   const d = clone(doc); d.masters = [];
@@ -22,7 +23,7 @@ export async function exportDesktop(kind, doc, layout) {
   const id = new Map(); let count = 1; d.pages.forEach(p => p.objects.forEach(o => id.set(o.id, 'u' + count++))); Object.keys(d.stories).forEach(key => id.set(key, 's' + count++));
   for (const page of d.pages) for (const o of page.objects) {
     if (o.type === 'image') { const a = d.assets[o.assetId], ext = a.src.startsWith('data:image/jpeg') ? 'jpg' : a.src.startsWith('data:image/webp') ? 'webp' : 'png', name = `Links/${o.assetId}.${ext}`; packageZip.file(name, a.src.split(',')[1], { base64: true }); links.set(o.id, { name, width: a.width, height: a.height }); }
-    if (o.type === 'table' || o.type === 'shape' && !['rect', 'ellipse', 'line'].includes(o.kind) || o.type === 'text' && d.stories[o.storyId].style.wordArt && d.stories[o.storyId].style.wordArt !== 'none') {
+    if (o.type === 'image' && (o.crop || o.path) || o.type === 'table' || o.type === 'shape' && (o.gradient || !['rect', 'ellipse', 'line'].includes(o.kind)) || o.type === 'text' && d.stories[o.storyId].style.wordArt && d.stories[o.storyId].style.wordArt !== 'none') {
       const { pageCanvas, canvasBlob } = await import('./exports.mjs'); const canvas = await pageCanvas({ ...d, width: o.w, height: o.h }, { objects: [{ ...o, x: 0, y: 0, rotation: 0 }] }, layout, 300); const name = `Links/${id.get(o.id)}.png`; packageZip.file(name, await canvasBlob(canvas)); links.set(o.id, { name, width: canvas.width, height: canvas.height }); report.push(`${id.get(o.id)}: ${o.type === 'table' ? 'table' : o.type === 'text' ? 'WordArt' : o.kind} converted to a 300 ppi picture.`); canvas.width = canvas.height = 1;
     }
   }
@@ -33,7 +34,7 @@ export async function exportDesktop(kind, doc, layout) {
     const colorId = c => `Color/${c.slice(1)}`; zip.file('Resources/Graphic.xml', wrapper('Graphic', '<Swatch Self="Swatch/None" Name="None"/>' + [...colors].map(c => `<Color Self="${colorId(c)}" Name="${c}" Model="Process" Space="RGB" ColorValue="${[1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)).join(' ')}"/>`).join('')));
     zip.file('Resources/Styles.xml', wrapper('Styles', '<RootCharacterStyleGroup Self="rc"><CharacterStyle Self="CharacterStyle/$ID/[No character style]" Name="$ID/[No character style]"/></RootCharacterStyleGroup><RootParagraphStyleGroup Self="rp"><ParagraphStyle Self="ParagraphStyle/$ID/[No paragraph style]" Name="$ID/[No paragraph style]"/></RootParagraphStyleGroup>'));
     zip.file('Resources/Preferences.xml', wrapper('Preferences', `<DocumentPreference PageWidth="${d.width}" PageHeight="${d.height}" FacingPages="false" PagesPerDocument="${d.pages.length}" DocumentBleedTopOffset="${d.bleed || 0}" DocumentBleedBottomOffset="${d.bleed || 0}" DocumentBleedInsideOrLeftOffset="${d.bleed || 0}" DocumentBleedOutsideOrRightOffset="${d.bleed || 0}"/>`));
-    zip.file('Resources/Fonts.xml', wrapper('Fonts', ['Arial', 'Georgia', 'Verdana'].map(font => `<FontFamily Self="FontFamily/${font}" Name="${font}">${['Regular', 'Bold', 'Italic', 'Bold Italic'].map(style => `<Font Self="Font/${font}-${style.replaceAll(' ', '')}" Name="${font} ${style}" FontFamily="${font}" FontStyleName="${style}" FontType="TrueType"/>`).join('')}</FontFamily>`).join('')));
+    zip.file('Resources/Fonts.xml', wrapper('Fonts', [...new Set(['Arial', 'Georgia', 'Verdana', ...Object.keys(d.customFonts||{}).map(id=>publicationFontName(d,id))])].map(font => `<FontFamily Self="FontFamily/${xml(font)}" Name="${xml(font)}">${['Regular', 'Bold', 'Italic', 'Bold Italic'].map(style => `<Font Self="Font/${xml(font)}-${style.replaceAll(' ', '')}" Name="${xml(font)} ${style}" FontFamily="${xml(font)}" FontStyleName="${style}" FontType="TrueType"/>`).join('')}</FontFamily>`).join('')));
     const usedStories = new Set(); let spreads = '';
     for (let pageIndex = 0; pageIndex < d.pages.length; pageIndex++) {
       const p = d.pages[pageIndex], spreadId = `spread${pageIndex + 1}`; let objects = '';
@@ -52,14 +53,15 @@ export async function exportDesktop(kind, doc, layout) {
     }
     let stories = '';
     for (const key of usedStories) { const s = d.stories[key], style = s.style;
-      const content = runs(s).map(run => `<CharacterStyleRange ${attrs({ AppliedCharacterStyle: 'CharacterStyle/$ID/[No character style]', PointSize: run.style.size, FontStyle: run.style.bold ? run.style.italic ? 'Bold Italic' : 'Bold' : run.style.italic ? 'Italic' : 'Regular', FillColor: colorId(run.style.color), Underline: String(run.style.underline) })}><Properties><AppliedFont type="string">${xml(run.style.font)}</AppliedFont></Properties>${run.text.split('\n').map(xml).join('</Content><Br/><Content>').replace(/^/, '<Content>').replace(/$/, '</Content>')}</CharacterStyleRange>`).join('');
+      const content = runs(s).map(run => `<CharacterStyleRange ${attrs({ AppliedCharacterStyle: 'CharacterStyle/$ID/[No character style]', PointSize: run.style.size, FontStyle: run.style.bold ? run.style.italic ? 'Bold Italic' : 'Bold' : run.style.italic ? 'Italic' : 'Regular', FillColor: colorId(run.style.color), Underline: String(run.style.underline), Tracking: (run.style.tracking??s.style.tracking??0) / run.style.size * 1000, HorizontalScale:(s.style.textScale||1)*100, KerningMethod:s.style.kerning==='none'?'0':'Metrics' })}><Properties><AppliedFont type="string">${xml(publicationFontName(d,run.style.font))}</AppliedFont></Properties>${run.text.split('\n').map(xml).join('</Content><Br/><Content>').replace(/^/, '<Content>').replace(/$/, '</Content>')}</CharacterStyleRange>`).join('');
       zip.file(`Stories/${id.get(key)}.xml`, wrapper('Story', `<Story Self="${id.get(key)}" AppliedTOCStyle="n"><StoryPreference StoryDirection="${style.direction === 'rtl' ? 'RightToLeftDirection' : 'LeftToRightDirection'}"/><ParagraphStyleRange AppliedParagraphStyle="ParagraphStyle/$ID/[No paragraph style]" Justification="${{ left: 'LeftAlign', right: 'RightAlign', center: 'CenterAlign', justify: 'FullyJustified' }[style.align]}" Leading="${style.size * style.lineHeight}">${content}</ParagraphStyleRange></Story>`)); stories += `<idPkg:Story src="Stories/${id.get(key)}.xml"/>`;
     }
     zip.file('designmap.xml', header + `<?aid style="50" type="document" readerVersion="6.0" featureSet="257" product="7.0"?><Document xmlns:idPkg="${NS}" DOMVersion="7.0" Self="d" ActiveLayer="layer1" StoryList="${[...usedStories].map(key => id.get(key)).join(' ')}"><Layer Self="layer1" Name="LayoutSplat" Visible="true" Locked="false" Printable="true"/><idPkg:Graphic src="Resources/Graphic.xml"/><idPkg:Fonts src="Resources/Fonts.xml"/><idPkg:Styles src="Resources/Styles.xml"/><idPkg:Preferences src="Resources/Preferences.xml"/>${spreads}${stories}</Document>`);
     zip.file('LayoutSplat/publication.json', JSON.stringify(doc)); packageZip.file('publication.idml', await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' }));
   } else {
-    const colors = new Set(['#000000']); Object.values(d.stories).forEach(s => { colors.add(s.style.color); (s.marks || []).forEach(m => m.color && colors.add(m.color)); }); d.pages.forEach(p => p.objects.forEach(o => { if (o.fill) colors.add(o.fill); if (o.stroke) colors.add(o.stroke); })); const fontName = s => `${s.font} ${s.bold ? s.italic ? 'Bold Italic' : 'Bold' : s.italic ? 'Italic' : 'Regular'}`;
-    const cstyle = s => attrs({ FONT: fontName(s), FONTSIZE: s.size, FCOLOR: s.color, FEATURES: s.underline ? 'underline' : 'inherit' });
+    const colors = new Set(['#000000']); Object.values(d.stories).forEach(s => { colors.add(s.style.color); (s.marks || []).forEach(m => m.color && colors.add(m.color)); }); d.pages.forEach(p => p.objects.forEach(o => { if (o.fill) colors.add(o.fill); if (o.stroke) colors.add(o.stroke); })); const fontName = s => `${publicationFontName(d,s.font)} ${s.bold ? s.italic ? 'Bold Italic' : 'Bold' : s.italic ? 'Italic' : 'Regular'}`;
+    const cstyle = s => attrs({ FONT: fontName(s), FONTSIZE: s.size, FCOLOR: s.color, KERN: (s.tracking||0) / s.size * 1000, FEATURES: s.underline ? 'underline' : 'inherit' });
+    for(const[id,f]of Object.entries(d.customFonts||{}))packageZip.file(`Document fonts/${id}.${f.format}`,f.src.split(',')[1],{base64:true});
     let body = [...colors].map(c => `<COLOR NAME="${c}" RGB="${c}" Spot="0" Register="0"/>`).join('') + '<LAYERS NUMMER="0" LEVEL="0" NAME="LayoutSplat" SICHTBAR="1" DRUCKEN="1" EDIT="1" FLOW="1" TRANS="1"/>';
     d.pages.forEach((p, i) => {
       const y = i * (d.height + 40); body += `<PAGE ${attrs({ NUM: i, PAGEXPOS: 0, PAGEYPOS: y, PAGEWIDTH: d.width, PAGEHEIGHT: d.height, BORDERLEFT: d.margin, BORDERRIGHT: d.margin, BORDERTOP: d.margin, BORDERBOTTOM: d.margin, NAM: '', MNAM: '' })}/>`;
@@ -77,6 +79,7 @@ export async function exportDesktop(kind, doc, layout) {
     });
     packageZip.file('publication.sla', header + `<SCRIBUSUTF8NEW Version="1.5.8"><DOCUMENT ${attrs({ ANZPAGES: d.pages.length, PAGEWIDTH: d.width, PAGEHEIGHT: d.height, BORDERLEFT: d.margin, BORDERRIGHT: d.margin, BORDERTOP: d.margin, BORDERBOTTOM: d.margin, FIRSTNUM: 1, BOOK: 0, UNITS: 2, DFONT: 'Arial Regular', DSIZE: 12, TITLE: d.title, BleedTop: d.bleed || 0, BleedLeft: d.bleed || 0, BleedRight: d.bleed || 0, BleedBottom: d.bleed || 0 })}>${body}</DOCUMENT></SCRIBUSUTF8NEW>`);
   }
+  if(kind==='idml')for(const[id,f]of Object.entries(d.customFonts||{}))packageZip.file(`Document fonts/${id}.${f.format}`,f.src.split(',')[1],{base64:true});
   packageZip.file('publication.layoutsplat.json', JSON.stringify(doc, null, 2)); packageZip.file('CONVERSION-REPORT.txt', report.join('\n')); return { blob: await packageZip.generateAsync({ type: 'blob', compression: 'DEFLATE' }), extension: `.${kind}-package.zip` };
 }
 export async function readZip(file) { const zip = await JSZip.loadAsync(file); let size = 0; if (Object.keys(zip.files).length > 5000) throw Error('Too many archive entries.'); for (const item of Object.values(zip.files)) { size += item._data?.uncompressedSize || 0; if (size > 256000000 || /(^|\/)\.\.(\/|$)/.test(item.name)) throw Error('Archive is too large or has unsafe paths.'); } return zip; }

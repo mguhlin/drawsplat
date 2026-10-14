@@ -1,6 +1,6 @@
 # DrawSplat&trade; Compliance &mdash; Operations Guide
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Operator-facing technical notes for the **Apps Script** Compliance Console. Its Drive/Sheets controls do not automatically manage district MariaDB/MySQL private boards or classroom records. Use the [current console guide](../guides/compliance-guide.html) and [district review reference](../wiki/compliance.html) for workflow and scope. Roadmaps describe historical development, not the authoritative current setup.

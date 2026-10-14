@@ -1,6 +1,6 @@
 # DrawSplat&trade; — Setup
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 DrawSplat is an ecosystem of standalone tools, widgets, games, SplatWorks, and the whiteboard. [Explore features by category](../wiki/tools-widgets-features.html). The complete district installation deploys the suite; the browser-only, Apps Script, and separate MySQL guides below describe particular usage or saving paths. Components keep their own storage and optional integrations.

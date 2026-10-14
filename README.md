@@ -1,8 +1,8 @@
 # DrawSplatTM
 
-**LayoutSplat v0.2.1:** [Open the publication editor](https://drawsplat.org/splatworks/layoutsplat/) · [Feature and file guide](https://drawsplat.org/wiki/layoutsplat.html) · [Release progress](splatworks/layoutsplat/PROGRESS.md). Adds 270 original templates, experimental native Publisher import inside the browser without LibreOffice, JSON/SVG/IDML/SLA exchange, SplatWorks content import/export, rich formatting and bold/italic/underline, masters, tables/groups, context imports, broad local media decoding, Excel/CSV merge, image/PDF/HTML exports, sharing, and Pack and Go. File also offers Clear saved browser data to remove the workspace draft and recovery and start blank. Conversion and print limits are documented in the guide; [further milestones](splatworks/ROADMAP.md) remain.
+**LayoutSplat v0.3.0:** [Open the publication editor](https://splatworks.org/splatworks/layoutsplat/) · [Feature guide](https://splatworks.org/wiki/layoutsplat.html) · [Roadmap and progress](splatworks/layoutsplat/PROGRESS.md). Includes 305 editable designs, 29 Avery sheet layouts covering 127 product codes, name badges, descriptive business cards and distinct menus, the official SplatWorks logo, organized File/Templates/Import/Export menus, contextual text-box linking, embedded local fonts and kerning/spacing controls, improved native browser Publisher import, legacy Pages, PDF-compatible Illustrator and EPS artwork. Native INDD/QXP and modern Pages IWA remain unsupported. Rebuilt v3.1.35 downloads add a standalone LayoutSplat package and include all five apps in the suite. DrawSplat whiteboard/tools keep their names; database/service identifiers and existing school rosters are unchanged.
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 **Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).
 
@@ -24,7 +24,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 
 ## Current district setup and support
 
-The [DrawSplat Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. Install the complete district suite from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
+The [SplatWorks Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. Install the complete district suite from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
 
 ## Getting started
 

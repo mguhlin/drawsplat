@@ -1,6 +1,6 @@
 # Local subtitle generation
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Shared browser-only subtitle generator used by VideoSplat, MediaSplat, and AudioSplat.

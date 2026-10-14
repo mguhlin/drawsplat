@@ -1,6 +1,6 @@
 # CipherSplat™ v1.0.2
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 CipherSplat™ v1.0.2 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.

@@ -1,158 +1,144 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat v0.2 is the SplatWorks publication editor. [Open LayoutSplat](../splatworks/layoutsplat/).
-Create flyers, brochures, newsletters, business cards, catalogs, greeting cards,
-labels, posters, menus, invitations, certificates, and other publications locally
-in your browser. The interface shares the suite's Apps launcher and original six
-language choices.
+LayoutSplat **v0.3.0** is the SplatWorks publication editor.
+[Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
+Create precise publications locally in your browser. The original six-language
+picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
+and its existing tools; SplatWorks is the ecosystem brand.
 
-## Start with a template
+## Templates
 
-Choose **Template library** in the top menu. Browse 270 original editable designs:
-18 industries × 15 publication types. Filter by industry, type, orientation, or
-search; choose the publication language and palette. **Download this collection**
-saves the filtered templates as JSON files in a ZIP. Extract it before opening an
-individual template. The seven quick-start categories remain under File → Templates.
+Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,
+business cards, or menus. There is one template library, with **305 editable designs**
+and six publication-language editions. Filter by industry, publication type,
+orientation, palette, or search. Descriptive card titles identify the design;
+industry remains a filter. Download a filtered collection as JSON files in a ZIP.
 
-These are independently created designs. They do not contain StockLayouts files,
-artwork, or copy. Replace the sample text, merge placeholders, and picture frames
-with your own material. A local illustration fills picture placeholders.
+The library includes **42 menu presets across 12 composition families**, including
+café, fine dining, diner, bistro, pizza, bakery, tapas, Asian, coastal, farm, buffet,
+and hotel layouts. Business cards have six compositions and replaceable logo
+examples. Other publications also include appropriate branding examples. The
+SplatWorks example logo can be replaced from its picture context menu.
+These are original templates, without StockLayouts artwork or copy.
 
-## Edit and arrange
+**29 Avery sheet geometries cover 127 product codes**, including US Letter and A4,
+address/shipping/return labels, file-folder labels, and insert/adhesive name badges.
+Search a product number; label cards lead with Avery stock numbers rather than
+industries. **File → Label sheet & printer alignment** adjusts horizontal/vertical
+printer offsets and the first unused label. Merge fills remaining slots and then
+new sheets. Print at actual size, without browser headers/footers or scaling.
+[Stock list and measurements](layoutsplat-labels.md).
 
-Use rulers in inches, centimeters, picas, points, or pixels. **File → Page layout** offers
-custom dimensions, margins, columns, rows, baseline guides, ruler origins, bleed,
-safe insets, guide locking, and facing-page preview. Unit and zoom changes preserve
-the publication's physical measurements.
+## Page layout, objects, and text
 
-Text stories flow through linked frames. Select a frame to change font, size,
-color, bold, italic, underline, alignment, direction, tracking, columns, drop caps,
-AutoFit, and WordArt effects. The rich editor applies formatting to selections.
-AutoFit can shrink to a minimum size; Grow overflowing frame is an explicit action.
-Continue on next page adds another linked frame. Picture wrapping is rectangular;
-drop caps are suppressed in wrapped frames and the checker explains that limit.
+**File → Page layout** controls page size, margins, columns, rows, baseline guides,
+ruler origins, bleed, safe insets, and facing pages. Rulers support inches,
+centimeters, picas, points, and pixels. Units/zoom do not change physical geometry.
+Preview, Print / Save as PDF, and Design checker are also grouped under File.
 
-Shift-click for multiple selection; group, align, distribute, resize, rotate, lock,
-or change stacking. **Shapes** opens one picker for rectangles, ellipses, lines,
-hexagons, triangles, arrows, stars, hearts, callouts, border art, and custom paths.
-More tools includes tables, drawing, watermarks, and a format painter. Each layer
-has a transparency slider: 0% is opaque and 100% is transparent. The selected
-object also has a transparency control in Properties; locked layers cannot change.
-**Preview** and **Design checker** are under File. Masters hold reusable background objects and
-support page assignments, left/right variants, editing, and local hidden-object
-overrides. Creating a master moves the chosen objects into it.
+Text flows through linked boxes. Shift-select two or more boxes, right-click,
+and choose **Link text boxes**. Unlink splits the chain while retaining text and
+formatting. A single-box link action lets you choose a target. Continue on next
+page adds another frame. Supported rich text includes bold, italic, underline,
+columns, drop caps, AutoFit, alignment/direction, WordArt, and format painting.
 
-## Right-click imports
+Properties offer **serif/sans-serif selection, font metrics kerning or no kerning,
+letter spacing (tracking), word spacing, horizontal text scale, ligatures, and
+line spacing**. **File → Import → Fonts** accepts local TTF, OTF, WOFF, and WOFF2.
+Imported fonts are embedded in native saves and portable HTML, and included in
+Pack and Go. Limits: 16 MB per font, 16 fonts and 64 MB total. Import fonts you
+are entitled to use. Exact fonts improve metrics, but paragraph composition and
+unsupported effects can still differ between programs.
 
-Right-click an object for actions relevant to it. Mac Control-click or Command-click
-and Shift+F10 also open the menu. Text frames offer import, append, paste, rich
-editing, and continuation. Pictures offer replacement, crop, watermark, and motion
-preview. Replacing content preserves the existing frame's size, position, and rotation.
+**Shapes** contains rectangles, ellipses, lines, hexagons, arrows, custom paths,
+and other shapes. Group, align, distribute, rotate, lock, and reorder objects.
+Layers have transparency sliders: 0% opaque to 100% transparent. Tables, drawing,
+watermarks, border art, and masters provide reusable publication elements.
+Picture wrapping is rectangular; wrapped drop caps remain a checker limitation.
 
-Text imports support TXT, Markdown, CSV/TSV text, HTML text, DOCX, ODT, and WriteSplat
-JSON. Word imports retain supported direct character formatting; page layout,
-pictures, headers, and document tables are not placed through this text-frame action.
+Right-click, Mac Control/Command-click, or Shift+F10 opens contextual actions.
+Import/append text into a text box or replace media in a picture box while keeping
+its geometry. Text imports support TXT, Markdown, CSV/TSV, HTML text, DOCX, ODT,
+and WriteSplat JSON; document tables and page layouts are not placed through this
+text-box action.
 
-## Open Publisher and other layout files
+## Open versus Import
 
-Choose **File → Open project** for `.pub`, `.layoutsplat`, `.layoutsplat.json`, SVG,
-IDML, Scribus SLA, interchange ZIPs, LayoutSplat HTML, or PDF.
+**File → Open LayoutSplat project** restores this editor's native JSON, `.layoutsplat`
+ZIP, or exported HTML with its native payload. **File → Import** offers alphabetically
+named source formats and converts them into LayoutSplat objects or page artwork.
+Native JSON is the lossless format; other applications use different document models.
 
-Microsoft Publisher decoding runs inside a bundled WebAssembly worker. It does
-**not require LibreOffice**, a desktop helper, or a conversion service. Supported
-text, graphics, and embedded pictures become editable objects; the original PUB
-is retained with the project. This import is experimental: review fonts, older
-encodings, effects, fields, and linked text against the source. If old text is
-garbled, choose its encoding under **File → Publisher import settings** and reopen.
-There is no native PUB export. Files are limited to 32 MB and decoding times out
-after 45 seconds; Cancel terminates the decoder.
+| Source | Import behavior |
+| --- | --- |
+| Microsoft Publisher `.pub` | Browser WebAssembly decoder; supported editable text, shapes, bitmap fills, crops, gradients, and embedded pictures; retains source bytes |
+| Apple Pages `.pages` | Legacy ZIP/XML documents are parsed locally with text, geometry, paths, styles, and embedded pictures; modern IWA documents require another export |
+| Adobe Illustrator `.ai` | PDF-compatible files become high-resolution page artwork; supported PostScript artwork uses the local converter |
+| PDF | All supported pages become correctly sized high-resolution artwork, with noneditable text |
+| EPS / PostScript | Local Ghostscript WebAssembly produces first-page flattened artwork; no desktop installation |
+| SVG | Supported editable objects; complex effects may need flattening |
+| InDesign IDML / Scribus SLA | Editable supported subsets and linked assets in packages; external application validation remains |
+| Native InDesign INDD/INDT / Quark QXP/QXD | Native decoding unavailable; use IDML (InDesign), SVG, or PDF. Import errors preserve the current project |
+| SplatWorks content | WriteSplat stories, ShowSplat pages, GridSplat/ListSplat tables from their native JSON |
 
-JSON is the lossless native exchange format. SVG, IDML, and SLA support a useful
-subset of external documents. LayoutSplat's own interchange exports include a
-native payload for faithful reopening. IDML/SLA packages include links and a
-conversion report; sophisticated effects may be flattened. Target InDesign/Scribus
-application fidelity has not been certified. Keep originals and compare conversions.
-PDF imports place a selected page as a picture, with non-editable text.
+Publisher conversion does **not require LibreOffice**, a server, or uploads.
+File → Import → Publisher import settings handles legacy encodings. Input is bounded
+to 32 MB, with a 45-second timeout and worker cancellation. No native PUB writer.
+Preserved crops, paragraph leading/alignment, bitmap fills, and text scaling improve
+accuracy. Compare source fonts, composition, and unsupported effects before printing.
+[Accuracy findings and remaining work](layoutsplat-import-accuracy.md).
 
-## Images and video
+## Images, video, and suite exchange
 
-Browser image formats, TIFF, HEIC/HEIF, and Photoshop composite previews have local
-decoding paths. Additional image/container formats are attempted through the
-bundled FFmpeg converter. Support depends on the actual codec and file variant;
-the file picker is broader than a guarantee that every variant will decode.
-Layered, multi-page, HDR, and color-profile content can be flattened.
+Local decoding covers common browser images, TIFF, HEIC/HEIF, PSD composites,
+and supported EPS/PS. Other image/video containers are attempted through bundled
+FFmpeg; actual codec and file variant determine support. Layered, multipage, HDR,
+and color-profile material may be flattened. Media input is bounded to 96 MB;
+raster pictures to 40 megapixels. Videos retain a print poster and can play in HTML.
 
-MP4/WebM and supported browser videos play locally. Containers such as AVI and MOV
-can be converted to MP4/H.264 when supported. Video and animation retain a picture
-poster for print/PDF and play in interactive HTML. File imports are limited to
-96 MB; raster pictures to 40 megapixels. Import failures preserve the publication.
+File → Import → SplatWorks content places native WriteSplat, ShowSplat, GridSplat,
+and ListSplat content. File → Export offers those four apps' native JSON. Text stories,
+slides, and tables are converted; formulas, charts, relationships, and all cell
+styles are not reconstructed. The conversion report describes omissions.
+Opening another app's JSON through ordinary project handoff opens that app in an
+isolated draft. Saving the LayoutSplat original remains the lossless backup.
 
-## Exchange SplatWorks content
+## Merge, saving, and output
 
-Use **File → Import SplatWorks content** to place native WriteSplat, ShowSplat,
-GridSplat, or ListSplat JSON content in a LayoutSplat publication. Ordinary Open
-still routes another app's JSON file to that app in an isolated draft.
+Mail merge reads local CSV, TSV, and XLSX worksheets. Map fields, filter, preview,
+and check records before generation. Labels span sheets and skip used positions.
+Recipient source tables are not saved in generated templates. Batches are bounded.
 
-WriteSplat imports become linked text frames with supported character formatting.
-ShowSplat imports become publication pages. Spreadsheet/database values become
-editable tables split across pages with repeated headers. Charts, database
-relationships, cell styles, and formulas are not evaluated or reconstructed.
+Save produces a portable `.layoutsplat` ZIP. **File → Export** offers native JSON,
+fixed-page HTML, an HTML reading edition, PDF proofs, high-resolution PNG/JPEG,
+SVG, IDML, Scribus SLA, suite content, and Pack and Go. Visual exports support
+page ranges; native and interchange projects contain the publication.
 
-Export & share offers native JSON for the same four apps. WriteSplat receives
-complete text stories; ShowSplat receives editable slide elements; GridSplat and
-ListSplat receive publication tables. The included conversion warnings explain
-omitted content. These formats serve different document models and are not a
-lossless substitute for saving the original LayoutSplat project.
+**Print / Save as PDF** preserves browser-shaped selectable text and vectors.
+The downloadable PDF proof is flattened. Print preparation includes bleed, crop
+marks, trim boxes, ICC output intents, and 150/300/600 ppi image output. Pack and Go
+collects the project, media, fonts, HTML editions, proof, checker findings, and
+printer instructions. Its optional Ghostscript helper offers PDF/X-3 conversion
+with structural checks; exhaustive PDF/X certification and printer acceptance
+remain separate validation work.
 
-## Mail merge
+**File → Clear saved browser data** clears this workspace's draft/recovery and undo,
+then reloads a blank publication. Cancel preserves the current work. Other apps'
+drafts and downloaded projects remain available. Browser drafts are specific to
+browser/device/domain: save a project before moving from DrawSplat.org to SplatWorks.org.
 
-Choose local CSV, TSV, or XLSX data, select a worksheet, map headers to `{{fields}}`,
-filter records, and preview. Check every record before generating publications.
-Labels fill consecutive slots across sheets. Generated publications contain the
-personalized values; the recipient source table is not saved with the template.
-Generation supports up to 500 pages per batch.
+## Installation and roadmap
 
-## Save, print, export, and share
+Serve over HTTP(S), including the supplied loopback launcher for offline use;
+direct `file://` opening is unsupported. Bundled fonts and decoder workers run locally.
+Keep shared assets and the MediaSplat FFmpeg runtime with the app. The current
+release packages include a standalone LayoutSplat ZIP, the five-app SplatWorks
+suite, and the complete district installation. [Downloads](../pages/download.html).
 
-Save creates a portable `.layoutsplat` ZIP; Export & share → LayoutSplat JSON makes
-an explicit editable JSON file. Both preserve stories, masters, assets, and rich
-formatting. Browser autosave and previous-draft recovery remain device/browser/domain
-specific. Download backups regularly, especially before moving to SplatWorks.org.
-
-**File → Clear saved browser data** removes this LayoutSplat workspace's draft and
-recovery copy, clears the current publication and undo history, and reloads into a
-blank publication. Cancel keeps the work. Downloaded files and other apps' drafts
-are preserved. The blank starting state persists until you begin editing again.
-Each domain has its own browser storage; clearing DrawSplat.org does not clear
-SplatWorks.org. In an isolated imported tab, the action clears that tab's workspace.
-
-Print / Save as PDF preserves browser-shaped selectable text and vectors. The
-dedicated downloadable PDF is a high-resolution flattened proof. PNG/JPEG offer
-150/300/600 ppi; PDF proofs can include bleed, crop marks, trim boxes, and an ICC
-output intent. Page ranges apply to visual exports; native project and desktop or
-SplatWorks interchange exports contain the full publication.
-
-HTML exports include fixed-layout media and a separate reading edition. Shared
-files are prepared before a second Share click invokes device sharing. Unsupported
-devices download the file. Email preview prepares a draft; attach the downloaded
-file yourself. Nothing is sent automatically.
-
-Pack and Go gathers JSON, HTML, a reading edition, PDF proof, pictures, motion media,
-bundled licensed fonts, printer specifications, and checker findings. Its optional
-Ghostscript helper converts a proof with a printer-supplied CMYK profile and checks
-PDF/X-3 structure independently. Neither an ICC output intent nor these structural
-checks constitutes exhaustive PDF/X certification; obtain printer approval.
-
-## Deployment and remaining work
-
-Serve the repository over HTTP(S); `file://` is unsupported. Runtime fonts, media
-decoders, and the Publisher worker are bundled locally. Publisher/media codecs
-download only when used. Updated source suite packages must include the shared
-MediaSplat FFmpeg runtime. Previously published download ZIPs retain their contents
-until rebuilt; the live application and GitHub source receive this update first.
-
-The [progress log](../splatworks/layoutsplat/PROGRESS.md) and
-[approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) track further
-wrapping/typography fidelity, external interchange validation, larger-document
-performance, stronger print preflight, and refreshed district release packaging.
-[Bundled-library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).
+Milestones 1–2 are implemented; the core tools in 3–4 are implemented, with further
+composition fidelity and direct suite data-source integration remaining. Milestone 5
+has print preparation and packaging, with stronger preflight, exhaustive PDF/X,
+large-document optimization, and external application validation still remaining.
+[Progress](../splatworks/layoutsplat/PROGRESS.md) ·
+[Approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) ·
+[Library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).

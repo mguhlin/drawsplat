@@ -1,6 +1,6 @@
 # QRSplat Studio
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 QRSplat creates standard QR codes entirely in the browser. No account, upload, analytics, or remote API is required. Designs saved with **Save design locally** use this browser's `localStorage` only. Wi-Fi passwords are deliberately excluded from saved designs.

@@ -1,6 +1,6 @@
 # VideoSplat™
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Latest packaged release: **v3.1.31**. The ZIPs include current labelled controls and October 9 creative-tool updates alongside the existing acceleration and recording fixes. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)

@@ -16,9 +16,17 @@ export function objectElement(doc, object, layout) {
       const body = document.createElement('div'); body.className = 'text-content'; Object.assign(body.style, { position: 'absolute', left: pt(column.x), top: pt(column.y), width: pt(column.w), height: pt(column.h) });
       const columnStyle = column.noDropCap ? { ...(column.style || style), dropCap: 0 } : column.style || style;
       applyTextStyle(body, columnStyle); appendRich(body, story, column.start, column.end, { first: column.start === 0, style: columnStyle }); el.append(body);
+      if (columnStyle.textScale && columnStyle.textScale !== 1) { body.style.width = pt(column.w / columnStyle.textScale); body.style.transform = `scaleX(${columnStyle.textScale})`; body.style.transformOrigin = '0 0'; }
     }
   } else if (object.type === 'image') {
-    const image = document.createElement('img'); image.className = 'object-image'; image.src = doc.assets[object.assetId].src; image.alt = doc.assets[object.assetId].alt || doc.assets[object.assetId].name; image.draggable = false; image.style.objectFit = object.fit; el.append(image);
+    const image = document.createElement('img'); image.className = 'object-image'; image.src = doc.assets[object.assetId].src; image.alt = doc.assets[object.assetId].alt || doc.assets[object.assetId].name; image.draggable = false; image.style.objectFit = object.fit === 'stretch' ? 'fill' : object.fit; el.append(image);
+    if (object.crop) { const c = object.crop; el.style.overflow = 'hidden'; Object.assign(image.style, { position: 'absolute', left: `${c.x * 100}%`, top: `${c.y * 100}%`, width: `${c.w * 100}%`, height: `${c.h * 100}%`, objectFit: 'fill' }); }
+    if (object.path && object.pathViewBox && !doc.assets[object.assetId].media) {
+      // Inline SVG keeps the crop and arbitrary mask in browser print and raster exports.
+      const [x,y,w,h]=object.pathViewBox,id=`clip-${crypto.randomUUID()}`,svg=document.createElementNS('http://www.w3.org/2000/svg','svg'),defs=document.createElementNS(svg.namespaceURI,'defs'),clip=document.createElementNS(svg.namespaceURI,'clipPath'),path=document.createElementNS(svg.namespaceURI,'path'),picture=document.createElementNS(svg.namespaceURI,'image'),c=object.crop||{x:0,y:0,w:1,h:1};
+      svg.setAttribute('viewBox',`0 0 ${object.w} ${object.h}`);svg.setAttribute('preserveAspectRatio','none');svg.classList.add('object-image');svg.setAttribute('role','img');svg.setAttribute('aria-label',image.alt);clip.id=id;path.setAttribute('d',object.path);path.setAttribute('transform',`scale(${object.w/w} ${object.h/h}) translate(${-x} ${-y})`);clip.append(path);defs.append(clip);svg.append(defs);
+      for(const [key,value]of Object.entries({href:image.src,x:c.x*object.w,y:c.y*object.h,width:c.w*object.w,height:c.h*object.h,preserveAspectRatio:object.fit==='stretch'||object.crop?'none':object.fit==='cover'?'xMidYMid slice':'xMidYMid meet','clip-path':`url(#${id})`}))picture.setAttribute(key,value);svg.append(picture);el.replaceChildren(svg);
+    }
   } else if (object.type === 'table') {
     const table = document.createElement('table'); table.className = 'object-table'; table.style.fontSize = pt(object.fontSize); table.style.direction = object.direction || 'ltr';
     object.cells.forEach((row, index) => { const tr = document.createElement('tr'); row.forEach(value => { const cell = document.createElement(object.header && !index ? 'th' : 'td'); cell.textContent = value; if (cell.tagName === 'TH') cell.scope = 'col'; tr.append(cell); }); table.append(tr); }); el.style.overflow = 'hidden'; el.append(table);
@@ -32,6 +40,9 @@ export function objectElement(doc, object, layout) {
     const inset = object.strokeWidth / 2;
     const attrs = object.kind === 'ellipse' ? { cx: object.w / 2, cy: object.h / 2, rx: Math.max(0, object.w / 2 - inset), ry: Math.max(0, object.h / 2 - inset) } : object.kind === 'line' ? { x1: 0, y1: object.h / 2, x2: object.w, y2: object.h / 2 } : { x: inset, y: inset, width: Math.max(0, object.w - object.strokeWidth), height: Math.max(0, object.h - object.strokeWidth) };
     Object.entries(attrs).forEach(([k, v]) => item.setAttribute(k, v)); item.setAttribute('fill', object.noFill ? 'none' : object.fill); item.setAttribute('stroke', object.stroke); item.setAttribute('stroke-width', object.kind === 'line' ? Math.max(1, object.strokeWidth) : object.strokeWidth); svg.append(item); el.append(svg);
+    if (object.gradient && !object.noFill) { const g = object.gradient, defs = document.createElementNS(svg.namespaceURI, 'defs'), gradient = document.createElementNS(svg.namespaceURI, g.type === 'radial' ? 'radialGradient' : 'linearGradient'), id = `gradient-${crypto.randomUUID()}`; gradient.id = id;
+      if (g.type === 'linear') { const angle = g.angle * Math.PI / 180, x = Math.cos(angle) / 2, y = Math.sin(angle) / 2; for (const [key, value] of Object.entries({ x1: .5 - x, y1: .5 - y, x2: .5 + x, y2: .5 + y })) gradient.setAttribute(key, value); }
+      for (const s of g.stops) { const stop = document.createElementNS(svg.namespaceURI, 'stop'); stop.setAttribute('offset', s.offset); stop.setAttribute('stop-color', s.color); stop.setAttribute('stop-opacity', s.opacity); gradient.append(stop); } defs.append(gradient); svg.prepend(defs); item.setAttribute('fill', `url(#${id})`); }
     if (path) item.setAttribute('d', path);
     if (object.kind === 'border') {
       item.setAttribute('fill', 'none'); item.setAttribute('stroke-width', '2');

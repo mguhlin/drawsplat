@@ -1,6 +1,6 @@
 # DrawSplat&trade; — Google Apps Script Setup
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Use this when you want **Google Drive + Sheets** as the backend. You get cloud saves, shared collaboration rooms, templates, student turn-ins, the full Compliance Console (Activity Records, Safety Review, Age Band Lock, Family Access Tools, Retention, Time Limits, District Privacy Packet), and the Parent Request Center.

@@ -5,7 +5,7 @@ import { validatePublication } from './engine.mjs';
 import { parseDelimited, substituteStory, generateMerge } from './merge.mjs';
 import { makeTemplate } from './templates.mjs';
 test('every original template and its six language editions has a valid editable model', () => {
-  assert.equal(TEMPLATE_CATALOG.length, 270);
+  assert.equal(TEMPLATE_CATALOG.length, 305);
   for (const entry of TEMPLATE_CATALOG) for (const language of ['en', 'es', 'vi', 'ar', 'zh', 'uh']) {
     const doc = validatePublication(catalogPublication(entry.id, { language })); assert.equal(doc.templateId, entry.id); assert.ok(doc.pages.length); assert.ok(Object.keys(doc.stories).length);
     if (language === 'ar') assert.ok(Object.values(doc.stories).every(story => story.style.direction === 'rtl'));

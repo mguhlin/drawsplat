@@ -1,6 +1,6 @@
 # MariaDB and district classrooms
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 MariaDB and MySQL use the same DrawSplat API. For district administrators, start with the [district installation guide](district-selfhost.html), including Bash/BAT launchers, first-run web database setup, CSV rosters, and Google sign-in. The [local MariaDB guide](mariadb-local.md) describes the development service.

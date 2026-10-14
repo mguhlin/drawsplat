@@ -1,6 +1,6 @@
 # Super Star Trek - Browser Edition
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 A browser-playable version of the classic command-driven **Super Star Trek** game. Open `index.html` in a browser to play.

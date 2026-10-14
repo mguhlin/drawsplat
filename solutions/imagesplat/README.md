@@ -1,6 +1,6 @@
 # ImageSplat
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.31**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).

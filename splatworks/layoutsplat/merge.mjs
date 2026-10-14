@@ -22,7 +22,7 @@ export function substituteStory(story, record, mapping = {}) {
   let text = '', old = 0;
   for (const r of replacements) { text += story.text.slice(old, r.from) + String(r.value); old = r.to; } text += story.text.slice(old);
   const position = (offset, end = false) => { let shift = 0; for (const r of replacements) { if (offset <= r.from) break; if (offset < r.to) return r.from + shift + (end ? String(r.value).length : 0); shift += String(r.value).length - (r.to - r.from); } return offset + shift; };
-  return { ...clone(story), text, marks: (story.marks || []).map(mark => ({ ...mark, from: position(mark.from), to: position(mark.to, true) })).filter(mark => mark.to > mark.from) };
+  return { ...clone(story), text, marks: (story.marks || []).map(mark => ({ ...mark, from: position(mark.from), to: position(mark.to, true) })).filter(mark => mark.to > mark.from), ...(story.paragraphs ? { paragraphs: story.paragraphs.map(p => ({ ...p, from: position(p.from), to: position(p.to, true) })).filter(p => p.to > p.from) } : {}) };
 }
 export function previewRecord(doc, record, mapping = {}) {
   const copy = clone(doc); for (const [id, story] of Object.entries(copy.stories)) copy.stories[id] = substituteStory(story, record, mapping); return copy;
@@ -40,11 +40,16 @@ export function generateMerge(doc, records, mapping = {}) {
   if (doc.labelLayout) {
     const source = doc.pages[0], slots = source.objects.filter(o => o.labelSlot !== undefined).sort((a, b) => a.labelSlot - b.labelSlot);
     if (!slots.length) throw Error('Label template has no slots.');
-    for (let start = 0; start < records.length; start += slots.length) {
+    const skip = Number.isInteger(doc.labelLayout.startAt) ? doc.labelLayout.startAt : 0; if (skip < 0 || skip >= slots.length) throw Error('First unused label is outside this sheet.');
+    if(Math.ceil((records.length+skip)/slots.length)>500)throw Error('Generate at most 500 label sheets per batch.');
+    let cursor=0, firstSheet=true;
+    while(cursor<records.length) {
       const p = { id: uid(), objects: [], masterId: null, masterOverrides: [] };
-      slots.forEach((slot, index) => { if (!records[start + index]) return; const o = clone(slot); o.id = uid(); const id = uid(); o.storyId = id; result.stories[id] = { ...substituteStory(doc.stories[slot.storyId], records[start + index], mapping), frames: [o.id] }; p.objects.push(o); });
+      slots.forEach((slot, index) => { if(firstSheet&&index<skip||cursor>=records.length)return;const record=records[cursor++],o = clone(slot); o.id = uid(); const id = uid(); o.storyId = id; result.stories[id] = { ...substituteStory(doc.stories[slot.storyId], record, mapping), frames: [o.id] }; p.objects.push(o); });
       result.pages.push(p);
+      firstSheet=false;
     }
+    result.labelLayout.startAt=0;
   } else {
     if (doc.pages.length * records.length > 500) throw Error('Generate at most 500 pages per batch.');
     for (const record of records) {

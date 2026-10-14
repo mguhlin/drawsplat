@@ -9,6 +9,9 @@ import { importSvg, importFabric } from './compatibility.mjs';
 import { readZip, importIdml, importSla } from './desktop-formats.mjs';
 import { portableHtml } from './fonts.mjs';
 import { importPublisher } from './publisher.mjs';
+import { importPages } from './pages-import.mjs';
+import { importArtwork } from './artwork-import.mjs';
+import { loadProjectFonts } from './local-fonts.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
@@ -175,9 +178,10 @@ function continueStory() {
   });
 }
 async function rasterSample(publication) {
-  for (const asset of Object.values(publication.assets)) if (asset.src === 'sample-art.svg') {
-    const image = new Image(); image.src = 'sample-art.svg'; await image.decode();
-    const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; canvas.getContext('2d').drawImage(image, 0, 0); asset.src = canvas.toDataURL('image/png');
+  await loadProjectFonts(publication);
+  for (const asset of Object.values(publication.assets)) if (['sample-art.svg', 'splatworks-logo.png'].includes(asset.src)) {
+    const image = new Image(); image.src = asset.src; await image.decode();
+    const scale = asset.brandExample ? Math.min(1, 160 / Math.max(image.naturalWidth, image.naturalHeight)) : 1, canvas = document.createElement('canvas'); canvas.width = Math.round(image.naturalWidth * scale); canvas.height = Math.round(image.naturalHeight * scale); canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height); asset.width = canvas.width; asset.height = canvas.height; asset.src = canvas.toDataURL('image/png');
   }
 }
 function download(blob, extension) {
@@ -185,7 +189,7 @@ function download(blob, extension) {
 }
 async function saveProject() {
   try {
-    const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(doc, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose Export & share → Pack and Go.\n');
+    const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(doc, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose File → Export → Pack and Go.\n');
     const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }); download(blob, '.layoutsplat'); status('savedProject');
   } catch { status('saveFailed'); }
 }
@@ -194,6 +198,10 @@ async function parseProject(file, options = {}) {
   let text;
   let result, warnings = [];
   if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value }));
+  else if (/\.pages$/i.test(file.name)) ({ doc: result, warnings } = await importPages(file, options));
+  else if (/\.(ai|pdf|eps|ps)$/i.test(file.name)) ({ doc: result, warnings } = await importArtwork(file, options));
+  else if (/\.(indd|indt)$/i.test(file.name)) throw Error('Native InDesign INDD/INDT decoding is not available in LayoutSplat. Export IDML and package its linked images for editable import, or export PDF for page appearance. This document has not replaced your current publication.');
+  else if (/\.(qxp|qxd|qxt)$/i.test(file.name)) throw Error('Native QuarkXPress decoding is not available in LayoutSplat. Export PDF for page appearance or SVG for editable supported objects. Keep companion images with any interchange package. This document has not replaced your current publication.');
   else if (/\.(layoutsplat|idml|zip)$/i.test(file.name)) {
     const zip = await readZip(file), entry = zip.file('publication.json') || zip.file('publication.layoutsplat.json') || zip.file('LayoutSplat/publication.json');
     if (entry) { if (entry._data?.uncompressedSize > 256000000) throw new Error('archive'); result = validatePublication(JSON.parse(await entry.async('string'))); }
@@ -202,22 +210,20 @@ async function parseProject(file, options = {}) {
   } else if (/\.svg$/i.test(file.name)) ({ doc: result, warnings } = importSvg(await file.text()));
   else if (/\.html?$/i.test(file.name)) { const html = new DOMParser().parseFromString(await file.text(), 'text/html'), payload = html.querySelector('template#layoutsplat-document')?.content.textContent; if (!payload) throw Error('Open a LayoutSplat HTML publication, or import another program through SVG, IDML, SLA, or PDF.'); result = validatePublication(JSON.parse(payload)); }
   else if (/\.sla$/i.test(file.name)) ({ doc: result, warnings } = await importSla(await file.text()));
-  else if (/\.pdf$/i.test(file.name)) {
-    const asset = await importMedia(file); result = newPublication(true); const id = uid(); result.assets[id] = asset; result.width = Math.max(72, Math.min(2000, asset.width * 72 / 300)); result.height = Math.max(72, Math.min(2000, asset.height * 72 / 300)); result.margin = Math.min(36, Math.min(result.width, result.height) / 8); result.pages[0].objects.push({ id: uid(), type: 'image', assetId: id, x: 0, y: 0, w: result.width, h: result.height, rotation: 0, fit: 'contain', locked: false }); warnings = asset.notes || []; delete asset.notes;
-  } else { text = await file.text(); if (text.length > 256000000) throw new Error('size'); const data = JSON.parse(text); if (Array.isArray(data.objects) && data.app !== 'LayoutSplat') ({ doc: result, warnings } = importFabric(data)); else result = validatePublication(data); }
+  else { text = await file.text(); if (text.length > 256000000) throw new Error('size'); const data = JSON.parse(text); if (Array.isArray(data.objects) && data.app !== 'LayoutSplat') ({ doc: result, warnings } = importFabric(data)); else result = validatePublication(data); }
   await rasterSample(result); return { doc: result, warnings };
 }
 async function openProject(file, transferred = false) {
-  const controller = new AbortController(), publisher = /\.pub$/i.test(file.name);
+  const controller = new AbortController(), publisher = /\.(pub|pages|ai|pdf|eps|ps)$/i.test(file.name);
   try {
-    if (!transferred && !/\.(layoutsplat|pub|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
-    if (publisher) { $('mediaProgress').textContent = t('publisherDecoding'); $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
+    if (!transferred && !/\.(layoutsplat|pub|pages|ai|eps|ps|indd|indt|qxp|qxd|qxt|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
+    if (publisher) { $('mediaProgress').textContent = /\.pub$/i.test(file.name) ? t('publisherDecoding') : 'Importing layout locally…'; $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
     const imported = await parseProject(file, { signal: controller.signal, onProgress: text => $('mediaProgress').textContent = text }), next = imported.doc;
     if (publisher) $('mediaImportDialog').close();
     if (!transferred && !confirm(t('replaceConfirm'))) return;
     checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); status(transferred ? 'isolatedDraft' : 'opened');
     if (imported.warnings.length) showImportReport(imported.warnings);
-  } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); if (publisher && !controller.signal.aborted) showImportReport([t('mediaImportError'), error.message]); }
+  } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); if (!controller.signal.aborted) showImportReport([t('mediaImportError'), error.message]); }
   finally { if (publisher) $('mediaImportDialog').close(); }
 }
 async function importPicture(file, replaceId = null) {
@@ -253,11 +259,12 @@ function openSetup() {
 }
 async function action(name) {
   const o = selectedObject();
+  if(name.startsWith('importFile-')){const kind=name.slice(11),formats={ai:'.ai',indesign:'.idml,.zip,.indd,.indt',pages:'.pages',eps:'.eps,.ps',pub:'.pub',pdf:'.pdf',quark:'.qxp,.qxd,.qxt',scribus:'.sla,.zip',svg:'.svg'};if(kind==='media')$('pictureInput').click();else{$('projectInput').accept=formats[kind]||'.layoutsplat,.json';$('projectInput').click();}return;}
   if (await publishing?.action(name)) { document.querySelectorAll('.more-tools[open]').forEach(menu => menu.open = false); return; }
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
     case 'save': await saveProject(); break;
-    case 'open': $('projectInput').click(); break;
+    case 'open': $('projectInput').accept='.layoutsplat,.json,.zip,.html,.htm';$('projectInput').click(); break;
     case 'clearBrowser': {
       if (!confirm(t('clearBrowserConfirm'))) break;
       try { const storage = workspaceStorage(); storage.setItem(START_BLANK, '1'); storage.removeItem(STORE); storage.removeItem(BACKUP); clearTimeout(saveTimer); unsaved = false; lastSaved = null; undoStack = []; redoStack = []; location.reload(); }
@@ -280,7 +287,7 @@ async function action(name) {
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#7c3aed', name)); break;
     case 'editStory': editStory(); break;
     case 'continue': continueStory(); break;
-    case 'link': if (o?.type === 'text') { linking = linking ? null : o.id; render(); } break;
+    case 'contextLink': case 'link': if (o?.type === 'text' && !o.locked) { linking = linking ? null : o.id; render(); } break;
     case 'addPage': if (doc.pages.length >= 500) status('pageLimit'); else mutate(() => { doc.pages.push({ id: uid(), objects: [] }); activePage = doc.pages.length - 1; selected = null; }); break;
     case 'duplicatePage': duplicatePage(); break;
     case 'deletePage': if (doc.pages.length > 1 && confirm(t('deletePageConfirm'))) mutate(() => { [...page().objects].forEach(object => removeObject(doc, object.id)); doc.pages.splice(activePage, 1); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; }); break;
@@ -366,7 +373,7 @@ $('objectProperties').addEventListener('change', event => {
   if (id === 'propFontSize' || id === 'propLineHeight') { value = Number(value); if (!Number.isFinite(value) || value < (id === 'propFontSize' ? 6 : 1) || value > (id === 'propFontSize' ? 120 : 3)) { status('invalidMeasure'); renderProperties(); return; } }
   mutate(() => {
     if (geometry[id]) { if (publishing?.members().length > 1) publishing.transformSelection(geometry[id], value); else o[geometry[id]] = value; }
-    else if (styles[id] && o.type === 'text') doc.stories[o.storyId].style[styles[id]] = value;
+    else if (styles[id] && o.type === 'text') {const story=doc.stories[o.storyId];story.style[styles[id]] = value;if(id==='propFont')for(const mark of story.marks||[])delete mark.font;if(id==='propLineHeight')delete story.paragraphs;}
     else if (id === 'propBold') doc.stories[o.storyId].style.weight = event.target.checked ? 'bold' : 'normal';
     else if (id === 'propLocked') (publishing?.members() || [o]).forEach(member => member.locked = event.target.checked);
     else if (id === 'propFill') { o.fill = value; o.stroke = value; }
@@ -374,7 +381,7 @@ $('objectProperties').addEventListener('change', event => {
     else if (id === 'propFit') o.fit = value;
   });
 });
-$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) mutate(() => { const s = doc.stories[id]; if (s.text !== $('storyText').value) s.marks = []; s.text = $('storyText').value; }); $('storyDialog').close(); });
+$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) mutate(() => { const s = doc.stories[id]; if (s.text !== $('storyText').value) { s.marks = []; delete s.paragraphs; } s.text = $('storyText').value; }); $('storyDialog').close(); });
 $('applySetup').addEventListener('click', () => {
   const next = clone(doc), dims = $('paperSize').value === 'custom' ? [Number($('customPageW').value), Number($('customPageH').value)] : [...PAPER[$('paperSize').value]]; if ($('paperSize').value !== 'custom' && $('landscape').checked) dims.reverse(); [next.width, next.height] = dims;
   next.bleed = Number($('pageBleed').value); next.safeArea = Number($('pageSafe').value); next.facingPages = $('facingPages').checked; next.rulerOrigin = { x: Number($('rulerOriginX').value), y: Number($('rulerOriginY').value) }; next.guides.locked = $('lockGuides').checked; next.guides.showHorizontal = $('showRulerH').checked; next.guides.showVertical = $('showRulerV').checked;
@@ -421,7 +428,7 @@ async function boot() {
     try { doc = validatePublication(JSON.parse(workspaceStorage().getItem(BACKUP))); loaded = true; lastStatus = 'recovered'; } catch { doc = newPublication(); loaded = true; lastStatus = 'storageUnavailable'; }
   }
   installPublishingUI();
-  $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.html,.htm,.pub';
+  $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.html,.htm,.pub,.pages,.ai,.eps,.ps,.indd,.indt,.qxp,.qxd,.qxt';
   document.body.insertAdjacentHTML('beforeend', '<input id="videoInput" type="file" accept="video/*,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp" hidden><dialog id="mediaImportDialog"><p id="mediaProgress" role="status"></p><button type="button" id="mediaCancel" data-i18n="cancel">Cancel</button></dialog><dialog id="importReportDialog"><form method="dialog"><h2 data-i18n="conversionReport">Import / conversion report</h2><p id="importReportText" style="white-space:pre-wrap"></p><button data-i18n="close">Close</button></form></dialog>');
   $('videoInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
   $('mediaImportDialog').addEventListener('cancel', event => { event.preventDefault(); $('mediaCancel').click(); });
@@ -449,6 +456,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.2.1', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.3.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

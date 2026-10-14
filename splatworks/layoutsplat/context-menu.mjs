@@ -7,10 +7,10 @@ export function setupContextMenu(api) {
   function close() { menu.hidden = true; }
   function open(x, y, objectId) {
     if (document.querySelector('dialog[open]')) return;
-    if (objectId && !api.selectedIds().has(objectId)) api.select(objectId);
+    if (objectId) api.select(objectId); // Preserve multi-selection while targeting the clicked member.
     const o = api.getSelectedObject(), locked = o?.locked; menu.replaceChildren();
     const button = (action, key, disabled = false) => { const el = document.createElement('button'); el.type = 'button'; el.role = 'menuitem'; el.dataset.action = action; el.textContent = t(key); el.disabled = disabled; menu.append(el); };
-    if (o?.type === 'text') { button('richStory', 'richText', locked); button('importText', 'importText', locked); button('appendText', 'appendText', locked); button('pasteText', 'pasteText', locked); button('continue', 'continueStory', locked); }
+    if (o?.type === 'text') { button('richStory', 'richText', locked); button('contextLink', 'linkTextBoxes', locked || api.members().some(m => m.locked || m.type !== 'text') || api.members().length > 1 && new Set(api.members().map(m => m.storyId)).size === 1); if (api.getDoc().stories[o.storyId].frames.length > 1) button('unlinkTextBoxes', 'unlinkTextBoxes', locked); button('importText', 'importText', locked); button('appendText', 'appendText', locked); button('pasteText', 'pasteText', locked); button('continue', 'continueStory', locked); }
     if (o?.type === 'image') { button('replaceMedia', api.getDoc().assets[o.assetId].media?.kind === 'video' ? 'replaceVideo' : 'replacePicture', locked); if (api.getDoc().assets[o.assetId].media) button('previewMedia', 'previewMedia'); button('watermark', 'watermark', locked); button('cropImage', 'applyCrop', locked); }
     if (o?.type === 'table') button('table', 'editTable', locked);
     if (o) { button('copyObject', 'copyObject'); button('duplicateObject', 'duplicate', locked); button('contextLock', locked ? 'unlockObject' : 'lockObject'); button('front', 'bringFront', locked); button('back', 'sendBack', locked); button('group', 'group', locked || api.members().length < 2); button('ungroup', 'ungroup', locked || !o.groupIds?.length); button('deleteObject', 'delete', locked); }
@@ -29,7 +29,7 @@ export function setupContextMenu(api) {
     const file = event.target.files[0], objectId = event.target.dataset.objectId, append = event.target.dataset.append === 'true'; event.target.value = ''; if (!file) return;
     try { const imported = await importText(file), o = findObject(api.getDoc(), objectId)?.object; if (!o || o.type !== 'text' || o.locked) return; const story = api.getDoc().stories[o.storyId], offset = append ? story.text.length + (story.text ? 1 : 0) : 0;
       if (offset + imported.text.length > 100000) throw Error(t('textImportError'));
-      api.mutate(() => { if (append) { story.text += (story.text ? '\n' : '') + imported.text; story.marks = [...(story.marks || []), ...imported.marks.map(m => ({ ...m, from: m.from + offset, to: m.to + offset }))]; } else { story.text = imported.text; story.marks = imported.marks; } }); if (imported.notes.length) api.showReport(imported.notes);
+      api.mutate(() => { delete story.paragraphs; if (append) { story.text += (story.text ? '\n' : '') + imported.text; story.marks = [...(story.marks || []), ...imported.marks.map(m => ({ ...m, from: m.from + offset, to: m.to + offset }))]; } else { story.text = imported.text; story.marks = imported.marks; } }); if (imported.notes.length) api.showReport(imported.notes);
     } catch (error) { api.showReport([t('textImportError'), error?.message || String(error)]); }
   };
   $('replaceMediaInput').accept = api.mediaAccept;
@@ -39,7 +39,7 @@ export function setupContextMenu(api) {
     if (name === 'importText' || name === 'appendText') { if (o?.type === 'text' && !o.locked) { $('textImportInput').dataset.objectId = o.id; $('textImportInput').dataset.append = String(name === 'appendText'); $('textImportInput').click(); } return true; }
     if (name === 'replaceMedia') { if (o?.type === 'image' && !o.locked) { $('replaceMediaInput').dataset.objectId = o.id; $('replaceMediaInput').click(); } return true; }
     if (name === 'contextLock') { if (o) { const locked = !o.locked; api.mutate(() => api.members().forEach(item => item.locked = locked)); } return true; }
-    if (name === 'pasteText') { if (o?.type === 'text' && !o.locked) try { const text = await navigator.clipboard.readText(); if (text.length > 100000) throw Error(t('textImportError')); api.mutate(() => { d.stories[o.storyId].text = text; d.stories[o.storyId].marks = []; }); } catch { api.showReport([t('clipboardHint')]); } return true; }
+    if (name === 'pasteText') { if (o?.type === 'text' && !o.locked) try { const text = await navigator.clipboard.readText(); if (text.length > 100000) throw Error(t('textImportError')); api.mutate(() => { d.stories[o.storyId].text = text; d.stories[o.storyId].marks = []; delete d.stories[o.storyId].paragraphs; }); } catch { api.showReport([t('clipboardHint')]); } return true; }
     if (name === 'copyObject') { copied = { objects: clone(api.members()), stories: {}, assets: {} }; copied.objects.forEach(o => { if (o.type === 'text') copied.stories[o.storyId] = clone(d.stories[o.storyId]); if (o.type === 'image') copied.assets[o.assetId] = clone(d.assets[o.assetId]); }); return true; }
     if (name === 'pasteObject') { if (copied && api.currentPage().objects.length + copied.objects.length <= 200) api.mutate(() => { const stories = new Map(), assets = new Map(), groups = new Map(); for (const original of copied.objects) { const o = clone(original); o.id = uid(); o.x += 12; o.y += 12; o.locked = false;
       if (o.type === 'text') { const old = o.storyId; if (!stories.has(old)) { const id = uid(); stories.set(old, id); d.stories[id] = { ...clone(copied.stories[old]), frames: [] }; } o.storyId = stories.get(old); d.stories[o.storyId].frames.push(o.id); }

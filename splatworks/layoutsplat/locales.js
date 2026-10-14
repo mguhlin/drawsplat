@@ -4,6 +4,9 @@
 skip|Skip to publication|Ir a la publicación|Đến ấn phẩm|انتقل إلى المنشور|跳到出版物|प्रकाशन पर जाएँ
 publishingRelease|Publishing tools|Herramientas de publicación|Công cụ xuất bản|أدوات النشر|出版工具|प्रकाशन उपकरण
 shapes|Shapes|Formas|Hình dạng|أشكال|形状|आकृतियाँ
+linkTextBoxes|Link text boxes|Vincular cuadros de texto|Liên kết hộp văn bản|ربط مربعات النص|链接文本框|टेक्स्ट बॉक्स लिंक करें
+unlinkTextBoxes|Unlink text box|Desvincular cuadro de texto|Bỏ liên kết hộp văn bản|فك ربط مربع النص|取消文本框链接|टेक्स्ट बॉक्स अलग करें
+stretchPicture|Stretch to frame|Estirar al marco|Kéo giãn theo khung|تمديد إلى الإطار|拉伸填充框架|फ़्रेम में फैलाएँ
 hexagon|Hexagon|Hexágono|Lục giác|سداسي|六边形|षट्भुज
 transparency|Transparency|Transparencia|Độ trong suốt|الشفافية|透明度|पारदर्शिता
 layerTransparency|Transparency: {name}|Transparencia: {name}|Độ trong suốt: {name}|الشفافية: {name}|透明度：{name}|पारदर्शिता: {name}
@@ -11,7 +14,7 @@ clearBrowser|Clear saved browser data|Borrar datos del navegador|Xóa dữ liệ
 clearBrowserConfirm|Clear this LayoutSplat workspace's saved draft, recovery copy, and current publication? Save a project file first if needed. This starts a blank publication; other apps and downloaded files are kept.|¿Borrar el borrador, la recuperación y la publicación actual de LayoutSplat? Guarda un archivo si lo necesitas. Se inicia una publicación vacía; se conservan otras apps y descargas.|Xóa bản nháp, bản khôi phục và ấn phẩm hiện tại của LayoutSplat? Lưu tệp dự án trước nếu cần. Bắt đầu ấn phẩm trống; giữ ứng dụng khác và tệp đã tải.|مسح مسودة LayoutSplat ونسخة الاستعادة والمنشور الحالي؟ احفظ ملفاً أولاً عند الحاجة. يبدأ منشور فارغ وتبقى التطبيقات الأخرى والملفات المنزلة.|清除当前 LayoutSplat 工作区的草稿、恢复副本和出版物？如需保留，请先保存项目文件。将打开空白出版物，其他应用和下载文件保留。|इस LayoutSplat कार्यक्षेत्र का ड्राफ़्ट, रिकवरी और वर्तमान प्रकाशन मिटाएँ? आवश्यकता हो तो पहले प्रोजेक्ट सहेजें। खाली प्रकाशन खुलेगा; अन्य ऐप और डाउनलोड सुरक्षित रहेंगे।
 browserCleared|Saved draft and recovery cleared. Start a new publication.|Borrador y recuperación borrados. Inicia una publicación.|Đã xóa bản nháp và khôi phục. Tạo ấn phẩm mới.|تم مسح المسودة والاستعادة. ابدأ منشوراً جديداً.|已清除草稿和恢复副本。开始新出版物。|ड्राफ़्ट और रिकवरी मिट गए। नया प्रकाशन शुरू करें।
 templateLibrary|Template library|Biblioteca de plantillas|Thư viện mẫu|مكتبة القوالب|模板库|टेम्पलेट लाइब्रेरी
-originalTemplates|270 original editable designs: 18 industries and 15 publication types.|270 diseños originales editables: 18 sectores y 15 tipos.|270 mẫu gốc có thể sửa: 18 ngành và 15 loại ấn phẩm.|270 تصميماً أصلياً قابلاً للتحرير: 18 مجالاً و15 نوع منشور.|270 个原创可编辑设计：18 个行业和 15 种出版物类型。|270 मूल संपादन योग्य डिज़ाइन: 18 उद्योग और 15 प्रकाशन प्रकार।
+originalTemplates|Original editable designs with descriptive titles. Filter by industry or search Avery product numbers.|Diseños editables con títulos descriptivos. Filtra por sector o busca números Avery.|Mẫu chỉnh sửa với tên mô tả. Lọc ngành hoặc tìm mã Avery.|تصاميم قابلة للتحرير بأسماء وصفية. رشّح حسب المجال أو ابحث برقم Avery.|可编辑设计，标题说明样式。按行业筛选或搜索 Avery 产品编号。|वर्णनात्मक नामों वाले संपादन योग्य डिज़ाइन। उद्योग फ़िल्टर या Avery नंबर खोजें।
 searchTemplates|Search templates|Buscar plantillas|Tìm mẫu|البحث في القوالب|搜索模板|टेम्पलेट खोजें
 publicationType|Publication type|Tipo de publicación|Loại ấn phẩm|نوع المنشور|出版物类型|प्रकाशन प्रकार
 industry|Industry|Sector|Ngành|المجال|行业|उद्योग
@@ -174,8 +177,8 @@ helpEdit|Select an object, drag it, or use the corner handle to resize it. Arrow
 helpLink|To link text, select a frame, choose Link frames, then select another frame. Continue on next page adds a connected frame for you.|Selecciona un marco, pulsa Enlazar marcos y selecciona otro. Continuar añade un marco en la página siguiente.|Chọn khung, nhấn Liên kết khung, rồi chọn khung khác. Tiếp tục thêm khung ở trang sau.|حدد إطاراً واختر ربط الإطارات ثم حدد إطاراً آخر. المتابعة تضيف إطاراً في الصفحة التالية.|选择文本框，点击链接文本框，再选择另一个。继续到下一页会添加链接框。|फ़्रेम चुनें, फ़्रेम जोड़ें दबाएँ, फिर दूसरा फ़्रेम चुनें। अगले पृष्ठ पर जारी रखें नया जुड़ा फ़्रेम जोड़ता है।
 helpRulers|Drag from either ruler to add a guide. Double-click a custom guide to remove it. Units and zoom change the view, not the document.|Arrastra desde una regla para añadir una guía. Doble clic en una guía propia para eliminarla. Unidades y zoom solo cambian la vista.|Kéo từ thước để thêm đường gióng. Nhấp đúp đường tùy chỉnh để xóa. Đơn vị và thu phóng chỉ đổi cách xem.|اسحب من المسطرة لإضافة دليل. انقر الدليل المخصص مرتين لحذفه. الوحدات والتكبير يغيران العرض فقط.|从标尺拖动添加参考线。双击自定义参考线将其删除。单位和缩放仅改变视图。|रूलर से खींचकर गाइड जोड़ें। अपना गाइड हटाने के लिए दो बार क्लिक करें। इकाइयाँ और ज़ूम केवल दृश्य बदलते हैं।
 helpPrint|Print / Save as PDF opens your browser's print dialog. Choose Save as PDF, actual size, zero margins, and no headers or footers. Preview and print use the same pages.|Imprimir abre el diálogo del navegador. Elige Guardar PDF, tamaño real, márgenes cero y sin encabezados ni pies. Vista previa e impresión usan las mismas páginas.|In mở hộp thoại trình duyệt. Chọn lưu PDF, kích thước thực, lề bằng không, không đầu/chân trang. Xem trước và in dùng cùng trang.|الطباعة تفتح حوار المتصفح. اختر حفظ PDF والحجم الفعلي وهوامش صفر وبدون ترويسات. المعاينة والطباعة تستخدمان الصفحات نفسها.|打印会打开浏览器对话框。选择保存 PDF、实际大小、零边距，并关闭页眉页脚。预览和打印使用相同页面。|प्रिंट ब्राउज़र का संवाद खोलता है। PDF, वास्तविक आकार, शून्य हाशिए और बिना शीर्ष/पाद लेख चुनें। पूर्वावलोकन और प्रिंट समान पृष्ठ उपयोग करते हैं।
-helpScope|Use templates, rich text, masters, mail merge, media imports, and Export & share. Review conversion reports before printing.|Usa plantillas, texto enriquecido, maestras, combinación, medios y exportación. Revisa los informes antes de imprimir.|Dùng mẫu, văn bản phong phú, trang chủ, trộn thư, media và xuất. Xem báo cáo trước khi in.|استخدم القوالب والنص المنسق والرئيسية والدمج والوسائط والتصدير. راجع التقارير قبل الطباعة.|使用模板、富文本、母版、邮件合并、媒体和导出。打印前请检查报告。|टेम्पलेट, रिच टेक्स्ट, मास्टर, मेल मर्ज, मीडिया और निर्यात उपयोग करें। प्रिंट से पहले रिपोर्ट देखें।
-helpSave|Work is saved in this browser when storage is available. Download a project to keep a portable copy. Fonts follow those installed on the computer.|El trabajo se guarda en este navegador si hay almacenamiento. Descarga una copia portátil. Se usan las fuentes instaladas en el equipo.|Công việc được lưu trong trình duyệt khi có bộ nhớ. Tải dự án để giữ bản di động. Phông chữ theo máy tính.|يُحفظ العمل في المتصفح عند توفر التخزين. نزّل المشروع لنسخة محمولة. الخطوط تعتمد على المثبت في الجهاز.|存储可用时，工作保存在本浏览器中。下载项目以保留可携带副本。字体取决于电脑安装情况。|स्टोरेज उपलब्ध होने पर कार्य इस ब्राउज़र में सहेजा जाता है। पोर्टेबल प्रतिलिपि के लिए प्रोजेक्ट डाउनलोड करें। फ़ॉन्ट कंप्यूटर पर स्थापित फ़ॉन्ट का उपयोग करते हैं।
+helpScope|Use templates, rich text, masters, mail merge, media imports, and File → Export. Review conversion reports before printing.|Usa plantillas, texto enriquecido, maestras, combinación, medios y exportación. Revisa los informes antes de imprimir.|Dùng mẫu, văn bản phong phú, trang chủ, trộn thư, media và xuất. Xem báo cáo trước khi in.|استخدم القوالب والنص المنسق والرئيسية والدمج والوسائط والتصدير. راجع التقارير قبل الطباعة.|使用模板、富文本、母版、邮件合并、媒体和导出。打印前请检查报告。|टेम्पलेट, रिच टेक्स्ट, मास्टर, मेल मर्ज, मीडिया और निर्यात उपयोग करें। प्रिंट से पहले रिपोर्ट देखें।
+helpSave|Work is saved in this browser when storage is available. Download a project to keep a portable copy. Bundled and imported fonts travel with saved projects.|El trabajo se guarda en este navegador si hay almacenamiento. Descarga una copia portátil. Se usan las fuentes instaladas en el equipo.|Công việc được lưu trong trình duyệt khi có bộ nhớ. Tải dự án để giữ bản di động. Phông chữ theo máy tính.|يُحفظ العمل في المتصفح عند توفر التخزين. نزّل المشروع لنسخة محمولة. الخطوط تعتمد على المثبت في الجهاز.|存储可用时，工作保存在本浏览器中。下载项目以保留可携带副本。字体取决于电脑安装情况。|स्टोरेज उपलब्ध होने पर कार्य इस ब्राउज़र में सहेजा जाता है। पोर्टेबल प्रतिलिपि के लिए प्रोजेक्ट डाउनलोड करें। फ़ॉन्ट कंप्यूटर पर स्थापित फ़ॉन्ट का उपयोग करते हैं।
 close|Close|Cerrar|Đóng|إغلاق|关闭|बंद करें
 pageNumber|Page {page} of {total}|Página {page} de {total}|Trang {page} / {total}|الصفحة {page} من {total}|第 {page} 页，共 {total} 页|पृष्ठ {page} / {total}
 savedLocal|Saved in this browser|Guardado en este navegador|Đã lưu trong trình duyệt|محفوظ في هذا المتصفح|已保存在本浏览器|इस ब्राउज़र में सहेजा गया
@@ -206,7 +209,7 @@ isolatedDraft|Imported project opened in a separate draft. Download a project be
 guideAdded|Guide added. Double-click it to remove it.|Guía añadida. Doble clic para eliminarla.|Đã thêm đường gióng. Nhấp đúp để xóa.|تمت إضافة دليل. انقر مرتين لحذفه.|参考线已添加。双击删除。|गाइड जुड़ा। हटाने के लिए दो बार क्लिक करें।
 lockedNotice|Unlock this object in Properties before editing it.|Desbloquea el objeto en Propiedades antes de editar.|Mở khóa trong Thuộc tính trước khi sửa.|افتح قفل العنصر في الخصائص قبل تحريره.|编辑前请在属性中解锁对象。|संपादन से पहले गुण में वस्तु का लॉक खोलें।
 exportScope|HTML keeps fixed pages and uses the fonts available on the viewing computer.|HTML mantiene páginas fijas y usa las fuentes del equipo.|HTML giữ trang cố định và dùng phông chữ trên máy xem.|HTML يحافظ على الصفحات ويستخدم خطوط جهاز العرض.|HTML 保留固定页面并使用查看电脑的字体。|HTML निश्चित पृष्ठ और देखने वाले कंप्यूटर के फ़ॉन्ट उपयोग करता है।
-templates|Publication templates|Plantillas de publicaciones|Mẫu ấn phẩm|قوالب المنشورات|出版物模板|प्रकाशन टेम्पलेट
+templates|Templates|Plantillas de publicaciones|Mẫu ấn phẩm|قوالب المنشورات|出版物模板|प्रकाशन टेम्पलेट
 saveTemplate|Save as template|Guardar como plantilla|Lưu thành mẫu|حفظ كقالب|另存为模板|टेम्पलेट सहेजें
 masterPages|Master pages|Páginas maestras|Trang chủ|الصفحات الرئيسية|母版页|मास्टर पृष्ठ
 mailMerge|Mail merge|Combinar correspondencia|Trộn thư|دمج البريد|邮件合并|मेल मर्ज
@@ -348,6 +351,53 @@ shareFallback|Downloaded instead. Attach or share the downloaded file.|Se descar
 emailSubject|Subject|Asunto|Tiêu đề|الموضوع|主题|विषय
 emailAttachment|Attachment|Adjunto|Tệp đính kèm|المرفق|附件|अटैचमेंट
 emailAttachHint|Download the file, then attach it to your email. Nothing is sent automatically.|Descarga el archivo y adjúntalo al correo. No se envía automáticamente.|Tải tệp và đính kèm vào email. Không tự động gửi.|نزّل الملف وأرفقه بالبريد. لا يُرسل شيء تلقائياً.|请下载文件并附加到邮件。不会自动发送。|फ़ाइल डाउनलोड कर ईमेल में संलग्न करें। कुछ स्वतः नहीं भेजा जाता।
+openLayoutProject|Open LayoutSplat project|Abrir proyecto LayoutSplat|Mở dự án LayoutSplat|فتح مشروع LayoutSplat|打开 LayoutSplat 项目|LayoutSplat प्रोजेक्ट खोलें
+browseAllTemplates|Browse all designs|Ver todos los diseños|Xem mọi thiết kế|تصفح كل التصاميم|浏览所有设计|सभी डिज़ाइन देखें
+labelTemplates|Avery labels & name badges|Etiquetas Avery y gafetes|Nhãn Avery và thẻ tên|ملصقات Avery وبطاقات الأسماء|Avery 标签与姓名牌|Avery लेबल और नाम बैज
+nameBadges|Name badges|Gafetes|Thẻ tên|بطاقات الأسماء|姓名牌|नाम बैज
+labelKind|Label / badge type|Tipo de etiqueta / gafete|Loại nhãn / thẻ|نوع الملصق / البطاقة|标签／姓名牌类型|लेबल / बैज प्रकार
+labelSettings|Label sheet & printer alignment|Hoja de etiquetas y alineación|Trang nhãn và căn chỉnh máy in|ورقة الملصقات ومحاذاة الطابعة|标签纸与打印对齐|लेबल शीट और प्रिंटर संरेखण
+labelOffsetX|Move right (pt; negative = left)|Mover a la derecha (pt; negativo = izquierda)|Dịch phải (pt; âm = trái)|تحريك يميناً (نقطة؛ السالب يسار)|向右移动（点；负数向左）|दाएँ खिसकाएँ (pt; ऋणात्मक = बाएँ)
+labelOffsetY|Move down (pt; negative = up)|Mover abajo (pt; negativo = arriba)|Dịch xuống (pt; âm = lên)|تحريك لأسفل (نقطة؛ السالب لأعلى)|向下移动（点；负数向上）|नीचे खिसकाएँ (pt; ऋणात्मक = ऊपर)
+labelStart|First unused label on first sheet|Primera etiqueta libre de la primera hoja|Nhãn trống đầu tiên trên trang đầu|أول ملصق غير مستخدم في الورقة الأولى|第一页首个未使用的标签|पहली शीट पर पहला खाली लेबल
+labelPrintHint|Print at Actual size / 100% on the matching paper size. Disable Fit to page, headers, and footers. Test on plain paper first.|Imprime al tamaño real / 100% con el papel correcto. Desactiva Ajustar, encabezados y pies. Prueba en papel normal.|In kích thước thật / 100% với đúng cỡ giấy. Tắt co vừa trang, đầu và chân trang. Thử giấy thường trước.|اطبع بالحجم الفعلي / 100% وبمقاس الورق الصحيح. عطّل الملاءمة والرؤوس والتذييلات. اختبر على ورق عادي أولاً.|按实际大小／100% 和正确纸张打印。关闭适合页面、页眉和页脚。先用普通纸测试。|सही कागज़ पर वास्तविक आकार / 100% में प्रिंट करें। फ़िट, हेडर और फ़ुटर बंद करें। पहले सामान्य कागज़ पर जाँचें।
+labelOfficialSource|Avery product details|Detalles del producto Avery|Thông tin sản phẩm Avery|تفاصيل منتج Avery|Avery 产品详情|Avery उत्पाद विवरण
+import|Import|Importar|Nhập|استيراد|导入|आयात
+importIllustrator|Adobe Illustrator — PDF-compatible artwork|Adobe Illustrator — arte compatible con PDF|Adobe Illustrator — đồ họa tương thích PDF|Adobe Illustrator — رسم متوافق مع PDF|Adobe Illustrator — PDF 兼容图稿|Adobe Illustrator — PDF संगत आर्टवर्क
+importInDesign|Adobe InDesign — IDML / packaged images|Adobe InDesign — IDML / imágenes empaquetadas|Adobe InDesign — IDML / ảnh đóng gói|Adobe InDesign — IDML / صور مجمّعة|Adobe InDesign — IDML／打包图片|Adobe InDesign — IDML / पैक चित्र
+importPages|Apple Pages — legacy XML layouts|Apple Pages — diseños XML antiguos|Apple Pages — bố cục XML cũ|Apple Pages — تخطيطات XML القديمة|Apple Pages — 旧版 XML 布局|Apple Pages — पुराने XML लेआउट
+importEps|EPS / PostScript — artwork|EPS / PostScript — arte|EPS / PostScript — đồ họa|EPS / PostScript — رسوم|EPS／PostScript — 图稿|EPS / PostScript — आर्टवर्क
+importImagesVideo|Images & video — place on this page|Imágenes y vídeo — colocar en la página|Ảnh và video — đặt trên trang|صور وفيديو — وضع في هذه الصفحة|图像与视频 — 放置于当前页|चित्र और वीडियो — इस पृष्ठ पर रखें
+importPublisher|Microsoft Publisher — native .pub|Microsoft Publisher — .pub nativo|Microsoft Publisher — .pub gốc|Microsoft Publisher — ملف .pub أصلي|Microsoft Publisher — 原生 .pub|Microsoft Publisher — मूल .pub
+importPdf|PDF — page artwork|PDF — arte de páginas|PDF — đồ họa trang|PDF — رسوم الصفحات|PDF — 页面图稿|PDF — पृष्ठ आर्टवर्क
+importQuark|QuarkXPress — conversion required|QuarkXPress — requiere conversión|QuarkXPress — cần chuyển đổi|QuarkXPress — يتطلب تحويلاً|QuarkXPress — 需要转换|QuarkXPress — रूपांतरण आवश्यक
+importScribus|Scribus — SLA / packaged images|Scribus — SLA / imágenes empaquetadas|Scribus — SLA / ảnh đóng gói|Scribus — SLA / صور مجمّعة|Scribus — SLA／打包图片|Scribus — SLA / पैक चित्र
+importSvg|SVG — editable supported objects|SVG — objetos compatibles editables|SVG — đối tượng hỗ trợ có thể sửa|SVG — عناصر مدعومة قابلة للتحرير|SVG — 可编辑的受支持对象|SVG — समर्थित संपादन योग्य वस्तुएँ
+export|Export|Exportar|Xuất|تصدير|导出|निर्यात
+exportJson|LayoutSplat JSON — editable project|LayoutSplat JSON — proyecto editable|LayoutSplat JSON — dự án có thể sửa|LayoutSplat JSON — مشروع قابل للتحرير|LayoutSplat JSON — 可编辑项目|LayoutSplat JSON — संपादन योग्य प्रोजेक्ट
+exportPng|PNG image|Imagen PNG|Ảnh PNG|صورة PNG|PNG 图像|PNG चित्र
+exportJpeg|JPEG image|Imagen JPEG|Ảnh JPEG|صورة JPEG|JPEG 图像|JPEG चित्र
+exportSvg|SVG vectors & text|Vectores y texto SVG|Vector và văn bản SVG|متجهات ونص SVG|SVG 矢量与文本|SVG वेक्टर और पाठ
+exportIdml|InDesign IDML package|Paquete InDesign IDML|Gói InDesign IDML|حزمة InDesign IDML|InDesign IDML 包|InDesign IDML पैक
+exportSla|Scribus SLA package|Paquete Scribus SLA|Gói Scribus SLA|حزمة Scribus SLA|Scribus SLA 包|Scribus SLA पैक
+exportWriteSplat|WriteSplat document|Documento WriteSplat|Tài liệu WriteSplat|مستند WriteSplat|WriteSplat 文档|WriteSplat दस्तावेज़
+exportShowSplat|ShowSplat presentation|Presentación ShowSplat|Bản trình chiếu ShowSplat|عرض ShowSplat|ShowSplat 演示文稿|ShowSplat प्रस्तुति
+exportGridSplat|GridSplat workbook|Libro GridSplat|Sổ GridSplat|دفتر GridSplat|GridSplat 工作簿|GridSplat वर्कबुक
+exportListSplat|ListSplat database|Base de datos ListSplat|Cơ sở dữ liệu ListSplat|قاعدة ListSplat|ListSplat 数据库|ListSplat डेटाबेस
+
+importSuiteContent|SplatWorks content|Contenido SplatWorks|Nội dung SplatWorks|محتوى SplatWorks|SplatWorks 内容|SplatWorks सामग्री
+importTextBox|Text into selected text box|Texto en el cuadro seleccionado|Văn bản vào hộp đã chọn|نص في المربع المحدد|文本导入选中文本框|चुने हुए टेक्स्ट बॉक्स में पाठ
+fontCategory|Font category|Categoría de fuente|Loại phông chữ|فئة الخط|字体类别|फ़ॉन्ट श्रेणी
+serif|Serif|Con serifas|Có chân|ذو زوائد|衬线|सेरिफ़
+sansSerif|Sans serif|Sin serifas|Không chân|بلا زوائد|无衬线|सैंस सेरिफ़
+kerning|Kerning (letter pairs)|Kerning (pares de letras)|Kerning (cặp chữ)|تباعد أزواج الحروف|字偶距|कर्निंग (अक्षर जोड़े)
+kerningOn|Font metrics|Métricas de la fuente|Theo phông chữ|مقاييس الخط|使用字体度量|फ़ॉन्ट मेट्रिक्स
+kerningOff|Off|Desactivado|Tắt|إيقاف|关闭|बंद
+wordSpacing|Word spacing (pt)|Espacio entre palabras (pt)|Khoảng cách từ (pt)|تباعد الكلمات (نقطة)|词间距（点）|शब्द अंतर (pt)
+horizontalScale|Horizontal scale (%)|Escala horizontal (%)|Tỷ lệ ngang (%)|المقياس الأفقي (%)|水平缩放（%）|क्षैतिज स्केल (%)
+ligatures|Common ligatures|Ligaduras comunes|Chữ ghép thông dụng|وصلات الحروف الشائعة|常用连字|सामान्य संयुक्त अक्षर
+importFont|Import a font file|Importar archivo de fuente|Nhập tệp phông chữ|استيراد ملف خط|导入字体文件|फ़ॉन्ट फ़ाइल आयात करें
+importFontMenu|Fonts — TTF / OTF / WOFF / WOFF2|Fuentes — TTF / OTF / WOFF / WOFF2|Phông chữ — TTF / OTF / WOFF / WOFF2|خطوط — TTF / OTF / WOFF / WOFF2|字体 — TTF／OTF／WOFF／WOFF2|फ़ॉन्ट — TTF / OTF / WOFF / WOFF2
 `;
   const langs = ['en', 'es', 'vi', 'ar', 'zh', 'uh'], dict = Object.fromEntries(langs.map(l => [l, {}]));
   rows.trim().split('\n').forEach(row => { const [key, ...values] = row.split('|'); langs.forEach((lang, i) => { dict[lang][key] = values[i]; }); });

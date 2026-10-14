@@ -1,11 +1,11 @@
-# DrawSplat ecosystem district installation
+# SplatWorks ecosystem district installation
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 [View HTML](district-selfhost.html) · [Download Markdown](district-selfhost.md)
 
-Install the complete DrawSplat ecosystem: the whiteboard, standalone tools and widgets, games, and SplatWorks. Choose the components your district needs, create its administrator account, and set up teacher and student classrooms. MariaDB/MySQL powers whiteboard accounts, saved boards, and classroom workflows; other components keep their own storage and optional integrations. [Explore component features by category](../wiki/tools-widgets-features.html).
+Install the complete SplatWorks ecosystem: the whiteboard, standalone tools and widgets, games, and SplatWorks. Choose the components your district needs, create its administrator account, and set up teacher and student classrooms. MariaDB/MySQL powers whiteboard accounts, saved boards, and classroom workflows; other components keep their own storage and optional integrations. [Explore component features by category](../wiki/tools-widgets-features.html).
 
 ## Quick Start
 

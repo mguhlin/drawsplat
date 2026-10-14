@@ -7,6 +7,7 @@ export function applyTextStyle(element, style) {
   if (style.wordArt === 'outline') { element.style.webkitTextStroke = `.5pt ${style.color}`; element.style.color = 'white'; }
   element.dir = style.direction;
   element.style.fontFamily = `"${style.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`;
+  element.style.fontKerning=style.kerning||'auto';element.style.fontVariantLigatures=style.ligatures===false?'none':'common-ligatures contextual';element.style.wordSpacing=`${style.wordSpacing||0}pt`;
 }
 export function createMeasurer() {
   const el = document.createElement('div'); el.className = 'text-measure'; el.setAttribute('aria-hidden', 'true');
@@ -16,7 +17,7 @@ export function createMeasurer() {
 export function fitText(text, frame, style, measurer, story = null, offset = 0) {
   if (!text) return 0;
   const width = frame.w - frame.padding * 2, height = frame.h - frame.padding * 2;
-  if (width <= 0 || height < style.size * style.lineHeight) return 0;
+  if (width <= 0 || !story?.paragraphs?.length && height < style.size * style.lineHeight) return 0;
   applyTextStyle(measurer, style); measurer.style.width = `${width}pt`;
   const fits = count => { measurer.replaceChildren(); if (story) appendRich(measurer, story, offset, offset + count, { first: offset === 0, style }); else measurer.textContent = text.slice(0, count); return measurer.getBoundingClientRect().height <= height * PT_TO_PX + 0.1; };
   if (fits(text.length)) return text.length;
@@ -62,7 +63,7 @@ export function layoutStories(doc, measurer) {
           const virtual = { ...f, w: width, h: f.h - 2 * f.padding - inset, padding: 0 };
           const obstacles = found.page.objects.filter(o => o.type === 'image' && o.wrap === 'square' && o.x < f.x + f.w && o.x + o.w > f.x && o.y < f.y + f.h && o.y + o.h > f.y);
           if (obstacles.length) { const wrapped = wrapAround(story, offset, { ...f, padding: f.padding + inset }, col, width, gap, frameStyle, obstacles, measurer); columns.push(...wrapped.columns.map(column => ({ ...column, style: frameStyle }))); offset = wrapped.offset; continue; }
-          const n = fitText(story.text.slice(offset), virtual, frameStyle, measurer, story, offset);
+          const n = fitText(story.text.slice(offset), { ...virtual, w: virtual.w / (frameStyle.textScale || 1) }, frameStyle, measurer, story, offset);
           columns.push({ text: story.text.slice(offset, offset + n), start: offset, end: offset + n, x: f.padding + col * (width + gap), y: f.padding + inset, w: width, h: virtual.h, style: frameStyle }); offset += n;
         }
         collected.push([id, { text: story.text.slice(start, offset), start, end: offset, storyId, columns }]);
@@ -105,7 +106,7 @@ function wrapAround(story, offset, frame, col, width, gap, style, obstacles, mea
     }
     if (style.direction === 'rtl') intervals.reverse();
     for (const [a, b] of intervals) {
-      const remaining = story.text.slice(offset), newline = remaining.indexOf('\n'), n = fitText(remaining, { w: b - a, h: leading + .2, padding: 0 }, lineStyle, measurer, { ...story, style: lineStyle }, offset);
+      const remaining = story.text.slice(offset), newline = remaining.indexOf('\n'), n = fitText(remaining, { w: (b - a) / (style.textScale || 1), h: leading + .2, padding: 0 }, lineStyle, measurer, { ...story, style: lineStyle }, offset);
       const consumed = newline >= 0 && newline < n ? newline + 1 : n;
       columns.push({ text: story.text.slice(offset, offset + consumed), start: offset, end: offset + consumed, x: a, y, w: b - a, h: leading + .2, noDropCap: true }); offset += consumed;
     }

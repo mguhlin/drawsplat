@@ -1,8 +1,8 @@
 # LayoutSplat bundled components
 
 LayoutSplat application source is GPL-3.0-only; see `COPYING`. Components retain
-their respective licenses. No operating-system or imported publication fonts are
-redistributed.
+their respective licenses. The distribution supplies licensed bundled fonts; local user-imported fonts are
+embedded only in that user’s saved projects and exports.
 
 | Component | Use | Source / notices |
 | --- | --- | --- |
@@ -24,3 +24,20 @@ Its decoder build is libheif-emscripten `v1.23.5`, using strukturag/libheif revi
 `413e2a87e6a70b3eccc3a3adc5801179dd2d9e00`. The included build scripts identify
 codec dependencies and rebuilding steps. The decoder is a replaceable ES module;
 LayoutSplat does not restrict use of modified builds.
+
+
+## Additional v0.3 components
+
+- **Ghostscript WebAssembly**, `@jspawn/ghostscript-wasm` 0.0.2, AGPL-3.0.
+  The license, pinned source links, build instructions, hashes, and the only wrapper
+  change accompany the decoder in `vendor/ghostscript/BUILD.md`.
+- **Avery label geometry data** comes from LibreOffice's label database, revision
+  `baddf594428a2e6cb011d3e1c710f380ec02d594`, under the LibreOffice MPL-2.0 /
+  Apache-2.0 licensing terms. Source and product URLs accompany every stock record
+  in `label-stocks.json`. Dimensions are converted from hundredths of millimeters
+  to points; selected US nominal dimensions are normalized to exact inch fractions.
+  Avery is a product compatibility reference; its logos or commercial designs are
+  not included. See `docs/layoutsplat-labels.md` for the stock list and adjustments.
+
+The legacy Pages XML parser and artwork import adapters are LayoutSplat source.
+They do not bundle Apple, Adobe, Quark, or Microsoft desktop applications.

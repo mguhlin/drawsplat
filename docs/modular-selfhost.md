@@ -1,6 +1,6 @@
 # Modular Self-Hosting
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 DrawSplatTM can be installed as one complete browser-based package, or as
@@ -109,9 +109,9 @@ and runtime. If you add a host CSP, permit the model download hosts listed in
 `solutions/videosplat/docs/NETWORK_INVENTORY.md`; keep runtime scripts same-origin.
 See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).
 
-## Current release: v3.1.34
+## Current release: v3.1.35
 
-All thirteen packages are refreshed from the current source: full DrawSplat, SplatWorks suite and four individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.34.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
+All sixteen downloads are refreshed from the current source: full DrawSplat, SplatWorks suite and five individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.35.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
 
 The download page shows approximate ZIP and unpacked sizes, measured from release archives in decimal MB. Run `python3 scripts/update-download-sizes.py vX.Y.Z` after building a release, rebuild with the updated page, then use `--check` to verify displayed sizes against the final archives.
 
@@ -123,7 +123,7 @@ PDFSplat and CipherSplat’s dedicated offline edition open directly from disk i
 
 ### ClipSplat add-on
 
-ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. The v3.1.34 full/Tools bundles include ClipSplat. The v3.1.34 release also supplies a refreshed standalone ClipSplat ZIP and separate checksum file.
+ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. The v3.1.35 full/Tools bundles include ClipSplat. The v3.1.35 release also supplies a refreshed standalone ClipSplat ZIP and separate checksum file.
 
 ## Typing Games in v3.1.29
 
@@ -131,6 +131,16 @@ The full DrawSplat and Games packages include the Typing Games menu and Cipher C
 
 ## October 9 creative-tool updates
 
-Current packages include document/image import and PNG/JPG/WebP export in PDFSplat, point placement and on-page formatting, matched text appearance, preserved page rotation, ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and labelled action icons. Keep shared styles, icon folders, PDF libraries, and ShowSplat framework files together. [Details and conversion limits](release-notes/RELEASE_NOTES_v3.1.34.md).
+Current packages include document/image import and PNG/JPG/WebP export in PDFSplat, point placement and on-page formatting, matched text appearance, preserved page rotation, ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and labelled action icons. Keep shared styles, icon folders, PDF libraries, and ShowSplat framework files together. [Details and conversion limits](release-notes/RELEASE_NOTES_v3.1.35.md).
 
-Version v3.1.34 also includes PDFSplat presentation/full-screen controls, timed looping, blank screens, and portable WebDeck v5 export in the applicable packages.
+Version v3.1.35 also includes PDFSplat presentation/full-screen controls, timed looping, blank screens, and portable WebDeck v5 export in the applicable packages.
+
+
+## October 14 package refresh
+
+The refreshed release includes standalone LayoutSplat, the five-app SplatWorks
+suite, official glossy SplatWorks website artwork, and current SplatWorks Wiki.
+The complete district suite is district-suite-v1.2.5. Archive/root paths remain
+compatible with existing installations. Branding does not rename MySQL/MariaDB
+databases, tables, service/environment names, accounts, rosters, or whiteboard files.
+Back up deployed configuration and data before replacing application files.

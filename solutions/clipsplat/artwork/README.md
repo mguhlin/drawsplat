@@ -1,6 +1,6 @@
 # ClipSplat illustrated frames
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
 Generated October 5, 2026 using the built-in `image_gen.imagegen` tool via the imagegen skill. Generation mode, one call per original artwork; no reference images and no CLI/API fallback. Every call used `transparent_background: true`. The originals were copied into this directory without image editing. All three are 941 × 1672 RGBA PNGs with transparent centers.
