@@ -1,5 +1,28 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.3 original fonts and independent print checks
+
+Publisher imports retain previously loaded font files and choose matching family
+and weight/italic variants. Office text-box imports use the same matching logic.
+Reports name remaining font substitutions. Supported fonts stay embedded in native
+projects and exports. This improves text metrics without claiming source layout
+parity for unsupported source effects or linked-story metadata.
+
+The optional PDF/X-3 helper now inspects embedded font programs, Type3 glyphs and
+Unicode mappings, nested forms/resources, RGB vector/text/image colors,
+transparency, active content, encryption and page boxes. Reports include file and
+ICC hashes and tool versions. Ten deliberate faulty/clean PDF checks and a real
+Ghostscript-converted proof validate it. Characterized RGB remains allowed for
+PDF/X-3. This is structural preflight, not external ISO/commercial certification.
+
+A real 100-page linked-story browser export is independently checked for all
+100 distinct fragments, exact page counts/Letter dimensions and embedded fonts.
+The original two-page selectable Arabic proof remains in regression coverage.
+All 48 LayoutSplat browser workflows and nine model checks passed locally.
+WriteSplat's live tests found and fixed ruler focus loss during consecutive arrow
+adjustments. Canvas/ruler checks passed on SplatWorks.org; the fix is verified
+locally and will be checked again on both production domains.
+
 ## October 14, 2026 — WriteSplat canvas and suite text follow-up
 
 WriteSplat v0.2.0 removes the bundled body heading from new documents, adds Letter

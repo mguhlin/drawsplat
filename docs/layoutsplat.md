@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.2** is the SplatWorks publication editor.
+LayoutSplat **v0.4.3** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -152,8 +152,13 @@ The downloadable PDF proof is flattened. Print preparation includes bleed, crop
 marks, trim boxes, ICC output intents, and 150/300/600 ppi image output. Pack and Go
 collects the project, media, fonts, HTML editions, proof, checker findings, and
 printer instructions. Its optional Ghostscript helper offers PDF/X-3 conversion
-with structural checks; exhaustive PDF/X certification and printer acceptance
-remain separate validation work.
+with independent structural checks for font embedding and Type3 glyph/mapping
+presence, transparency, uncharacterized RGB, active content, page boxes and
+source/output/profile hashes. The report records checker and conversion versions.
+These checks passed for a converted two-page proof; a separate browser proof
+verifies all 100 linked-story fragments on exactly 100 Letter pages with embedded
+fonts. Exhaustive PDF/X certification and printer acceptance remain separate
+validation work.
 
 **File → Clear saved browser data** clears this workspace's draft/recovery and undo,
 then reloads a blank publication. Cancel preserves the current work. Other apps'
@@ -185,3 +190,12 @@ built for printing, and preview pages only while preview is enabled. A 500-page
 regression confirms text conservation and reflow of one edited story rather than
 all 500. This is a controlled browser check, not a guarantee for every complex
 500-page publication or independent commercial-printer certification.
+
+### Original fonts in Publisher imports
+
+Import your original font files before opening a PUB. Matching family names are
+retained in the new publication, and regular/bold/italic variants are chosen from
+the imported files by style. The report lists source families that still needed
+bundled substitutes. DOC/DOCX/ODT text-box insertion uses the same variant matching.
+Matching fonts improves metrics but does not guarantee Publisher page composition;
+advanced source effects and linked flows still need review.

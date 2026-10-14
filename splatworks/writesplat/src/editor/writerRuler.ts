@@ -29,17 +29,19 @@ export function setupWriterRuler(mount:HTMLElement,writer:WriterEditor,translate
   if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return;event.preventDefault();const delta=(event.key==='ArrowRight'?1:-1)*(event.shiftKey?9:1);
   if(key==='tab'){const tabs=normalizeTabs(attrs.tabs);tabs[index]=Math.max(1,Math.min(468,tabs[index]+delta));writer.setParagraphLayout({tabs});update();}
   else change(key,value(attrs,key)+(key==='indentRight'?-delta:delta));
-  requestAnimationFrame(()=>{const next=ruler.querySelector<HTMLElement>(key==='tab'?`[data-tab-index="${index}"]`:`[data-ruler-key="${key}"]`);next?.focus();});
+  marker.focus({preventScroll:true});
  });ruler.tabIndex=-1;
  function update(){cancelAnimationFrame(pending);pending=requestAnimationFrame(()=>{
   if(drag)return;writer.view.dom.dataset.empty=String(writer.view.state.doc.childCount===1&&writer.view.state.doc.firstChild?.type.name==='paragraph'&&writer.view.state.doc.firstChild.content.size===0);const requested=mount.dataset.zoom;const zoom=requested==='fit'?Math.max(.25,Math.min(1.3,(viewport.clientWidth-20)/816)):Number(requested)||1;mount.style.setProperty('--editor-zoom',String(zoom));ruler.style.width=816*zoom+'px';
   const attrs=writer.getParagraphLayout();for(const[key,field]of Object.entries(fields))if(document.activeElement!==field)field.value=String(Math.round(value(attrs,key)/factors[unit.value]*100)/100);
+  const focused=(document.activeElement as HTMLElement)?.closest<HTMLElement>('[data-ruler-key]'),focusKey=focused?.dataset.rulerKey,focusIndex=focused?.dataset.tabIndex;
   ruler.replaceChildren();const step=unit.value==='cm'?72/25.4:unit.value==='pt'?6:9,major=unit.value==='cm'?10:unit.value==='pt'?6:8;
   for(let i=0;i*step<=468;i++){const tick=document.createElement('span');tick.className='ruler-tick'+(i%major===0?' major':'');tick.style.left=(72+i*step)*4/3*zoom+'px';if(i%major===0)tick.textContent=String(Math.round(i*step/factors[unit.value]*10)/10);ruler.append(tick);}
   const positions={indentLeft:value(attrs,'indentLeft'),firstLineIndent:value(attrs,'indentLeft')+value(attrs,'firstLineIndent'),indentRight:468-value(attrs,'indentRight')};
   for(const[key,n]of Object.entries(positions)){const marker=document.createElement('button');marker.type='button';marker.className='ruler-marker '+key;marker.dataset.rulerKey=key;marker.setAttribute('aria-label',translate(key==='indentLeft'?'Left indent':key==='indentRight'?'Right indent':'First-line indent'));marker.style.left=(72+n)*4/3*zoom+'px';ruler.append(marker);}
   normalizeTabs(attrs.tabs).forEach((n,index)=>{const marker=document.createElement('button');marker.type='button';marker.className='ruler-marker tab';marker.dataset.rulerKey='tab';marker.dataset.tabIndex=String(index);marker.setAttribute('aria-label',`Tab stop ${Math.round(n/factors[unit.value]*100)/100} ${unit.value}`);marker.style.left=(72+n)*4/3*zoom+'px';ruler.append(marker);});
   const pages=Math.max(1,Math.min(500,Math.ceil((writer.view.dom.scrollHeight*zoom+192*zoom)/(1056*zoom))));if(guides.children.length!==pages){guides.replaceChildren(...Array.from({length:pages},(_,i)=>{const outline=document.createElement('div');outline.className='writer-page-outline';outline.dataset.page=String(i+1);return outline;}));}guides.querySelectorAll<HTMLElement>('.writer-page-outline').forEach((outline,i)=>{outline.style.top=i*1056*zoom+'px';outline.style.height=1056*zoom+'px';});
+  if(focusKey){const next=ruler.querySelector<HTMLElement>(focusKey==='tab'?`[data-tab-index="${focusIndex}"]`:`[data-ruler-key="${focusKey}"]`);next?.focus({preventScroll:true});}
   writer.view.dom.dispatchEvent(new Event('writer-layout-change'));
  });}
  for(const type of ['keyup','pointerup','input'])mount.addEventListener(type,update);document.addEventListener('selectionchange',update);new ResizeObserver(update).observe(viewport);document.fonts?.addEventListener('loadingdone',update);update();return{update};

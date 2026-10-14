@@ -31,3 +31,11 @@ formats, paragraph composition parity, and real target-application validation fo
 InDesign/Scribus exports. Current CI verifies model/native round trips, emitted XML,
 local import workflows, fonts, and independent print proof structure; this is not
 external desktop application certification.
+
+## Matching original fonts
+
+Fonts loaded before a PUB import are retained in the new publication. Exact family
+names and the closest available weight/italic variant are selected. The importer
+reports remaining substitutions by source family. Text-box Office imports also
+select matching variants. A missing variant can still require synthetic styling;
+matching a font alone does not reproduce every source layout rule.

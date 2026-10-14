@@ -208,7 +208,7 @@ async function parseProject(file, options = {}) {
   if (file.size > 192000000) throw new Error('size');
   let text;
   let result, warnings = [];
-  if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value }));
+  if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value, customFonts: doc.customFonts||{} }));
   else if (/\.pages$/i.test(file.name)) ({ doc: result, warnings } = await importPages(file, options));
   else if (/\.(ai|pdf|eps|ps)$/i.test(file.name)) ({ doc: result, warnings } = await importArtwork(file, options));
   else if (/\.(indd|indt)$/i.test(file.name)) throw Error('Native InDesign INDD/INDT decoding is not available in LayoutSplat. Export IDML and package its linked images for editable import, or export PDF for page appearance. This document has not replaced your current publication.');
@@ -470,6 +470,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.4.2', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.4.3', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

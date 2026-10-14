@@ -1,6 +1,7 @@
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
-import { color, fontFamily, length } from './compatibility.mjs';
+import { color, length } from './compatibility.mjs';
 import { importMedia, readData } from './media.mjs';
+import { matchImportedFont } from './font-matching.mjs';
 const value = (p, key, fallback = '') => p?.[key]?.value ?? p?.[key] ?? fallback;
 const measure = (p, key, fallback = 0) => { const item = p?.[key]; if (!item) return fallback; if (typeof item === 'object' && Number.isFinite(item.number)) { if (item.unit === 0) return item.number * 72; if (item.unit === 2) return item.number; if (item.unit === 3) return item.number / 20; if (item.unit === 4) return item.number; } return length(value(p, key), fallback); };
 const numeric = (p, key, fallback = 0) => { const n = Number.parseFloat(value(p, key)); return Number.isFinite(n) ? n : fallback; };
@@ -20,11 +21,11 @@ function pathGeometry(data) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'), el = document.createElementNS(svg.namespaceURI, 'path'); el.setAttribute('d', path); svg.style.cssText = 'position:fixed;left:-30000px;top:0;visibility:hidden'; svg.append(el); document.body.append(svg);
   try { const box = el.getBBox(); return { path, box: { x: box.x, y: box.y, w: Math.max(6, box.width), h: Math.max(6, box.height) } }; } finally { svg.remove(); }
 }
-export async function publicationFromPublisher(events, filename = 'Publisher publication') {
+export async function publicationFromPublisher(events, filename = 'Publisher publication', {customFonts={}} = {}) {
   if (!Array.isArray(events) || events.length > 100000) throw Error('Invalid Publisher drawing data.');
-  const d = newPublication(true); d.pages = []; d.title = filename.replace(/\.pub$/i, '').slice(0, 200); const warnings = ['Native Publisher decoded inside this browser. Text and supported objects remain editable; verify fonts, text flow, effects, and page appearance before printing.'], fonts = new Set();
+  const d = newPublication(true); if(Object.keys(customFonts).length)d.customFonts=structuredClone(customFonts); d.pages = []; d.title = filename.replace(/\.pub$/i, '').slice(0, 200); const warnings = ['Native Publisher decoded inside this browser. Text and supported objects remain editable; verify fonts, text flow, effects, and page appearance before printing.'], fonts = new Set();
   let page, style = {}, text, paragraph = {}, span = {}, table, cell, groups = [], paragraphCount = 0, masterMode = false, paragraphStart = 0;
-  const pictures = new Map();
+  const pictures = new Map(), substitutedFonts = new Map();
   function pictureCrop(p) {
     const top=numeric(p,'layoutsplat:crop-top'),bottom=numeric(p,'layoutsplat:crop-bottom'),left=numeric(p,'layoutsplat:crop-left'),right=numeric(p,'layoutsplat:crop-right');
     if(![top,bottom,left,right].some(Boolean))return undefined;
@@ -58,7 +59,7 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
     words = words.replace(/\r/g, '');
     if (table && cell) { cell.text += words; return; } if (!text) return;
     const story = d.stories[text.storyId], from = story.text.length; story.text += words; if (story.text.length > 100000) throw Error('Publisher story is too long.'); if (story.text.length === from) return;
-    const originalFont = value(span, 'style:font-name', value(span, 'fo:font-family', story.style.font)), font = fontFamily(originalFont); fonts.add(originalFont);
+    const originalFont = value(span, 'style:font-name', value(span, 'fo:font-family', story.style.font)), font = matchImportedFont(originalFont, customFonts, /bold|[6-9]00/.test(value(span,'fo:font-weight'))?700:400, value(span,'fo:font-style')==='italic'); fonts.add(originalFont); if(!Object.hasOwn(customFonts,font)&&originalFont!==font)substitutedFonts.set(originalFont,font);
     const mark = { from, to: story.text.length, font, size: clamp(measure(span, 'fo:font-size', story.style.size), 6, 120), color: color(value(span, 'fo:color'), story.style.color), bold: /bold|[6-9]00/.test(value(span, 'fo:font-weight')), italic: value(span, 'fo:font-style') === 'italic', underline: value(span, 'style:text-underline-style', 'none') !== 'none' };
     story.marks.push(mark); if (from === 0) { story.style.font = font; story.style.size = mark.size; story.style.color = mark.color; story.style.weight = mark.bold ? 'bold' : 'normal'; const rawLeading = value(paragraph, 'fo:line-height'), relativeLeading = paragraph['fo:line-height']?.unit === 1 || String(rawLeading).endsWith('%'); story.style.lineHeight = clamp(relativeLeading ? parseFloat(rawLeading) / 100 : measure(paragraph, 'fo:line-height', mark.size * 1.15) / mark.size, 1, 3); const rawScale = numeric(span, 'fo:text-scale', 100); story.style.textScale = clamp(rawScale > 1000 ? rawScale / 10000 : rawScale / 100, .5, 2); }
   }
@@ -123,13 +124,13 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
       case 'openTableCell': if (table) { if (!table.cells.length) table.cells.push([]); cell = { text: '' }; paragraphCount = 0; } break;
       case 'closeTableCell': if (table && cell) table.cells.at(-1).push(cell.text); cell = null; break;
       case 'endTableObject': if (table?.cells.length) { const cols = Math.max(...table.cells.map(r => r.length)); table.cells.forEach(r => { while (r.length < cols) r.push(''); }); if (cols) add(table); } table = null; cell = null; break;
-      case 'defineEmbeddedFont': warnings.push('Embedded Publisher fonts are not redistributed. LayoutSplat uses bundled font substitutes.'); break;
+      case 'defineEmbeddedFont': warnings.push('Embedded Publisher font data is not decoded. Matching imported font files are used when available.'); break;
     }
   }
-  if (!d.pages.length) throw Error('The Publisher decoder produced no pages.'); d.importedFrom = 'Microsoft Publisher'; d.sourceFonts = [...fonts].filter(Boolean); warnings.push('Publisher fonts are mapped to bundled Arial/Georgia/Verdana substitutes. Older files may require a legacy text encoding. Linked frames and advanced Publisher effects should be reviewed.');
+  if (!d.pages.length) throw Error('The Publisher decoder produced no pages.'); d.importedFrom = 'Microsoft Publisher'; d.sourceFonts = [...fonts].filter(Boolean); if(substitutedFonts.size)warnings.push('Unavailable Publisher fonts were substituted: '+[...substitutedFonts].map(([source,target])=>source+' → '+target).join(', ')+'. Import original font files before opening the PUB for closer metrics.'); warnings.push('Matching imported font families and style variants are retained. Older files may require a legacy text encoding. Linked frames and advanced Publisher effects should be reviewed.');
   return { doc: validatePublication(d), warnings: [...new Set(warnings)] };
 }
-export async function importPublisher(file, { signal, onProgress = () => {}, encoding = 'auto' } = {}) {
+export async function importPublisher(file, { signal, onProgress = () => {}, encoding = 'auto', customFonts = {} } = {}) {
   if (!file.size || file.size > 32000000) throw Error('Choose a Publisher document smaller than 32 MB.');
   const bytes = await file.arrayBuffer(); signal?.throwIfAborted(); onProgress('Loading the local Publisher decoder…');
   const worker = new Worker(new URL('./publisher/worker.mjs', import.meta.url), { type: 'module' });
@@ -137,6 +138,6 @@ export async function importPublisher(file, { signal, onProgress = () => {}, enc
     const cleanup = () => { clearTimeout(timer); signal?.removeEventListener('abort', abort); worker.terminate(); }, abort = () => { cleanup(); reject(Error('Publisher import cancelled.')); }, timer = setTimeout(() => { cleanup(); reject(Error('Publisher decoding timed out. Try a smaller publication.')); }, 45000);
     signal?.addEventListener('abort', abort, { once: true }); worker.onmessage = event => { cleanup(); event.data.error ? reject(Error(event.data.error)) : resolve(event.data); }; worker.onerror = event => { cleanup(); reject(Error(event.message || 'Publisher decoding failed.')); }; worker.postMessage({ bytes, encoding }, [bytes]);
   });
-  signal?.throwIfAborted(); onProgress('Building editable Publisher pages…'); const result = await publicationFromPublisher(data.events, file.name);
+  signal?.throwIfAborted(); onProgress('Building editable Publisher pages…'); const result = await publicationFromPublisher(data.events, file.name, {customFonts});
   result.doc.originalPublisher = { name: file.name.slice(0, 200), src: await readData(new Blob([file], { type: 'application/octet-stream' })) }; return result;
 }

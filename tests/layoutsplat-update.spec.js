@@ -56,3 +56,12 @@ test('font-load redraw preserves unfinished property edits until they are commit
   await page.locator('#'+field).fill(amount);const prior=await page.locator('#pageSurface .object.text').elementHandle();await page.evaluate(()=>document.fonts.dispatchEvent(new Event('loadingdone')));await expect.poll(()=>prior.evaluate(el=>el.isConnected)).toBe(false);await expect(page.locator('#'+field)).toHaveValue(amount);await page.locator('#'+field).press('Tab');await expect.poll(async()=>{const d=await doc(page);return key==='columns'?d.pages[0].objects[0].columns:Object.values(d.stories)[0].style[key];}).toBe(Number(amount));
  }
 });
+
+test('Publisher and Office imports select matching embedded family and style variants',async({page})=>{
+ await ready(page);const result=await page.evaluate(async()=>{
+ const {publicationFromPublisher}=await import('/splatworks/layoutsplat/publisher.mjs'),{importFont}=await import('/splatworks/layoutsplat/local-fonts.mjs'),{officeHtmlToStory}=await import('/splatworks/layoutsplat/office-story.mjs');const customFonts={};
+ for(const name of ['LiberationSans-Regular.ttf','LiberationSans-BoldItalic.ttf']){const bytes=await(await fetch('/splatworks/layoutsplat/fonts/'+name)).arrayBuffer(),entry=await importFont(new File([bytes],name),{customFonts});customFonts[entry.id]=entry.font;}
+ const family=Object.values(customFonts)[0].family,ids=Object.keys(customFonts),events=[{op:'startPage',data:{'svg:width':'612pt','svg:height':'792pt'}},{op:'startTextObject',data:{'svg:x':'36pt','svg:y':'36pt','svg:width':'540pt','svg:height':'100pt'}},{op:'openParagraph'},{op:'openSpan',data:{'style:font-name':family,'fo:font-size':'12pt'}},{op:'insertText',data:'Regular '},{op:'closeSpan'},{op:'openSpan',data:{'style:font-name':family,'fo:font-weight':'bold','fo:font-style':'italic'}},{op:'insertText',data:'Bold italic'},{op:'closeParagraph'},{op:'endTextObject'}],pub=await publicationFromPublisher(events,'Font proof.pub',{customFonts}),office=officeHtmlToStory(`<p style="font-family:'${family}'">Regular <strong><em>Bold italic</em></strong></p>`,customFonts);
+ return {ids,pub,office};});
+ const story=Object.values(result.pub.doc.stories)[0];expect(story.style.font).toBe(result.ids[0]);expect(story.marks.map(m=>m.font)).toEqual(result.ids);expect(Object.keys(result.pub.doc.customFonts)).toEqual(result.ids);expect(result.pub.warnings.join(' ')).not.toContain('Unavailable Publisher fonts');expect(result.office.marks.map(m=>m.font)).toEqual(result.ids);expect(result.office.substitutedFonts).toEqual([]);
+});
