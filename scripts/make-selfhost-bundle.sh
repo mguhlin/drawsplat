@@ -533,31 +533,6 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
-# LayoutSplat is also a standalone module; keep its local codecs and shared runtime.
-copy_tree splatworks/layoutsplat "$LAYOUT_ROOT/splatworks/layoutsplat" "${SPLATWORKS_EXCLUDES[@]}"
-copy_tree splatworks/shared "$LAYOUT_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
-copy_tree assets "$LAYOUT_ROOT/assets" "${MODULE_EXCLUDES[@]}"
-copy_tree vendor "$LAYOUT_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
-copy_tree solutions/mediasplat/ffmpeg "$LAYOUT_ROOT/solutions/mediasplat/ffmpeg" "${MODULE_EXCLUDES[@]}"
-for guide in layoutsplat.md layoutsplat-labels.md layoutsplat-import-accuracy.md; do
-  copy_file "docs/$guide" "$LAYOUT_ROOT/docs/$guide"
-done
-for guide in layoutsplat layoutsplat-labels layoutsplat-import-accuracy; do
-  copy_file "wiki/$guide.html" "$LAYOUT_ROOT/wiki/$guide.html"
-done
-cat > "$LAYOUT_ROOT/LAYOUTSPLAT-README.txt" <<EOF
-LayoutSplat / SplatWorks standalone publication editor
-Version: $VERSION_LABEL
-Source: $SHORT_SHA
-Extract the entire archive and open START-HERE.html for the local launcher.
-For static hosting, upload the folders unchanged and open /splatworks/layoutsplat/.
-Includes 305 templates, Avery labels/name badges, embedded fonts, Publisher/legacy
-Pages imports, EPS/AI/PDF artwork, file exchange, rich text, merge and print tools.
-Keep shared assets, decoder source/license files, and MediaSplat FFmpeg together.
-Native INDD/QXP and modern Pages IWA require interchange exports.
-See docs/layoutsplat.md and splatworks/layoutsplat/THIRD_PARTY_NOTICES.md.
-EOF
-
 for app_dir in gridsplat showsplat writesplat listsplat layoutsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
@@ -906,7 +881,6 @@ python3 scripts/add-offline-launcher.py "${GRID_ROOT}" GridSplat "splatworks/gri
 python3 scripts/add-offline-launcher.py "${SHOW_ROOT}" ShowSplat "splatworks/showsplat/"
 python3 scripts/add-offline-launcher.py "${WRITE_ROOT}" WriteSplat "splatworks/writesplat/"
 python3 scripts/add-offline-launcher.py "${LIST_ROOT}" ListSplat "splatworks/listsplat/"
-python3 scripts/add-offline-launcher.py "${LAYOUT_ROOT}" LayoutSplat "splatworks/layoutsplat/"
 python3 scripts/add-offline-launcher.py "${SPLATWORKS_SUITE_ROOT}" SplatWorks "pages/splatworks.html"
 python3 scripts/add-offline-launcher.py "${TOOLS_ROOT}" Tools "pages/tools.html"
 python3 scripts/add-offline-launcher.py "${WIDGETS_ROOT}" Widgets "pages/tools.html#widgets"
@@ -928,7 +902,6 @@ if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$SHOW_OUT_PATH" "splatworks-showsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WRITE_OUT_PATH" "splatworks-writesplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$LIST_OUT_PATH" "splatworks-listsplat-selfhost-$VERSION_LABEL"
-  zip -rq "$REPO_ROOT/$LAYOUT_OUT_PATH" "splatworks-layoutsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$SPLATWORKS_SUITE_OUT_PATH" "splatworks-suite-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$TOOLS_OUT_PATH" "drawsplat-tools-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WIDGETS_OUT_PATH" "drawsplat-widgets-selfhost-$VERSION_LABEL"
@@ -1033,6 +1006,7 @@ rm -rf "$STAGE_DIR"
 
 # Also create the independent ClipSplat package with its shared encoder.
 python3 scripts/make-clipsplat-bundle.py "$VERSION_LABEL"
+python3 scripts/make-layoutsplat-bundle.py "$VERSION_LABEL"
 
 # A single portable manifest covers every download, including ClipSplat and CipherSplat.
 python3 - "$VERSION_LABEL" <<'PY'

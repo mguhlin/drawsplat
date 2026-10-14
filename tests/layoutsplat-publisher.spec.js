@@ -22,3 +22,6 @@ test('native Publisher opening preserves its original bytes and decodes explicit
   await page.locator('#projectInput').setInputFiles({ name: 'invalid.pub', mimeType: 'application/octet-stream', buffer: Buffer.from('Not a Publisher document') });
   await expect(page.locator('#importReportDialog')).toBeVisible(); expect(await page.evaluate(() => LayoutSplat.getPublication())).toEqual(doc);
 });
+
+// Exercise an extracted standalone package with all external requests blocked.
+test.beforeEach(async({context})=>{if(process.env.LAYOUTSPLAT_OFFLINE_CHECK)await context.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());});
