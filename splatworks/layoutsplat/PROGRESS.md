@@ -141,3 +141,5 @@ test races; the tests now await the dialog closing after the new document loads.
 
 The roadmap remains open as described above; native proprietary formats and
 advanced print/typography validation are not claimed complete.
+
+Final regression follow-up: font-load redraws preserve focused property input values; a browser regression checks column/spacing edits while a font-load event triggers redraw. Affected LayoutSplat, suite, and district archives were refreshed before release completion.

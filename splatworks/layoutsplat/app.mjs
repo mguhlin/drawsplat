@@ -57,7 +57,7 @@ function paintSelection() {
 }
 function render() {
   layout = layoutStories(doc, measurer); issues = designFindings(doc, layout);
-  $('publicationTitle').value = doc.title; document.title = `${doc.title} · LayoutSplat™`;
+  if ($('publicationTitle') !== document.activeElement) $('publicationTitle').value = doc.title; document.title = `${doc.title} · LayoutSplat™`;
   $('pageLabel').textContent = publishing?.masterId() ? `${t('master')}: ${page().name}` : t('pageNumber', { page: activePage + 1, total: doc.pages.length });
   $('undoBtn').disabled = !undoStack.length; $('redoBtn').disabled = !redoStack.length;
   $('linkHint').hidden = !linking; $('linkBtn').classList.toggle('primary', !!linking);
@@ -126,20 +126,21 @@ function renderThumbnails() {
   });
 }
 function renderProperties() {
+  const value = (id, next) => { if ($(id) !== document.activeElement) $(id).value = next; };
   const o = selectedObject(); $('emptySelection').hidden = !!o; $('objectProperties').hidden = !o; $('objectType').textContent = o ? t(o.type === 'text' ? 'textFrame' : o.type === 'image' ? 'picture' : o.type === 'table' ? 'table' : o.kind === 'rect' ? 'rectangle' : o.kind) : '';
   $('editStoryBtn').disabled = !o || o.type !== 'text'; $('linkBtn').disabled = !o || o.type !== 'text' || o.locked;
   if (!o) return;
   const geometry = publishing?.members().length > 1 ? publishing.bounds() : o;
-  for (const [id, key] of [['propX', 'x'], ['propY', 'y'], ['propW', 'w'], ['propH', 'h']]) { $(id).value = formatMeasure(geometry[key], unit); $(id).disabled = o.locked; }
-  $('propRotation').value = o.rotation; $('propRotation').disabled = o.locked; $('propLocked').checked = o.locked;
-  $('propTransparency').value = Math.round((1 - (o.opacity ?? 1)) * 100); $('propTransparency').disabled = o.locked; $('transparencyValue').textContent = $('propTransparency').value + '%';
+  for (const [id, key] of [['propX', 'x'], ['propY', 'y'], ['propW', 'w'], ['propH', 'h']]) { value(id, formatMeasure(geometry[key], unit)); $(id).disabled = o.locked; }
+  value('propRotation', o.rotation); $('propRotation').disabled = o.locked; $('propLocked').checked = o.locked;
+  value('propTransparency', Math.round((1 - (o.opacity ?? 1)) * 100)); $('propTransparency').disabled = o.locked; $('transparencyValue').textContent = $('propTransparency').value + '%';
   $('textProperties').hidden = o.type !== 'text'; $('shapeProperties').hidden = o.type !== 'shape'; $('imageProperties').hidden = o.type !== 'image';
   if (o.type === 'text') {
     const story = doc.stories[o.storyId], s = story.style;
-    $('propFont').value = s.font; $('propFontSize').value = s.size; $('propBold').checked = s.weight === 'bold'; $('propTextColor').value = s.color; $('propLineHeight').value = s.lineHeight; $('propAlign').value = s.align; $('propDirection').value = s.direction;
+    value('propFont', s.font); value('propFontSize', s.size); $('propBold').checked = s.weight === 'bold'; value('propTextColor', s.color); value('propLineHeight', s.lineHeight); value('propAlign', s.align); value('propDirection', s.direction);
     $('storyInfo').textContent = t('linkedInfo', { count: story.frames.length });
-  } else if (o.type === 'shape') { $('propFill').value = o.fill; $('propOpacity').value = o.opacity; }
-  else if (o.type === 'image') { $('propFit').value = o.fit; const a = doc.assets[o.assetId]; $('imageInfo').textContent = `${a.width} × ${a.height} px`; }
+  } else if (o.type === 'shape') { value('propFill', o.fill); value('propOpacity', o.opacity); }
+  else if (o.type === 'image') { value('propFit', o.fit); const a = doc.assets[o.assetId]; $('imageInfo').textContent = `${a.width} × ${a.height} px`; }
   $('objectProperties').querySelectorAll('button').forEach(button => { button.disabled = o.locked; });
 }
 function renderLayers() {

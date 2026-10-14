@@ -49,3 +49,10 @@ test('Publisher bitmap events retain native bytes, crop, scale and paragraph met
 
 // Exercise an extracted standalone package with all external requests blocked.
 test.beforeEach(async({context})=>{if(process.env.LAYOUTSPLAT_OFFLINE_CHECK)await context.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());});
+
+test('font-load redraw preserves unfinished property edits until they are committed',async({page})=>{
+ await ready(page);await page.locator('#fileMenu > summary').click();await page.locator('[data-action=blank]').click();await page.locator('[data-action=text]').click();
+ for(const [field,amount,key]of [['propColumns','2','columns'],['propTracking','0.4','tracking']]){
+  await page.locator('#'+field).fill(amount);const prior=await page.locator('#pageSurface .object.text').elementHandle();await page.evaluate(()=>document.fonts.dispatchEvent(new Event('loadingdone')));await expect.poll(()=>prior.evaluate(el=>el.isConnected)).toBe(false);await expect(page.locator('#'+field)).toHaveValue(amount);await page.locator('#'+field).press('Tab');await expect.poll(async()=>{const d=await doc(page);return key==='columns'?d.pages[0].objects[0].columns:Object.values(d.stories)[0].style[key];}).toBe(Number(amount));
+ }
+});

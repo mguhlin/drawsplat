@@ -78,7 +78,7 @@ export function setupPublishing(api) {
     if (o?.type === 'text') {
       const s = d.stories[o.storyId].style;
       const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none',propKerning:s.kerning||'auto',propWordSpacing:s.wordSpacing||0,propTextScale:(s.textScale||1)*100 };
-      for (const [id, value] of Object.entries(controls)) if ($(id)) $(id).value = value;
+      for (const [id, value] of Object.entries(controls)) if ($(id) && $(id) !== document.activeElement) $(id).value = value;
       $('propBaselineAlign').checked = !!o.baselineAlign;
       $('propLigatures').checked=s.ligatures!==false;fontTools.render();
       if ($('autoFitInfo')) $('autoFitInfo').textContent = `${t('fontSize')}: ${api.getLayout().styles.get(o.storyId)?.size ?? s.size}`;
