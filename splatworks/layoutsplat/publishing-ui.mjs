@@ -4,6 +4,7 @@ export function installPublishingUI() {
   before('#fileMenu .menu-panel', '<button data-action="templateLibrary" data-i18n="templateLibrary">Browse template library</button>');
   before('#fileMenu .menu-panel', '<button data-action="publisherSettings" data-i18n="publisherSettings">Publisher import settings</button>');
   before('#fileMenu .menu-panel', '<button data-action="importSuite" data-i18n="importSuite">Import SplatWorks content</button>');
+  before('#fileMenu .menu-panel', '<hr><button data-action="clearBrowser" data-i18n="clearBrowser">Clear saved browser data</button>');
   const share = document.createElement('button'); share.dataset.action = 'shareExports'; share.dataset.i18n = 'share'; share.textContent = 'Share'; document.querySelector('#fileMenu [data-action="print"]').after(share);
   const browse = document.createElement('button'); browse.dataset.action = 'browseTemplates'; browse.dataset.i18n = 'templateLibrary'; browse.textContent = 'Template library'; document.querySelector('.menu-bar .release-label').before(browse);
   before('.toolbar', '<div class="tool-group"><button data-action="text-bold" aria-pressed="false" data-i18n="bold">Bold</button><button data-action="text-italic" aria-pressed="false" data-i18n="italic">Italic</button><button data-action="text-underline" aria-pressed="false" data-i18n="underline">Underline</button><button data-action="video" data-i18n="video">Video</button></div>');

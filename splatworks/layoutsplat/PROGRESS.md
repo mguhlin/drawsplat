@@ -2,6 +2,12 @@
 
 ## October 14, 2026 — v0.2 publishing release
 
+Follow-up: File → Clear saved browser data removes the current workspace's draft
+and recovery, resets memory/undo by reloading, and keeps a blank starting state.
+Its cancel/confirm and reload behavior are checked independently. Other apps'
+storage and downloaded project files are preserved. SplatWorks.org began serving
+the shared SplatWorks homepage during this release's production verification.
+
 The next substantial update adds 270 original templates (18 industries × 15 types),
 six publication-language editions, rich editing and ordinary bold/italic/underline,
 columns, drop caps, AutoFit, WordArt, tables, groups, alignment/distribution,

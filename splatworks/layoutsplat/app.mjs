@@ -10,7 +10,7 @@ import { readZip, importIdml, importSla } from './desktop-formats.mjs';
 import { portableHtml } from './fonts.mjs';
 import { importPublisher } from './publisher.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
-const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1';
+const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
 let undoStack = [], redoStack = [], saveTimer, pointer, editingStoryId, lastSaved, unsaved = false;
 const measurer = createMeasurer(); let layout, issues;
@@ -27,6 +27,7 @@ function saveLocal() {
     const storage = workspaceStorage(), json = JSON.stringify(doc);
     if (lastSaved) storage.setItem(BACKUP, lastSaved);
     storage.setItem(STORE, json); lastSaved = json; unsaved = false;
+    storage.removeItem(START_BLANK);
     status(isTransferredWorkspace() ? 'isolatedDraft' : 'savedLocal');
   } catch { status('storageUnavailable'); }
 }
@@ -257,6 +258,12 @@ async function action(name) {
   switch (name) {
     case 'save': await saveProject(); break;
     case 'open': $('projectInput').click(); break;
+    case 'clearBrowser': {
+      if (!confirm(t('clearBrowserConfirm'))) break;
+      try { const storage = workspaceStorage(); storage.setItem(START_BLANK, '1'); storage.removeItem(STORE); storage.removeItem(BACKUP); clearTimeout(saveTimer); unsaved = false; lastSaved = null; undoStack = []; redoStack = []; location.reload(); }
+      catch { status('storageUnavailable'); }
+      break;
+    }
     case 'blank': case 'sample': {
       if (!confirm(t('replaceConfirm'))) break;
       const next = newPublication(name === 'blank'); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
@@ -408,6 +415,7 @@ async function boot() {
   try {
     const storage = workspaceStorage(), raw = storage.getItem(STORE);
     if (raw) { doc = validatePublication(JSON.parse(raw)); lastSaved = raw; loaded = true; }
+    else if (storage.getItem(START_BLANK) === '1') { doc = newPublication(true); loaded = true; lastStatus = 'browserCleared'; }
     else doc = newPublication();
   } catch {
     try { doc = validatePublication(JSON.parse(workspaceStorage().getItem(BACKUP))); loaded = true; lastStatus = 'recovered'; } catch { doc = newPublication(); loaded = true; lastStatus = 'storageUnavailable'; }
@@ -441,6 +449,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.2.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.2.1', getPublication: () => clone(doc), getLayout: () => ({ fragments: [...layout.fragments.entries()], overflows: clone(layout.overflows) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

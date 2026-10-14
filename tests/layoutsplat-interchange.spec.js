@@ -35,3 +35,14 @@ test('File contains page layout, preview, and checking; shapes and layer transpa
   expect((await snapshot(page)).pages[0].objects.find(o => o.id === object.id).opacity).toBeCloseTo(.4); await expect(page.locator(`#pageSurface [data-object-id="${object.id}"]`)).toHaveCSS('opacity','0.4');
   await page.reload(); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); expect((await snapshot(page)).pages[0].objects.find(o => o.id === object.id).opacity).toBeCloseTo(.4); expect(errors).toEqual([]);
 });
+test('clearing browser data supports cancellation, deletes both saved copies, and stays blank after reload', async ({ page }) => {
+  await page.goto('/splatworks/layoutsplat/'); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true);
+  await expect.poll(() => page.evaluate(() => !!localStorage.getItem('layoutsplat.autosave.v1'))).toBe(true);
+  await page.locator('[data-action=text]').click(); await expect.poll(() => page.evaluate(() => !!localStorage.getItem('layoutsplat.recovery.v1'))).toBe(true);
+  await page.evaluate(() => localStorage.setItem('other-app-test', 'Keep this draft'));
+  const before = await snapshot(page); page.once('dialog', dialog => dialog.dismiss()); await page.locator('#fileMenu summary').click(); await page.locator('[data-action=clearBrowser]').click(); expect(await snapshot(page)).toEqual(before);
+  page.once('dialog', dialog => dialog.accept()); await page.locator('#fileMenu summary').click(); await Promise.all([page.waitForEvent('load'), page.locator('[data-action=clearBrowser]').click()]); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true);
+  await expect.poll(async () => Object.keys((await snapshot(page)).stories).length).toBe(0); const empty = await snapshot(page); expect(empty.pages).toHaveLength(1); expect(empty.pages[0].objects).toHaveLength(0); expect(empty.assets).toEqual({}); await expect(page.locator('#undoBtn')).toBeDisabled();
+  expect(await page.evaluate(() => [localStorage.getItem('layoutsplat.autosave.v1'),localStorage.getItem('layoutsplat.recovery.v1'),localStorage.getItem('other-app-test')])).toEqual([null,null,'Keep this draft']);
+  await page.reload(); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); expect(Object.keys((await snapshot(page)).stories)).toHaveLength(0); expect(await page.evaluate(() => localStorage.getItem('layoutsplat.autosave.v1'))).toBeNull();
+});

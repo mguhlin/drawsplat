@@ -39,3 +39,7 @@ file on SplatWorks.org. Do not add an automatic redirect for existing applicatio
 URLs until a deliberate draft migration is available. The homepage canonical URL
 remains DrawSplat.org while the new domain is pending; a later canonical switch
 should follow successful live verification.
+
+SplatWorks.org resolved and returned the shared SplatWorks™ homepage during
+production verification on October 14, 2026. The v0.2 feature deployment succeeded
+on both Cloudflare Pages and Workers. Both domains remain attached.

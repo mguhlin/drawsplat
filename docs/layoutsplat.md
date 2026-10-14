@@ -119,6 +119,13 @@ an explicit editable JSON file. Both preserve stories, masters, assets, and rich
 formatting. Browser autosave and previous-draft recovery remain device/browser/domain
 specific. Download backups regularly, especially before moving to SplatWorks.org.
 
+**File → Clear saved browser data** removes this LayoutSplat workspace's draft and
+recovery copy, clears the current publication and undo history, and reloads into a
+blank publication. Cancel keeps the work. Downloaded files and other apps' drafts
+are preserved. The blank starting state persists until you begin editing again.
+Each domain has its own browser storage; clearing DrawSplat.org does not clear
+SplatWorks.org. In an isolated imported tab, the action clears that tab's workspace.
+
 Print / Save as PDF preserves browser-shaped selectable text and vectors. The
 dedicated downloadable PDF is a high-resolution flattened proof. PNG/JPEG offer
 150/300/600 ppi; PDF proofs can include bleed, crop marks, trim boxes, and an ICC
