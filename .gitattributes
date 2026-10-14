@@ -8,3 +8,5 @@ splatworks/shared/word-legacy/*LICENSE -whitespace
 splatworks/shared/word-legacy/COPYING -whitespace
 splatworks/shared/word-legacy/*.patch -whitespace
 splatworks/shared/word-legacy/compound-file.mjs linguist-generated
+
+splatworks/layoutsplat/quark/*.LICENSE -whitespace

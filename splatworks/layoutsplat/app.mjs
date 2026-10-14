@@ -15,6 +15,7 @@ import { setupStoryEditor } from './story-editor.mjs';
 import { setupMovableDialogs } from './dialogs.mjs';
 import { loadProjectFonts } from './local-fonts.mjs';
 import { importQuark } from './quark-import.mjs';
+import {refreshPageNumbers} from './publication-fields.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
@@ -59,6 +60,7 @@ function paintSelection() {
   renderProperties(); renderLayers(); publishing?.render();
 }
 function render() {
+  refreshPageNumbers(doc);
   layout = layoutStories(doc, measurer); issues = designFindings(doc, layout);
   if ($('publicationTitle') !== document.activeElement) $('publicationTitle').value = doc.title; document.title = `${doc.title} · LayoutSplat™`;
   $('pageLabel').textContent = publishing?.masterId() ? `${t('master')}: ${page().name}` : t('pageNumber', { page: activePage + 1, total: doc.pages.length });
@@ -393,7 +395,7 @@ $('objectProperties').addEventListener('change', event => {
     else if (id === 'propFit') o.fit = value;
   });
 });
-$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) { const value = storyEditor.value(), next = clone(doc); Object.assign(next.stories[id], value); try { validatePublication(next); mutate(() => Object.assign(doc.stories[id], value)); } catch { status('invalidProject'); return; } } $('storyDialog').close(); });
+$('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) { const value = storyEditor.value(), next = clone(doc); Object.assign(next.stories[id], value); try { validatePublication(next); mutate(() => {Object.assign(doc.stories[id], value);delete doc.stories[id].pageNumberFormat;delete doc.stories[id].pageNumberValue;}); } catch { status('invalidProject'); return; } } $('storyDialog').close(); });
 $('applySetup').addEventListener('click', () => {
   const next = clone(doc), dims = $('paperSize').value === 'custom' ? [Number($('customPageW').value), Number($('customPageH').value)] : [...PAPER[$('paperSize').value]]; if ($('paperSize').value !== 'custom' && $('landscape').checked) dims.reverse(); [next.width, next.height] = dims;
   next.bleed = Number($('pageBleed').value); next.safeArea = Number($('pageSafe').value); next.facingPages = $('facingPages').checked; next.rulerOrigin = { x: Number($('rulerOriginX').value), y: Number($('rulerOriginY').value) }; next.guides.locked = $('lockGuides').checked; next.guides.showHorizontal = $('showRulerH').checked; next.guides.showVertical = $('showRulerV').checked;
@@ -471,6 +473,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.4.4', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.4.5', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

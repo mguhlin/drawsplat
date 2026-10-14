@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.4** is the SplatWorks publication editor.
+LayoutSplat **v0.4.5** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -210,3 +210,27 @@ are rejected without replacing the current publication; use PDF or supported SVG
 interchange for them. Linked stories, hyphenation, text paths, external linked
 pictures and advanced effects still need review. See the [matching decoder source
 and rebuild instructions](../splatworks/layoutsplat/quark/BUILD.md).
+
+### Updating page numbers
+
+Masters → Insert page numbers adds editable folios using `{page}` and `{total}`.
+Existing folios update when pages are added, duplicated or deleted. Insert again
+to change the format or cover new blank pages; it updates existing folios instead
+of duplicating them. Editing a folio's story, importing text into it, or linking
+it with an ordinary story turns it into ordinary text. Moving a folio into a
+master also makes it ordinary text; dynamic master fields remain limited.
+
+### HTML reading order
+
+Open Reading order in the properties panel. Choose a text frame, picture or table,
+then use Earlier/Later or Omit from reading edition. These choices affect the
+HTML reading edition and Pack and Go reading file; page positions, stacking and
+print output stay unchanged. Linked stories appear once at their first included
+frame. Native saves preserve the order and omissions. The reading edition now
+retains supported inline/paragraph formatting and links. Pale ink is adapted
+to dark ink against its white reading canvas; the native publication is unchanged. Shapes and master
+backgrounds remain decorative, separate from the page-content reading sequence.
+
+The expanded 100-page print proof independently conserves all 100 linked-story
+fragments and 800 body paragraphs, with embedded fonts and exact Letter geometry.
+The cached 500-page layout benchmark uses newsletter-length copy.

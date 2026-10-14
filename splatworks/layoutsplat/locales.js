@@ -1,6 +1,12 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
+readingOrder|Reading order|Orden de lectura|Thứ tự đọc|ترتيب القراءة|阅读顺序|पढ़ने का क्रम
+readingHint|Set the HTML reading edition's text, picture and table order. Linked stories appear once. Stacking and placement stay unchanged.|Ordena textos, imágenes y tablas en la edición HTML. Las historias vinculadas aparecen una vez. No cambia las capas ni la ubicación.|Đặt thứ tự văn bản, ảnh và bảng cho bản HTML. Bài liên kết xuất hiện một lần. Không đổi lớp hay vị trí.|رتّب النص والصور والجداول في نسخة HTML. تظهر القصص المرتبطة مرة واحدة. لا يتغير التكديس أو الموضع.|设置 HTML 阅读版的文字、图片和表格顺序。链接故事仅显示一次。不改变叠放和位置。|HTML संस्करण में पाठ, चित्र और तालिका क्रम तय करें। लिंक कहानी एक बार दिखती है। परत और स्थान नहीं बदलते।
+readingObject|Reading item|Elemento de lectura|Mục đọc|عنصر القراءة|阅读项目|पढ़ने का आइटम
+readingEarlier|Earlier|Antes|Trước|سابق|提前|पहले
+readingLater|Later|Después|Sau|لاحق|推后|बाद में
+readingExclude|Omit from reading edition|Omitir en edición de lectura|Bỏ khỏi bản đọc|حذف من نسخة القراءة|从阅读版中省略|पढ़ने के संस्करण से हटाएँ
 whiteboardCollection|Whiteboard backgrounds & images|Fondos e imágenes de la pizarra|Nền và ảnh bảng trắng|خلفيات وصور السبورة|白板背景与图片|व्हाइटबोर्ड पृष्ठभूमि और चित्र
 backgroundCollectionHelp|Use the whiteboard's classroom organizers, ScratchArt backgrounds, coloring pages, and animal photos. Pictures are embedded in your project.|Usa organizadores, fondos ScratchArt, páginas para colorear y fotos de animales de la pizarra. Las imágenes se guardan en el proyecto.|Dùng mẫu lớp học, nền ScratchArt, trang tô màu và ảnh động vật của bảng trắng. Ảnh được nhúng vào dự án.|استخدم منظمات الفصل وخلفيات ScratchArt وصفحات التلوين وصور الحيوانات. الصور مضمنة في المشروع.|使用白板的课堂图表、ScratchArt 背景、涂色页和动物照片。图片嵌入项目中。|कक्षा आयोजक, ScratchArt पृष्ठभूमि, रंग भरने के पृष्ठ और पशु फ़ोटो उपयोग करें। चित्र प्रोजेक्ट में शामिल होते हैं।
 collection|Collection|Colección|Bộ sưu tập|المجموعة|集合|संग्रह

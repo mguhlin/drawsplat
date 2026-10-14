@@ -1,5 +1,21 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.5 folios, reading edition and richer document proofs
+
+Page/total folios update as pages change. Reinsert updates formats without
+creating duplicates and covers new blank pages. Story editing/import/linking
+converts a folio to ordinary text. Master copies are static; dynamic master
+fields remain limited. Reading order has per-item earlier/later and omission
+controls, independent of print geometry/stacking. Native saves retain the choices;
+reading HTML now keeps supported inline/paragraph formatting and links.
+
+The 100-page PDF proof now conserves 100 linked fragments plus 800 body
+paragraphs, rather than only a marker per page. The 500-page cached-layout
+benchmark uses newsletter-length copy. Validation: all 51 LayoutSplat workflows and ten model checks passed, followed
+by the two field/reading checks after improving pale-ink contrast. Both
+independent PDF checks passed. Native legacy QuarkXPress v0.4.4 deployed
+and passed its real import/save/reopen test on SplatWorks.org; all CI checks passed.
+
 ## October 14, 2026 — v0.4.4 legacy QuarkXPress browser import
 
 A bounded WebAssembly worker with libqxp 0.0.3 reads supported QuarkXPress 3.1–4.1

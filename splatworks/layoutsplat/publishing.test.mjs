@@ -37,3 +37,8 @@ test('labels fill consecutive recipient slots across sheets without retaining so
   const doc = makeTemplate('labels'), records = Array.from({ length: 31 }, (_, i) => ({ Name: `Person ${i + 1}`, Address: 'Local address' })), merged = generateMerge(doc, records);
   assert.equal(merged.pages.length, 2); assert.equal(merged.pages[0].objects.length, 30); assert.equal(merged.pages[1].objects.length, 1); assert.ok(Object.values(merged.stories).some(s => s.text.includes('Person 31'))); assert.equal(merged.records, undefined);
 });
+
+test('generated page fields conserve formatting bounds and manual edits detach them',async()=>{
+ const{refreshPageNumbers,moveReadingObject}=await import('./publication-fields.mjs');const doc={pages:[{objects:[{id:'a',type:'text',storyId:'s',x:0,y:0}]},{objects:[]}],stories:{s:{text:'Page 1 of 1',pageNumberFormat:'Page {page} of {total}',pageNumberValue:'Page 1 of 1',marks:[{from:0,to:11,bold:true}],paragraphs:[{from:0,to:11}]}}};refreshPageNumbers(doc);assert.equal(doc.stories.s.text,'Page 1 of 2');assert.equal(doc.stories.s.marks[0].to,doc.stories.s.text.length);doc.stories.s.text='User footer';refreshPageNumbers(doc);assert.equal(doc.stories.s.text,'User footer');assert.equal(doc.stories.s.pageNumberFormat,undefined);
+ const page={objects:[{id:'a',type:'text',x:0,y:0},{id:'b',type:'image',x:0,y:50}]};assert.equal(moveReadingObject(page,'b',-1),true);assert.deepEqual(page.objects.map(o=>o.id),['a','b']);assert.deepEqual(page.objects.map(o=>o.readingOrder),[1,0]);assert.equal(moveReadingObject(page,'b',-1),false);
+});

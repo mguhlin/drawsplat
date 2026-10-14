@@ -94,6 +94,7 @@ export function linkFrames(doc, sourceId, targetId) {
   const source = findObject(doc, sourceId)?.object, target = findObject(doc, targetId)?.object;
   if (!source || !target || source.type !== 'text' || target.type !== 'text' || source.storyId === target.storyId) throw new Error('Choose a text frame from a different story.');
   const targetStoryId = target.storyId, a = doc.stories[source.storyId], b = doc.stories[targetStoryId];
+  for(const story of [a,b]){delete story.pageNumberFormat;delete story.pageNumberValue;}
   const separator = a.text && b.text ? '\n\n' : '';
   const offset = a.text.length + separator.length;
   if (offset + b.text.length > 100000) throw Error('Linked story exceeds 100,000 characters.');
@@ -142,6 +143,8 @@ export function validatePublication(input) {
       if (typeof o.id !== 'string' || ids.has(o.id) || !['text', 'shape', 'image', 'table'].includes(o.type)) fail(); ids.add(o.id);
       if (!number(o.x, -2000, 4000) || !number(o.y, -2000, 4000) || !number(o.w, o.type === 'text' ? 6 : .1, 2000) || !number(o.h, o.type === 'text' ? 6 : .1, 2000) || !number(o.rotation, -360, 360) || typeof o.locked !== 'boolean') fail();
       if (o.type === 'text') { if (!number(o.padding, 0, 36) || !Object.hasOwn(d.stories, o.storyId)) fail(); textFrames.add(o.id); }
+      if(o.readingOrder!==undefined&&(!Number.isInteger(o.readingOrder)||!number(o.readingOrder,0,200)))fail();
+      if(o.readingExcluded!==undefined&&typeof o.readingExcluded!=='boolean')fail();
       if (o.insets !== undefined && (o.type !== 'text' || !o.insets || ['left','right','top','bottom'].some(edge => !number(o.insets[edge], 0, 36)))) fail();
       if (o.type === 'shape' && (!['rect', 'ellipse', 'line', 'triangle', 'hexagon', 'arrow', 'star', 'heart', 'callout', 'border', 'path'].includes(o.kind) || !/^#[0-9a-f]{6}$/i.test(o.fill) || !/^#[0-9a-f]{6}$/i.test(o.stroke) || !number(o.strokeWidth, 0, 20) || !number(o.opacity, 0, 1))) fail();
       if(o.strokeDash!==undefined&&(typeof o.strokeDash!=='string'||o.strokeDash.length>100||!/^\d+(?:\.\d+)?(?:[ ,]+\d+(?:\.\d+)?)*$/.test(o.strokeDash)))fail();
@@ -168,6 +171,7 @@ export function validatePublication(input) {
   for (const [id, story] of Object.entries(d.stories)) {
     const s = story.style;
     if (typeof story.text !== 'string' || story.text.length > 100000 || !Array.isArray(story.frames) || !story.frames.length || !s) fail();
+    for(const key of ['pageNumberFormat','pageNumberValue'])if(story[key]!==undefined&&(typeof story[key]!=='string'||story[key].length>200))fail();
     if (!validFont(s.font) || !number(s.size, 6, 120) || !['normal', 'bold'].includes(s.weight) || !/^#[0-9a-f]{6}$/i.test(s.color) || !['left', 'center', 'right', 'justify'].includes(s.align) || !['ltr', 'rtl'].includes(s.direction) || !number(s.lineHeight, 1, 3)) fail();
     for (const frameId of story.frames) { if (!textFrames.has(frameId) || used.has(frameId) || findObject(d, frameId).object.storyId !== id) fail(); used.add(frameId); }
     if (story.marks !== undefined) {

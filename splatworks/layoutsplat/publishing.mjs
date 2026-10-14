@@ -10,6 +10,7 @@ import { setupSuiteImport } from './suite-interchange.mjs';
 import { setupLabelSettings } from './label-settings.mjs';
 import { setupBackgroundLibrary } from './background-library.mjs';
 import { setupFontTools } from './local-fonts.mjs';
+import {setupReadingOrder} from './reading-order.mjs';
 export function setupPublishing(api) {
   const $ = id => document.getElementById(id), { t, mutate, render, status } = api;
   let editingMasterId = null, selection = new Set(), painter = null, richEditor = null, drawing = false, trace = null;
@@ -20,7 +21,7 @@ export function setupPublishing(api) {
   const backgrounds = setupBackgroundLibrary(api);
   const suite = setupSuiteImport(api);
   const labels = setupLabelSettings(api);
-  const fontTools=setupFontTools(api);
+  const fontTools=setupFontTools(api),readingOrder=setupReadingOrder(api);
   const bounds = () => { const list = members(); if (!list.length) return null; const x = Math.min(...list.map(o => o.x)), y = Math.min(...list.map(o => o.y)); return { x, y, w: Math.max(...list.map(o => o.x + o.w)) - x, h: Math.max(...list.map(o => o.y + o.h)) - y }; };
   function onSelect(id, event = {}) {
     if (!id) { selection.clear(); return null; }
@@ -62,6 +63,7 @@ export function setupPublishing(api) {
     });
   }
   function renderExtras() {
+    readingOrder.render();
     const d = getDoc(), p = api.currentPage(); selection = new Set([...selection].filter(id => p.objects.some(o => o.id === id)));
     if (api.getSelected() && !selection.has(api.getSelected())) selection = new Set([api.getSelected()]);
     if (!api.getSelected()) selection.clear();
@@ -100,7 +102,7 @@ export function setupPublishing(api) {
     if (template) { const next = makeTemplate(template.dataset.template, $('templateTheme').value); if (confirm(t('replaceConfirm'))) api.replaceDoc(next); $('templateDialog').close(); }
     const rich = event.target.closest('[data-rich]'); if (rich && richEditor) richEditor.toggle(rich.dataset.rich);
   });
-  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value(), getDoc().stories[id].style); mutate(() => { const story = getDoc().stories[id]; Object.assign(story, value); }); $('richStoryDialog').close(); };
+  $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value(), getDoc().stories[id].style); mutate(() => { const story = getDoc().stories[id]; Object.assign(story, value);delete story.pageNumberFormat;delete story.pageNumberValue; }); $('richStoryDialog').close(); };
   $('richStoryDialog').addEventListener('close', () => { richEditor?.destroy(); richEditor = null; });
   $('richColor').onchange = () => richEditor?.style({ color: $('richColor').value });
   $('richSize').onchange = () => richEditor?.style({ size: Number($('richSize').value) });
@@ -176,14 +178,14 @@ export function setupPublishing(api) {
     if (name === 'formatPainter') { if (o?.type === 'text') { painter = clone(d.stories[o.storyId].style); status('paintHint'); } return true; }
     if (['triangle', 'hexagon', 'arrow', 'star', 'heart', 'callout', 'border'].includes(name)) { api.addObject(shape(d.margin + 12, d.margin + 12, name === 'border' ? d.width - d.margin * 2 : 160, name === 'border' ? d.height - d.margin * 2 : 110, d.brand?.accent || '#7c3aed', name)); return true; }
     if (name === 'watermark') { if (o?.type === 'image' && !o.locked) mutate(() => { o.x = 0; o.y = 0; o.w = d.width; o.h = d.height; o.opacity = .15; o.fit = 'cover'; p.objects = p.objects.filter(item => item !== o); p.objects.unshift(o); }); return true; }
-    if (name === 'createMaster') { if ((d.masters || []).length >= 20) return true; const name = prompt(t('masterName'), `${t('master')} ${(d.masters || []).length + 1}`); if (name) mutate(() => { const objects = [...(list.length ? list : p.objects)], master = { id: uid(), name: name.slice(0, 80), objects }; p.objects = p.objects.filter(o => !objects.includes(o)); selection.clear(); api.setSelected(null); (d.masters ||= []).push(master); p.masterId = master.id; }); return true; }
+    if (name === 'createMaster') { if ((d.masters || []).length >= 20) return true; const name = prompt(t('masterName'), `${t('master')} ${(d.masters || []).length + 1}`); if (name) mutate(() => { const objects = [...(list.length ? list : p.objects)];for(const object of objects){const story=d.stories[object.storyId];if(story){delete story.pageNumberFormat;delete story.pageNumberValue;}}const master = { id: uid(), name: name.slice(0, 80), objects }; p.objects = p.objects.filter(o => !objects.includes(o)); selection.clear(); api.setSelected(null); (d.masters ||= []).push(master); p.masterId = master.id; }); return true; }
     if (name === 'applyMaster') { mutate(() => { p.masterId = $('masterSelect').value || null; p.masterOverrides = []; }); return true; }
     if (name === 'applyMasterAll') { mutate(() => d.pages.forEach(p => { p.masterId = $('masterSelect').value || null; p.masterOverrides = []; })); return true; }
     if (name === 'applyMasterLeft' || name === 'applyMasterRight') { mutate(() => d.pages.forEach((p, index) => { if (index % 2 === (name === 'applyMasterLeft' ? 1 : 0)) { p.masterId = $('masterSelect').value || null; p.masterOverrides = []; } })); return true; }
     if (name === 'editMaster') { editingMasterId = editingMasterId ? null : $('masterSelect').value; selection.clear(); api.setSelected(null); $('mastersDialog').close(); render(); return true; }
     if (name === 'hideMasterObject') { const id = $('masterObjectOverride').value; if (id) mutate(() => (p.masterOverrides ||= []).push(id)); return true; }
     if (name === 'resetMasterOverrides') { mutate(() => p.masterOverrides = []); return true; }
-    if (name === 'pageNumbers') { const value = prompt(t('pageNumberPrompt'), 'Page {page} of {total}'); if (value) mutate(() => { d.pages.forEach((p, i) => { const storyId = uid(), f = frame(storyId, d.margin, d.height - d.margin - 20, d.width - 2 * d.margin, 20); f.padding = 0; d.stories[storyId] = { text: value.replaceAll('{page}', String(i + 1)).replaceAll('{total}', String(d.pages.length)), style: { ...textStyle(), size: 9 }, frames: [f.id] }; p.objects.push(f); }); }); return true; }
+    if (name === 'pageNumbers') { const value = prompt(t('pageNumberPrompt'), Object.values(d.stories).find(s=>s.pageNumberFormat)?.pageNumberFormat||t('pageNumber',{page:'{page}',total:'{total}'})); if (value) mutate(() => { d.pages.forEach(p => { const existing=p.objects.find(o=>o.type==='text'&&d.stories[o.storyId].pageNumberFormat);if(existing){d.stories[existing.storyId].pageNumberFormat=value.slice(0,200);return;}if(p.objects.length>=200)return;const storyId=uid(),f=frame(storyId,d.margin,d.height-d.margin-20,d.width-2*d.margin,20);f.padding=0;d.stories[storyId]={text:'',pageNumberFormat:value.slice(0,200),style:{...textStyle(),size:9},frames:[f.id]};p.objects.push(f); }); }); return true; }
     if (name === 'growFrame') { if (o?.type === 'text' && !o.locked) { const overflow = api.getLayout().overflows.find(f => f.storyId === o.storyId); if (overflow) mutate(() => { const last = findObject(d, overflow.frameId).object; last.h = Math.min(2000, last.h + Math.ceil(overflow.remaining / Math.max(1, Math.floor(last.w / (d.stories[o.storyId].style.size * .55)))) * d.stories[o.storyId].style.size * d.stories[o.storyId].style.lineHeight); }); } return true; }
     return false;
   }

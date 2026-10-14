@@ -13,6 +13,7 @@ for path in files:
         text=page.extract_text(); marker=f'LAYOUTPAGE{i:03}'
         assert text.count(marker)==1 and text.count('LAYOUTPAGE')==1,f'Page {i}: duplicate/missing linked fragment.'
         assert 'Complete linked-story print text.' in text,f'Page {i}: incomplete sentence.'
+        assert text.count(f'BODYCOPY{i:03}')==8 and text.count('BODYCOPY')==8,f'Page {i}: missing/duplicated body paragraphs.'
         for ref in page['/Resources']['/Font'].values():
             if ref.idnum in inspected: continue
             inspected.add(ref.idnum);font=ref.get_object()
@@ -23,4 +24,4 @@ for path in files:
                 for descendant in font.get('/DescendantFonts',[font]):
                     descriptor=descendant.get_object().get('/FontDescriptor');assert descriptor
                     assert any(descriptor.get_object().get(k) and descriptor.get_object()[k].get_data() for k in ['/FontFile','/FontFile2','/FontFile3']),'Unembedded font.'
-    print(json.dumps({'pdf':str(path),'pages':100,'linked_fragments':100,'letter_points':[612,792],'embedded_fonts':len(inspected)}))
+    print(json.dumps({'pdf':str(path),'pages':100,'linked_fragments':100,'body_paragraphs':800,'letter_points':[612,792],'embedded_fonts':len(inspected)}))
