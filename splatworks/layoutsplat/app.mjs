@@ -14,6 +14,7 @@ import { importArtwork } from './artwork-import.mjs';
 import { setupStoryEditor } from './story-editor.mjs';
 import { setupMovableDialogs } from './dialogs.mjs';
 import { loadProjectFonts } from './local-fonts.mjs';
+import { importQuark } from './quark-import.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
@@ -212,7 +213,7 @@ async function parseProject(file, options = {}) {
   else if (/\.pages$/i.test(file.name)) ({ doc: result, warnings } = await importPages(file, options));
   else if (/\.(ai|pdf|eps|ps)$/i.test(file.name)) ({ doc: result, warnings } = await importArtwork(file, options));
   else if (/\.(indd|indt)$/i.test(file.name)) throw Error('Native InDesign INDD/INDT decoding is not available in LayoutSplat. Export IDML and package its linked images for editable import, or export PDF for page appearance. This document has not replaced your current publication.');
-  else if (/\.(qxp|qxd|qxt)$/i.test(file.name)) throw Error('Native QuarkXPress decoding is not available in LayoutSplat. Export PDF for page appearance or SVG for editable supported objects. Keep companion images with any interchange package. This document has not replaced your current publication.');
+  else if (/\.(qxp|qxd|qxt)$/i.test(file.name)) ({doc:result,warnings}=await importQuark(file,{...options,customFonts:doc.customFonts||{}}));
   else if (/\.(layoutsplat|idml|zip)$/i.test(file.name)) {
     const zip = await readZip(file), entry = zip.file('publication.json') || zip.file('publication.layoutsplat.json') || zip.file('LayoutSplat/publication.json');
     if (entry) { if (entry._data?.uncompressedSize > 256000000) throw new Error('archive'); result = validatePublication(JSON.parse(await entry.async('string'))); }
@@ -225,7 +226,7 @@ async function parseProject(file, options = {}) {
   await rasterSample(result); return { doc: result, warnings };
 }
 async function openProject(file, transferred = false) {
-  const controller = new AbortController(), publisher = /\.(pub|pages|ai|pdf|eps|ps)$/i.test(file.name);
+  const controller = new AbortController(), publisher = /\.(pub|pages|ai|pdf|eps|ps|qxp|qxd|qxt)$/i.test(file.name);
   try {
     if (!transferred && !/\.(layoutsplat|pub|pages|ai|eps|ps|indd|indt|qxp|qxd|qxt|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
     if (publisher) { $('mediaProgress').textContent = /\.pub$/i.test(file.name) ? t('publisherDecoding') : 'Importing layout locally…'; $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
@@ -470,6 +471,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.4.3', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.4.4', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

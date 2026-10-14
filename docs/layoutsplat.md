@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.3** is the SplatWorks publication editor.
+LayoutSplat **v0.4.4** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -107,7 +107,8 @@ Native JSON is the lossless format; other applications use different document mo
 | EPS / PostScript | Local Ghostscript WebAssembly produces first-page flattened artwork; no desktop installation |
 | SVG | Supported editable objects; complex effects may need flattening |
 | InDesign IDML / Scribus SLA | Editable supported subsets and linked assets in packages; external application validation remains |
-| Native InDesign INDD/INDT / Quark QXP/QXD | Native decoding unavailable; use IDML (InDesign), SVG, or PDF. Import errors preserve the current project |
+| Native QuarkXPress QXP/QXD/QXT | Supported 3.1–4.1 text, frame geometry and vectors; later versions require SVG/PDF interchange |
+| Native InDesign INDD/INDT | Native decoding unavailable; use IDML, SVG or PDF. Import errors preserve the current project |
 | SplatWorks content | WriteSplat stories, ShowSplat pages, GridSplat/ListSplat tables from their native JSON |
 
 Publisher conversion does **not require LibreOffice**, a server, or uploads.
@@ -199,3 +200,13 @@ the imported files by style. The report lists source families that still needed
 bundled substitutes. DOC/DOCX/ODT text-box insertion uses the same variant matching.
 Matching fonts improves metrics but does not guarantee Publisher page composition;
 advanced source effects and linked flows still need review.
+
+### Legacy QuarkXPress native import
+
+File → Import → QuarkXPress opens supported 3.1–4.1 documents/templates locally.
+Text, frame geometry and supported vectors become editable. The original bytes
+remain in the native project. QuarkXPress 5+ and the supplied newer private sample
+are rejected without replacing the current publication; use PDF or supported SVG
+interchange for them. Linked stories, hyphenation, text paths, external linked
+pictures and advanced effects still need review. See the [matching decoder source
+and rebuild instructions](../splatworks/layoutsplat/quark/BUILD.md).

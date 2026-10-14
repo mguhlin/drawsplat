@@ -205,7 +205,7 @@ export function validatePublication(input) {
     for (const key of ['italic', 'underline']) if (s[key] !== undefined && typeof s[key] !== 'boolean') fail();
   }
   if (used.size !== textFrames.size) fail();
-  if (d.originalPublisher && (typeof d.originalPublisher.name !== 'string' || d.originalPublisher.name.length > 200 || typeof d.originalPublisher.src !== 'string' || d.originalPublisher.src.length > 44000000 || !/^data:application\/octet-stream;base64,[A-Za-z0-9+/=]+$/.test(d.originalPublisher.src))) fail();
+  for(const key of ['originalPublisher','originalQuark'])if (d[key] && (typeof d[key].name !== 'string' || d[key].name.length > 200 || typeof d[key].src !== 'string' || d[key].src.length > 44000000 || !/^data:application\/octet-stream;base64,[A-Za-z0-9+/=]+$/.test(d[key].src))) fail();
   for (const p of d.pages) {
     if (p.masterId && !(d.masters || []).some(m => m.id === p.masterId)) fail();
     if (p.masterOverrides !== undefined && (!Array.isArray(p.masterOverrides) || p.masterOverrides.length > 200 || p.masterOverrides.some(id => typeof id !== 'string'))) fail();

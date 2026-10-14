@@ -39,3 +39,18 @@ names and the closest available weight/italic variant are selected. The importer
 reports remaining substitutions by source family. Text-box Office imports also
 select matching variants. A missing variant can still require synthetic styling;
 matching a font alone does not reproduce every source layout rule.
+
+## Native legacy QuarkXPress
+
+Bundled libqxp 0.0.3 reads supported QuarkXPress 3.1–4.1 files in the browser.
+Supported text/frames/vectors remain editable and original bytes are retained.
+Source font variants use the imported matching family files when available.
+Newer QXP files remain unsupported, including the private supplied sample; the
+current publication is preserved when decoding fails. External linked pictures,
+text paths, hyphenation, linked-story metadata and advanced effects need review.
+
+Two real upstream text documents pass browser-only/offline opening, source-byte
+retention and native-project save/reopen checks. A 5.x detection fixture fails
+without changing the project. Two pinned-toolchain builds produced identical
+WebAssembly and JavaScript hashes. This verifies the tested subset, not all legacy
+QuarkXPress documents.

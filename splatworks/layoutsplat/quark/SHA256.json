@@ -1,0 +1,11 @@
+{
+  "BUILD.md": "0445c41216523ff306914c6afa28ef5d543c8d57049b2a7f3f29c77e8812de73",
+  "adapter.cpp": "6608abfc75a4b27e821e1b96730d0c8c100a06550fd0b1c0df60e9f0dbc766a1",
+  "build.py": "0d00a80d5db5ac9ed893c22db75f41fe092d0d9a035529eb907820e8cba1363d",
+  "libqxp.LICENSE": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85",
+  "quark-decoder.mjs": "e2e4bbe801db1ba2b8128e59ab9e6dabaadcdb3465b6704733e422c1b845a8ed",
+  "quark-decoder.wasm": "6353f9685984e391657f652136dbfa3c80043005f855e69db9b26204e6f00c32",
+  "source/libqxp-0.0.3.tar.xz": "4687a9cc96c32d7406e5072c4da150fca696c563e5cde62b024f82fa53d32332",
+  "source/librevenge-0.0.5.tar.xz": "106d0c44bb6408b1348b9e0465666fa83b816177665a22cd017e886c1aaeeb34",
+  "worker.mjs": "d9384eb742e5382b40b766a0f4dd8bafd4a7ada85c584b92c211a49c851cdbf8"
+}

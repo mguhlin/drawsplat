@@ -1,5 +1,28 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.4 legacy QuarkXPress browser import
+
+A bounded WebAssembly worker with libqxp 0.0.3 reads supported QuarkXPress 3.1–4.1
+text, frame geometry and vectors. Matching local fonts and the common drawing
+conversion retain supported editing. Native saves keep the original source bytes.
+Source archives, licenses, adapter, build script and hashes accompany the runtime.
+Two pinned-toolchain builds produced identical WASM/JavaScript hashes.
+
+Real 3.3/4.x upstream text samples open offline, preserve their exact source bytes,
+and survive native save/reopen. A 5.x detection fixture and the supplied private
+QXP file are rejected without replacing the publication. Newer QXP, linked-story
+metadata, text paths, external pictures, hyphenation and complex effects remain
+limited; this is not complete modern QuarkXPress support.
+All 49 LayoutSplat browser workflows, nine model checks and both independent
+PDF geometry/font/text checks passed after this update.
+
+Production follow-up for v0.4.3: all application CI checks passed. The Git-linked
+Cloudflare Pages build uploaded its assets but stalled before activation. A clean
+archive of committed `0fe6895` was redeployed directly to the same Pages project
+(deployment `413df828`), preserving domain bindings and application data. The
+WriteSplat ruler fix passed on DrawSplat.org; Publisher/Office font matching passed on both public domains, and the 100-page
+linked-story print workflow passed on SplatWorks.org.
+
 ## October 14, 2026 — v0.4.3 original fonts and independent print checks
 
 Publisher imports retain previously loaded font files and choose matching family

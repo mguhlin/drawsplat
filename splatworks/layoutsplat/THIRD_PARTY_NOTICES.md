@@ -58,3 +58,11 @@ Antiword 0.37 with Debian 0.37-17 patches (GPL-2.0-or-later), Emscripten
 the formatting patch, build script, licenses and SHA-256 manifest are included.
 The decoder runs in a separate browser worker; short compound streams are
 normalized in memory without changing the chosen file.
+
+## Browser legacy QuarkXPress import (v0.4.4)
+
+libqxp 0.0.3 (MPL-2.0), librevenge 0.0.5 and their matching source archives
+accompany `quark/`. The GPL-3.0-only drawing adapter, pinned build script and
+runtime hashes are included. ICU, Boost, zlib and Emscripten notices are shared
+with the adjacent `publisher/` directory. Supported native input is QuarkXPress
+3.1–4.1; no desktop application is required. Newer files remain unsupported.
