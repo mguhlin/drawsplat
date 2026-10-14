@@ -22,7 +22,8 @@ GROUPS={
 }
 # Keep the search index complete while presenting a short audience-based sidebar.
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
-GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','305 designs, Avery labels, native Publisher/Pages import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
+GROUPS['SplatWorks'].insert(1, ('wiki/writesplat.html','WriteSplat · Document editing and import','Word/LibreOffice formatting, source numbering and spacing, local saving and current compatibility.'))
+GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','123 distinct compositions, Avery labels, native Publisher/Pages import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
 GROUPS['SplatWorks'].extend([('wiki/layoutsplat-labels.html','LayoutSplat · Avery labels & name badges','All 29 Avery sheet layouts and 127 compatible product codes; physical dimensions and printer alignment.'),('wiki/layoutsplat-import-accuracy.html','LayoutSplat · Import accuracy','Private sample findings, source font differences, supported formats, and remaining compatibility work.')])
 GROUPS['Technical and updates'].insert(2, ('wiki/splatworks-domain.html','SplatWorks.org domain setup','Serve the same deployment on both domains and preserve access to existing browser drafts.'))
 GROUPS['Start here']=[row for row in GROUPS['Start here'] if row[0] not in ['docs/district-selfhost.html','guides/teacher-options-quick-start.html']]
@@ -40,7 +41,7 @@ EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.htm
 runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
 EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
 GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
-RENDER=['layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())

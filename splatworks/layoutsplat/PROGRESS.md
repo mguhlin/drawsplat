@@ -1,5 +1,31 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.1 formatted Office insertion
+
+Shared browser DOCX/ODT conversion resolves defaults, named/inherited styles,
+OpenDocument automatic styles, supported font/character properties, Word list
+starts/overrides, paragraph spacing/indents and relative/fixed leading. Selected
+text-box import/append keeps frame geometry and existing paragraphs, validates
+before replacing a story, and preserves native saves. Imported local font families
+are matched before built-in fallbacks; reports identify actual unsupported styling.
+
+WriteSplat uses the same parser and saves paragraph attributes. The private Word
+sample retains list numbers 1–6, 10-point question text and 1.15 leading. Floating
+block handles were removed from flow; all six list text starts now align exactly.
+DOCX/ODT page layout, floating pictures and advanced features are not fully decoded;
+legacy DOC feasibility remains next. Word export composition parity, modern native
+layout formats, printer preflight and the requested WriteSplat ruler/pages remain
+active work.
+
+The v3.1.36/v1.2.6 v0.4.0 downloads are published: 16 clean app packages, 32 offline
+startup checks, five deep offline LayoutSplat workflows, and all 20 uploaded asset
+SHA-256 digests matched their local files. Production v0.4 was verified on both
+origins, including short URLs. Office insertion is the next deployed code milestone. Validation: 45 WriteSplat
+unit tests, two existing shell/drag browser checks, two Office browser workflows,
+service-worker regression, 21 Wiki checks plus a focused rerun after adding the
+new WriteSplat article. The private Word sample was inspected locally; source
+files and screenshots are not distributed.
+
 ## October 14, 2026 — v0.4 composition, editing and performance milestone
 
 123 distinct physical compositions replace color-counted variants, with 738 valid

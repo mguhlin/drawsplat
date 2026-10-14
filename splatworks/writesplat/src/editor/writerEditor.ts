@@ -24,40 +24,71 @@ import {
   tableNodes,
 } from 'prosemirror-tables';
 
+const paragraphDefaults = {
+  leading: {default:null}, lineMultiple:{default:null}, spaceBefore:{default:null}, spaceAfter:{default:null},
+  indentLeft:{default:null}, indentRight:{default:null}, firstLineIndent:{default:null}, fontSize:{default:null}, fontFamily:{default:null},
+};
+function paragraphAttrs(node: Node | string): Record<string, unknown> {
+  if(!(node instanceof HTMLElement))return {};
+  const style=node.style,attrs:Record<string,unknown>={align:domTextAlign(node)};
+  const pt=(value:string)=>{const n=parseFloat(value);return Number.isFinite(n)?n*(value.endsWith('px')?.75:1):null;};
+  for(const [key,value] of Object.entries({spaceBefore:style.marginTop,spaceAfter:style.marginBottom,indentLeft:style.marginLeft,indentRight:style.marginRight,firstLineIndent:style.textIndent,fontSize:style.fontSize}))if(value)attrs[key]=pt(value);
+  if(style.lineHeight){if(/pt|px/.test(style.lineHeight))attrs.leading=pt(style.lineHeight);else attrs.lineMultiple=Number(style.lineHeight);}
+  if(style.fontFamily)attrs.fontFamily=style.fontFamily;
+  return attrs;
+}
+function paragraphDomAttrs(attrs:Record<string,unknown>): Record<string,string> {
+  const properties:Record<string,string>={};const align=validTextAlign(attrs.align);if(align)properties['text-align']=align;
+  for(const [key,name] of Object.entries({leading:'line-height',spaceBefore:'margin-top',spaceAfter:'margin-bottom',indentLeft:'margin-left',indentRight:'margin-right',firstLineIndent:'text-indent',fontSize:'font-size'})){const n=attrs[key];if(typeof n==='number'&&Number.isFinite(n)&&n>= (key==='firstLineIndent'?-360:0)&&n<=360)properties[name]=n+'pt';}
+  if(typeof attrs.lineMultiple==='number'&&attrs.lineMultiple>=.5&&attrs.lineMultiple<=6)properties['line-height']=String(attrs.lineMultiple);
+  if(typeof attrs.fontFamily==='string'&&/^[\w ,"'-]{1,120}$/.test(attrs.fontFamily))properties['font-family']=attrs.fontFamily;
+  const style=Object.entries(properties).map(([key,value])=>key+':'+value).join(';');return style?{style}:{};
+}
 const paragraphNode: NodeSpec = {
   attrs: {
     align: { default: null },
+    ...paragraphDefaults,
   },
   content: 'inline*',
   group: 'block',
   parseDOM: [
     {
       tag: 'p',
-      getAttrs: (node) => ({ align: domTextAlign(node) }),
+      getAttrs: paragraphAttrs,
     },
   ],
   toDOM(node) {
-    return ['p', textAlignAttrs(node.attrs.align), 0];
+    return ['p', paragraphDomAttrs(node.attrs), 0];
   },
 };
 const headingNode: NodeSpec = {
   attrs: {
     level: { default: 1 },
     align: { default: null },
+    ...paragraphDefaults,
   },
   content: 'inline*',
   group: 'block',
   defining: true,
   parseDOM: [1, 2, 3, 4, 5, 6].map((level) => ({
     tag: `h${level}`,
-    getAttrs: (node) => ({ level, align: domTextAlign(node) }),
+    getAttrs: (node) => ({ level, ...paragraphAttrs(node) }),
   })),
   toDOM(node) {
-    return [`h${node.attrs.level}`, textAlignAttrs(node.attrs.align), 0];
+    return [`h${node.attrs.level}`, paragraphDomAttrs(node.attrs), 0];
   },
 };
 const baseNodes = basicSchema.spec.nodes.update('paragraph', paragraphNode).update('heading', headingNode);
-const listNodes = addListNodes(baseNodes, 'paragraph block*', 'block');
+let listNodes = addListNodes(baseNodes, 'paragraph block*', 'block');
+for(const [name,tag] of [['ordered_list','ol'],['bullet_list','ul']]){
+  const original=listNodes.get(name)!;
+  listNodes=listNodes.update(name,{...original,attrs:{...original.attrs,compact:{default:false},numberStyle:{default:'1'}},parseDOM:[{tag,getAttrs:(dom)=>({...(tag==='ol'?{order:dom instanceof HTMLElement?Number(dom.getAttribute('start'))||1:1,numberStyle:dom instanceof HTMLElement&&['a','A','i','I'].includes(dom.getAttribute('type')||'')?dom.getAttribute('type'):'1'}:{}),compact:dom instanceof HTMLElement&&(dom.style.margin==='0px'||dom.style.marginTop==='0px')})}],toDOM(node){
+    const attrs:Record<string,string|number>={};if(tag==='ol'&&node.attrs.order!==1)attrs.start=node.attrs.order;if(tag==='ol'&&['a','A','i','I'].includes(node.attrs.numberStyle))attrs.type=node.attrs.numberStyle;
+    if(node.attrs.compact)attrs.style='margin-top:0;margin-bottom:0;padding-left:36pt';return[tag,attrs,0];
+  }});
+}
+const listItem=listNodes.get('list_item')!;
+listNodes=listNodes.update('list_item',{...listItem,toDOM(node){const attrs=paragraphDomAttrs({fontSize:node.firstChild?.attrs.fontSize,fontFamily:node.firstChild?.attrs.fontFamily});return['li',attrs,0];}});
 
 function domTextAlign(node: Node | string): string | null {
   if (!(node instanceof HTMLElement)) {
@@ -65,11 +96,6 @@ function domTextAlign(node: Node | string): string | null {
   }
 
   return validTextAlign(node.style.textAlign);
-}
-
-function textAlignAttrs(align: unknown): Record<string, string> {
-  const value = validTextAlign(align);
-  return value ? { style: `text-align: ${value}` } : {};
 }
 
 function validTextAlign(value: unknown): string | null {

@@ -16,7 +16,7 @@ describe('DOCX export', () => {
   it('preserves tables, inline formatting, and safe hyperlinks on DOCX import',async()=>{
     const blob=await htmlToDocxBlob('Classroom notes','<p>Read <a href="https://example.org/lesson">the lesson</a>.</p><ol><li>Plan</li><li>Revise</li></ol><table><tbody><tr><td><strong>Topic</strong></td><td><em>Evidence</em></td></tr><tr><td>Rain</td><td>Clouds</td></tr></tbody></table>');
     const html=await docxToHtml(await blob.arrayBuffer());
-    expect(html).toContain('<ol><li>Plan</li><li>Revise</li></ol>');expect(html).toContain('<table>');expect(html).toContain('<strong>Topic</strong>');expect(html).toContain('<em>Evidence</em>');expect(html).toContain('href="https://example.org/lesson"');expect((html.match(/<tr>/g)||[]).length).toBe(2);
+    const parsed=new DOMParser().parseFromString(html,'text/html');expect([...parsed.querySelectorAll('ol li')].map(li=>li.textContent)).toEqual(['Plan','Revise']);expect(parsed.querySelector('strong')?.textContent).toBe('Topic');expect(parsed.querySelector('em')?.textContent).toBe('Evidence');expect(parsed.querySelector('a')?.getAttribute('href')).toBe('https://example.org/lesson');expect(parsed.querySelectorAll('tr')).toHaveLength(2);
   });
 
   it('round-trips DOCX back to HTML on import', async () => {

@@ -34,3 +34,5 @@ test('original template compositions render without missing or overflowing text'
  const {TEMPLATE_CATALOG,catalogPublication}=await import('/splatworks/layoutsplat/template-catalog.mjs'),{createMeasurer,layoutStories}=await import('/splatworks/layoutsplat/layout.mjs');await document.fonts.ready;const m=createMeasurer(),failures=[];
  for(const e of TEMPLATE_CATALOG)for(const language of ['en','es','vi','ar','zh','uh']){const d=catalogPublication(e.id,{language}),l=layoutStories(d,m);if(l.overflows.length)failures.push({id:e.id,language,overflows:l.overflows.map(x=>({text:d.stories[x.storyId].text,remaining:x.remaining}))});}m.remove();return failures;});expect(report).toEqual([]);
 });
+
+test.beforeEach(async({context})=>{if(process.env.LAYOUTSPLAT_OFFLINE_CHECK)await context.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());});

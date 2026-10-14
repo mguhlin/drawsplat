@@ -509,6 +509,7 @@ body[data-markdown-mode='split'] .markdown-source {
 }
 
 .ProseMirror {
+  position: relative;
   min-height: 100%;
   caret-color: var(--accent);
   cursor: text;
@@ -622,8 +623,8 @@ body.student-view .ProseMirror .teacher-only {
 }
 
 .block-drag-handle {
-  position: relative;
-  float: left;
+  position: absolute;
+  float: none;
   transform: translate(-1.65rem, .15rem);
   display: inline-grid;
   place-items: center;
@@ -644,7 +645,8 @@ body.student-view .ProseMirror .teacher-only {
 }
 
 .draggable-block:hover .block-drag-handle,
-.block-drag-handle:focus {
+.block-drag-handle:focus,
+.block-drag-handle:hover {
   background: var(--soft);
   opacity: 1;
   outline: 2px solid transparent;

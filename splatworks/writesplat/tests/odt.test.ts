@@ -8,12 +8,12 @@ describe('OpenDocument support', () => {
     const blob = htmlToOdtBlob('Lab Draft', source);
     const html = await odtToHtml(await blob.arrayBuffer());
 
-    expect(html).toContain('<h1>Lab Draft</h1>');
-    expect(html).toContain('<h2>Science Notes</h2>');
-    expect(html).toContain('<strong>careful</strong>');
-    expect(html).toContain('<ul><li>Question</li><li>Evidence</li></ul>');
-    expect(html).toContain('<table>');
-    expect(html).toContain('<td>Claim</td>');
+    const parsed=new DOMParser().parseFromString(html,'text/html');
+    expect(parsed.querySelector('h1')?.textContent).toBe('Lab Draft');
+    expect(parsed.querySelector('h2')?.textContent).toBe('Science Notes');
+    expect(parsed.querySelector('span[style*="font-weight:bold"]')?.textContent).toBe('careful');
+    expect([...parsed.querySelectorAll('ul li')].map(li=>li.textContent)).toEqual(['Question','Evidence']);
+    expect(parsed.querySelector('td')?.textContent).toBe('Claim');
   });
 
   it('rejects files without OpenDocument content.xml', async () => {

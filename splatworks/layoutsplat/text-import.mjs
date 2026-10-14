@@ -4,28 +4,25 @@ import { writeSplatText } from './suite-interchange.mjs';
 const elements = (el, name) => [...el.getElementsByTagNameNS('*', name)];
 const attr = (el, name) => [...(el?.attributes || [])].find(a => a.localName === name)?.value;
 export const TEXT_ACCEPT = '.txt,.md,.markdown,.csv,.tsv,.html,.htm,.docx,.odt,.json,text/plain,text/markdown';
-export async function importText(file) {
+export async function importText(file,customFonts={}) {
   if (!file.size || file.size > 20000000) throw Error('Choose a text/document file under 20 MB.');
   const ext = file.name.split('.').at(-1).toLowerCase(); let text = '', marks = [], notes = [];
   if (ext === 'json') return writeSplatText(JSON.parse(await file.text()));
-  if (ext === 'docx') {
-    const zip = await readZip(file), entry = zip.file('word/document.xml'); if (!entry || entry._data?.uncompressedSize > 24000000) throw Error('Invalid Word document.'); const parsed = parseXml(await entry.async('string'));
-    for (const p of elements(parsed, 'p')) {
-      if (text) text += '\n';
-      for (const run of elements(p, 'r')) { const from = text.length; for (const el of run.children) { if (el.localName === 't') text += el.textContent; if (el.localName === 'tab') text += '\t'; if (el.localName === 'br') text += '\n'; }
-        if (text.length === from) continue; const props = elements(run, 'rPr')[0], m = { from, to: text.length };
-        if (props) {
-          for (const [name, key] of [['b', 'bold'], ['i', 'italic'], ['u', 'underline']]) { const el = elements(props, name)[0]; if (el) m[key] = !['0', 'false', 'off', 'none'].includes(attr(el, 'val')); }
-          const size = Number(attr(elements(props, 'sz')[0], 'val')) / 2, color = attr(elements(props, 'color')[0], 'val'), font = attr(elements(props, 'rFonts')[0], 'ascii'); if (size >= 6 && size <= 120) m.size = size; if (/^[0-9a-f]{6}$/i.test(color || '')) m.color = '#' + color; if (font) m.font = fontFamily(font);
-        }
-        if (Object.keys(m).length > 2) marks.push(m);
-      }
-    }
-    notes.push('Word text and direct character formatting imported. Images, tables, headers, footers, and document page layout are not placed in this text frame.');
-  } else if (ext === 'odt') {
-    const zip = await readZip(file), entry = zip.file('content.xml'); if (!entry || entry._data?.uncompressedSize > 24000000) throw Error('Invalid OpenDocument text.'); const parsed = parseXml(await entry.async('string'));
-    const paragraphs = [...parsed.getElementsByTagName('*')].filter(el => ['p', 'h'].includes(el.localName) && /opendocument.*text/.test(el.namespaceURI || ''));
-    text = paragraphs.map(p => { const copy = p.cloneNode(true); elements(copy, 'line-break').forEach(el => el.replaceWith(parsed.createTextNode('\n'))); elements(copy, 'tab').forEach(el => el.replaceWith(parsed.createTextNode('\t'))); return copy.textContent; }).join('\n'); notes.push('OpenDocument text imported as plain text. Use LayoutSplat formatting after import.');
+  if (['docx','odt'].includes(ext)) {
+    const zip = await readZip(file);
+    const read = async path => { const entry = zip.file(path); if (!entry) return null; if (entry._data?.uncompressedSize > 8000000) throw Error('Document XML exceeds 8 MB.'); const value = await entry.async('string'); if(value.length > 8000000) throw Error('Document XML exceeds 8 MB.'); return value; };
+    const { wordXmlToHtml, odtXmlToHtml } = await import('../shared/office-text.mjs');
+    const { officeHtmlToStory } = await import('./office-story.mjs');
+    let html;
+    if(ext === 'docx') { const xml = await read('word/document.xml'); if(!xml) throw Error('Invalid Word document.'); html = wordXmlToHtml(xml, await read('word/styles.xml'), await read('word/numbering.xml'), await read('word/_rels/document.xml.rels')); }
+    else { const xml = await read('content.xml'); if(!xml) throw Error('Invalid OpenDocument text.'); html = odtXmlToHtml(xml, await read('styles.xml')); }
+    const story = officeHtmlToStory(html,customFonts);
+    notes.push('Imported document text with supported inline formatting, list numbering, paragraph spacing and indents.');
+    if(html.includes('<table'))notes.push('Table cell text becomes paragraphs; table geometry is not placed in this frame.');
+    if(/background-color|line-through/.test(html))notes.push('This document uses highlights or strike-through that LayoutSplat stories do not yet retain.');
+    if(story.substitutedFonts.length)notes.push('Unavailable source fonts were matched to built-in families: '+story.substitutedFonts.join(', ')+'. Import the original font files first for closer metrics.');
+    if(Object.keys(zip.files).some(path=>/^(word\/(media|header|footer)|Pictures\/)/.test(path)))notes.push('Document images, headers and footers are not inserted into the selected text frame.');
+    return { ...story, notes };
   } else if (['html', 'htm'].includes(ext)) {
     const parsed = new DOMParser().parseFromString(await file.text(), 'text/html'); parsed.querySelectorAll('script,style,iframe,object,template').forEach(el => el.remove()); const blocks = [...parsed.body.querySelectorAll('p,h1,h2,h3,h4,h5,h6,li,pre')]; text = blocks.length ? blocks.map(el => el.textContent).join('\n') : parsed.body.textContent; notes.push('HTML text imported without scripts or external resources.');
   } else if (['txt', 'md', 'markdown', 'csv', 'tsv'].includes(ext) || file.type.startsWith('text/')) text = await file.text();

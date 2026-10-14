@@ -1,5 +1,7 @@
 # WriteSplatTM
 
+**Office import:** [Word/LibreOffice formatting and limits](https://splatworks.org/wiki/writesplat.html). Source numbering, paragraph spacing, style inheritance and supported fonts/marks are retained locally.
+
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 

@@ -1,6 +1,7 @@
-import { clone, uid, findObject } from './engine.mjs';
+import { clone, uid, findObject, validatePublication } from './engine.mjs';
 import { TEXT_ACCEPT, importText } from './text-import.mjs';
 export function setupContextMenu(api) {
+  const plainParagraphs = (text,style) => { let from=0;return text.split('\n').map(line=>{const p={from,to:from+line.length,leading:Math.max(6,Math.min(360,style.size*style.lineHeight)),align:style.align};from+=line.length+1;return p;}); };
   const $ = id => document.getElementById(id), { t } = api; let copied = null;
   document.body.insertAdjacentHTML('beforeend', `<div id="objectContextMenu" role="menu" aria-label="Object actions" hidden></div><input id="textImportInput" type="file" accept="${TEXT_ACCEPT}" hidden><input id="replaceMediaInput" type="file" hidden>`);
   const menu = $('objectContextMenu');
@@ -27,9 +28,17 @@ export function setupContextMenu(api) {
   menu.addEventListener('click', event => { if (event.target.closest('button')) close(); }); window.addEventListener('resize', close);
   $('textImportInput').onchange = async event => {
     const file = event.target.files[0], objectId = event.target.dataset.objectId, append = event.target.dataset.append === 'true'; event.target.value = ''; if (!file) return;
-    try { const imported = await importText(file), o = findObject(api.getDoc(), objectId)?.object; if (!o || o.type !== 'text' || o.locked) return; const story = api.getDoc().stories[o.storyId], offset = append ? story.text.length + (story.text ? 1 : 0) : 0;
+    try { const imported = await importText(file,api.getDoc().customFonts), o = findObject(api.getDoc(), objectId)?.object; if (!o || o.type !== 'text' || o.locked) return; const story = api.getDoc().stories[o.storyId], offset = append ? story.text.length + (story.text ? 1 : 0) : 0;
       if (offset + imported.text.length > 100000) throw Error(t('textImportError'));
-      api.mutate(() => { delete story.paragraphs; if (append) { story.text += (story.text ? '\n' : '') + imported.text; story.marks = [...(story.marks || []), ...imported.marks.map(m => ({ ...m, from: m.from + offset, to: m.to + offset }))]; } else { story.text = imported.text; story.marks = imported.marks; } }); if (imported.notes.length) api.showReport(imported.notes);
+      const next = clone(story);
+      if (append) {
+        const existing = story.text ? (story.paragraphs || plainParagraphs(story.text,story.style)) : [];
+        next.text += (story.text ? '\n' : '') + imported.text;
+        next.marks = [...(story.marks || []), ...imported.marks.map(m => ({...m,from:m.from+offset,to:m.to+offset}))];
+        next.paragraphs = [...existing, ...(imported.paragraphs || plainParagraphs(imported.text,story.style)).map(p => ({...p,from:p.from+offset,to:p.to+offset}))];
+      } else { next.text=imported.text; next.marks=imported.marks; if(imported.paragraphs)next.paragraphs=imported.paragraphs;else delete next.paragraphs; if(imported.style)Object.assign(next.style,imported.style); }
+      validatePublication({...api.getDoc(), stories:{...api.getDoc().stories,[o.storyId]:next}});
+      api.mutate(() => { api.getDoc().stories[o.storyId]=next; }); if (imported.notes.length) api.showReport(imported.notes);
     } catch (error) { api.showReport([t('textImportError'), error?.message || String(error)]); }
   };
   $('replaceMediaInput').accept = api.mediaAccept;
