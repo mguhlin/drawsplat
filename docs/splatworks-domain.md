@@ -43,3 +43,12 @@ should follow successful live verification.
 SplatWorks.org resolved and returned the shared SplatWorks™ homepage during
 production verification on October 14, 2026. The v0.2 feature deployment succeeded
 on both Cloudflare Pages and Workers. Both domains remain attached.
+
+## Short app links
+
+The paths `/layoutsplat`, `/writesplat`, `/showsplat`, `/gridsplat`, and
+`/listsplat` redirect to their existing `/splatworks/<app>/` addresses on both
+production domains. `_redirects` supplies Cloudflare 301 rules; each root folder
+has a static HTML fallback for GitHub Pages and local servers. Query parameters
+and fragments are preserved by the static fallback. Browser drafts remain tied
+to the domain, so a redirect within one domain keeps that domain’s workspace.

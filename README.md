@@ -4,6 +4,8 @@
 
 **LayoutSplat refresh:** An existing whiteboard offline cache now checks LayoutSplat modules for updates. The editor updates that worker and offers a reload button without deleting saved projects. To erase a draft and recovery copy, use File → Clear saved browser data on each domain you used.
 
+**Short app links:** `/layoutsplat`, `/writesplat`, `/showsplat`, `/gridsplat`, and `/listsplat` work on both splatworks.org and drawsplat.org. These redirect to the existing app paths and preserve old bookmarks. The [terms and privacy policy](https://splatworks.org/legal/terms-privacy) names both SplatWorks™ and DrawSplat™ and explains component-specific storage and controls.
+
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review. Guide illustrations display in full, and 23 previously text-only wiki guides now include a classroom ecosystem hero.
 
 **Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).

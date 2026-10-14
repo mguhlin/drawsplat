@@ -21,4 +21,4 @@ jobs:
       - run: python scripts/build-district-guide.py && python scripts/build-support-wiki.py
       - run: git diff --exit-code
       - run: npm ci && npx playwright install --with-deps chromium
-      - run: npx playwright test tests/support-wiki.spec.js tests/district-quickstart.spec.js tests/site-navigation.spec.js --workers=2
+      - run: npx playwright test tests/support-wiki.spec.js tests/district-quickstart.spec.js tests/site-navigation.spec.js tests/splatworks-short-urls.spec.js --workers=2

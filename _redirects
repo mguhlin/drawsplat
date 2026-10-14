@@ -21,3 +21,20 @@
 /solutions/animated-gif/                /solutions/gifsplat/         301
 /solutions/animated-gif/index.html      /solutions/gifsplat/         301
 /solutions/animated-gif/*               /solutions/gifsplat/:splat   301
+
+# SplatWorks ecosystem short links, on both production domains.
+/layoutsplat  /splatworks/layoutsplat/  301
+/layoutsplat/  /splatworks/layoutsplat/  301
+/layoutsplat/*  /splatworks/layoutsplat/:splat  301
+/writesplat  /splatworks/writesplat/  301
+/writesplat/  /splatworks/writesplat/  301
+/writesplat/*  /splatworks/writesplat/:splat  301
+/showsplat  /splatworks/showsplat/  301
+/showsplat/  /splatworks/showsplat/  301
+/showsplat/*  /splatworks/showsplat/:splat  301
+/gridsplat  /splatworks/gridsplat/  301
+/gridsplat/  /splatworks/gridsplat/  301
+/gridsplat/*  /splatworks/gridsplat/:splat  301
+/listsplat  /splatworks/listsplat/  301
+/listsplat/  /splatworks/listsplat/  301
+/listsplat/*  /splatworks/listsplat/:splat  301
