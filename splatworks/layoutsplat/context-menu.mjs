@@ -45,7 +45,7 @@ export function setupContextMenu(api) {
   $('replaceMediaInput').onchange = async event => { const file = event.target.files[0], id = event.target.dataset.objectId; event.target.value = ''; if (file) await api.importPicture(file, id); };
   async function action(name) {
     const o = api.getSelectedObject(), d = api.getDoc();
-    if (name === 'importText' || name === 'appendText') { if (o?.type === 'text' && !o.locked) { $('textImportInput').dataset.objectId = o.id; $('textImportInput').dataset.append = String(name === 'appendText'); $('textImportInput').click(); } return true; }
+    if (['importText','appendText','importWord','importOdt'].includes(name)) { if (o?.type === 'text' && !o.locked) { $('textImportInput').accept = name==='importWord'?'.doc,.docx':name==='importOdt'?'.odt':TEXT_ACCEPT; $('textImportInput').dataset.objectId = o.id; $('textImportInput').dataset.append = String(name === 'appendText'); $('textImportInput').click(); } return true; }
     if (name === 'replaceMedia') { if (o?.type === 'image' && !o.locked) { $('replaceMediaInput').dataset.objectId = o.id; $('replaceMediaInput').click(); } return true; }
     if (name === 'contextLock') { if (o) { const locked = !o.locked; api.mutate(() => api.members().forEach(item => item.locked = locked)); } return true; }
     if (name === 'pasteText') { if (o?.type === 'text' && !o.locked) try { const text = await navigator.clipboard.readText(); if (text.length > 100000) throw Error(t('textImportError')); api.mutate(() => { d.stories[o.storyId].text = text; d.stories[o.storyId].marks = []; delete d.stories[o.storyId].paragraphs; }); } catch { api.showReport([t('clipboardHint')]); } return true; }

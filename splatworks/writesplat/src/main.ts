@@ -19,6 +19,7 @@ import { htmlToPlainText } from './export/plainText';
 import { htmlToRtf } from './export/rtf';
 import { createStudentViewHtml, createTeacherViewHtml } from './export/studentView';
 import { assertWriteSplatFile, createNativeFile, type WriteSplatFile } from './storage/nativeFile';
+import { docToHtml } from './storage/importDoc';
 import { docxToHtml } from './storage/importDocx';
 import { odtToHtml } from './storage/importOdt';
 import './styles/global.css';
@@ -788,7 +789,7 @@ function appHtml(): string {
 
     <input id="fileInput" type="file" accept=".writesplat.json,application/json" hidden>
     <input id="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" hidden>
-    <input id="importFileInput" type="file" accept=".odt,application/vnd.oasis.opendocument.text,application/x-vnd.oasis.opendocument.text,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.md,.markdown,text/markdown,.txt,.text,text/plain,.html,.htm,text/html" hidden>
+    <input id="importFileInput" type="file" accept=".doc,application/msword,.odt,application/vnd.oasis.opendocument.text,application/x-vnd.oasis.opendocument.text,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.md,.markdown,text/markdown,.txt,.text,text/plain,.html,.htm,text/html" hidden>
     <div id="linkDialog" class="modal-backdrop" hidden>
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="linkDialogTitle">
         <h2 id="linkDialogTitle">Insert link</h2>
@@ -2142,7 +2143,9 @@ function bootstrap(): void {
         const parsed:unknown=JSON.parse(await file.text());assertWriteSplatFile(parsed);loadNativeFile(parsed);currentLocalDocumentId=null;refresh();
         getRequiredElement('statusSaved').textContent=`Opened ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;return;
       }
-      if (/\.docx$/i.test(name)) {
+      if (/\.doc$/i.test(name)) {
+        writer.setHtml(await docToHtml(file));
+      } else if (/\.docx$/i.test(name)) {
         writer.setHtml(await docxToHtml(await file.arrayBuffer()));
       } else if (/\.odt$/i.test(name)) {
         writer.setHtml(await odtToHtml(await file.arrayBuffer()));

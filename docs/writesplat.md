@@ -7,7 +7,7 @@ editor feedback and are separate from imported document highlighting.
 
 ## Word and LibreOffice imports
 
-Open DOCX or ODT through File. The importer runs locally, with no conversion
+Open DOC, DOCX or ODT through File. The importer runs locally, with no conversion
 upload or desktop office dependency. Word defaults, named style inheritance and
 direct run formatting preserve common font families/sizes, colors, bold, italic,
 underline and safe hyperlinks. Paragraph attributes retain source line spacing,
@@ -20,8 +20,11 @@ inferring bold or italic from a style's name.
 The imported attributes survive native JSON saves and HTML serialization. Nested
 lists and basic tables are retained. This is not complete Word/LibreOffice page
 composition: floating pictures, headers/footers, tracked revisions, fields and
-advanced table/page features require review. Legacy binary DOC is not decoded by
-this importer; export it to DOCX/ODT for now. DOCX/ODT input is limited to 20 MB,
+advanced table/page features require review. Binary DOC uses a bundled browser worker. Supported combined styles, native font
+families/sizes, palette colors, numbering and paragraph spacing/indents are
+retained. The decoder supports ordinary legacy Word variants; encrypted or damaged
+files may fail. Native DOC line leading, fields/hyperlink targets and advanced
+layout remain limited. Short compound streams are normalized in memory. DOCX/ODT input is limited to 20 MB,
 with bounded XML and entity declarations rejected.
 
 Block-drag handles sit outside text flow so they do not change paragraph wrapping

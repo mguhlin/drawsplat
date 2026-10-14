@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci
-      - run: node scripts/build-whiteboard-gallery.mjs --check
+      - run: node scripts/build-whiteboard-gallery.mjs --check && node scripts/check-word-legacy.mjs
       - run: node --test splatworks/layoutsplat/engine.test.mjs splatworks/layoutsplat/publishing.test.mjs
       - run: node scripts/check-splatworks-builds.mjs && node scripts/validate-tool-registry.mjs
       - run: npx playwright install --with-deps chromium

@@ -88,7 +88,7 @@ for(const [name,tag] of [['ordered_list','ol'],['bullet_list','ul']]){
   }});
 }
 const listItem=listNodes.get('list_item')!;
-listNodes=listNodes.update('list_item',{...listItem,toDOM(node){const attrs=paragraphDomAttrs({fontSize:node.firstChild?.attrs.fontSize,fontFamily:node.firstChild?.attrs.fontFamily});return['li',attrs,0];}});
+listNodes=listNodes.update('list_item',{...listItem,attrs:{...listItem.attrs,numberOverride:{default:null}},parseDOM:[{tag:'li',getAttrs:dom=>({numberOverride:dom instanceof HTMLElement&&/^\d+$/.test(dom.getAttribute('value')||'')?Number(dom.getAttribute('value')):null})}],toDOM(node){const attrs:Record<string,string|number>=paragraphDomAttrs({fontSize:node.firstChild?.attrs.fontSize,fontFamily:node.firstChild?.attrs.fontFamily});if(typeof node.attrs.numberOverride==='number'&&Number.isInteger(node.attrs.numberOverride)&&node.attrs.numberOverride>=0&&node.attrs.numberOverride<=100000)attrs.value=node.attrs.numberOverride;return['li',attrs,0];}});
 
 function domTextAlign(node: Node | string): string | null {
   if (!(node instanceof HTMLElement)) {

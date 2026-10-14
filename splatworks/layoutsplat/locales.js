@@ -410,6 +410,8 @@ wordSpacing|Word spacing (pt)|Espacio entre palabras (pt)|Khoảng cách từ (p
 horizontalScale|Horizontal scale (%)|Escala horizontal (%)|Tỷ lệ ngang (%)|المقياس الأفقي (%)|水平缩放（%）|क्षैतिज स्केल (%)
 ligatures|Common ligatures|Ligaduras comunes|Chữ ghép thông dụng|وصلات الحروف الشائعة|常用连字|सामान्य संयुक्त अक्षर
 importFont|Import a font file|Importar archivo de fuente|Nhập tệp phông chữ|استيراد ملف خط|导入字体文件|फ़ॉन्ट फ़ाइल आयात करें
+importWordText|Microsoft Word — DOC / DOCX text|Microsoft Word — texto DOC / DOCX|Microsoft Word — văn bản DOC / DOCX|Microsoft Word — نص DOC / DOCX|Microsoft Word — DOC／DOCX 文本|Microsoft Word — DOC / DOCX पाठ
+importOdtText|LibreOffice Writer — ODT text|LibreOffice Writer — texto ODT|LibreOffice Writer — văn bản ODT|LibreOffice Writer — نص ODT|LibreOffice Writer — ODT 文本|LibreOffice Writer — ODT पाठ
 importFontMenu|Fonts — TTF / OTF / WOFF / WOFF2|Fuentes — TTF / OTF / WOFF / WOFF2|Phông chữ — TTF / OTF / WOFF / WOFF2|خطوط — TTF / OTF / WOFF / WOFF2|字体 — TTF／OTF／WOFF／WOFF2|फ़ॉन्ट — TTF / OTF / WOFF / WOFF2
 `;
   const langs = ['en', 'es', 'vi', 'ar', 'zh', 'uh'], dict = Object.fromEntries(langs.map(l => [l, {}]));

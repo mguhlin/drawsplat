@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.1** is the SplatWorks publication editor.
+LayoutSplat **v0.4.2** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -76,14 +76,20 @@ Picture wrapping is rectangular; wrapped drop caps remain a checker limitation.
 
 Right-click, Mac Control/Command-click, or Shift+F10 opens contextual actions.
 Import/append text into a text box or replace media in a picture box while keeping
-its geometry. DOCX and ODT imports retain supported font sizes/colors, bold/italic/underline,
+its geometry. DOC, DOCX and ODT imports retain supported font sizes/colors, bold/italic/underline,
 source list numbering, paragraph leading, spacing and indents. Named/default
 styles and OpenDocument automatic styles are resolved locally. Append preserves
 existing paragraph formatting. Available imported font families are matched before
 fallbacks; the report identifies actual substituted fonts or unsupported styles.
-Text imports support TXT, Markdown, CSV/TSV, HTML text, DOCX, ODT,
+Text imports support TXT, Markdown, CSV/TSV, HTML text, DOC, DOCX, ODT,
 and WriteSplat JSON; document tables and page layouts are not placed through this
-text-box action.
+text-box action. **File → Import → Microsoft Word** accepts DOC/DOCX;
+**LibreOffice Writer** accepts ODT. Select an unlocked text box first.
+Binary DOC uses a local WebAssembly worker with supported combined styles,
+font families/sizes/colors, list counters and paragraph spacing/indents. Source
+line leading, fields/hyperlink targets, images and advanced page layout require
+review. Short compound-file streams are normalized in memory. There is no
+LibreOffice installation or conversion upload requirement.
 
 ## Open versus Import
 

@@ -1,5 +1,31 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.2 binary Word compatibility
+
+Native binary DOC text now decodes locally in a bounded WebAssembly worker in
+LayoutSplat and WriteSplat. Original fonts, font sizes, palette colors, combined
+B/I/U, native list counters, paragraph spacing/indents and alignment survive the
+supported conversion. A CFB normalizer enables small-stream documents that the
+upstream decoder rejects. Original source files are not modified. File → Import
+adds alphabetically grouped Microsoft Word and LibreOffice Writer text-box choices.
+
+GPL/Apache/MIT notices, matching source archives, the formatting patch, rebuild
+script and runtime hashes accompany the worker. A pinned-toolchain rebuild matched
+both runtime hashes before the font-table enhancement. The original source corpus,
+a synthetic short styled document and a private Word-derived sample were checked.
+The private sample keeps all six numbered questions and its 10/11-point Arial runs.
+Native source line leading, fields/hyperlink targets and complex page features are
+still limited. No desktop office app is required at runtime.
+
+Office v0.4.1 deployed successfully on both origins; two live import workflows and
+both new Wiki pages were verified. A transient unrelated GridSplat divider-drag CI
+failure passed when the failed job was rerun; all milestone CI checks are green.
+Validation: all 46 LayoutSplat browser workflows, 45 WriteSplat unit tests, nine model tests, and the independent two-page Letter PDF/font/text check passed. Browser-only tests cover both small-stream combined formatting and the upstream legacy DOC corpus, with invalid input preserving the publication.
+
+Next priorities remain WriteSplat page outlines/ruler and starter cleanup, printer
+preflight and larger print proofs, further native layout import compatibility,
+and the next complete download refresh.
+
 ## October 14, 2026 — v0.4.1 formatted Office insertion
 
 Shared browser DOCX/ODT conversion resolves defaults, named/inherited styles,

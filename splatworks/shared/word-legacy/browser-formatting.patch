@@ -1,0 +1,272 @@
+--- a/antiword.h
++++ b/antiword.h
+@@ -322,7 +322,7 @@
+ extern void	vSetHeaders(diagram_type *, USHORT);
+ extern void	vStartOfList(diagram_type *, UCHAR, BOOL);
+ extern void	vEndOfList(diagram_type *);
+-extern void	vStartOfListItem(diagram_type *, BOOL);
++extern void	vStartOfListItem(diagram_type *, BOOL, UINT);
+ extern void	vEndOfTable(diagram_type *);
+ extern BOOL	bAddTableRow(diagram_type *, char **, int,
+ 			const short *, UCHAR);
+@@ -371,6 +371,7 @@
+ /* fonts.c */
+ extern int	iGetFontByNumber(UCHAR, USHORT);
+ extern const char	*szGetOurFontname(int);
++extern const char *szGetSourceFontname(UCHAR);
+ extern int	iFontname2Fontnumber(const char *, USHORT);
+ extern void	vCreate0FontTable(void);
+ extern void	vCreate2FontTable(FILE *, int, const UCHAR *);
+@@ -722,14 +723,15 @@
+ extern void	vEpilogueXML(diagram_type *);
+ extern void	vMove2NextLineXML(diagram_type *);
+ extern void	vSubstringXML(diagram_type *,
+-				const char *, size_t, long, USHORT);
++				const char *, size_t, long, UCHAR, USHORT, drawfile_fontref, USHORT);
+ extern void	vStartOfParagraphXML(diagram_type *, UINT);
+ extern void	vEndOfParagraphXML(diagram_type *, UINT);
+ extern void	vEndOfPageXML(diagram_type *);
+ extern void	vSetHeadersXML(diagram_type *, USHORT);
+ extern void	vStartOfListXML(diagram_type *, UCHAR, BOOL);
+ extern void	vEndOfListXML(diagram_type *);
+-extern void	vStartOfListItemXML(diagram_type *, BOOL);
++extern void	vStartOfListItemXML(diagram_type *, BOOL, UINT);
++extern void vParagraphMetricsXML(diagram_type *, long, long, long, long, long, UCHAR, USHORT);
+ extern void	vEndOfTableXML(diagram_type *);
+ extern void	vAddTableRowXML(diagram_type *, char **, int,
+ 			const short *, UCHAR);
+--- a/output.c
++++ b/output.c
+@@ -267,7 +267,7 @@
+ 		break;
+ 	case conversion_xml:
+ 		vSubstringXML(pDiag, szString, tStringLength, lStringWidth,
+-				usFontstyle);
++				ucFontColor, usFontstyle, tFontRef, usFontSize);
+ 		break;
+ 	case conversion_pdf:
+ 		vSubstringPDF(pDiag, szString, tStringLength, lStringWidth,
+@@ -466,7 +466,7 @@
+  * Create a start of a list item
+  */
+ void
+-vStartOfListItem(diagram_type *pDiag, BOOL bNoMarks)
++vStartOfListItem(diagram_type *pDiag, BOOL bNoMarks, UINT number)
+ {
+ 	switch (eConversionType) {
+ 	case conversion_text:
+@@ -475,7 +475,7 @@
+ 	case conversion_ps:
+ 		break;
+ 	case conversion_xml:
+-		vStartOfListItemXML(pDiag, bNoMarks);
++		vStartOfListItemXML(pDiag, bNoMarks, number);
+ 		break;
+ 	case conversion_pdf:
+ 		break;
+--- a/draw.c
++++ b/draw.c
+@@ -665,7 +665,7 @@
+  * DUMMY function
+  */
+ void
+-vStartOfListItem(diagram_type *pDiag, BOOL bNoMarks)
++vStartOfListItem(diagram_type *pDiag, BOOL bNoMarks, UINT number)
+ {
+ 	TRACE_MSG("vStartOfListItem");
+ } /* end of vStartOfListItem */
+--- a/xml.c
++++ b/xml.c
+@@ -800,9 +800,11 @@
+  */
+ static void
+ vPrintXML(diagram_type *pDiag, const char *szString, size_t tStringLength,
+-		USHORT usFontstyle)
++		UCHAR ucFontColor, USHORT usFontstyle, drawfile_fontref tFontRef, USHORT usFontSize)
+ {
+ 	const char	*szAttr;
++	char emphasisRoles[64], emphasisAttribute[80];
++	ULONG rgb;
+ 	int	iCount;
+ 	size_t	tNextFree;
+ 	BOOL	bNotReady, bEmphasisNew, bSuperscriptNew, bSubscriptNew;
+@@ -874,17 +876,13 @@
+ 
+ 	/* Start what has to be started */
+ 	if (bEmphasisNew && !bEmphasisOpen) {
+-		if (bIsBold(usFontstyle)) {
+-			szAttr = "role='bold'";
+-		} else if (bIsItalic(usFontstyle)) {
+-			szAttr = NULL;
+-		} else if (bIsUnderline(usFontstyle)) {
+-			szAttr = "role='underline'";
+-		} else if (bIsStrike(usFontstyle)) {
+-			szAttr = "role='strikethrough'";
+-		} else {
+-			szAttr = NULL;
+-		}
++		emphasisRoles[0] = '\0';
++		if (bIsBold(usFontstyle)) strcat(emphasisRoles, "bold ");
++		if (bIsItalic(usFontstyle)) strcat(emphasisRoles, "italic ");
++		if (bIsUnderline(usFontstyle)) strcat(emphasisRoles, "underline ");
++		if (bIsStrike(usFontstyle)) strcat(emphasisRoles, "strikethrough ");
++		snprintf(emphasisAttribute, sizeof(emphasisAttribute), "role='%s'", emphasisRoles);
++		szAttr = emphasisAttribute;
+ 		vAddStartTag(pDiag, TAG_EMPHASIS, szAttr);
+ 	}
+ 	if (bSuperscriptNew && !bSuperscriptOpen) {
+@@ -894,10 +892,16 @@
+ 		vAddStartTag(pDiag, TAG_SUBSCRIPT, NULL);
+ 	}
+ 
++	/* Preserve the supported native run metrics for the browser adapter. */
++	rgb = ulColor2Color(ucFontColor);
++	fprintf(pDiag->pOutFile, "<phrase bold=\"%d\" italic=\"%d\" underline=\"%d\" strike=\"%d\" font-size=\"%.1f\" color=\"#%02lx%02lx%02lx\" font-family=\"", bIsBold(usFontstyle), bIsItalic(usFontstyle), bIsUnderline(usFontstyle), bIsStrike(usFontstyle), (double)usFontSize / 2.0, (rgb & 0xff00) >> 8, (rgb & 0xff0000) >> 16, (rgb & 0xff000000) >> 24);
++	if (szGetSourceFontname((UCHAR)tFontRef) != NULL) vPrintSpecialString(pDiag, szGetSourceFontname((UCHAR)tFontRef));
++	fputs("\">", pDiag->pOutFile);
+ 	/* The print the string */
+ 	for (iCount = 0; iCount < (int)tStringLength; iCount++) {
+ 		vPrintChar(pDiag, szString[iCount]);
+ 	}
++	fputs("</phrase>", pDiag->pOutFile);
+ } /* end of vPrintXML */
+ 
+ /*
+@@ -921,7 +925,7 @@
+ void
+ vSubstringXML(diagram_type *pDiag,
+ 	const char *szString, size_t tStringLength, long lStringWidth,
+-	USHORT usFontstyle)
++	UCHAR ucFontColor, USHORT usFontstyle, drawfile_fontref tFontRef, USHORT usFontSize)
+ {
+ 	fail(pDiag == NULL || szString == NULL);
+ 	fail(pDiag->pOutFile == NULL);
+@@ -932,7 +936,7 @@
+ 		return;
+ 	}
+ 
+-	vPrintXML(pDiag, szString, tStringLength, usFontstyle);
++	vPrintXML(pDiag, szString, tStringLength, ucFontColor, usFontstyle, tFontRef, usFontSize);
+ 	pDiag->lXleft += lStringWidth;
+ } /* end of vSubstringXML */
+ 
+@@ -1238,9 +1242,10 @@
+  * Create a start of a list item
+  */
+ void
+-vStartOfListItemXML(diagram_type *pDiag, BOOL bNoMarks)
++vStartOfListItemXML(diagram_type *pDiag, BOOL bNoMarks, UINT number)
+ {
+ 	const char	*szAttr;
++	char numberAttribute[40];
+ 	UCHAR	ucTopTag;
+ 
+ 	fail(pDiag == NULL);
+@@ -1260,7 +1265,8 @@
+ 		ucReadStack() != TAG_ORDEREDLIST, ucReadStack());
+ 
+ 	/* Start a new list item */
+-	szAttr = bNoMarks ? "override='none'" : NULL;
++	snprintf(numberAttribute, sizeof(numberAttribute), "override='%u'", number);
++	szAttr = bNoMarks ? "override='none'" : numberAttribute;
+ 	vAddStartTag(pDiag, TAG_LISTITEM, szAttr);
+ 	/* Start a new paragraph (independant of level) */
+ 	vAddStartTag(pDiag, TAG_PARA, NULL);
+@@ -1436,3 +1442,9 @@
+ 	}
+ 	vAddEndTag(pDiag, TAG_ROW);
+ } /* end of vAddTableRowXML */
++
++/* Paragraph metrics are carried as a nonprinting marker for the browser adapter. */
++void vParagraphMetricsXML(diagram_type *pDiag, long before, long after, long left, long first, long right, UCHAR align, USHORT size)
++{
++    fprintf(pDiag->pOutFile, "<phrase role=\"splatworks-paragraph\" before=\"%.3f\" after=\"%.3f\" left=\"%.3f\" first=\"%.3f\" right=\"%.3f\" align=\"%u\" size=\"%.1f\"/>", before/1000.0, after/1000.0, left/1000.0, first/1000.0, right/1000.0, (UINT)align, size/2.0);
++}
+--- a/fonts.c
++++ b/fonts.c
+@@ -52,6 +52,16 @@
+ 	return -1;
+ } /* end of iGetFontByNumber */
+ 
++/* Preserve original Word family names for the browser XML adapter. */
++const char *szGetSourceFontname(UCHAR number)
++{
++    size_t i;
++    for (i = 0; i < tFontTableRecords; i++)
++        if (pFontTable[i].ucWordFontNumber == number && pFontTable[i].szWordFontname[0])
++            return pFontTable[i].szWordFontname;
++    return "Arial";
++}
++
+ /*
+  * szGetOurFontname - Get our font name
+  *
+--- a/fonts_u.c
++++ b/fonts_u.c
+@@ -139,7 +139,8 @@
+ 			tOptions.eConversionType != conversion_pdf;
+ 
+ 	if (bUsePlainText) {
+-		/* Plain text, no fonts */
++		/* XML carries the source font number without changing text layout. */
++		if (tOptions.eConversionType == conversion_xml) return (drawfile_fontref)ucWordFontNumber;
+ 		return (drawfile_fontref)0;
+ 	}
+ 
+--- a/word2text.c
++++ b/word2text.c
+@@ -1006,8 +1006,11 @@
+ 							pStyleTmp);
+ 			}
+ 			if (bInList && bFirstLine) {
+-				vStartOfListItem(pDiag, bNoMarks);
++				vStartOfListItem(pDiag, bNoMarks, usListNumber);
+ 			}
++			if (tOptions.eConversionType == conversion_xml && bFirstLine)
++			    vParagraphMetricsXML(pDiag, lBeforeIndentation, lAfterIndentation,
++			        lLeftIndentation, lLeftIndentation1, lRightIndentation, ucAlignment, usFontSize);
+ 			vPutIndentation(pDiag, pAnchor, bNoMarks, bFirstLine,
+ 					usListNumber, ucNFC, szListChar,
+ 					lLeftIndentation, lLeftIndentation1);
+--- a/properties.c
++++ b/properties.c
+@@ -48,7 +48,8 @@
+ 		}
+ 		if (tOptions.eConversionType == conversion_draw ||
+ 		    tOptions.eConversionType == conversion_ps ||
+-		    tOptions.eConversionType == conversion_pdf) {
++		    tOptions.eConversionType == conversion_pdf ||
++		    tOptions.eConversionType == conversion_xml) {
+ 			vCreate0FontTable();
+ 		}
+ 		vSet0SummaryInfo(pFile, aucHeader);
+@@ -72,7 +73,8 @@
+ 		}
+ 		if (tOptions.eConversionType == conversion_draw ||
+ 		    tOptions.eConversionType == conversion_ps ||
+-		    tOptions.eConversionType == conversion_pdf) {
++		    tOptions.eConversionType == conversion_pdf ||
++		    tOptions.eConversionType == conversion_xml) {
+ 			vCreate2FontTable(pFile, iWordVersion, aucHeader);
+ 		}
+ 		vSet2SummaryInfo(pFile, iWordVersion, aucHeader);
+@@ -105,7 +107,8 @@
+ 		}
+ 		if (tOptions.eConversionType == conversion_draw ||
+ 		    tOptions.eConversionType == conversion_ps ||
+-		    tOptions.eConversionType == conversion_pdf) {
++		    tOptions.eConversionType == conversion_pdf ||
++		    tOptions.eConversionType == conversion_xml) {
+ 			vCreate6FontTable(pFile, pPPS->tWordDocument.ulSB,
+ 				aulBBD, tBBDLen, aucHeader);
+ 		}
+@@ -138,7 +141,8 @@
+ 		}
+ 		if (tOptions.eConversionType == conversion_draw ||
+ 		    tOptions.eConversionType == conversion_ps ||
+-		    tOptions.eConversionType == conversion_pdf) {
++		    tOptions.eConversionType == conversion_pdf ||
++		    tOptions.eConversionType == conversion_xml) {
+ 			vCreate8FontTable(pFile, pPPS,
+ 				aulBBD, tBBDLen, aulSBD, tSBDLen, aucHeader);
+ 		}

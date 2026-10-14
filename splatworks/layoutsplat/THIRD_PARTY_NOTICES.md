@@ -49,3 +49,12 @@ regexp-to-ast 0.4.0 (MIT), and tiny-emitter 2.1.0 (MIT) calculate native
 GridSplat recipients. Matching source, license notices, pinned versions and
 rebuild instructions accompany `vendor/suite-data/BUILD.md`. ListSplat
 calculations use the ecosystem's GPL application sources.
+
+## Browser binary Word import (v0.4.2)
+
+Antiword 0.37 with Debian 0.37-17 patches (GPL-2.0-or-later), Emscripten
+4.0.22 runtime notices, and SheetJS CFB 1.2.2 / bundled CRC-32 1.2.1
+(Apache-2.0) accompany `splatworks/shared/word-legacy/`. Matching source,
+the formatting patch, build script, licenses and SHA-256 manifest are included.
+The decoder runs in a separate browser worker; short compound streams are
+normalized in memory without changing the chosen file.

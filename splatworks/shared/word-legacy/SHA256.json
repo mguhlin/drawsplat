@@ -1,0 +1,17 @@
+{
+  "BUILD.md": "971e00decec9ef9d31a03a45152e86e72bfe7efc325a7e00fd81d663c6bf4f05",
+  "CFB-LICENSE": "279ce5f639ecd1767f96948f9fbe6f0aa8145cb280cf98473fb366eab5e6de26",
+  "COPYING": "3c6f6f8e9eda89b42eda68cf893681db1eeb03e951af8677782501ac95c9b556",
+  "EMSCRIPTEN-LICENSE": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86",
+  "antiword-0.37-17-debian.tar.xz": "e3bdff1911b4ccbf45bc977c6a1b79800f3ee8fdd11ec861cbfd60258176492b",
+  "antiword-0.37-source.tar.gz": "4415e79d9f4c8d282a1cffbdaffe7ec0178982b9608e79bfd18561234a43e0cc",
+  "antiword-decoder.mjs": "c7c8cba2df6ca353f2a9e4dba5366e17e7b8d2f5f5133556d760a7e9a713985d",
+  "antiword-decoder.wasm": "bb12ce001e7916d9963ce0b0bac5df4dfd3139977c3a3bb5e71089b63b8431b1",
+  "browser-formatting.patch": "d19b75af647ef4422a37e95d1bc5b9c0c675451e0d08742cbe3b8eefc60f917d",
+  "build.py": "2aeb5671250b3cb9c918b39a31e54ef1a9f62ac2bb635759172e6114d6c1eb01",
+  "cfb-1.2.2-source.tgz": "1dc1e4ae89d7b400bac9bbaa1963af701842e38afa756c272cb441ab6266d512",
+  "compound-file.mjs": "ed29c7c6e9448440cde5f58bae8314bf465fdc18bf8f1b93eeb2199381ea6189",
+  "import.mjs": "e441ff260aaca0bb1952f0ca733dc5cd1892e872f8f917494b72b35c17837d48",
+  "normalize.mjs": "2556601ed4dbc5b16d1e3cec7cce23e2e560f770347edcbd8e935a35a5a48af1",
+  "worker.mjs": "f565ce3253d6c2c6cf4c14d76284b460d1a16a03dad02dad7fd78b4e280b0050"
+}

@@ -54,3 +54,45 @@ export function odtXmlToHtml(contentXml,stylesXml=null){
  if(el.localName==='table'&&el.namespaceURI?.includes('table'))return'<table><tbody>'+[...el.children].filter(n=>n.localName==='table-row').map(row=>'<tr>'+[...row.children].filter(n=>n.localName==='table-cell').map(cell=>'<td>'+[...cell.children].map(n=>block(n,level)).join('')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';return [...el.children].map(n=>block(n,level)).join('');}
  const body=descendants(d,'text').find(n=>n.namespaceURI?.includes('office'));if(!body)throw Error('The OpenDocument file has no text body.');return [...body.children].map(n=>block(n)).join('')||'<p></p>';
 }
+
+// Only decoder-generated DocBook is accepted; original DOC bytes are handled in a worker.
+export function legacyWordXmlToHtml(decoded){
+ const input=decoded.replace(/<!DOCTYPE book PUBLIC "-\/\/OASIS\/\/DTD DocBook XML V4\.1\.2\/\/EN"\s+"http:\/\/www\.oasis-open\.org\/docbook\/xml\/4\.1\.2\/docbookx\.dtd">/,'');
+ const d=xml(input);if(d.documentElement.localName!=='book')throw Error('Invalid legacy Word decoder output.');
+ let lastSize=12,pendingMetrics;
+ const bool=(el,key)=>el.getAttribute(key)==='1';
+ function inline(el){return [...el.childNodes].map(n=>{
+  if(n.nodeType===3)return el.localName!=='phrase'&&/^\s*$/.test(n.textContent)?'':esc(n.textContent);if(n.nodeType!==1)return '';
+  if(n.localName==='phrase'&&n.getAttribute('role')==='splatworks-paragraph')return '';
+  if(n.localName==='phrase'){
+   const size=bounded(Number(n.getAttribute('font-size')),6,120),family=font(n.getAttribute('font-family')),color=n.getAttribute('color');
+   return styled('span',inline(n),{'font-size':size?size+'pt':undefined,'font-family':family||undefined,color:/^#[\da-f]{6}$/i.test(color||'')?color:undefined,'font-weight':bool(n,'bold')?'bold':'normal','font-style':bool(n,'italic')?'italic':'normal','text-decoration':[bool(n,'underline')?'underline':'',bool(n,'strike')?'line-through':''].filter(Boolean).join(' ')||'none'});
+  }
+  if(['imagedata','mediaobject','imageobject'].includes(n.localName))return '';
+  // Every decoded text run has its own explicit flags, including normal overrides.
+  return inline(n);
+ }).join('');}
+ function paragraph(el,tag='p',inList=false){
+  const metrics=el.querySelector('phrase[role="splatworks-paragraph"]')||pendingMetrics,firstRun=el.querySelector('phrase[font-size]'),size=bounded(Number(metrics?.getAttribute('size')||firstRun?.getAttribute('font-size')||lastSize),6,120)||12;lastSize=size;
+  pendingMetrics=null;
+  const props={'margin-top':'0pt','margin-bottom':'0pt','font-size':size+'pt','line-height':'1.2','font-family':font(firstRun?.getAttribute('font-family'))||undefined,color:/^#[\da-f]{6}$/i.test(firstRun?.getAttribute('color')||'')?firstRun.getAttribute('color'):undefined,'font-weight':firstRun&&bool(firstRun,'bold')?'bold':'normal','font-style':firstRun&&bool(firstRun,'italic')?'italic':'normal','text-decoration':firstRun&&bool(firstRun,'underline')?'underline':'none'};
+  if(metrics){for(const[key,cssKey]of[['before','margin-top'],['after','margin-bottom'],['left','margin-left'],['right','margin-right'],['first','text-indent']])props[cssKey]=(bounded(Number(metrics.getAttribute(key)),key==='first'?-360:0,360)||0)+'pt';props['text-align']=['left','center','right','justify'][Number(metrics.getAttribute('align'))]||'left';}
+  if(inList){props['margin-left']='0pt';props['text-indent']='0pt';}
+  return styled(tag,inline(el).replace(/^\s*\n|\n\s*$/g,''),props);
+ }
+ function block(el,inList=false){
+  if(el.localName==='phrase'&&el.getAttribute('role')==='splatworks-paragraph'){pendingMetrics=el;return '';}
+  if(el.localName==='bookinfo')return '';
+  if(el.localName==='title')return el.parentElement.localName==='book'||!el.textContent.trim()?'':paragraph(el,'h2');
+  if(el.localName==='para')return paragraph(el,'p',inList);
+  if(['orderedlist','itemizedlist'].includes(el.localName)){
+   const ordered=el.localName==='orderedlist',type={loweralpha:'a',upperalpha:'A',lowerroman:'i',upperroman:'I'}[el.getAttribute('numeration')],items=[...el.children].filter(e=>e.localName==='listitem'),number=items[0]?.getAttribute('override');
+   return styled(ordered?'ol':'ul',items.map(item=>'<li'+(/^\d+$/.test(item.getAttribute('override')||'')?' value="'+item.getAttribute('override')+'"':'')+'>'+[...item.children].map(n=>block(n,true)).join('')+'</li>').join(''),{'margin-top':'0pt','margin-bottom':'0pt','padding-left':'36pt'},ordered?' start="'+(/^\d+$/.test(number||'')?number:1)+'"'+(type?' type="'+type+'"':''):'');
+  }
+  if(el.localName==='entry')return'<td>'+[...el.children].map(n=>block(n)).join('')+'</td>';
+  if(el.localName==='row')return'<tr>'+[...el.children].map(n=>block(n)).join('')+'</tr>';
+  if(el.localName==='table'||el.localName==='informaltable')return'<table><tbody>'+[...el.children].map(n=>block(n)).join('')+'</tbody></table>';
+  return [...el.children].map(n=>block(n,inList)).join('');
+ }
+ return [...d.documentElement.children].map(n=>block(n)).join('')||'<p></p>';
+}

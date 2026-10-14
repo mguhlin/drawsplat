@@ -76,7 +76,7 @@ export function setupPublishing(api) {
     const override = $('masterObjectOverride'); if (override) { const old = override.value; override.replaceChildren(new Option(t('chooseMasterObject'), '')); const master = (d.masters || []).find(m => m.id === p.masterId); for (const o of master?.objects || []) override.add(new Option(o.type === 'text' ? d.stories[o.storyId].text.slice(0, 30) : t(o.type === 'image' ? 'picture' : 'rectangle'), o.id)); override.value = old; }
     const o = api.getSelectedObject();
     document.querySelectorAll('[data-action="labelSettings"]').forEach(b=>b.disabled=!d.labelLayout?.stock);
-    document.querySelectorAll('#fileMenu [data-action="importText"]').forEach(b=>b.disabled=o?.type!=='text'||o.locked);
+    document.querySelectorAll('#fileMenu [data-action="importText"],#fileMenu [data-action="importWord"],#fileMenu [data-action="importOdt"]').forEach(b=>b.disabled=o?.type!=='text'||o.locked);
     if (o?.type === 'text') {
       const s = d.stories[o.storyId].style;
       const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none',propKerning:s.kerning||'auto',propWordSpacing:s.wordSpacing||0,propTextScale:(s.textScale||1)*100 };

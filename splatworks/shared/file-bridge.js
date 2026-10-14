@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 DrawSplat contributors. See LICENSE.txt in this directory.
 export const APP_NAMES = {writesplat:'WriteSplat',showsplat:'ShowSplat',gridsplat:'GridSplat',listsplat:'ListSplat',layoutsplat:'LayoutSplat'};
-const TYPES = {writesplat:['docx','odt','txt','text','md','markdown','html','htm','json'],showsplat:['pptx','odp','pdf','html','htm','md','markdown','json'],gridsplat:['xlsx','ods','csv','tsv','md','markdown','json'],listsplat:['csv','tsv','json'],layoutsplat:['layoutsplat','json']};
+const TYPES = {writesplat:['doc','docx','odt','txt','text','md','markdown','html','htm','json'],showsplat:['pptx','odp','pdf','html','htm','md','markdown','json'],gridsplat:['xlsx','ods','csv','tsv','md','markdown','json'],listsplat:['csv','tsv','json'],layoutsplat:['layoutsplat','json']};
 const TTL = 10 * 60 * 1000;
 const PARAM = 'open-file';
 const sessionKey = () => 'drawsplat.imported-tab.' + location.pathname;
@@ -18,7 +18,7 @@ export function fileOwner(name){
   for(const app of Object.keys(APP_NAMES))if(value.endsWith('.'+app+'.json'))return app;
   const extension=value.split('.').pop();
   if(extension==='layoutsplat')return 'layoutsplat';
-  if(['docx','odt'].includes(extension))return 'writesplat';
+  if(['doc','docx','odt'].includes(extension))return 'writesplat';
   if(['pptx','odp'].includes(extension))return 'showsplat';
   if(['xlsx','ods'].includes(extension))return 'gridsplat';
   return null;
@@ -38,7 +38,7 @@ export async function assertSupportedFile(file, app){
     throw new Error(owner?`Open ${file.name} in ${APP_NAMES[owner]}.`:`${APP_NAMES[app]} cannot open this file type. Use ${TYPES[app].map(type=>'.'+type).join(', ')}. For older Office files, save a current DOCX, XLSX, PPTX, or CSV copy first.`);
   }
   if(file.size>20_000_000)throw new Error('File imports are limited to 20 MB.');
-  if(!['docx','odt','pptx','odp','xlsx','ods','pdf','layoutsplat'].includes(extension)){
+  if(!['doc','docx','odt','pptx','odp','xlsx','ods','pdf','layoutsplat'].includes(extension)){
     const bytes=new Uint8Array(await file.slice(0,512).arrayBuffer());
     if(bytes.includes(0) || (bytes[0]===0x50 && bytes[1]===0x4b && bytes[2]===3 && bytes[3]===4))throw new Error('This looks like a binary file with a text filename. Use its original Office extension, or export text/CSV as UTF-8.');
   }

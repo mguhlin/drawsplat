@@ -6,7 +6,7 @@ const doc=page=>page.evaluate(()=>LayoutSplat.getPublication());
 async function fileSection(page,id){await page.locator('#fileMenu > summary').click();if(!await page.locator(`#${id}`).evaluate(e=>e.open))await page.locator(`#${id} > summary`).click();}
 test('File has one Templates entry, alphabetical imports, and HTML export',async({page})=>{
  await ready(page);expect(await page.locator('.menu-bar > [data-action=browseTemplates]').count()).toBe(0);await fileSection(page,'fileImport');
- const labels=await page.locator('#fileImport .submenu-panel button').allTextContents();expect(labels.slice(0,13)).toEqual([...labels.slice(0,13)].sort((a,b)=>a.localeCompare(b,'en')));
+ const labels=await page.locator('#fileImport .submenu-panel button').allTextContents();expect(labels.slice(0,-1)).toEqual([...labels.slice(0,-1)].sort((a,b)=>a.localeCompare(b,'en')));
  await page.locator('[data-action=importFile-pages]').click();await expect(page.locator('#projectInput')).toHaveAttribute('accept','.pages');await fileSection(page,'fileExport');await page.locator('[data-action=export-html]').click();await expect(page.locator('#exportFormat')).toHaveValue('html');
  const wait=page.waitForEvent('download');await page.locator('#exportDownload').click();const text=await fs.readFile(await(await wait).path(),'utf8');expect(text).toContain('layoutsplat-document');expect(text).toContain('publication-page');
 });
