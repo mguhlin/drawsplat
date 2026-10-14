@@ -61,7 +61,7 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
   }
   for (const event of events) {
     const p = event.data || {};
-    if (event.op === 'startMasterPage') { masterMode = true; warnings.push('Publisher master backgrounds are converted into the emitted page objects.'); continue; }
+    if (event.op === 'startMasterPage') { masterMode = true; warnings.push('Publisher master-page objects are not applied. Review recurring headers, footers, and backgrounds.'); continue; }
     if (event.op === 'endMasterPage') { masterMode = false; continue; }
     if (masterMode) continue;
     switch (event.op) {

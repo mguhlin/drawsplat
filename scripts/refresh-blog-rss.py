@@ -81,7 +81,7 @@ def merge_feeds(current, published, curated, now):
             entries[key] = item
     root = ET.Element('rss', {'version': '2.0'})
     channel = ET.SubElement(root, 'channel')
-    for tag, value in [('title', 'SplatWorks Blog'), ('link', 'https://drawsplat.org/blog/'), ('description', 'DrawSplat project updates and published articles from MGuhlin.org.'), ('language', 'en-US')]:
+    for tag, value in [('title', 'SplatWorks Blog'), ('link', 'https://drawsplat.org/blog/'), ('description', 'SplatWorks ecosystem updates and published articles from MGuhlin.org.'), ('language', 'en-US')]:
         ET.SubElement(channel, tag).text = value
     for item in sorted(entries.values(), key=lambda value: (publication(value), identity(value)), reverse=True):
         channel.append(item)
