@@ -6,6 +6,47 @@ The user subsequently authorized continuing through all milestones and requested
 
 Additional approved scope: broad local image/video decoding and conversion, printable video posters, object-specific context menus (right-click, Mac Control/Command-click, keyboard), text import into an existing frame, media replacement without changing frame geometry, and a large original template library inspired by the publication types/industry breadth of StockLayouts. The user explicitly requested native `.pub` import and subsequently required browser-contained decoding without LibreOffice. This supersedes the earlier desktop-bridge proposal. v0.2 bundles libmspub as WebAssembly with experimental editable conversion and source retention. Import/export native content from WriteSplat, ShowSplat, GridSplat, and ListSplat as well as routing files to their original applications. Clearly distinguish editable native imports from PDF backgrounds and preserve/report conversion limitations. Update README/wiki/release documentation, commit, push, deploy the next substantial update, and verify production.
 
+## Remaining work
+
+Current checkpoint: **v0.4.6, October 14, 2026**. Work proceeds in the priority
+order below, starting with Publisher typography and text flow. These items remain
+open; the original milestone descriptions later in this plan describe the full
+approved scope rather than a list of unfinished features.
+
+- [ ] **Publisher typography and text flow.** Improve paragraph composition,
+  hyphenation, contour wrapping and imported linked-story flow. Compare editable
+  imports and printed output with reference publications/PDFs using matching fonts;
+  record remaining line-break, overflow and positioning differences.
+- [ ] **Native imports and external application checks.** Expand Publisher fixtures
+  and independently open/round-trip supported IDML and Scribus SLA exports in their
+  target applications. Research modern Pages IWA, QuarkXPress 5+ and native INDD
+  decoding; these formats are not currently implemented. Record supported versions,
+  editable features and conversion losses before claiming compatibility.
+- [ ] **Richer SplatWorks exchange.** Preserve more complex content, embedded font
+  files, custom tab positions and semantic list numbering between applications.
+  Verify formatting and content after a round trip, and report unsupported features.
+  Native GridSplat/ListSplat mail-merge sources are already implemented.
+- [ ] **Dynamic fields on master pages.** Resolve page/total fields separately for
+  every page using a master, including after insertion, duplication and deletion.
+  Ordinary-page folios already update; master artwork still needs dynamic fields.
+- [ ] **Broader large-document performance.** Exercise image-heavy publications,
+  complex masters and multiple linked stories on modest devices. Measure memory,
+  editing/reflow, preview and print behavior beyond the existing controlled 500-page
+  cache regression and 100-page linked-story PDF proof; fix demonstrated bottlenecks.
+- [ ] **Independent commercial-print validation.** Validate PDF/X output, printer
+  profile handling, fonts, transparency, color and page boxes with independent tools
+  and actual commercial-printer proofs. Existing structural preflight and Pack and
+  Go are preparation tools; they do not establish printer acceptance or certification.
+
+The core editor, distinct templates, shared whiteboard backgrounds, browser-native
+PUB/legacy DOC/legacy Quark imports, formatted DOCX/ODT insertion, ordinary folios,
+HTML reading order and current download/district packages have shipped. Rebuilding
+the v0.4.6 packages is **complete**, not an outstanding roadmap item.
+
+Record acceptance evidence and deployed improvements in [PROGRESS.md](PROGRESS.md)
+as each checkbox is completed. No completion date or fidelity guarantee is assigned
+to proprietary-format research before feasibility is established.
+
 ## Interface and language
 
 Reuse SplatWorks purple (`#7c3aed`), orange (`#ff9f2f`), white panels, dark text (`#1f2937`), pale purple surfaces (`#f7f4ff`), and subtle borders (`#d8d2ff`). Follow the existing system-font stack and line-icon vocabulary. Publication pages remain white against a quiet workspace. Left-align controls; reserve strong color for selection and primary actions.

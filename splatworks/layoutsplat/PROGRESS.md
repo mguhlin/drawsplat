@@ -6,7 +6,7 @@ Milestones 1–2 are implemented. The core publishing and personalization tools 
 3–4 are implemented; advanced composition and richer conversion remain. Milestone 5
 has print preparation and independent structural checks, but is not certified complete.
 
-Remaining priorities:
+Remaining priorities (acceptance criteria are in the [current roadmap checklist](IMPLEMENTATION_PLAN.md#remaining-work)):
 
 - Closer Publisher paragraph composition, hyphenation, contour wrapping and imported linked-story fidelity.
 - More varied Publisher fixtures and source/round-trip checks in external InDesign/Scribus applications; modern Pages IWA, QuarkXPress 5+ and native INDD remain unavailable.

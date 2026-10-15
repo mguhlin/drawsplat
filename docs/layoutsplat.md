@@ -181,10 +181,13 @@ Keep shared assets and the MediaSplat FFmpeg runtime with the app. The current
 release packages include a standalone LayoutSplat ZIP, the five-app SplatWorks
 suite, and the complete district installation. [Downloads](../pages/download.html).
 
-Milestones 1–2 are implemented; the core tools in 3–4 are implemented, with further
-composition fidelity and direct suite data-source integration remaining. Milestone 5
-has print preparation and packaging, with stronger preflight, exhaustive PDF/X,
-large-document optimization, and external application validation still remaining.
+Milestones 1–2 and the core tools in 3–4 are implemented, including native
+GridSplat/ListSplat mail-merge sources. The [remaining-work checklist](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work)
+prioritizes Publisher typography and linked text flow, native-import coverage and
+external application checks, richer suite exchange, dynamic master-page fields,
+broader large-document workloads and independent commercial-print/PDF-X validation.
+Milestone 5 has structural preflight, print preparation and published packages;
+commercial-printer acceptance and certification remain open.
 [Progress](../splatworks/layoutsplat/PROGRESS.md) ·
 [Approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) ·
 [Library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).

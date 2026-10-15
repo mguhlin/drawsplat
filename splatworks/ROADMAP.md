@@ -71,9 +71,17 @@ are implemented. WriteSplat exchange now preserves supported paragraph metrics,
 blank paragraphs and list labels. The 20-section [illustrated feature guide](../docs/layoutsplat-features.md)
 and [current progress](layoutsplat/PROGRESS.md) distinguish shipped behavior from limits.
 
-Remaining work is closer Publisher composition and imported linked flow,
-hyphenation/contour wrapping, dynamic fields in masters, richer complex suite
-exchange, modern proprietary formats, broader large-document stress cases,
-external application round-trip validation and independent commercial print/PDF-X
-acceptance. The latest rebuilt downloads and district suite have been published;
-packaging is no longer an outstanding v0.4.6 task.
+### Remaining work — October 14, 2026
+
+The [detailed remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work)
+records acceptance criteria in priority order:
+
+- [ ] Closer Publisher typography, hyphenation, contour wrapping and imported linked-story flow.
+- [ ] Broader native-import coverage and external InDesign/Scribus round-trip validation; research modern Pages IWA, QuarkXPress 5+ and native INDD.
+- [ ] Richer SplatWorks exchange, including font files, custom tabs and semantic list numbering.
+- [ ] Dynamic page/total fields in master-page artwork.
+- [ ] Larger and more varied document workloads beyond the controlled performance proofs.
+- [ ] Independent PDF/X validation, printer-profile workflows and commercial-printer acceptance.
+
+The latest rebuilt downloads and district suite have been published; packaging is
+complete for v0.4.6. Shipped functionality above is not part of this open checklist.
