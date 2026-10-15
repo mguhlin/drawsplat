@@ -1,5 +1,26 @@
 # LayoutSplat development progress
 
+## Current roadmap status — October 14, 2026
+
+Milestones 1–2 are implemented. The core publishing and personalization tools in
+3–4 are implemented; advanced composition and richer conversion remain. Milestone 5
+has print preparation and independent structural checks, but is not certified complete.
+
+Remaining priorities:
+
+- Closer Publisher paragraph composition, hyphenation, contour wrapping and imported linked-story fidelity.
+- More varied Publisher fixtures and source/round-trip checks in external InDesign/Scribus applications; modern Pages IWA, QuarkXPress 5+ and native INDD remain unavailable.
+- Richer suite exchange for complex content, font files, custom tabs and semantic list numbering. Native GridSplat/ListSplat mail-merge sources are already implemented.
+- Dynamic page-number fields in master artwork. Ordinary-page page/total folios already update.
+- Broader large-document workloads beyond the controlled 500-page cache regression and 100-page print proof.
+- Exhaustive independent PDF/X validation, printer-supplied profile workflows and real commercial-printer acceptance.
+- Audit and publish the rebuilt download packages containing the latest v0.4.6 changes.
+
+Historical “remaining” lists below describe their dated versions; later entries
+record work completed since then. The current template library, Word/DOCX/ODT
+insertion, browser legacy Quark import, whiteboard collections and reading-order
+controls are shipped capabilities, not future milestones.
+
 ## October 14, 2026 — illustrated documentation
 
 Added a 20-section feature inventory with 14 actual v0.4.6 production screenshots,

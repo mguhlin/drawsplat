@@ -57,7 +57,7 @@ def identity(item):
 
 def merge_feeds(current, published, curated, now):
     entries = {}
-    local = [item for item in current if item.findtext('source') == 'DrawSplat Updates']
+    local = [item for item in current if item.findtext('source') in ('DrawSplat Updates', 'SplatWorks Updates')]
     for source, items in [('local', local), ('mguhlin', published), ('curated', curated), ('archive', current)]:
         for original in items:
             key, date = identity(original), publication(original)

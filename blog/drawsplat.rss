@@ -6,6 +6,15 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
+      <title>Microsoft Publisher Is Retiring. Meet LayoutSplat.</title>
+      <link>https://splatworks.org/blog/microsoft-publisher-retiring-layoutsplat.html</link>
+      <guid>https://splatworks.org/blog/microsoft-publisher-retiring-layoutsplat.html</guid>
+      <pubDate>Thu, 15 Oct 2026 00:21:35 GMT</pubDate>
+      <description>&lt;img src="https://splatworks.org/assets/layoutsplat-guide/v0.4.6/01-workspace.png" alt="LayoutSplat newsletter workspace"&gt;A detailed illustrated tour of LayoutSplat: original templates, linked text frames, typography, Avery labels and badges, local Publisher imports, media, and print exports. Includes 14 production screenshots and current compatibility limits.</description>
+      <source url="https://splatworks.org/blog/">SplatWorks Updates</source>
+      <media:thumbnail url="https://splatworks.org/assets/layoutsplat-guide/v0.4.6/01-workspace.png" />
+    </item>
+    <item>
       <title>DrawSplat.org: Making Data Privacy Agreements Easier for Schools</title>
       <link>https://mguhlin.org/blog/2026-10-11-drawsplat-org-making-data-privacy-agreements-easier-for-schools/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-drawsplat-org-making-data-privacy-agreements-easier-for-schools/</guid>
