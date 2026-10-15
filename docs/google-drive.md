@@ -18,7 +18,8 @@ Keep a file copy in your Google Drive from the SplatWorks office apps and creati
 
 | App | Where to save | What Drive receives |
 | --- | --- | --- |
-| WriteSplat, ShowSplat, GridSplat, ListSplat, LayoutSplat | **File → Save to Google Drive** | A native editable project copy. GridSplat also offers reopening its last Drive save from this browser. |
+| WriteSplat, ShowSplat, ListSplat, LayoutSplat | **File → Save to Google Drive** | A native editable project copy. |
+| GridSplat | **File → Save → Save Google Drive** | A native editable spreadsheet project. **File → Open → Open Google Drive** reopens its last Drive save from this browser. |
 | PDFSplat | **Save PDF to Google Drive** in the toolbar | A PDF with the current edits and page arrangement. |
 | VideoSplat | **File → Save project to Google Drive** | A `.videosplat.json` timeline manifest. It references media; keep the originals and relink them when moving to another device. |
 | VideoSplat rendered video | **Export video**, render, then **Save video to Google Drive** | The rendered playable video, separate from the editable project manifest. |
