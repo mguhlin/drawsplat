@@ -44,6 +44,11 @@ done
 cp "$ROOT_DIR/assets/css/action-icons.css" "$STAGING_DIR/CipherSplat/shared/assets/css/"
 mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/icons"
 cp -r "$ROOT_DIR/assets/icons/actions" "$STAGING_DIR/CipherSplat/shared/assets/icons/"
+python3 - "$STAGING_DIR/CipherSplat/index.html" <<'PY'
+import sys,re
+from pathlib import Path
+p=Path(sys.argv[1]);s=p.read_text();p.write_text(re.sub(r'<!-- splat-privacy:start -->.*?<!-- splat-privacy:end -->','',s,flags=re.S))
+PY
 sed -i 's|../../assets/|./shared/assets/|g' "$STAGING_DIR/CipherSplat/index.html"
 python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" CipherSplat 'index.html?offline=1'
 

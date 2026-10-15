@@ -2,7 +2,7 @@ name: District database installation
 on:
   push:
     branches: [main]
-    paths: ['server/mysql-backend/**', 'downloads/drawsplat-starter.sql', 'scripts/build-starter-sql.cjs', 'tests/starter-sql-ci.cjs', 'selfhost/district/**', 'start-district.*', 'start-native.*', 'scripts/install-docker-debian.sh', 'tests/*district*', 'tests/mysql-backend.test.cjs', '.github/workflows/district-database.yml']
+    paths: ['server/mysql-backend/**', 'downloads/drawsplat-starter.sql', 'scripts/build-starter-sql.cjs', 'tests/starter-sql-ci.cjs', 'selfhost/district/**', 'start-district.*', 'start-native.*', 'scripts/install-docker-debian.sh', 'tests/*district*', 'tests/mysql-backend.test.cjs', 'tests/student-privacy.test.cjs', '.github/workflows/district-database.yml']
   workflow_dispatch:
 permissions:
   contents: read

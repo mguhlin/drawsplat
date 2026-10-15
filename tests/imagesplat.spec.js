@@ -29,7 +29,7 @@ test("ImageSplat copies the complete annotated canvas", async ({
   await page.goto("/solutions/imagesplat/");
 
   await expect(page.getByRole("heading", { name: "ImageSplat™" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "DrawSplat™ Tools" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open DrawSplat apps" })).toBeVisible();
 
   const input = page.locator("#imageInput");
   await input.setInputFiles({

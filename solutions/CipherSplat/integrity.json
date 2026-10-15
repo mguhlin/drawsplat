@@ -8,7 +8,7 @@
   "files": {
     "app.js": "f6f16119220f5964659677a0e1de50abc8abfe95e2fca3ff97b59ad7b37b65c6",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
-    "index.html": "b9d6ecf34cf4b5c94b7bccced651f83b1b559836f33e0306521a60904aa0ca90",
+    "index.html": "40f436c0d32b042013f53670069546c2d058ff0830aa83df658ee1cdf46dc0fc",
     "manifest.webmanifest": "d6362f1965a02c471821dcb55d37359615762759f5c2760ac367cc74eec26960",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
@@ -22,6 +22,8 @@
     "vendor/hash-wasm/argon2.umd.min.js": "dcec617a2e1b700fa132d1583a186cb70611113395e869f2dd6cc82b415d3094",
     "vendor/hash-wasm/LICENSE": "c14dea172f72f2714284a0ac2ab1b00b5352a01409d58255a46227ffc541debd",
     "vendor/hash-wasm/package.json": "bdb86309706014e1e3062ce78aa7a2e8b196a44d5a22ceec8978d864e28116f7",
+    "../../assets/js/privacy-controls.js": "6eb26d6d0564b83130c99616f173196c248a8bea5533b724bcb57bdec54d37c9",
+    "../../assets/css/privacy-controls.css": "fec56ed11753ecf33f2bcd9b25e2f4e05431cec52643545d77089f5fca1156fc",
     "../../assets/js/app-language.js": "ea0807c72322a648a3cde22499718c7d7de550e602249d0d5e95e26d27de290a",
     "../../assets/css/app-language.css": "dbf94be48a864912bc2283c491741966a04a761f4a474ff19388ac9fcff2549f",
     "../../assets/js/action-cards.js": "a1726148f495ae1472ca331d57eea1e0bce0a46818dcd5844141c18937620c20",

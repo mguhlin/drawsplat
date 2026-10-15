@@ -32,6 +32,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 REPO_ROOT="$(pwd)"
+python3 scripts/build-privacy-controls.py
 node scripts/check-splatworks-builds.mjs
 node scripts/build-pdfsplat.mjs
 bash scripts/build-ciphersplat-offline.sh
@@ -869,6 +870,19 @@ done
 for module_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT"; do
   copy_file site.webmanifest "$module_root/site.webmanifest"
   copy_file data/drawsplat-tools.json "$module_root/data/drawsplat-tools.json"
+done
+
+# Every independently hosted module keeps the common privacy surface and baseline.
+for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"; do
+  copy_tree assets/css "$privacy_root/assets/css" "${MODULE_EXCLUDES[@]}"
+  copy_tree assets/js "$privacy_root/assets/js" "${MODULE_EXCLUDES[@]}"
+  copy_tree assets/brand "$privacy_root/assets/brand" "${MODULE_EXCLUDES[@]}"
+  copy_tree privacy "$privacy_root/privacy" "${MODULE_EXCLUDES[@]}"
+  copy_tree legal "$privacy_root/legal" "${MODULE_EXCLUDES[@]}"
+  for privacy_file in privacy-controls.css privacy-center.css; do copy_file "assets/css/$privacy_file" "$privacy_root/assets/css/$privacy_file"; done
+  for privacy_file in privacy-controls.js privacy-center.js protect-review.js; do copy_file "assets/js/$privacy_file" "$privacy_root/assets/js/$privacy_file"; done
+  for privacy_file in privacy-inventory.json privacy-retention.json privacy-providers.json; do copy_file "data/$privacy_file" "$privacy_root/data/$privacy_file"; done
+  copy_file _headers "$privacy_root/_headers"
 done
 
 # Keep the hosted CipherSplat intact and include its direct-file edition beside it.

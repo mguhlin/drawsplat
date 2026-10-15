@@ -390,46 +390,25 @@ function attachComplianceRoutes(app, pool, options = {}) {
     }
   });
 
-  /* --- Student data delete / export ------------------------------------ */
-
-  app.post(basePath + '/admin/users/:id/delete-data', requireRole(['district_admin','campus_admin']), async (req, res) => {
+  /* Student record operations are district-admin-only. Campus/teacher scope is
+     not established by the legacy role check, so do not expose other students. */
+  const studentPrivacy = require('./student-privacy');
+  app.post(basePath + '/admin/users/:id/delete-data', requireRole(['district_admin']), async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      const reason = String(req.body && req.body.reason || '').slice(0, 500);
-      const [user] = await pool.query('SELECT id, email, student_name FROM users WHERE id = ? LIMIT 1', [id]);
-      if (!user[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
-      const [turnins] = await pool.execute('DELETE FROM turnins WHERE student_name = ?', [user[0].student_name]);
-      const [cloudBoards] = await pool.execute('DELETE FROM cloud_boards WHERE user_id = ?', [id]);
-      const [sessions] = await pool.execute('DELETE FROM sessions WHERE user_id = ?', [id]);
-      const [usage] = await pool.execute('DELETE FROM time_usage WHERE user_id = ?', [id]);
-      await pool.execute('UPDATE users SET deleted_at = NOW(), email = NULL, student_name = NULL, password_hash = NULL, password_salt = NULL, parent_code_hash = NULL WHERE id = ?', [id]);
-      await logEvent(pool, 'DATA_DELETED', {
-        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
-        targetType: 'user', targetId: String(id),
-        metadata: { reason, turninsDeleted: turnins.affectedRows, sessionsDeleted: sessions.affectedRows, usageDeleted: usage.affectedRows, boardsDeleted: cloudBoards.affectedRows }
-      });
-      res.json({ ok: true, deleted: { turnins: turnins.affectedRows, sessions: sessions.affectedRows, usage: usage.affectedRows, boards: cloudBoards.affectedRows } });
-    } catch (err) {
-      res.status(500).json({ ok: false, error: 'Server error' });
-    }
+      if (req.body?.confirm !== 'DELETE_STUDENT_DATA' && !String(req.body?.reason || '').trim()) return res.status(400).json({ ok: false, error: 'Confirm with DELETE_STUDENT_DATA after verified authorization and export.' });
+      res.json(await studentPrivacy.deleteStudent(pool, req.params.id, req.dsUser));
+    } catch (err) { res.status(err.status || 500).json({ ok: false, error: err.status ? err.message : 'Server error' }); }
   });
-
-  app.get(basePath + '/admin/users/:id/export-data', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+  app.get(basePath + '/admin/users/:id/export-data', requireRole(['district_admin']), async (req, res) => {
+    let conn;
     try {
-      const id = Number(req.params.id);
-      const [user] = await pool.query('SELECT id, email, student_name, class_name, role, age_band, created_at FROM users WHERE id = ? LIMIT 1', [id]);
-      if (!user[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
-      const [turnins] = await pool.query('SELECT id, title, board_json, status, created_at FROM turnins WHERE student_name = ? ORDER BY created_at DESC', [user[0].student_name]);
-      await logEvent(pool, 'DATA_EXPORT', {
-        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
-        targetType: 'user', targetId: String(id),
-        metadata: { turninsExported: turnins.length }
-      });
-      const boards = (req.dsUser.id === id || ['district_admin','campus_admin'].includes(req.dsUser.role)) ? (await pool.query('SELECT board_key, title, board_json, updated_at FROM cloud_boards WHERE user_id = ?', [id]))[0] : [];
-      res.json({ ok: true, user: user[0], turnins, boards });
-    } catch (err) {
-      res.status(500).json({ ok: false, error: 'Server error' });
-    }
+      conn = await pool.getConnection();
+      await conn.beginTransaction();
+      const result = await studentPrivacy.exportStudent(conn, req.params.id);
+      await conn.execute("INSERT INTO audit_events (actor_user_id, actor_role, action, target_type, target_id) VALUES (?, ?, 'DATA_EXPORT', 'user', ?)", [req.dsUser.id, req.dsUser.role, String(req.params.id)]);
+      await conn.commit(); res.json(result);
+    } catch (err) { if (conn) await conn.rollback(); res.status(err.status || 500).json({ ok: false, error: err.status ? err.message : 'Server error' }); }
+    finally { if (conn) conn.release(); }
   });
 
   /* --- Parent's view of their own requests ----------------------------- */

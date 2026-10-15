@@ -7,7 +7,7 @@
 <link rel="manifest" href="../../site.webmanifest" />
 <meta name="theme-color" content="#7c3aed" />
 <!-- /DrawSplat favicons -->
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../../assets/css/privacy-controls.css"><script src="../../assets/js/privacy-controls.js"></script><!-- splat-privacy:end -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="doc.title">Clock Wizard — SplatWorks Tools</title>
   <meta name="description" content="Get a realistic time estimate for any task, with phase breakdown and an honest ADHD-tax allowance.">
@@ -231,7 +231,7 @@
       </div>
       <div class="field">
         <label for="apiKeyInput" data-i18n="settings.keyLabel">API key</label>
-        <input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
+        <p class="intro">Your key stays in this tab only. Before the first AI request, review the provider and approve sending content. Student data requires school-approved terms. <a href="/privacy/">Privacy controls</a></p><input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
       </div>
       <div class="field">
         <label for="modelInput" data-i18n="settings.modelLabel">Model (optional override)</label>
@@ -385,10 +385,10 @@
 
   // ====== AI
   function loadSettings() {
-    try { const r = localStorage.getItem(STORAGE_KEY); if (!r) return { provider: "anthropic", apiKey: "", model: "" }; return JSON.parse(r); }
+    try { const r = localStorage.getItem(STORAGE_KEY); if (!r) return { provider: "anthropic", apiKey: "", model: "" }; return { ...JSON.parse(r), apiKey: "" }; }
     catch { return { provider: "anthropic", apiKey: "", model: "" }; }
   }
-  function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
+  function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...s, apiKey: "" })); refreshModePill(); }
   function refreshModePill() {
     if (settings.apiKey) {
       modePill.className = "mode-pill ai";

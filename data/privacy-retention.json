@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "reviewed": "2026-10-15",
+  "schedule": [
+    {"data":"Browser drafts, imported source/media, recovery copies, game state and settings","default":"User-managed until cleared; upgrades do not silently erase existing work","configured":"Privacy center offers 1, 7 or 30 days from explicit renewal","deletion":"On next visit after an enabled deadline; blocked database handles are reported. Browser site-data controls are the fallback."},
+    {"data":"AI API keys in the five task tools","default":"Current tab memory only","deletion":"Lost on reload or closing the tab; legacy persisted keys removed on the next tool visit"},
+    {"data":"Google Apps Script boards","default":"Archive at 90 days; delete at 365 days","deletion":"Configured daily trigger; operator verifies Drive trash, Sheets and backups"},
+    {"data":"District database private boards and classroom submissions/feedback","default":"365 days after last save/submission when the operator enables district record cleanup","deletion":"Daily configured job; operator reviews configuration before enabling it"},
+    {"data":"District assignments and roster/account records","default":"School educational/records schedule; identify exit/withdrawal/termination date","deletion":"Verified district-administrator erasure workflow for student-linked records; shared class/assignment records require district review"},
+    {"data":"Audit records","default":"365 days, configurable","deletion":"Daily retention job; student erasure removes identifying fields from account-linked activity"},
+    {"data":"Completed or denied family requests","default":"1095 days, configurable; longer only for a documented legal requirement","deletion":"Daily retention job; account erasure removes linked request narratives and identifiers"},
+    {"data":"Expired or revoked login sessions","default":"Expired sessions removed after 30 days; revoked sessions removed on cleanup","deletion":"Daily retention job"},
+    {"data":"Downloaded files, shared exports, cloud files and external media objects","default":"District-approved educational schedule, active deletion within 30 days of termination","deletion":"Device/cloud owner deletes every verified copy; revokes links/access; checks trash"},
+    {"data":"Backups","default":"Maximum 90 calendar days after termination/deletion request; restore must reapply pending erasures","deletion":"Encrypted backup rotation, expiry and documented destruction receipt"},
+    {"data":"Public hosting request metadata","default":"Provider security/operational retention under the applicable Cloudflare terms; no project analytics beacon is added by these controls","deletion":"Public-site privacy contact routes provider-held requests; exact provider retention is an evidence item, not a product-controlled timer"}
+  ],
+  "termination":{"activeDays":30,"backupDays":90,"exportBeforeDelete":true,"postPurposeRetention":"Only documented legal obligations; minimize or irreversibly de-identify records, prohibit re-identification, record the basis and end date"}
+}

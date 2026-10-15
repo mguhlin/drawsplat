@@ -20,6 +20,7 @@ GROUPS={
  'Privacy and district review': [('wiki/compliance.html','Compliance and district review','Storage-specific safeguards, operational evidence, NDPA/DPA and district approval.'),('guides/compliance-guide.html','Apps Script Compliance Console','Safety, family access, age bands, use limits, retention and privacy packets.'),('legal/terms-privacy.html','Terms and privacy','Formal terms, data handling and software license notices.'),('legal/ndpa-packet.html','NDPA / DPA Review Packet','Data flow, review exhibits, controls and district evidence.'),('legal/district-addendum.html','District Privacy Addendum','District agreement template and responsibilities.'),('legal/privacy-agreements.html','DPA Register','Recorded agreement execution and review status.'),('legal/google-oauth-disclosure.html','Google OAuth disclosure','School identity versus Drive permissions and Google data use.'),('legal/compliance-gaps.html','Compliance Gap List','Deployment limits and district controls still required.'),('legal/gdpr-compliance.html','GDPR reference','Privacy review for applicable deployments.'),('legal/texas-compliance.html','Texas compliance reference','Texas school privacy and operational review.'),('legal/widgets-security.html','Component data and network inventory','Local drafts, media permissions, exports, optional AI/cloud services and hosting metadata.'),('legal/accessibility.html','Accessibility statement','Accessibility support and known limits.'),('legal/privacy-builder.html','Privacy Notice Builder','Create a deployment-specific notice.'),('legal/combined-policy.html','Combined policy packet','Consolidated policy documents for district review.'),('wiki/COMPLIANCE.html','Compliance operations reference','Apps Script endpoints, configuration and operator procedures.')],
  'Technical and updates': [('wiki/support-wiki-maintenance.html','Maintaining the wiki','Canonical sources, generated search index, documentation checks and publishing.'),('wiki/tool-inventory.html','Component inventory','Whiteboard, SplatWorks, tools, widgets and games.'),('wiki/standalone-architecture.html','Standalone architecture','Static application and integration boundaries.'),('pages/release-notes.html','Release notes','Application and package changes.'),('blog/index.html','SplatWorks blog','Feature walkthroughs and release articles.'),('pages/contact.html','Contact and support','Report a problem or request implementation services.')]
 }
+GROUPS['Privacy and district review'].extend([('legal/protect-review.html','PROTECT controls and deployment review','Shared controls, retention schedule, age/consent paths and evidence-based scoring.'),('legal/service-providers.html','Service providers and change notices','Provider roles, countries, processing boundaries, contract requirements and objections.')])
 # Keep the search index complete while presenting a short audience-based sidebar.
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/writesplat.html','WriteSplat · Document editing and import','Word/LibreOffice formatting, source numbering and spacing, local saving and current compatibility.'))
@@ -83,7 +84,7 @@ for current in ['wiki/index.html','pages/support.html','guides/index.html']:
 
 # Rebuild the combined packet from canonical policy articles before indexing it.
 packet=[]
-for name in ['terms-privacy','texas-compliance','district-addendum','gdpr-compliance','google-oauth-disclosure','ndpa-packet','accessibility','widgets-security','compliance-gaps']:
+for name in ['terms-privacy','texas-compliance','district-addendum','gdpr-compliance','google-oauth-disclosure','ndpa-packet','accessibility','widgets-security','compliance-gaps','protect-review','service-providers']:
     document=(ROOT/'legal'/f'{name}.html').read_text()
     content=re.search(r'<main\b[^>]*>(.*?)</main>',document,re.S).group(1)
     content=re.sub(r'<h1([^>]*)>(.*?)</h1>',r'<h2\1>\2</h2>',content,flags=re.S)
@@ -173,3 +174,6 @@ print('Built SplatWorks Wiki:',len(entries),'searchable articles')
 # Keep every public header aligned with this generated documentation.
 import subprocess, sys
 subprocess.run([sys.executable, str(ROOT/"scripts/build-site-navigation.py")], check=True)
+
+# Reapply the shared controls after generated HTML has been rewritten.
+subprocess.run([sys.executable, str(ROOT/"scripts/build-privacy-controls.py")], check=True)

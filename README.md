@@ -1,5 +1,7 @@
 # DrawSplatTM
 
+**Privacy controls — October 15, 2026 (v3.1.38):** [Your privacy](https://splatworks.org/privacy/) adds origin-local export/clear, explicit retention choices, connection preferences, and tab-only AI keys with approval before transmission. [PROTECT deployment review](https://splatworks.org/legal/protect-review) and the [provider register](https://splatworks.org/legal/service-providers) document evidence and operator responsibilities. Existing projects are preserved; browser and district database cleanup require explicit configuration. Student database export/erasure now covers account-linked boards, submissions/feedback, memberships and usage. See server/mysql-backend/README.md for the upgrade and legacy-record boundaries. A 13–14/14 deployment score requires verified operational evidence; the software does not automatically certify every installation.
+
 **Current naming:** SplatWorks is the ecosystem; DrawSplat is the whiteboard. Main creative tools include ConceptSplat (formerly Concept Map Studio), MarkdownSplat, DiagramSplat, QuizSplat, RubricSplat, and SketchSplat VR. Existing URLs, file formats, and older release names remain valid. See the [current wiki](https://splatworks.org/wiki/) and [component features](https://splatworks.org/wiki/tools-widgets-features.html). Dated release entries below retain their historical terminology.
 
 

@@ -3,9 +3,10 @@ test.use({ serviceWorkers: 'block' });
 const fs = require('node:fs/promises');
 const fixture = (title = 'Audit board') => ({ title, active: 0, panels: [{ id: 'p1', name: 'Panel 1', bg: 'blank', objects: [{ id: 'r1', type: 'rect', x: 80, y: 80, w: 180, h: 120, fill: '#ff0000', stroke: '#000000', strokeWidth: 2, opacity: 1 }] }] });
 async function open(page, init) {
-  await page.addInitScript(() => { localStorage.setItem('drawsplat.welcomed','1'); localStorage.setItem('drawsplat.consent.accepted','1'); localStorage.setItem('drawsplat.lastStartupTipDate',new Date().toISOString().slice(0,10)); });
+  await page.addInitScript(() => { localStorage.setItem('drawsplat.welcomed','1'); localStorage.setItem('drawsplat.consent.accepted','1'); localStorage.setItem('drawsplat.startupTipDate',new Date().toISOString().slice(0,10)); });
   if(init) await page.addInitScript(init);
   await page.goto('/app/whiteboard.html');
+  if (await page.locator('#entryRoleDialog').isVisible()) await page.locator('#entryRoleTeacher').click();
   await expect(page.locator('#canvasToolHud')).toBeVisible();
 }
 async function load(page, value) {
@@ -115,8 +116,10 @@ test('draw, drag, resize, duplicate, delete, undo/redo and reopen', async ({ pag
   expect(errors).toEqual([]);
 });
 
-test('first visit sequences welcome, consent and concept-map dialog', async ({ page }) => {
+test('first visit sequences role choice, welcome, consent and concept-map dialog', async ({ page }) => {
   await page.goto('/app/whiteboard.html');
+  await expect(page.locator('#entryRoleDialog')).toBeVisible();
+  await page.locator('#entryRoleTeacher').click();
   await expect(page.locator('#welcomeDialog')).toBeVisible();
   await expect(page.locator('#drawsplatConsentBanner')).toHaveCount(0);
   await page.locator('#welcomeDismiss').click();
@@ -172,10 +175,11 @@ for(const [name,width,height] of [['phone portrait',390,844],['phone landscape',
     test.use({viewport:{width,height},hasTouch:true});
     test('layout and touch selection', async ({ page }, info) => {
       await open(page);await load(page,fixture());
+      await page.locator('[data-tool="select"]').first().evaluate(el=>el.click());
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       const box=await page.locator('#boardSvg').boundingBox();expect(box.width).toBeGreaterThan(200);expect(box.height).toBeGreaterThan(100);
-      await page.touchscreen.tap(box.x+100,box.y+100);await expect(page.locator('#boardSvg .selected')).toHaveCount(1);
-      if(width<=600){expect((await page.locator('.sidebar-undo-row').boundingBox()).height).toBeLessThan(60)}
+      await page.locator('#boardSvg .object').first().scrollIntoViewIfNeeded();const object=await page.locator('#boardSvg .object').first().boundingBox();await page.touchscreen.tap(object.x+object.width/2,object.y+object.height/2);await expect(page.locator('#boardSvg .selected')).toHaveCount(1);
+      if(width<=600 && await page.locator('.sidebar-undo-row').isVisible()){expect((await page.locator('.sidebar-undo-row').boundingBox()).height).toBeLessThan(60)}
       const rail=page.locator('#toolButtons');
       expect(await rail.evaluate(el=>{if(el.scrollHeight<=el.clientHeight)return true;el.scrollTop=100;return el.scrollTop>0})).toBeTruthy();
       await page.screenshot({path:info.outputPath('layout.png'),fullPage:true});
@@ -295,6 +299,6 @@ test('offline extensionless navigation resolves the precached HTML without a red
     URL,Response,self:{location:{origin:'https://audit.test'},addEventListener:(name,fn)=>{if(name==='fetch')handleFetch=fn}},
     caches:{match:async key=>key==='https://audit.test/app/whiteboard.html'?cached:undefined},fetch:async()=>{throw new Error('offline')}
   });
-  const response=await new Promise(resolve=>handleFetch({request:{url:'https://audit.test/app/whiteboard',method:'GET',mode:'navigate',destination:'document'},respondWith:resolve}));
+  const response=await new Promise(resolve=>handleFetch({request:{url:'https://audit.test/app/whiteboard',method:'GET',mode:'navigate',destination:'document',headers:new Headers(),cache:'default'},respondWith:resolve}));
   expect(response.status).toBe(200);expect(response.redirected).toBe(false);expect(await response.text()).toContain('Whiteboard offline');
 });

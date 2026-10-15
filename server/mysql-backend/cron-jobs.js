@@ -102,14 +102,15 @@ function start(pool, deps) {
   const audit = () => dailyAuditCleanup(pool, logEvent).catch(err => console.error('dailyAuditCleanup failed', err.message));
   const boards = () => dailyBoardCleanup(pool, logEvent).catch(err => console.error('dailyBoardCleanup failed', err.message));
 
+  const district = () => require('./district-retention').cleanupDistrictRecords(pool, logEvent).catch(err => console.error('districtRetention failed', err.message));
   const everyMinute = setInterval(enforce, ONE_MIN);
-  const everyDay = setInterval(() => { audit(); boards(); }, TWENTY_FOUR_H);
+  const everyDay = setInterval(() => { audit(); boards(); district(); }, TWENTY_FOUR_H);
 
-  setTimeout(() => { audit(); boards(); }, 30 * 1000);
+  setTimeout(() => { audit(); boards(); district(); }, 30 * 1000);
 
   return {
     stop() { clearInterval(everyMinute); clearInterval(everyDay); },
-    runNow: { enforce, audit, boards }
+    runNow: { enforce, audit, boards, district }
   };
 }
 

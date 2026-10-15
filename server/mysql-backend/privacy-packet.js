@@ -19,7 +19,12 @@ const STATIC_DOCS_RELATIVE = [
   '../../legal/texas-compliance.html',
   '../../legal/privacy-builder.html',
   '../../COMPLIANCE-ROADMAP.md',
-  '../../docs/COMPLIANCE.md'
+  '../../docs/COMPLIANCE.md',
+  '../../legal/protect-review.html',
+  '../../legal/service-providers.html',
+  '../../data/privacy-inventory.json',
+  '../../data/privacy-retention.json',
+  '../../data/privacy-providers.json'
 ];
 
 function crc32(buf) {

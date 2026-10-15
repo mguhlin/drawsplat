@@ -29,7 +29,7 @@ if [ -d "$CIPHER_DIR/shared/assets" ]; then
     if [ -f "$CIPHER_DIR/$file" ]; then FILES+=("$file"); fi
   done
 else
-  FILES+=(../../assets/js/app-language.js ../../assets/css/app-language.css ../../assets/js/action-cards.js ../../assets/css/action-cards.css ../../assets/css/action-icons.css)
+  FILES+=(../../assets/js/privacy-controls.js ../../assets/css/privacy-controls.css ../../assets/js/app-language.js ../../assets/css/app-language.css ../../assets/js/action-cards.js ../../assets/css/action-cards.css ../../assets/css/action-icons.css)
 fi
 
 {

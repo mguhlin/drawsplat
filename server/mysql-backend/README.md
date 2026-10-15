@@ -174,3 +174,42 @@ The checkmarks below indicate backend code exists, not validated whiteboard feat
 - Verify the Clever district token is stored as encrypted-at-rest (managed MySQL providers handle this; bare-metal installs need disk encryption).
 - Hand the OAuth Google client ID to the frontend; the backend audience-checks it.
 - For multi-instance deployments, set `DRAWSPLAT_CRON=0` on every instance except one, and front the SSE endpoint with a sticky-session load balancer (or swap `realtime.js` for Redis pub/sub).
+
+## PROTECT privacy upgrade (October 15, 2026)
+
+The public privacy page is `/privacy/`. Existing drafts are not erased on upgrade.
+Expiry (1/7/30 days) requires an explicit choice and runs on return; all other copies
+need their own deletion procedure. `legal/protect-review.html` records deployment
+scores only after a reviewer supplies evidence. It does not certify an installation.
+
+District-administrator `GET /admin/users/:id/export-data` now includes private boards,
+classroom submissions and feedback, memberships, usage, request summaries, and
+non-credential session/activity metadata. `POST /admin/users/:id/delete-data`
+requires `{"confirm":"DELETE_STUDENT_DATA"}` (or the existing nonempty `reason`).
+It transactionally erases account-linked records and removes identifying request/audit
+fields. These operations apply only to student accounts. Campus/teacher role labels
+alone do not establish authorization to export any student in the database; the
+complete operation is district-admin-only. Schools must verify the requester's identity
+and deliver exports through an approved channel.
+
+Legacy free-text-name turn-ins are deliberately not automatically matched to an
+account: two students may share a name. Review those exact records, storage objects,
+local downloads, Apps Script/cloud records and backups separately. The operation's
+response lists these manual-review boundaries.
+
+To enable cleanup after approving the schedule, merge the following into the existing
+configuration using the district-admin `PUT /admin/compliance-config` endpoint
+(`{"config": ...}`; retain existing safety/age/time settings):
+
+```json
+{"retention":{"districtRecords":{"enabled":true,"boardDays":365,"submissionDays":365}}}
+```
+
+Keep `DRAWSPLAT_CRON=1` on exactly one API instance. The daily job deletes private
+boards by last save and classroom submissions/feedback by submission time, writing a
+transactional count-only audit event. It is disabled until explicitly configured.
+Assignments, rosters, exported files, media objects and backups remain on the district's
+records schedule. Test cleanup and restore with synthetic records before rollout.
+Use encrypted disks/database/object storage and encrypted off-server backups, preserve
+the password pepper securely, and reapply erasures before restoring a backup to service.
+The software cannot attest these host settings; keep their evidence in the review.

@@ -1,0 +1,1741 @@
+{
+  "version": 1,
+  "reviewed": "2026-10-15",
+  "scope": "All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.",
+  "method": "Reproducible static source inventory plus runtime privacy-control tests. Storage literals and constants are evidence, not an exhaustive dynamic-key guarantee.",
+  "publicHost": {
+    "provider": "Cloudflare, Inc.",
+    "companyCountry": "United States",
+    "processingLocation": "Global edge network; no country-only residency commitment. Content editing remains local unless a connection is used.",
+    "data": "IP address, user agent, request URL and operational request metadata; no project-upload backend is supplied by the public site."
+  },
+  "components": [
+    {
+      "id": "clipsplat",
+      "name": "ClipSplat",
+      "path": "/solutions/clipsplat/",
+      "entry": "solutions/clipsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": true,
+        "literalKeys": [
+          "drawsplat.language"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "github.com",
+        "help.instagram.com",
+        "unpkg.com",
+        "www.instagram.com",
+        "www.meta.com",
+        "www.socialcal.app"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "d50f2865e84380f5eea433cf54e641349a182889de767a338437d505e50d7359"
+    },
+    {
+      "id": "whiteboard",
+      "name": "DrawSplat Whiteboard",
+      "path": "/app/whiteboard.html",
+      "entry": "app/whiteboard.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "127.0.0.1:",
+        "accounts.google.com",
+        "localhost:",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "7b6bc026d35130f7eeedcef53b8b990b2e5a2b4a4ae79d7bfc4ef037d3c64feb"
+    },
+    {
+      "id": "gridsplat",
+      "name": "GridSplat",
+      "path": "/splatworks/gridsplat/",
+      "entry": "splatworks/gridsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "en.wikipedia.org",
+        "github.com",
+        "purl.org",
+        "react.dev",
+        "rolldown.rs",
+        "sap.github.io",
+        "schemas.microsoft.com",
+        "schemas.openxmlformats.org",
+        "stuk.github.io",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "88785ae65a33afc40b5fe7db82423124ed5e969f242f329c66b2748803991067"
+    },
+    {
+      "id": "showsplat",
+      "name": "ShowSplat",
+      "path": "/splatworks/showsplat/",
+      "entry": "splatworks/showsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": true,
+        "literalKeys": [
+          "showsplat.railHeight",
+          "showsplat.zoomLevel"
+        ],
+        "namedConstants": [
+          {
+            "name": "NOTE_SCALE_KEY",
+            "value": "webdeck-notes-scale"
+          },
+          {
+            "name": "STORAGE_KEY",
+            "value": "showsplat.deck.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "127.0.0.1:4183",
+        "drawsplat.org",
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+        "github.com",
+        "mguhlin.github.io",
+        "raw.githubusercontent.com",
+        "schemas.openxmlformats.org",
+        "www.w3.org",
+        "www.youtube-nocookie.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "d3a10f504ae7aafecc670d0aac0a37e32b64469c96d80c388430d99c9061847c"
+    },
+    {
+      "id": "writesplat",
+      "name": "WriteSplat",
+      "path": "/splatworks/writesplat/",
+      "entry": "splatworks/writesplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "answers.microsoft.com",
+        "example.org",
+        "prosemirror.net",
+        "purl.org",
+        "rolldown.rs",
+        "schemas.microsoft.com",
+        "schemas.openxmlformats.org",
+        "stuk.github.io",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "4541311baf6782cea137c846cd9d4f2d7c6d851d5e724a2fbd6de3823fa29072"
+    },
+    {
+      "id": "layoutsplat",
+      "name": "LayoutSplat",
+      "path": "/splatworks/layoutsplat/",
+      "entry": "splatworks/layoutsplat/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "2fcd684ba34f6c1dd314410773b9e3cfac06cc0b9af4b1a7fbf563f1d33dea59"
+    },
+    {
+      "id": "listsplat",
+      "name": "ListSplat",
+      "path": "/splatworks/listsplat/",
+      "entry": "splatworks/listsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "8baf63a791846d7e7691a9d96eed69d1769e35b57c45b27dc63128cdd2c6ad13"
+    },
+    {
+      "id": "animated-gif",
+      "name": "GIFsplat™",
+      "path": "/solutions/gifsplat/",
+      "entry": "solutions/gifsplat/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "f3abcf346792c0070113c4dfd35a864217cfb458cee8e8b0466abf2dfe0546ca"
+    },
+    {
+      "id": "audiosplat",
+      "name": "AudioSplat",
+      "path": "/solutions/audiosplat/",
+      "entry": "solutions/audiosplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "accounts.google.com",
+        "bigsoundbank.com",
+        "cdn.jsdelivr.net",
+        "commons.wikimedia.org",
+        "developer.mozilla.org",
+        "drive.google.com",
+        "example.org",
+        "gist.github.com",
+        "github.com",
+        "huggingface.co",
+        "kenney.nl",
+        "mixkit.co",
+        "opengameart.org",
+        "pixabay.com",
+        "rolldown.rs",
+        "sonniss.com",
+        "sound-effects.bbcrewind.co.uk",
+        "soundbible.com",
+        "tabletopaudio.com",
+        "web.dev",
+        "www.apache.org",
+        "www.fisheries.noaa.gov",
+        "www.googleapis.com",
+        "www.mp3dev.org",
+        "www.nasa.gov",
+        "www.nps.gov",
+        "www.soundeffectsplus.com",
+        "www.soundgator.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "1fef0f06d0eb0abbf53ecb79547b768bd5aa22e48c50859bec77175517affdaa"
+    },
+    {
+      "id": "big-link",
+      "name": "Big Link",
+      "path": "/solutions/big-link/",
+      "entry": "solutions/big-link/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "4a611d7e275ef3acdf31891eaa7157a06936067c25eae80aaad98f5748798192"
+    },
+    {
+      "id": "bingo-caller",
+      "name": "Bingo Caller",
+      "path": "/solutions/bingo-caller/",
+      "entry": "solutions/bingo-caller/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "367410c7615ea805b83a3cf93d3fd736afd26479645e1a7e6937e06d55a879af"
+    },
+    {
+      "id": "bingo-cards",
+      "name": "Bingo Card Generator",
+      "path": "/solutions/bingo-card-generator/",
+      "entry": "solutions/bingo-card-generator/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "e6ee4d4e29c3eec5b4229ae2f1f79940b53f350842dc875b3b7d409f1e4c2734"
+    },
+    {
+      "id": "brain-sort",
+      "name": "Brain Sort",
+      "path": "/solutions/brain-sort/",
+      "entry": "solutions/brain-sort/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "brainSort.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "ac945748dd718ab641073522e4fb2c9fecfbb32c7337688b7e09e1ce7576f8b8"
+    },
+    {
+      "id": "ciphersplat",
+      "name": "CipherSplat",
+      "path": "/solutions/CipherSplat/",
+      "entry": "solutions/CipherSplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "127.0.0.1:8765",
+        "drawsplat.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "40f436c0d32b042013f53670069546c2d058ff0830aa83df658ee1cdf46dc0fc"
+    },
+    {
+      "id": "clock-wizard",
+      "name": "Clock Wizard",
+      "path": "/solutions/clock-wizard/",
+      "entry": "solutions/clock-wizard/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "clockWizard.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "6d3de48ceb047be43ad8444eda54405ceb23c878d7b766bebe8d127a42031085"
+    },
+    {
+      "id": "coin-flipper",
+      "name": "Coin Flipper",
+      "path": "/solutions/coinflipping/",
+      "entry": "solutions/coinflipping/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [
+          "drawsplatCoinSetups"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "789f2d15ece853276f0c99ea5d194981e7eb60559f7a75a34e78a19c3c117535"
+    },
+    {
+      "id": "coloring-book",
+      "name": "Coloring Book",
+      "path": "/solutions/coloring-book/",
+      "entry": "solutions/coloring-book/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "0809095def47aede6f9fb05e464c0e16db08418d4a838377ece3bb4de5343722"
+    },
+    {
+      "id": "concept-map",
+      "name": "ConceptSplat",
+      "path": "/solutions/concept-map/",
+      "entry": "solutions/concept-map/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "9795c1d7945d44a9fb415a99a28e3bf746e21b757c03d15ae216cda96c783abc"
+    },
+    {
+      "id": "dice",
+      "name": "Dice Roller",
+      "path": "/solutions/dice/",
+      "entry": "solutions/dice/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "f694d6e47f046b2bb165284ae779f346aa70d5d262d969d4ca169c82bbf0fab6"
+    },
+    {
+      "id": "dicebreakers",
+      "name": "Dicebreaker Creator",
+      "path": "/solutions/dicebreakers/",
+      "entry": "solutions/dicebreakers/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [
+          "dicebreaker.key."
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "accounts.google.com",
+        "cdn.jsdelivr.net",
+        "content.dropboxapi.com",
+        "graph.microsoft.com",
+        "login.microsoftonline.com",
+        "www.dropbox.com",
+        "www.googleapis.com",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "03011e78d3b1ec8fb08076d2de519e482847fa22489ca5f03705a41c9a5948fa"
+    },
+    {
+      "id": "dots-boxes",
+      "name": "Dots and Boxes",
+      "path": "/solutions/dotsboxes/",
+      "entry": "solutions/dotsboxes/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "ca353f3e01a6efc7e999fea3d90ff1164d84c0e4e3bdb2c688e792c7e12bffc5"
+    },
+    {
+      "id": "draw-sketch",
+      "name": "Draw & Sketch",
+      "path": "/solutions/drawsketch/",
+      "entry": "solutions/drawsketch/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "8bcbd274bda623b2d093c6f643afb7624b4b68d182e66625e5b655ee9e34368b"
+    },
+    {
+      "id": "fortune-wheel",
+      "name": "Fortune Wheel",
+      "path": "/solutions/fortune/",
+      "entry": "solutions/fortune/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "dd5d6d8628c4a6a0a585efebb353337dd0801d3220184ab1c3d38fbebda67e8b"
+    },
+    {
+      "id": "graphsplat",
+      "name": "GraphSplat",
+      "path": "/solutions/graphsplat/",
+      "entry": "solutions/graphsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "tea.texas.gov",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "9e4815bbdea6d8672b207459a56138690211826fefdd9568f070f5a3222656a0"
+    },
+    {
+      "id": "markdown-studio",
+      "name": "MarkdownSplat",
+      "path": "/solutions/markdown-studio/",
+      "entry": "solutions/markdown-studio/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "drawsplat.markdownStudio.draft.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "example.com",
+        "mguhlin.github.io",
+        "purl.org",
+        "schemas.openxmlformats.org",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "c712bb7804581c79fa7c6b2790e236ba5330169e83bf45ac54ff55bbc9383853"
+    },
+    {
+      "id": "mediasplat",
+      "name": "MediaSplat",
+      "path": "/solutions/mediasplat/",
+      "entry": "solutions/mediasplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "cdn.jsdelivr.net",
+        "developer.mozilla.org",
+        "emscripten.org",
+        "gist.github.com",
+        "github.com",
+        "huggingface.co",
+        "react.dev",
+        "rolldown.rs",
+        "unpkg.com",
+        "web.dev",
+        "www.apache.org",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "030bf5d157cf70c2d8abeccfdf764678006f32c33d217f2adc3532c2a61ece83"
+    },
+    {
+      "id": "meme-puzzle",
+      "name": "Meme Puzzle",
+      "path": "/solutions/memepuzzle/",
+      "entry": "solutions/memepuzzle/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "latestPuzzleKey",
+            "value": "drawsplat.memepuzzle.latest"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "commons.wikimedia.org",
+        "drawsplat.org",
+        "schemas.openxmlformats.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "52aab033cef5b6d4928b35bb095a35ea0788772792df7ebb7564f27d66b1cf01"
+    },
+    {
+      "id": "memesplat",
+      "name": "MemeSplat™",
+      "path": "/solutions/memesplat/",
+      "entry": "solutions/memesplat/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "d6f9f07e640a4300b889350a177d74f52bd6cb8132a296d4b1cfddfe4de5fd0e"
+    },
+    {
+      "id": "mermaid",
+      "name": "DiagramSplat",
+      "path": "/solutions/mermaid/",
+      "entry": "solutions/mermaid/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "lastLoadedKey",
+            "value": "flowchart"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "0b93db99293ce8e5ec95ad7be9878361748c82e0b895021261e87286363f116c"
+    },
+    {
+      "id": "pdfsplat",
+      "name": "PDFsplat",
+      "path": "/solutions/pdfsplat/",
+      "entry": "solutions/pdfsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "NOTE_SCALE_KEY",
+            "value": "webdeck-notes-scale"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "127.0.0.1:4182",
+        "drawsplat.org",
+        "mguhlin.github.io",
+        "purl.org",
+        "schema.org",
+        "schemas.openxmlformats.org",
+        "www.daisy.org",
+        "www.idpf.org",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "d1ab9970affc80e4cea37ea52e2570de46065052b879737de011253a77dded2c"
+    },
+    {
+      "id": "qrsplat",
+      "name": "QRSplat Studio",
+      "path": "/solutions/qrsplat/",
+      "entry": "solutions/qrsplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "CONFIG_KEY",
+            "value": "qrsplat.backend.v1"
+          },
+          {
+            "name": "STORAGE_KEY",
+            "value": "qrsplat.designs.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org",
+        "example.org",
+        "script.google.com",
+        "script.googleusercontent.com",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "f15eaa6ddabb2718da9060cf573480791ebbae485160d0af6053f223b9507243"
+    },
+    {
+      "id": "quiz-flashcards",
+      "name": "QuizSplat",
+      "path": "/solutions/quiz-flashcard-studio/",
+      "entry": "solutions/quiz-flashcard-studio/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [
+          "drawsplat.quizFlashcardStudio"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "schemas.openxmlformats.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "dc5a5df17d9e91e13239ada1fdeb8ca93a264e898a5ff93cc90f568b29c34241"
+    },
+    {
+      "id": "rubric-builder",
+      "name": "RubricSplat",
+      "path": "/solutions/rubric-builder/",
+      "entry": "solutions/rubric-builder/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "5b9ebf0b1218eec859730d7036dff65ef09c1934e6438b8ca9bc23fddca1f4d5"
+    },
+    {
+      "id": "sketchspace-vr",
+      "name": "SketchSplat VR",
+      "path": "/solutions/sketchspace-VR/",
+      "entry": "solutions/sketchspace-VR/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "blog.tcea.org",
+        "tinkersphere.com",
+        "www.aliexpress.us",
+        "www.amazon.com",
+        "www.crcibernetica.com",
+        "www.ebay.com",
+        "www.walmart.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "5b55c0d876a56abe1e3368f814da226484af448654521238efd9afdf6174236b"
+    },
+    {
+      "id": "splatbot",
+      "name": "SplatBot Studio",
+      "path": "/solutions/splatbot-studio/",
+      "entry": "solutions/splatbot-studio/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "CUSTOM_MISSIONS_KEY",
+            "value": "splatbot.customMissions.v1"
+          },
+          {
+            "name": "STORAGE_KEY",
+            "value": "splatbot.project.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "afd934b104b90b4edd995a484867c8b3ac17400ae0efa93705bdf2e4bafebbc1"
+    },
+    {
+      "id": "splatimage",
+      "name": "ImageSplat™",
+      "path": "/solutions/imagesplat/",
+      "entry": "solutions/imagesplat/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": true,
+        "indexedDB": false,
+        "literalKeys": [
+          "imagesplat-camera-id"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "esm.sh"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "f1450ba739e8bd4c8d81c5b3dda18a63e84c1fa3dc5c67b03d7280678e3cc9f1"
+    },
+    {
+      "id": "step-splat",
+      "name": "Step-Splat",
+      "path": "/solutions/step-splat/",
+      "entry": "solutions/step-splat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "stepSplat.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "5ba5bc6a9a58dd653467e0a37a7c60b6368a77826e405f5ee8dde2487a5fd3d7"
+    },
+    {
+      "id": "story-wheel",
+      "name": "Story Wheel",
+      "path": "/solutions/storywheel/",
+      "entry": "solutions/storywheel/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "cd985ccdffe8490a2b4408ee29b8fb53ef0e9778f132c211d73886907c0772cd"
+    },
+    {
+      "id": "toneshifter",
+      "name": "Toneshifter",
+      "path": "/solutions/toneshifter/",
+      "entry": "solutions/toneshifter/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "toneshifter.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "5d008e896310d37f56d0f58228880d5688035bb084cff84e3f96f2a3e9556572"
+    },
+    {
+      "id": "vibe-check",
+      "name": "Vibe Check",
+      "path": "/solutions/vibe-check/",
+      "entry": "solutions/vibe-check/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "STORAGE_KEY",
+            "value": "vibeCheck.v1"
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "6d13d88704a40f73b9aba7776c110813b28560f5b480cba0d3eba78494e6607c"
+    },
+    {
+      "id": "videosplat",
+      "name": "VideoSplat",
+      "path": "/solutions/videosplat/",
+      "entry": "solutions/videosplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": true,
+        "indexedDB": true,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "aomediacodec.github.io",
+        "bugzil.la",
+        "cdn.jsdelivr.net",
+        "developer.mozilla.org",
+        "en.wikipedia.org",
+        "gist.github.com",
+        "github.com",
+        "huggingface.co",
+        "kripken.github.io",
+        "odml.pa.googleapis.com",
+        "pubs.opengroup.org",
+        "react.dev",
+        "rolldown.rs",
+        "server.com:4324:12",
+        "tools.ietf.org",
+        "unicode.org",
+        "unpkg.com",
+        "web.dev",
+        "webkit.org",
+        "www.apache.org",
+        "www.ietf.org",
+        "www.khronos.org",
+        "www.w3.org",
+        "www.webmproject.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "6ee5c539a88573e6e7ac01a6c3ae34b84aef07ca4ff94dfd78b0c9cc6b9ac0cc"
+    },
+    {
+      "id": "wheel-spinner",
+      "name": "Wheel Spinner",
+      "path": "/solutions/wheel-spinner/",
+      "entry": "solutions/wheel-spinner/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "ee730cb7df2d64f229034476ccc9d4848f503ebebfadf1a7526215d727612869"
+    },
+    {
+      "id": "wordsearch",
+      "name": "Word Search Maker",
+      "path": "/solutions/wordsearch/",
+      "entry": "solutions/wordsearch/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "0eea145bc736c55809d52b0ea059677483d5df66aa50f5a58f8bd448b5ea9283"
+    },
+    {
+      "id": "castles",
+      "name": "Castles & Catapults",
+      "path": "/games/castles/",
+      "entry": "games/castles/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "044f27d179620ad4d7f60e8d7df3be9ceadfc37b63f7127a67683644c6c2c285"
+    },
+    {
+      "id": "flood-fill",
+      "name": "Flood Fill",
+      "path": "/games/floodfill/",
+      "entry": "games/floodfill/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "0e2e92fff81e6146bd22bd1983e94d86a5f3e9e122dba13011858afbab4394ee"
+    },
+    {
+      "id": "flow-free",
+      "name": "Flow Free",
+      "path": "/games/flowfree/",
+      "entry": "games/flowfree/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "puzzleKey",
+            "value": "n4"
+          }
+        ]
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "1533d16a527212286fc662f94ee640c59852ef47357f35cf3c492720aa569c1a"
+    },
+    {
+      "id": "fun-quiz",
+      "name": "Fun Quiz",
+      "path": "/games/funquiz/",
+      "entry": "games/funquiz/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "fonts.googleapis.com",
+        "script.google.com",
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "e290c228eb47047fe2f8085c407e307ec6119cab72c7a1793164ec5495bb4656"
+    },
+    {
+      "id": "gilasplat",
+      "name": "GilaSplat",
+      "path": "/games/gilasplat/",
+      "entry": "games/gilasplat/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [
+          "gilasplat.hiScore",
+          "gilasplat.startLevel"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "89d175e02395e5183aaddbcf16f795fe3fa115673ff4a735b76460f417232594"
+    },
+    {
+      "id": "lights-out",
+      "name": "Lights Out",
+      "path": "/games/lightsout/",
+      "entry": "games/lightsout/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "261af9ccfe92209549d02100aff47753b5257975c6dea3b633dc68cdde8799a7"
+    },
+    {
+      "id": "splatball",
+      "name": "Splatball",
+      "path": "/games/splatball/",
+      "entry": "games/splatball/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "13e5df4ba003b0887a04c9387d33289b14a210efd112c4ecd382b0e65cfc6326"
+    },
+    {
+      "id": "squirrel-run",
+      "name": "Squirrel Run",
+      "path": "/games/squirrel-run-game/",
+      "entry": "games/squirrel-run-game/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "HIGH_SCORE_KEY",
+            "value": "squirrel-run-high-score-v1"
+          },
+          {
+            "name": "overlayTitleKey",
+            "value": "overlay.title"
+          }
+        ]
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "23462d9173c7bb67abfff0dac3c2b9f4baa1185bfc8929a8900d0843922d1198"
+    },
+    {
+      "id": "star-trek",
+      "name": "Super Star Trek",
+      "path": "/games/super-star-trek/",
+      "entry": "games/super-star-trek/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "59a28619e32067c8731910c93254ebc1e2bbfa3ab6787b3eb6379ecdc708a3e8"
+    },
+    {
+      "id": "tangram",
+      "name": "Tangram Packing",
+      "path": "/games/tangram/",
+      "entry": "games/tangram/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "e0038aedbdf7f03b8a9d6e004acf220cdab70ffc581548162f937f5028fd70d2"
+    },
+    {
+      "id": "typing-games",
+      "name": "Typing Games",
+      "path": "/games/typing-games/",
+      "entry": "games/typing-games/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": [
+          {
+            "name": "storageKey",
+            "value": "drawsplat.typing."
+          }
+        ]
+      },
+      "literalRemoteHosts": [
+        "tea.texas.gov"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "132f4f0fde7fea7551145ad408f07d531cd5c61d3d3fb0d83ea7373519603b4e"
+    },
+    {
+      "id": "paws-and-keys",
+      "name": "Paws & Keys Adventure",
+      "path": "/games/paws-and-keys-adventure/",
+      "entry": "games/paws-and-keys-adventure/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "7b10c80d264c1bf6795295b9bbe95a175660179312e893640dde4a1e98d00b4f"
+    },
+    {
+      "id": "road-rally",
+      "name": "Cipher Chase",
+      "path": "/games/cipher-chase/",
+      "entry": "games/cipher-chase/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "8f19f246038684ea71564dc5d7638c78401a9900d91f88be3d45b5157637cde3"
+    },
+    {
+      "id": "block-zap",
+      "name": "Wordfall Reactor",
+      "path": "/games/wordfall-reactor/",
+      "entry": "games/wordfall-reactor/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [
+          "drawsplat.reactor.best"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "3d81cba9400d1edc16846de6016e68d2a1fa8ab4bfbcb4b5a94f04c43531a925"
+    },
+    {
+      "id": "passage-coach",
+      "name": "Story Sprint",
+      "path": "/games/story-sprint/",
+      "entry": "games/story-sprint/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "0e857ed6de6db2e8f7e7bdb916ae3c894b44c173fba8cd663839d765537b7183"
+    },
+    {
+      "id": "untangle",
+      "name": "Untangle",
+      "path": "/games/untangle/",
+      "entry": "games/untangle/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "5e88228b8731b8da4891a1988cd7d32897ff4302c3f84f3e33b347ec3294a5b0"
+    },
+    {
+      "id": "teacher-admin",
+      "name": "Teacher Admin",
+      "path": "/admin/admin.html",
+      "entry": "admin/admin.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "127.0.0.1:",
+        "accounts.google.com",
+        "drawsplat.example.org",
+        "localhost:",
+        "script.google.com",
+        "sheets.google.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "32b934064f9fa2e4c77d557392fdd9abfc71af8d6f3eb76d0638471c8e4d4c1c"
+    },
+    {
+      "id": "family-access",
+      "name": "Family Access Tools",
+      "path": "/parents/",
+      "entry": "parents/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "drawsplat.org",
+        "github.com",
+        "script.google.com",
+        "support.google.com",
+        "translate.google.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "93da6ebb0c49b8ac41fda6ae9291a21140a030c02f4b1eeeacf4585d5a9e098d"
+    },
+    {
+      "id": "templates",
+      "name": "Background Templates",
+      "path": "/pages/background-templates.html",
+      "entry": "pages/background-templates.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "buymeacoffee.com",
+        "docs.google.com",
+        "drawsplat.org",
+        "github.com",
+        "script.google.com",
+        "splatworks.org",
+        "support.google.com",
+        "translate.google.com"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "d7312b72bd90991918534f41d1abd8e2bdb637ec07cab0048136b28f7cca0dc6"
+    },
+    {
+      "id": "guides",
+      "name": "For educators",
+      "path": "/wiki/for-educators.html",
+      "entry": "wiki/for-educators.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": true,
+        "literalKeys": [
+          "drawsplat.complianceAdminPasscode"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "buymeacoffee.com",
+        "developers.cloudflare.com",
+        "docs.digitalocean.com",
+        "docs.railway.com",
+        "drawsplat.org",
+        "github.com",
+        "localhost:8000",
+        "localhost:8080",
+        "localhost:8787",
+        "localhost:8787.",
+        "mguhlin.org",
+        "script.google.com",
+        "splatworks.org",
+        "support.google.com",
+        "translate.google.com",
+        "www.avery.co.uk",
+        "www.avery.com",
+        "www.gnu.org",
+        "your-api.example"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "a560dadf9fbcedb353cd6c7b2e68d8b1ccdb9d394db24ab7a0c76092a65c04b5"
+    },
+    {
+      "id": "support",
+      "name": "SplatWorks Wiki",
+      "path": "/wiki/",
+      "entry": "wiki/index.html",
+      "storage": {
+        "localStorage": true,
+        "sessionStorage": false,
+        "indexedDB": true,
+        "literalKeys": [
+          "drawsplat.complianceAdminPasscode"
+        ],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "buymeacoffee.com",
+        "developers.cloudflare.com",
+        "docs.digitalocean.com",
+        "docs.railway.com",
+        "drawsplat.org",
+        "github.com",
+        "localhost:8000",
+        "localhost:8080",
+        "localhost:8787",
+        "localhost:8787.",
+        "mguhlin.org",
+        "script.google.com",
+        "splatworks.org",
+        "support.google.com",
+        "translate.google.com",
+        "www.avery.co.uk",
+        "www.avery.com",
+        "www.gnu.org",
+        "your-api.example"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-15",
+      "entrySha256": "bcf7c45c375673419a2ec474c1a8423f30e862f08391a8a26cb9482c13ddd419"
+    }
+  ]
+}

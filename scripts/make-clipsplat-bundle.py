@@ -18,6 +18,9 @@ with tempfile.TemporaryDirectory(prefix='clipsplat-package-') as temp:
     runtime.mkdir(parents=True)
     for name in ['ffmpeg-core.js', 'ffmpeg-core.part-01', 'ffmpeg-core.part-02']:
         shutil.copy2(root / 'solutions/mediasplat/ffmpeg' / name, runtime / name)
+    for relative in ['privacy','legal','assets/css','assets/js','assets/brand','data']:
+        shutil.copytree(root/relative,stage/relative,ignore=shutil.ignore_patterns('district-installation.json','district-tools.json'))
+    shutil.copy2(root/'_headers',stage/'_headers')
     (stage / 'README.txt').write_text('ClipSplat self-host package\n\nExtract the whole ZIP. Open START-HERE.html for local use (Python 3).\nFor hosting, upload solutions/ to your web root and open /solutions/clipsplat/.\nKeep solutions/mediasplat/ffmpeg/ intact: it supplies the local MP4 encoder.\nCamera and microphone require HTTPS or localhost. No media is uploaded.\nOnline sharing/external links require internet. Save originals; no autosave.\nSource and dependency metadata are included under solutions/clipsplat/.\n')
     subprocess.run([sys.executable, str(root / 'scripts/add-offline-launcher.py'), str(stage), 'ClipSplat', 'solutions/clipsplat/'], check=True)
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as z:
