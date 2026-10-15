@@ -286,7 +286,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "1fef0f06d0eb0abbf53ecb79547b768bd5aa22e48c50859bec77175517affdaa"
+      "entrySha256": "d0abc91d84153c3bf69200c4689eb5931239d51ee4473b9401c93ab38f4d741e"
     },
     {
       "id": "big-link",
@@ -679,7 +679,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "c712bb7804581c79fa7c6b2790e236ba5330169e83bf45ac54ff55bbc9383853"
+      "entrySha256": "51805d0db93ca0afc3d89402f668e8864d09dd9b4c9c2f689d3678e290a82672"
     },
     {
       "id": "mediasplat",
@@ -734,7 +734,6 @@
       },
       "literalRemoteHosts": [
         "commons.wikimedia.org",
-        "drawsplat.org",
         "schemas.openxmlformats.org"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -743,7 +742,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "52aab033cef5b6d4928b35bb095a35ea0788772792df7ebb7564f27d66b1cf01"
+      "entrySha256": "09bc6dc48914dab38668d4c3d547fc38e90f6577315b7aae5e10a3a8a11cc2a7"
     },
     {
       "id": "memesplat",
@@ -1672,6 +1671,7 @@
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
+        "eur-lex.europa.eu",
         "github.com",
         "localhost:8000",
         "localhost:8080",
@@ -1723,6 +1723,7 @@
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
+        "eur-lex.europa.eu",
         "github.com",
         "localhost:8000",
         "localhost:8080",

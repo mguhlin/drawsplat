@@ -51,6 +51,7 @@ const en = {
   driveSaveDone: "Saved to Google Drive",
   driveSaveFailed: "Google Drive could not save this audio. Confirm Drive access is allowed and try again.",
   googleUnavailable: "Google sign-in is still loading. Wait a moment, then try again.",
+  driveConnectionsDisabled: "External connections are off. Enable them in Privacy before using Google Drive.",
   driveAuthFailed: "Google authorization was cancelled or could not be completed.",
   sharingBlocked: "The audio was saved, but your Google Workspace sharing policy blocked a public link and embed code.",
   shareLink: "Share link",

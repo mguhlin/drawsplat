@@ -73,6 +73,7 @@ type GoogleTokenClient = {
 
 declare global {
   interface Window {
+    SplatPrivacy?: { getState: () => { optionalConnections: boolean } };
     google?: {
       accounts?: {
         oauth2?: {
@@ -1825,9 +1826,43 @@ async function renderExport(format: string): Promise<RenderedExport> {
   };
 }
 
-function showDriveSaveDialog(): void {
+let googleIdentityLoading: Promise<void> | null = null;
+
+function loadGoogleIdentity(): Promise<void> {
+  if (window.SplatPrivacy?.getState().optionalConnections === false) {
+    return Promise.reject(new Error(t("driveConnectionsDisabled" as never)));
+  }
+  if (window.google?.accounts?.oauth2) return Promise.resolve();
+  if (googleIdentityLoading) return googleIdentityLoading;
+  googleIdentityLoading = new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    const timer = window.setTimeout(() => failed(), 15000);
+    const failed = (): void => {
+      window.clearTimeout(timer); script.remove(); googleIdentityLoading = null;
+      reject(new Error(t("googleUnavailable" as never)));
+    };
+    script.onerror = failed;
+    script.onload = () => {
+      window.clearTimeout(timer);
+      if (window.google?.accounts?.oauth2) resolve(); else failed();
+    };
+    document.head.appendChild(script);
+  });
+  return googleIdentityLoading;
+}
+
+async function showDriveSaveDialog(): Promise<void> {
   if (projectDuration(project) <= 0) {
     toast(t("driveNeedsAudio" as never), true);
+    return;
+  }
+  try {
+    await loadGoogleIdentity();
+    if (window.SplatPrivacy?.getState().optionalConnections === false) throw new Error(t("driveConnectionsDisabled" as never));
+  } catch (error) {
+    toast(error instanceof Error ? error.message : t("googleUnavailable" as never), true);
     return;
   }
   showDialog(
@@ -1870,6 +1905,7 @@ async function saveMixToDrive(format: string, share: boolean): Promise<void> {
 }
 
 function requestDriveToken(): Promise<string> {
+  if (window.SplatPrivacy?.getState().optionalConnections === false) return Promise.reject(new Error(t("driveConnectionsDisabled" as never)));
   const oauth = window.google?.accounts?.oauth2;
   if (!oauth) return Promise.reject(new Error(t("googleUnavailable" as never)));
   return new Promise((resolve, reject) => {

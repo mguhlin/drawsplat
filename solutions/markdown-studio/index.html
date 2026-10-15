@@ -825,7 +825,7 @@ Use short paragraphs, a vocabulary table, and five comprehension questions.
 
 &gt; Tip: Better structure usually leads to better GenAI output.
 
-![Sample image](https://mguhlin.github.io/creations/markdown/md.png)</textarea>
+![Sample image](./sample-image.png)</textarea>
     </div>
     <div class="panel">
       <div class="panel-head">
@@ -1033,7 +1033,10 @@ def hello():
   // etc. user sees demo content in their language while the cleaner's
   // syntax-level fixes (duplicate heading markers, checkbox spacing, etc.)
   // still demonstrate.
-  function currentSample() { return t('sample.md'); }
+  function currentSample() {
+    const image = new URL('./sample-image.png', location.href).href;
+    return t('sample.md').replace('https://mguhlin.github.io/creations/markdown/md.png', image).replace('./sample-image.png', image);
+  }
 
   // ---------- Markdown parser ----------
   function escapeHtml(t) {

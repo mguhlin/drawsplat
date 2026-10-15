@@ -1,5 +1,5 @@
 /* DrawSplatTM offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.38-privacy-controls';
+const CACHE = 'drawsplat-v3.1.39-privacy-controls';
 const SHELL = [
   './',
   './index.html',

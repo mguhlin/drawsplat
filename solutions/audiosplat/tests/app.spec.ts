@@ -129,10 +129,25 @@ test("opens help with local privacy guidance", async ({ page }) => {
   );
 });
 
+test("connection opt-out prevents Google sign-in loading without losing the audio project", async ({ page }) => {
+  let identityLoads = 0;
+  await page.route("https://accounts.google.com/gsi/client", route => { identityLoads++; return route.abort(); });
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.evaluate(() => (window as unknown as { SplatPrivacy: { setConnections(enabled: boolean): void } }).SplatPrivacy.setConnections(false));
+  await page.locator("#audio-input").setInputFiles({ name: "local-only.wav", mimeType: "audio/wav", buffer: makeWav(1, 8000) });
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "Save audio to Google Drive" }).click();
+  await expect(page.locator("#toast")).toContainText("External connections are off");
+  expect(identityLoads).toBe(0);
+  await expect(page.locator(".clip").first()).toBeVisible();
+});
+
 test("saves an exported mix to Drive and creates opt-in sharing and embed code", async ({
   page,
 }) => {
+  let identityLoads = 0;
   await page.route("https://accounts.google.com/gsi/client", async (route) => {
+    identityLoads++;
     await route.fulfill({
       status: 200,
       contentType: "application/javascript",
@@ -165,6 +180,7 @@ test("saves an exported mix to Drive and creates opt-in sharing and embed code",
     },
   );
   await page.goto("/solutions/audiosplat/?lang=en");
+  expect(identityLoads).toBe(0);
   await page.locator("#audio-input").setInputFiles({
     name: "drive-source.wav",
     mimeType: "audio/wav",
@@ -175,6 +191,7 @@ test("saves an exported mix to Drive and creates opt-in sharing and embed code",
   await expect(page.getByRole("dialog")).toContainText(
     "AudioSplat uploads only the exported mix",
   );
+  expect(identityLoads).toBe(1);
   await page.getByRole("dialog").locator('select[name="format"]').selectOption("wav");
   await page.getByRole("dialog").getByText("Create an Anyone-with-the-link").click();
   await page.getByRole("dialog").getByRole("button", { name: "Save audio to Google Drive" }).click();

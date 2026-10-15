@@ -346,7 +346,7 @@
           <div class="field">
             <label for="imageSelect" data-i18n="field.image">Cute Cat Image</label>
             <select id="imageSelect">
-              <option value="https://drawsplat.org/kitty.png" data-i18n="image.drawsplatKitty">Creative Chaos DrawSplat Kitty</option>
+              <option value="../../kitty.png" data-i18n="image.drawsplatKitty">Creative Chaos DrawSplat Kitty</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg" data-i18n="image.cat1">Cute Cat</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Tabby-cat.jpg" data-i18n="image.tabby">Tabby Cat</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cat-1046544.jpg" data-i18n="image.orange">Orange Cat</option>
@@ -358,7 +358,7 @@
 
         <div class="field">
           <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
-          <input id="imageUrl" type="text" value="https://drawsplat.org/kitty.png">
+          <input id="imageUrl" type="text" value="../../kitty.png">
         </div>
 
         <div class="field">
@@ -413,6 +413,10 @@
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
+    // Same-origin on startup, absolute in exported activities so images remain portable.
+    const defaultImage = new URL('../../kitty.png', location.href).href;
+    $('#imageSelect option[value="../../kitty.png"]').value = defaultImage;
+    if ($('#imageUrl').value === '../../kitty.png') $('#imageUrl').value = defaultImage;
     const latestPuzzleKey = "drawsplat.memepuzzle.latest";
     let uploadedImage = "";
     let tileOrder = [];

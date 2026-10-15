@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   if (window.SplatPrivacy) return;
-  const VERSION = '2026-10-15.2';
+  const VERSION = '2026-10-15.3';
   const KEY = 'splatworks.privacy.v1';
   const rootURL = new URL('../../', document.currentScript.src);
   const privacyURL = new URL('privacy/', rootURL).href;
@@ -15,9 +15,16 @@
   if (!state || state.version !== 1 || !Number.isFinite(state.expiresAt)) {
     state = { version: 1, startedAt: Date.now(), expiresAt: Date.now() + 30 * DAY, optionalConnections: true, expiryEnabled: false };
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {} }
+  function privacyLabel() { return state.expiryEnabled && Date.now() + 7 * DAY >= state.expiresAt ? 'Privacy · save before expiry' : 'Privacy'; }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {}
+    const link = document.querySelector('.splat-privacy-link'); if (link) link.textContent = privacyLabel();
+  }
   save();
-  let aiApproved = false;
+  const approvedAIOrigins = new Set();
+  const pendingApprovals = new Map();
+  let approvalQueue = Promise.resolve(), approvalGeneration = 0, activeApproval;
+  const credentialField = /token|password|passcode|secret|api.?key|pepper|credential|authorization/i;
   // Migrate known legacy AI settings without carrying persistent secrets forward.
   for (const storeName of ['localStorage', 'sessionStorage']) {
     try {
@@ -35,36 +42,55 @@
   const networkError = () => new Error('External AI is disabled. Use the local option or ask your school about an approved service.');
   function permitted(input) {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, location.href);
-    if (providerHosts.test(url.hostname) && !aiApproved) return false;
+    if (providerHosts.test(url.hostname) && (url.protocol !== 'https:' || !approvedAIOrigins.has(url.origin))) return false;
     if (!state.optionalConnections && url.origin !== location.origin && /^https?:$/.test(url.protocol)) return false;
     return true;
   }
   // A second boundary in addition to removing browser AI credentials in the tools.
-  let approval;
-  function approveAI(hostname) {
-    if (aiApproved) return Promise.resolve(true);
-    if (approval) return approval;
-    approval = new Promise(resolve => {
+  function approveAI(origin) {
+    if (approvedAIOrigins.has(origin)) return Promise.resolve(true);
+    if (pendingApprovals.has(origin)) return pendingApprovals.get(origin);
+    const generation = approvalGeneration;
+    const operation = approvalQueue.then(async () => {
+      if (!state.optionalConnections || generation !== approvalGeneration) return false;
+      if (!document.body) await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
+      if (!state.optionalConnections || generation !== approvalGeneration) return false;
+      return new Promise(resolve => {
       const dialog = document.createElement('dialog'); dialog.className = 'splat-privacy-approval';
-      dialog.innerHTML = '<h2>Before sending content to AI</h2><p>Your prompt and selected content will leave this browser for the provider chosen in this tool. Review the <a href="/legal/service-providers.html" target="_blank" rel="noopener">provider register</a>. Use an approved API account with no-training terms. Do not send student information without school authorization.</p><label><input type="checkbox"> I am an adult using my own data, or an authorized educator using a school-approved service and consent basis.</label><form method="dialog"><button value="cancel">Use local processing</button> <button value="approve" disabled>Allow AI for this tab</button></form>';
-      const destination = document.createElement('p'); destination.textContent = 'Provider destination: ' + hostname; dialog.querySelector('h2').after(destination);
+      dialog.innerHTML = '<h2>Before sending content to AI</h2><p>Your prompt and selected content will leave this browser for this provider. Approval applies only to this destination in this tab. Review the <a href="/legal/terms-privacy.html#service-providers" target="_blank" rel="noopener">provider register</a>. Use an approved API account with no-training terms. Do not send student information without school authorization.</p><label><input type="checkbox"> I am an adult using my own data, or an authorized educator using a school-approved service and consent basis.</label><form method="dialog"><button value="cancel">Use local processing</button> <button value="approve" disabled>Allow AI for this tab</button></form>';
+      const destination = document.createElement('p'); destination.textContent = 'Provider destination: ' + origin; dialog.querySelector('h2').after(destination);
       document.body.appendChild(dialog);
       const checkbox = dialog.querySelector('input'), allow = dialog.querySelector('[value="approve"]');
       checkbox.onchange = () => { allow.disabled = !checkbox.checked; };
       dialog.addEventListener('close', () => {
-        aiApproved = dialog.returnValue === 'approve' && checkbox.checked;
-        dialog.remove(); approval = null; resolve(aiApproved);
+        const allowed = dialog.returnValue === 'approve' && checkbox.checked && state.optionalConnections && generation === approvalGeneration;
+        if (allowed) approvedAIOrigins.add(origin);
+        if (activeApproval === dialog) activeApproval = null;
+        dialog.remove(); resolve(allowed);
       }, { once: true });
-      dialog.showModal();
+      activeApproval = dialog; dialog.showModal();
+      });
     });
-    return approval;
+    approvalQueue = operation.then(() => {}, () => {});
+    const pending = operation.finally(() => { if (pendingApprovals.get(origin) === pending) pendingApprovals.delete(origin); });
+    pendingApprovals.set(origin, pending);
+    return pending;
+  }
+  function revokeAI() {
+    approvalGeneration++; approvedAIOrigins.clear(); pendingApprovals.clear();
+    if (activeApproval && activeApproval.open) activeApproval.close('cancel');
   }
   window.fetch = async function (input, init) {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, location.href);
-    if (providerHosts.test(url.hostname) && state.optionalConnections && !aiApproved) await approveAI(url.hostname);
+    const isAI = providerHosts.test(url.hostname);
+    if (isAI && url.protocol !== 'https:') throw networkError();
+    const signal = init && init.signal || (input instanceof Request ? input.signal : null);
+    if (signal && signal.aborted) throw new DOMException('Aborted', 'AbortError');
+    if (isAI && state.optionalConnections && !approvedAIOrigins.has(url.origin)) await approveAI(url.origin);
     if (!permitted(input)) throw networkError();
-    if (init && init.signal && init.signal.aborted) throw new DOMException('Aborted', 'AbortError');
-    return rawFetch(input, init);
+    if (signal && signal.aborted) throw new DOMException('Aborted', 'AbortError');
+    // A provider's redirect cannot silently forward approved content elsewhere.
+    return rawFetch(input, isAI ? { ...init, redirect: 'error' } : init);
   };
   const open = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function (method, url, ...rest) {
@@ -75,18 +101,22 @@
     const beacon = navigator.sendBeacon.bind(navigator);
     navigator.sendBeacon = (url, body) => permitted(String(url)) ? beacon(url, body) : false;
   }
+  function redactJSONString(value) {
+    if (typeof value !== 'string' || !/^\s*[\[{]/.test(value)) return value;
+    try {
+      return JSON.stringify(JSON.parse(value), (key, item) => credentialField.test(key) ? '[redacted]' : typeof item === 'string' ? redactJSONString(item) : item);
+    } catch (_) { return value; }
+  }
+  function credentialKey(key) {
+    return typeof key === 'string' ? credentialField.test(key) : Array.isArray(key) && key.some(credentialKey);
+  }
   function snapshotStorage(store) {
     const result = {};
     for (let i = 0; i < store.length; i++) {
       const key = store.key(i);
       // Credentials are never included in the privacy export.
-      if (/token|password|passcode|secret|api.?key|pepper|credential/i.test(key)) continue;
-      let value = store.getItem(key);
-      try {
-        const parsed = JSON.parse(value);
-        value = JSON.stringify(parsed, (k, v) => /token|password|passcode|secret|api.?key|pepper|credential/i.test(k) ? '[redacted]' : v);
-      } catch (_) {}
-      result[key] = value;
+      if (credentialField.test(key)) continue;
+      result[key] = redactJSONString(store.getItem(key));
     }
     return result;
   }
@@ -104,10 +134,10 @@
     if (Array.isArray(value)) return Promise.all(value.map(encode));
     if (value && typeof value === 'object') {
       const out = {};
-      for (const [k, v] of Object.entries(value)) out[k] = /token|password|passcode|secret|api.?key|pepper|credential/i.test(k) ? '[redacted]' : await encode(v);
+      for (const [k, v] of Object.entries(value)) out[k] = credentialField.test(k) ? '[redacted]' : await encode(v);
       return out;
     }
-    return value;
+    return typeof value === 'string' ? redactJSONString(value) : value;
   }
   function request(req) { return new Promise((resolve, reject) => { req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); }); }
   async function databases() {
@@ -123,7 +153,7 @@
         for (const name of db.objectStoreNames) {
           const tx = db.transaction(name, 'readonly'), store = tx.objectStore(name);
           const [keys, values] = await Promise.all([request(store.getAllKeys()), request(store.getAll())]);
-          stores[name] = await encode({ keys, values });
+          stores[name] = await encode({ keys, values: values.map((value, index) => credentialKey(keys[index]) ? '[redacted]' : value) });
         }
         result.databases[item.name] = stores;
       } finally { db.close(); }
@@ -131,6 +161,7 @@
     return result;
   }
   async function clearData() {
+    revokeAI();
     // Close app tabs first: a blocked IDB deletion is reported, never called successful.
     const all = await databases();
     for (const db of all) {
@@ -140,38 +171,57 @@
         req.onblocked = () => reject(new Error('Close other SplatWorks tabs on this domain, then retry clearing. A database is still open.'));
       });
     }
-    if ('caches' in window) for (const key of await caches.keys()) await caches.delete(key);
-    if ('serviceWorker' in navigator) for (const registration of await navigator.serviceWorker.getRegistrations()) await registration.unregister();
+    const cacheNames = 'caches' in window ? await caches.keys() : [];
+    for (const key of cacheNames) await caches.delete(key);
+    const registrations = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistrations() : [];
+    for (const registration of registrations) await registration.unregister();
     localStorage.clear(); sessionStorage.clear();
-    state = { version: 1, startedAt: Date.now(), expiresAt: Date.now() + 30 * DAY, optionalConnections: false };
+    state = { version: 1, startedAt: Date.now(), expiresAt: Date.now() + 30 * DAY, optionalConnections: false, expiryEnabled: false };
     save();
-    return { cleared: true, origin: location.origin, at: new Date().toISOString(), excluded: ['other domains', 'downloads', 'backend records', 'cloud copies', 'backups'] };
+    return { version: VERSION, cleared: true, origin: location.origin, at: new Date().toISOString(), counts: { databases: all.length, caches: cacheNames.length, serviceWorkerRegistrations: registrations.length }, scope: 'Origin-local browser clearing; privacy preferences reset; not proof of erasure from other systems.', excluded: ['other domains', 'downloads', 'backend records', 'cloud copies', 'backups'] };
   }
   window.SplatPrivacy = Object.freeze({
     version: VERSION, getState: () => ({ ...state, gpc: navigator.globalPrivacyControl === true, dnt: navigator.doNotTrack === '1' }),
     exportData, clearData,
-    setConnections(enabled) { state.optionalConnections = Boolean(enabled); save(); },
+    setConnections(enabled) { state.optionalConnections = Boolean(enabled); if (!state.optionalConnections) revokeAI(); save(); },
+    disableRetention() { state.expiryEnabled = false; save(); },
     renewRetention(days = 30) {
       if (![1, 7, 30].includes(Number(days))) throw new Error('Choose 1, 7, or 30 days.');
       state.expiryEnabled = true; state.startedAt = Date.now(); state.expiresAt = Date.now() + Number(days) * DAY; save();
     },
     aiUnavailable: networkError
   });
-  // Do not erase legacy work during an upgrade. A new 30-day clock starts on first use.
+  // Do not erase legacy work during an upgrade. Expiry starts only after an explicit choice.
   // Once expired, send the visitor to the dedicated clearing page before editing.
   if (!isCenter && state.expiryEnabled && Date.now() >= state.expiresAt) {
     location.replace(privacyURL + '?expired=1'); return;
   }
+  function readPreferences() {
+    try {
+      const incoming = JSON.parse(localStorage.getItem(KEY));
+      if (incoming && incoming.version === 1 && Number.isFinite(incoming.expiresAt)) {
+        if (!incoming.optionalConnections) revokeAI();
+        state = incoming;
+        const link = document.querySelector('.splat-privacy-link'); if (link) link.textContent = privacyLabel();
+      }
+    } catch (_) {}
+  }
+  window.addEventListener('storage', event => {
+    if (event.key === KEY || event.key === null) {
+      if (event.key === null) revokeAI();
+      readPreferences();
+    }
+  });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && !isCenter) {
-      try { state = JSON.parse(localStorage.getItem(KEY)) || state; } catch (_) {}
+      readPreferences();
       if (state.expiryEnabled && Date.now() >= state.expiresAt) location.replace(privacyURL + '?expired=1');
     }
   });
   function link() {
     if (window.top !== window.self || document.documentElement.hasAttribute('data-privacy-no-link')) return;
     const a = document.createElement('a'); a.href = privacyURL; a.className = 'splat-privacy-link';
-    a.textContent = Date.now() + 7 * DAY >= state.expiresAt ? 'Privacy · save before expiry' : 'Privacy';
+    a.textContent = privacyLabel();
     a.setAttribute('aria-label', 'Privacy: export or clear saved browser data');
     // Apps exposes the same link inside its menu. Never cover the existing launcher.
     const place = () => { a.hidden = Boolean(document.querySelector('[data-ds-app-launcher]')); };
