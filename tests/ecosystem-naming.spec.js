@@ -24,6 +24,7 @@ test('former and current names find the same tool without changing saved favorit
  await page.locator('#toolSearch').fill('Concept Map Studio');
  await page.locator('.ds-tool-card[data-id="concept-map"] .ds-favorite').click();
  await page.reload();await expect(page.locator('#favoritesShelf')).toContainText('ConceptSplat');
+ await page.goto('/pages/tools.html');for(const [,name] of renamed)await expect(page.locator('main')).toContainText(name);
 });
 
 for (const [id,name,former,slug] of renamed) {
