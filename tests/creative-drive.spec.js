@@ -54,12 +54,21 @@ async function openDrive(page,app){
  else await page.locator('#saveDriveBtn').click();
  const dialog=page.getByRole('dialog',{name:'Save to Google Drive',exact:true});await expect(dialog).toBeVisible();return dialog;
 }
+// Authorization success/cancellation may close its own window before Chromium
+// acknowledges the input command. The parent result is asserted by each test.
+async function clickAuthorizationButton(helper,selector){
+ try{await helper.locator(selector).click({noWaitAfter:true});}
+ catch(error){if(!helper.isClosed()||!String(error.message).includes('has been closed'))throw error;}
+}
+async function cancelAuthorization(helper){
+ const closed=helper.waitForEvent('close');await clickAuthorizationButton(helper,'#cancel');await closed;
+}
 async function authorize(context,dialog,app){
  await expect(dialog.getByRole('button',{name:'Save to Google Drive',exact:true})).toBeEnabled();
  let helper;
  if(isolated.has(app)){
   const event=context.waitForEvent('page');await dialog.getByRole('button',{name:'Save to Google Drive',exact:true}).click();helper=await event;
-  await expect(helper.locator('#authorize')).toBeEnabled();expect(await helper.evaluate(()=>crossOriginIsolated)).toBe(false);await helper.locator('#authorize').click();
+  await expect(helper.locator('#authorize')).toBeEnabled();expect(await helper.evaluate(()=>crossOriginIsolated)).toBe(false);await clickAuthorizationButton(helper,'#authorize');
  }else await dialog.getByRole('button',{name:'Save to Google Drive',exact:true}).click();
  return helper;
 }
@@ -101,10 +110,10 @@ for(const app of apps){
  });
 }
 test('isolated authorization can be cancelled without losing the open PDF',async({page,context})=>{
- const seen=await google(context);await ready(page,'pdfsplat');const dialog=await openDrive(page,'pdfsplat');const event=context.waitForEvent('page');await dialog.getByRole('button',{name:'Save to Google Drive',exact:true}).click();const helper=await event;await expect(helper.locator('#authorize')).toBeEnabled();await helper.locator('#cancel').click();await expect(dialog.getByRole('status')).toContainText('transfer stopped');expect(seen.uploads).toHaveLength(0);await dialog.getByRole('button',{name:'Cancel',exact:true}).click();await expect(page.locator('#saveDriveButton')).toBeEnabled();expect(await page.evaluate(()=>crossOriginIsolated)).toBe(true);
+ const seen=await google(context);await ready(page,'pdfsplat');const dialog=await openDrive(page,'pdfsplat');const event=context.waitForEvent('page');await dialog.getByRole('button',{name:'Save to Google Drive',exact:true}).click();const helper=await event;await expect(helper.locator('#authorize')).toBeEnabled();await cancelAuthorization(helper);await expect(dialog.getByRole('status')).toContainText('transfer stopped');expect(seen.uploads).toHaveLength(0);await dialog.getByRole('button',{name:'Cancel',exact:true}).click();await expect(page.locator('#saveDriveButton')).toBeEnabled();expect(await page.evaluate(()=>crossOriginIsolated)).toBe(true);
 });
 test('denied Google access stays recoverable in the isolated authorization window',async({page,context})=>{
- const seen=await google(context,{error:'access_denied'});await ready(page,'pdfsplat');const dialog=await openDrive(page,'pdfsplat');const helper=await authorize(context,dialog,'pdfsplat');await expect(helper.getByRole('status')).toContainText('permission was not granted');expect(seen.uploads).toHaveLength(0);await helper.locator('#cancel').click();await expect(dialog.getByRole('button',{name:'Save to Google Drive',exact:true})).toBeEnabled();
+ const seen=await google(context,{error:'access_denied'});await ready(page,'pdfsplat');const dialog=await openDrive(page,'pdfsplat');const helper=await authorize(context,dialog,'pdfsplat');await expect(helper.getByRole('status')).toContainText('permission was not granted');expect(seen.uploads).toHaveLength(0);await cancelAuthorization(helper);await expect(dialog.getByRole('button',{name:'Save to Google Drive',exact:true})).toBeEnabled();
 });
 test('Mermaid source saved from Drive can be opened locally for editing',async({page,context})=>{
  const seen=await google(context);await ready(page,'mermaid');const original=await page.locator('#mermaidSource').inputValue();const dialog=await openDrive(page,'mermaid');await authorize(context,dialog,'mermaid');await expect(dialog.getByRole('status')).toContainText('Saved ');const file=multipart(seen.uploads[0]);await dialog.getByRole('button',{name:'Done',exact:true}).click();await page.locator('#mermaidSource').fill('flowchart TD\n X --> Y');await page.locator('#sourceFile').setInputFiles({name:file.metadata.name,mimeType:'text/plain',buffer:file.bytes});await expect(page.locator('#mermaidSource')).toHaveValue(original);
