@@ -259,9 +259,6 @@
 /splatworks/listsplat/index.vite
   Cache-Control: no-transform
 
-/splatworks/shared/google-drive-auth
-  Cache-Control: no-transform
-
 /splatworks/showsplat/present
   Cache-Control: no-transform
 

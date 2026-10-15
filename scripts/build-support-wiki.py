@@ -65,7 +65,7 @@ for name in RENDER:
   frag=('#'+url.split('#',1)[1]) if '#' in url else ''
   return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+('/' if url.split('#')[0].endswith('/') else '')+frag+'"'
  body=re.sub(r'(href|src)="([^"]+)"',rel,body)
- (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else 'LayoutSplat: illustrated feature guide' if name=='layoutsplat-features' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
+ (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Save to Google Drive' if name=='google-drive' else 'Frequently asked questions (FAQs)' if name=='faq' else 'LayoutSplat: illustrated feature guide' if name=='layoutsplat-features' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
 def relative(path,current): return os.path.relpath(ROOT/path,(ROOT/current).parent)
 FAQ_SECTIONS=[(re.sub(r'[^a-z0-9]+','-',title.lower()).strip('-'),title) for title in re.findall(r'^## (.+)$',(ROOT/'docs/faq.md').read_text(),re.M)]

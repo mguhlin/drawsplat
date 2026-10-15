@@ -761,7 +761,7 @@ test('autosaves sheet data in the browser and offers optional Drive saving', asy
   await page.route('https://accounts.google.com/gsi/client', route => route.fulfill({ contentType: 'application/javascript', body: 'window.google={accounts:{oauth2:{}}};' }));
   await page.getByRole('menuitem', { name: 'Save Google Drive' }).click();
   const drive = page.getByRole('dialog', { name: 'Save to Google Drive', exact: true });
-  await expect(drive).toContainText('new native project file');
+  await expect(drive).toContainText('new file copy');
   await drive.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.getByTestId('cell-A1')).toContainText('Autosaved');
 });

@@ -44,6 +44,10 @@ for name in set(pages+[str(p.relative_to(ROOT)) for p in ROOT.glob('*.html')]):
  if name.endswith('/index.html') or name=='index.html':continue
  route='/'+name[:-5]
  if not any(route.startswith(prefix) for prefix in document_prefixes):routes.add(route)
+# Cloudflare keeps only the last definition of an identical route. Preserve
+# complete manual policies that already include the document privacy directive.
+for route, fields in re.findall(r'(?m)^(/[^\n]*)\n((?:[ \t]+[^\n]*(?:\n|$))*)', headers):
+ if re.search(r'(?im)^\s+Cache-Control:[^\n]*\bno-transform\b', fields):routes.discard(route)
 block='\n\n# splat-document-privacy:start\n# RFC no-transform prevents automatic HTML analytics injection.\n'
 block+='\n\n'.join(route+'\n  Cache-Control: no-transform' for route in sorted(routes))
 block+='\n# splat-document-privacy:end\n'

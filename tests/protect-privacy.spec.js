@@ -14,12 +14,13 @@ const seeded = async page => {
   });
 };
 test('document headers prevent proxy analytics injection without disabling compression for app assets', async () => {
- const rules = [];
+ const rules = [], definedRoutes = [];
  let current;
  for (const line of fs.readFileSync('_headers','utf8').split('\n')) {
-  if(line.startsWith('/'))current=line.trim();
+  if(line.startsWith('/')){current=line.trim();definedRoutes.push(current);}
   else if(current && /^\s+Cache-Control:.*\bno-transform\b/.test(line))rules.push(current);
  }
+ expect(new Set(definedRoutes).size, 'Duplicate Cloudflare routes can discard earlier security headers').toBe(definedRoutes.length);
  const protectedRoute = route => rules.some(pattern => new RegExp('^'+pattern.split('*').map(part=>part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('.*')+'$').test(route));
  for(const entry of [...manifest.components.map(c=>c.entry),'index.html','pages/splatworks.html','wiki/index.html','legal/terms-privacy.html','docs/district-selfhost.html']) {
   expect(protectedRoute('/'+entry),entry).toBe(true);
