@@ -58,3 +58,7 @@ and 100 linked fragments over 100 Letter pages; the 500-page cache regression
 uses newsletter-length copy. Core publishing features are implemented; source
 composition fidelity and externally validated print/native compatibility remain
 ongoing verification work.
+
+The v0.4.6 milestone preserves supported WriteSplat paragraph metrics, blank
+paragraphs and list labels across native suite exchange, in addition to inline
+formatting. Embedded fonts and advanced spacing remain reported conversion limits.

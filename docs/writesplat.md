@@ -66,3 +66,11 @@ page layout and embedded pictures are not placed by this text-box action.
 LayoutSplat reports unsupported highlighting/strike-through or substituted fonts
 when present. Import an original font first to match its family where available.
 Native JSON remains the editable backup for each application.
+
+## LayoutSplat exchange
+
+LayoutSplat native text export now supplies WriteSplat's paragraph leading,
+spacing, indents, alignment, font defaults and supported character marks. Blank
+paragraphs and tab characters survive. List labels from LayoutSplat are text,
+rather than native renumbering lists. Embedded fonts and advanced spacing are
+reported separately by LayoutSplat; use native project backups for full fidelity.

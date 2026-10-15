@@ -1,41 +1,39 @@
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
 import { fontFamily, color } from './compatibility.mjs';
 import { importMedia } from './media.mjs';
+import {textToRichDocument} from './rich.mjs';
+import {fontName} from './local-fonts.mjs';
+import {officeHtmlToStory} from './office-story.mjs';
+import {matchImportedFont,normalizedFamily} from './font-matching.mjs';
 
 const clamp = (n, a, b, fallback = a) => Number.isFinite(Number(n)) ? Math.max(a, Math.min(b, Number(n))) : fallback;
 const localImage = src => typeof src === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(src) && src.length <= 64000000;
 const safeText = value => String(value ?? '').slice(0, 100000);
-export function writeSplatText(data) {
-  if (!data?.document || !/WriteSplat/i.test(data.app || '')) throw Error('Choose a WriteSplat project.');
-  let text = '', marks = [], nodes = 0;
-  const visit = (node, depth = 0) => {
-    if (++nodes > 100000 || depth > 100) throw Error('The writing document is too complex.');
-    if (node.type === 'text') {
-      const from = text.length; text += safeText(node.text); const m = { from, to: text.length };
-      for (const mark of node.marks || []) {
-        if (mark.type === 'strong') m.bold = true;
-        if (mark.type === 'em') m.italic = true;
-        if (mark.type === 'underline') m.underline = true;
-        if (mark.type === 'fontFamily') m.font = fontFamily(mark.attrs?.family);
-        if (mark.type === 'fontSize') m.size = clamp(parseFloat(mark.attrs?.size) * (/px$/.test(mark.attrs?.size) ? .75 : 1), 6, 120, 12);
-        if (mark.type === 'textColor') m.color = color(mark.attrs?.color, '#25304b');
-        if (mark.type === 'link' && /^https?:\/\/|^mailto:/i.test(mark.attrs?.href || '')) m.link = mark.attrs.href;
-      }
-      if (text.length > from && Object.keys(m).length > 2) marks.push(m);
-    } else if (node.type === 'tab') text += '\t';
-    else if (node.type === 'hard_break') text += '\n';
-    else {
-      if (['paragraph', 'heading', 'list_item', 'table_row'].includes(node.type) && text && !text.endsWith('\n')) text += '\n';
-      if (node.type === 'image') text += `[${safeText(node.attrs?.alt || 'Picture')}]`;
-      for (const child of node.content || []) visit(child, depth + 1);
-    }
-    if (text.length > 100000 || marks.length > 10000) throw Error('A story supports 100,000 characters and 10,000 formatting ranges.');
-  };
-  if (data.document.format === 'prosemirror-json') visit(data.document.content);
-  else if (data.document.format === 'html') { const html = new DOMParser().parseFromString(data.document.body || '', 'text/html'); html.querySelectorAll('script,style,iframe,object,template').forEach(el => el.remove()); text = [...html.body.querySelectorAll('p,h1,h2,h3,h4,li')].map(el => el.textContent).join('\n') || html.body.textContent; }
-  else throw Error('Unsupported WriteSplat document format.');
-  if (text.length > 100000) throw Error('A story supports 100,000 characters.');
-  return { text, marks, notes: ['WriteSplat text and supported character formatting imported. Flow documents are repaginated; embedded pictures, comments, citations, and teacher tools need separate review.'] };
+function listNumber(value,type){if(!value)return '0';if(type==='a'||type==='A'){let out='';while(value>0){value--;out=String.fromCharCode(65+value%26)+out;value=Math.floor(value/26);}return type==='a'?out.toLowerCase():out;}if(type==='i'||type==='I'){let out='';for(const[n,letters]of [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(value>=n){out+=letters;value-=n;}return type==='i'?out.toLowerCase():out;}return String(value);}
+export function writeSplatText(data,customFonts={}) {
+ if(!data?.document||!/WriteSplat/i.test(data.app||''))throw Error('Choose a WriteSplat project.');
+ const notes=['WriteSplat text, supported character/paragraph formatting and list labels imported. Flow documents are repaginated; embedded pictures, comments, citations and teacher tools need separate review.'];
+ if(data.document.format==='html'){const result=officeHtmlToStory(data.document.body||'',customFonts);if(result.substitutedFonts.length)notes.push('Unavailable source fonts were substituted: '+result.substitutedFonts.join(', ')+'.');return {...result,notes};}
+ if(data.document.format!=='prosemirror-json')throw Error('Unsupported WriteSplat document format.');
+ let text='',marks=[],paragraphs=[],nodes=0,firstStyle;const substituted=new Set();const family=(value,weight=400,italic=false)=>{const source=String(value||'Arial').slice(0,120),id=matchImportedFont(source,customFonts,weight,italic);if(!Object.hasOwn(customFonts,id)&&!source.split(',').map(normalizedFamily).includes(normalizedFamily(id)))substituted.add(source+' → '+id);return id;};
+ const pt=(value,fallback=0)=>clamp(parseFloat(value)*(/px$/.test(String(value))?.75:1),0,360,fallback);
+ function visit(node,depth=0,base={font:'Arial',size:12,color:'#25304b'},prefix='',listDepth=0){
+  if(!node||++nodes>100000||depth>100)throw Error('The writing document is too complex.');
+  if(node.type==='text'){const from=text.length;text+=safeText(node.text);const mark={from,to:text.length,...base};for(const item of node.marks||[]){if(item.type==='strong')mark.bold=true;if(item.type==='em')mark.italic=true;if(item.type==='underline')mark.underline=true;if(item.type==='fontFamily')mark.fontSource=String(item.attrs?.family||'Arial').slice(0,120);if(item.type==='fontSize')mark.size=clamp(parseFloat(item.attrs?.size)*(/px$/.test(item.attrs?.size)?.75:1),6,120,base.size);if(item.type==='textColor')mark.color=color(item.attrs?.color,'#25304b');if(item.type==='link'&&/^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(item.attrs?.href||''))mark.link=item.attrs.href;}mark.font=family(mark.fontSource||base.fontSource||base.font,mark.bold?700:400,!!mark.italic);delete mark.fontSource;if(text.length>from)marks.push(mark);}
+  else if(node.type==='tab')text+='\t';else if(node.type==='hard_break')text+='\n';
+  else if(['paragraph','heading'].includes(node.type)){
+   if(paragraphs.length)text+='\n';const from=text.length,a=node.attrs||{},style={font:family(a.fontFamily||base.fontSource||base.font),fontSource:String(a.fontFamily||base.fontSource||base.font).slice(0,120),size:typeof a.fontSize==='number'?clamp(a.fontSize,6,120,base.size):node.type==='heading'?[24,20,18,16,14,12][clamp(a.level,1,6,1)-1]:base.size,color:base.color};firstStyle||=style;
+   if(prefix){text+=prefix;marks.push({from,to:text.length,font:style.font,size:style.size,color:style.color});}for(const child of node.content||[])visit(child,depth+1,style);
+   const multiple=typeof a.lineMultiple==='number'?clamp(a.lineMultiple,.5,6,1.45):undefined,inset=listDepth*18;
+   paragraphs.push({from,to:text.length,leading:typeof a.leading==='number'?clamp(a.leading,6,360,style.size*1.45):style.size*(multiple||1.45),...(multiple?{lineMultiple:multiple}:{}),align:['left','center','right','justify'].includes(a.align)?a.align:'left',spaceBefore:pt(a.spaceBefore),spaceAfter:pt(a.spaceAfter),indentLeft:Math.min(360,pt(a.indentLeft)+inset),indentRight:pt(a.indentRight),firstLineIndent:Math.max(-360,clamp(a.firstLineIndent,-360,360,0)-inset)});
+   if(a.tabs?.length)notes.push('Custom tab-stop positions are not applied to LayoutSplat text flow; tab characters are retained.');
+  }else if(['ordered_list','bullet_list'].includes(node.type)){
+   let number=Number.isInteger(node.attrs?.order)?clamp(node.attrs.order,0,100000,1):1;for(const item of node.content||[]){if(++nodes>100000)throw Error('The writing document is too complex.');const override=item.attrs?.numberOverride;if(Number.isInteger(override))number=clamp(override,0,100000,number);let label=node.type==='bullet_list'?'•  ':listNumber(number++,node.attrs?.numberStyle)+'.  ';for(const child of item.content||[]){visit(child,depth+1,base,label,listDepth+1);label='';}}
+  }else{if(node.type==='image')text+=`[${safeText(node.attrs?.alt||'Picture')}]`;for(const child of node.content||[])visit(child,depth+1,base,prefix,listDepth);}
+  if(text.length>100000||marks.length>10000||paragraphs.length>10000)throw Error('A story supports 100,000 characters and 10,000 formatting ranges/paragraphs.');
+ }
+ visit(data.document.content);if(!paragraphs.length)paragraphs.push({from:0,to:text.length,leading:17.4,align:'left'});const base=firstStyle||{font:'Arial',size:12,color:'#25304b'};
+ if(substituted.size)notes.push('Unavailable source font families were substituted: '+[...substituted].join(', ')+'.');delete base.fontSource;return {text,marks,paragraphs,style:{...textStyle(),...base,align:paragraphs[0].align,lineHeight:clamp(paragraphs[0].leading/base.size,1,3,1.45)},notes:[...new Set(notes)]};
 }
 
 export function suiteTables(data) {
@@ -44,11 +42,11 @@ export function suiteTables(data) {
   throw Error('Choose a GridSplat or ListSplat project.');
 }
 
-export async function importSuite(data) {
+export async function importSuite(data,{customFonts={}}={}) {
   const d = newPublication(true), warnings = []; d.title = safeText(data?.metadata?.title || data?.title || 'Imported publication').slice(0, 200);
   if (/WriteSplat/i.test(data?.app || '')) {
-    const imported = writeSplatText(data), key = uid(); warnings.push(...imported.notes);
-    d.stories[key] = { text: imported.text, marks: imported.marks, style: textStyle(), frames: [] };
+    const imported = writeSplatText(data,customFonts), key = uid();if(Object.keys(customFonts).length)d.customFonts=structuredClone(customFonts); warnings.push(...imported.notes);
+    d.stories[key] = { text: imported.text, marks: imported.marks, paragraphs: imported.paragraphs, style: {...textStyle(),...imported.style}, frames: [] };
     const count = Math.max(1, Math.ceil(imported.text.length / 1700)); d.pages = [];
     for (let i = 0; i < count; i++) { const f = frame(key, 36, 36, 540, 720); f.padding = 0; d.stories[key].frames.push(f.id); d.pages.push({ id: uid(), objects: [f] }); }
     warnings.push('Frames are linked so all source text is retained. Use the design checker and Continue on next page if the final frame overflows.');
@@ -96,20 +94,19 @@ export async function importSuite(data) {
 export function exportSuite(kind, doc, layout) {
   const date = new Date().toISOString(), warnings = [], tables = doc.pages.flatMap(p => p.objects.filter(o => o.type === 'table')), seen = new Set(); let data;
   if (kind === 'writesplat') {
-    const content = [];
-    for (const page of doc.pages) for (const o of [...page.objects].sort((a,b) => (a.readingOrder ?? a.y * 10000 + a.x) - (b.readingOrder ?? b.y * 10000 + b.x))) {
-      if (o.type !== 'text' || seen.has(o.storyId)) continue; seen.add(o.storyId); const s = doc.stories[o.storyId], boundaries = [...new Set([0, s.text.length, ...(s.marks || []).flatMap(m => [m.from, m.to])])].sort((a,b) => a-b); let inline = [];
-      for (let i = 0; i < boundaries.length - 1; i++) {
-        const from = boundaries[i], to = boundaries[i+1], active = (s.marks || []).filter(m => m.from <= from && m.to >= to), style = Object.assign({ bold: s.style.weight === 'bold', italic: !!s.style.italic, underline: !!s.style.underline, font: s.style.font, size: s.style.size, color: s.style.color }, ...active), marks = [];
-        if (style.bold) marks.push({ type: 'strong' }); if (style.italic) marks.push({ type: 'em' }); if (style.underline) marks.push({ type: 'underline' });
-        marks.push({ type: 'fontFamily', attrs: { family: style.font } }, { type: 'fontSize', attrs: { size: style.size + 'pt' } }, { type: 'textColor', attrs: { color: style.color } }); if (style.link) marks.push({ type: 'link', attrs: { href: style.link, title: null } });
-        s.text.slice(from, to).split('\n').forEach((part,j) => { if (j) { content.push({ type: 'paragraph', content: inline }); inline = []; } if (part) inline.push({ type: 'text', text: part, marks }); });
+    const content=[];
+    for(const s of Object.values(doc.stories))for(const paragraph of textToRichDocument(s).content){
+      const source=paragraph.attrs||{},attrs={align:source.align||s.style.align,leading:source.leading??null,lineMultiple:source.lineMultiple??(source.leading?null:s.style.lineHeight),spaceBefore:source.spaceBefore??0,spaceAfter:source.spaceAfter??0,indentLeft:source.indentLeft??0,indentRight:source.indentRight??0,firstLineIndent:source.firstLineIndent??0,fontFamily:fontName(doc,s.style.font),fontSize:s.style.size};
+      const children=[];for(const run of paragraph.content||[]){let style={font:s.style.font,size:s.style.size,color:s.style.color};const marks=[];for(const m of run.marks||[]){if(m.type==='style')style={...style,...Object.fromEntries(Object.entries(m.attrs).filter(([,value])=>value!==null))};else if(['strong','em','underline'].includes(m.type))marks.push(m);else if(m.type==='link')marks.push({type:'link',attrs:{href:m.attrs.href,title:null}});}
+        marks.push({type:'fontFamily',attrs:{family:fontName(doc,style.font)}},{type:'fontSize',attrs:{size:style.size+'pt'}},{type:'textColor',attrs:{color:style.color}});for(const part of run.text.split(/(\t)/)){if(part==='\t')children.push({type:'tab',marks});else if(part)children.push({type:'text',text:part,marks});}
       }
-      content.push({ type: 'paragraph', content: inline });
+      content.push({type:'paragraph',attrs,...(children.length?{content:children}:{})});
     }
-    if (!content.length) content.push({ type: 'paragraph' });
-    data = { app: 'WriteSplatTM', version: 1, createdAt: date, updatedAt: date, metadata: { title: doc.title, author: '', targetGrade: '6' }, document: { format: 'prosemirror-json', content: { type: 'doc', content } }, teacher: { studentView: false, citations: [], answerKey: [] } };
-    warnings.push('WriteSplat receives complete stories once, with supported character formatting. Page positions, masters, pictures, shapes, and tables are not part of this text export.');
+    if(!content.length)content.push({type:'paragraph'});
+    data={app:'WriteSplatTM',version:1,createdAt:date,updatedAt:date,metadata:{title:doc.title,author:'',targetGrade:'6'},document:{format:'prosemirror-json',content:{type:'doc',content}},teacher:{studentView:false,citations:[],answerKey:[]}};
+    warnings.push('WriteSplat receives complete stories with supported character and paragraph formatting. Page positions, masters, pictures, shapes and tables are not part of this text export.');
+    if(Object.keys(doc.customFonts||{}).length)warnings.push('Embedded font files are not transferred to WriteSplat. Original family names are retained; that app uses fonts available on its device.');
+    if(Object.values(doc.stories).some(s=>s.style.tracking||s.style.wordSpacing||s.style.textScale&&s.style.textScale!==1||s.marks?.some(m=>m.tracking)))warnings.push('Tracking, word spacing and horizontal text scaling are not transferred to WriteSplat.');
   } else if (kind === 'showsplat') {
     const scale = Math.min(1600 / doc.width, 900 / doc.height), dx = (1600 - doc.width * scale) / 2, dy = (900 - doc.height * scale) / 2;
     const slides = doc.pages.map((p, index) => { const master = (doc.masters || []).find(m => m.id === p.masterId), objects = [...(master?.objects || []).filter(o => !(p.masterOverrides || []).includes(o.id)), ...p.objects]; const elements = objects.map((o,z) => {
@@ -136,7 +133,7 @@ export function exportSuite(kind, doc, layout) {
 export function setupSuiteImport(api) {
   const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.hidden = true; input.id = 'suiteImportInput'; document.body.append(input);
   input.onchange = async () => { const file = input.files[0]; input.value = ''; if (!file) return;
-    try { if (file.size > 20000000) throw Error('SplatWorks imports are limited to 20 MB.'); const result = await importSuite(JSON.parse(await file.text())); if (confirm(api.t('replaceConfirm'))) { await api.replaceDoc(result.doc); api.showReport(result.warnings); } }
+    try { if (file.size > 20000000) throw Error('SplatWorks imports are limited to 20 MB.'); const result = await importSuite(JSON.parse(await file.text()),{customFonts:api.getDoc().customFonts||{}}); if (confirm(api.t('replaceConfirm'))) { await api.replaceDoc(result.doc); api.showReport(result.warnings); } }
     catch (error) { api.showReport([error.message]); }
   };
   return { open() { input.click(); } };

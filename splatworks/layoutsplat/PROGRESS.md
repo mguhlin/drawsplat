@@ -1,5 +1,21 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — v0.4.6 paragraph-aware WriteSplat exchange
+
+Native WriteSplat input now retains supported paragraph leading, spacing, indents,
+alignment, blank paragraphs and list starts/overrides as visible labels. Available
+imported font families/variants are matched. HTML input uses the shared formatted
+story converter. LayoutSplat output generates the actual WriteSplat paragraph
+attributes and inline marks, retaining blank paragraphs and tab atoms. Original
+font family names replace internal LayoutSplat font IDs; unavailable embedded font
+files and unsupported advanced spacing receive explicit conversion reports.
+
+Validation: all 52 LayoutSplat workflows, ten model checks and both independent
+PDF text/font/geometry checks passed locally.
+The browser workflow reopens exported JSON in real WriteSplat and checks physical
+indent/leading measurements plus styled text. Native list semantics, custom tab
+positions and page composition remain limited; labels and text are preserved.
+
 ## October 14, 2026 — v0.4.5 folios, reading edition and richer document proofs
 
 Page/total folios update as pages change. Reinsert updates formats without

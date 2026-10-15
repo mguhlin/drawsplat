@@ -46,3 +46,17 @@ test('clearing browser data supports cancellation, deletes both saved copies, an
   expect(await page.evaluate(() => [localStorage.getItem('layoutsplat.autosave.v1'),localStorage.getItem('layoutsplat.recovery.v1'),localStorage.getItem('other-app-test')])).toEqual([null,null,'Keep this draft']);
   await page.reload(); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); expect(Object.keys((await snapshot(page)).stories)).toHaveLength(0); expect(await page.evaluate(() => localStorage.getItem('layoutsplat.autosave.v1'))).toBeNull();
 });
+
+test('WriteSplat exchanges retain paragraph metrics, blank paragraphs and list labels in both directions',async({page,context})=>{
+ await ready(page);const result=await page.evaluate(async()=>{
+ const {importSuite,exportSuite}=await import('/splatworks/layoutsplat/suite-interchange.mjs');
+ const blocks=[
+  {type:'paragraph',attrs:{fontFamily:'Georgia',fontSize:14,align:'justify',leading:17,spaceBefore:6,spaceAfter:8,indentLeft:12,indentRight:6,firstLineIndent:-3},content:[{type:'text',text:'Preserve paragraph metrics.',marks:[{type:'strong'},{type:'em'},{type:'underline'}]}]},
+  {type:'paragraph',attrs:{fontSize:11,leading:18}},
+  {type:'ordered_list',attrs:{order:4,numberStyle:'1'},content:[{type:'list_item',content:[{type:'paragraph',content:[{type:'text',text:'Fourth item'}]}]}]}
+ ];
+ const data={app:'WriteSplatTM',metadata:{title:'Paragraph exchange'},document:{format:'prosemirror-json',content:{type:'doc',content:blocks}},teacher:{}};
+ const imported=await importSuite(data),story=Object.values(imported.doc.stories)[0],exported=exportSuite('writesplat',imported.doc,{fragments:new Map()});return {story,data:JSON.parse(await exported.blob.text())};});
+ expect(result.story.text).toBe('Preserve paragraph metrics.\n\n4.  Fourth item');expect(result.story.paragraphs).toHaveLength(3);expect(result.story.paragraphs[0]).toMatchObject({leading:17,align:'justify',spaceBefore:6,spaceAfter:8,indentLeft:12,indentRight:6,firstLineIndent:-3});expect(result.story.paragraphs[1]).toMatchObject({from:28,to:28,leading:18});expect(result.data.document.content.content[0].attrs).toMatchObject({leading:17,spaceBefore:6,indentLeft:12,firstLineIndent:-3,fontSize:14,fontFamily:'Georgia'});expect(result.data.document.content.content[1].content).toBeUndefined();
+ const writer=await context.newPage();await writer.goto('/splatworks/writesplat/');await writer.locator('#fileInput').setInputFiles({name:'paragraphs.writesplat.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(result.data))});await expect(writer.locator('.ProseMirror p').first()).toHaveCSS('margin-left','16px');await expect(writer.locator('.ProseMirror p').first()).toHaveCSS('text-indent','-4px');await expect(writer.locator('.ProseMirror p').first()).toHaveCSS('line-height','22.6667px');await expect(writer.locator('.ProseMirror')).toContainText('4.  Fourth item');await expect(writer.locator('.ProseMirror strong').first()).toContainText('Preserve paragraph metrics.');
+});

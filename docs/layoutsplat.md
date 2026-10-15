@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.5** is the SplatWorks publication editor.
+LayoutSplat **v0.4.6** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -234,3 +234,16 @@ backgrounds remain decorative, separate from the page-content reading sequence.
 The expanded 100-page print proof independently conserves all 100 linked-story
 fragments and 800 body paragraphs, with embedded fonts and exact Letter geometry.
 The cached 500-page layout benchmark uses newsletter-length copy.
+
+### WriteSplat paragraph exchange
+
+Native WriteSplat import retains supported character formatting, paragraph leading,
+spacing, indents, alignment and blank paragraphs. Ordered/bulleted lists become
+visible text labels, including starts and item overrides. Previously loaded
+matching font families/variants remain available to the imported publication.
+
+LayoutSplat exports complete stories to native WriteSplat paragraphs with supported
+inline formatting, paragraph metrics and tab characters. Font family names survive;
+embedded font files, custom tab positions, tracking, word spacing and horizontal
+scaling are not transferred to that editor. Conversion reports identify relevant
+limits. Paragraph/page composition still follows the receiving application.
