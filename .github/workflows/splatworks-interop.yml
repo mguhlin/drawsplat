@@ -2,9 +2,9 @@ name: SplatWorks file interoperability
 on:
   push:
     branches: [main]
-    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', '.github/workflows/splatworks-interop.yml']
+    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', 'tests/writesplat-ruler.spec.js', '.github/workflows/splatworks-interop.yml']
   pull_request:
-    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', '.github/workflows/splatworks-interop.yml']
+    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', 'tests/writesplat-ruler.spec.js', '.github/workflows/splatworks-interop.yml']
 permissions:
   contents: read
 jobs:
