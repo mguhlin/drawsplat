@@ -1,5 +1,33 @@
 # LayoutSplat development progress
 
+## October 15, 2026 — v0.4.7 presentation and animated GIF exports
+
+File → Export adds PPTX, ODP and animated GIF, also available in Export & share.
+PPTX/ODP use one PNG page image per slide at the selected ppi, preserving physical
+page dimensions and optional bleed. They include the office package structures
+(master/layout/theme relationships for PPTX; uncompressed first mimetype entry,
+page layout and manifest for ODP). Text/objects are not separately editable.
+GIF plays the selected page sequence with adjustable duration and maximum pixel
+dimension, looping forever. A bundled worker runs the existing palette/dither/LZW
+encoder. A 24-million-pixel aggregate limit bounds frame memory. Media use posters;
+HTML remains the playback export. No conversion service or new dependency is used.
+
+The export-path review also fixed stale prepared sharing after input edits or a
+failed regeneration. Controls stay locked during generation and recover on errors;
+page arrays are validated before rendering. Existing typography, native import and
+print-fidelity roadmap items remain open. This review covers the affected export
+paths and their renderer integration, not a comprehensive application audit.
+
+Validation: all 57 LayoutSplat browser workflows and both model-test files passed.
+Independent Python checks decode all GIF frames (order/colors, 480×288 dimensions,
+700 ms timing and infinite loop) and inspect both office packages' XML, internal
+relationships, image bytes and physical page sizes. LibreOffice Impress reopened
+PPTX and ODP and rendered three correctly ordered 360×216-point slides with the
+expected artwork. The existing two-page and 100-page selectable print proofs,
+ten PDF preflight checks, native-decoder inventory and app build checks passed.
+Published ZIP releases retain their existing contents; the next package refresh
+will include this code through the existing bundle scripts.
+
 ## Current roadmap status — October 14, 2026
 
 Milestones 1–2 are implemented. The core publishing and personalization tools in

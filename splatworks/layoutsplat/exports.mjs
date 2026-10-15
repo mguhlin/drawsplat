@@ -7,6 +7,8 @@ import { exportSuite } from './suite-interchange.mjs';
 import {readingObjects} from './publication-fields.mjs';
 import {appendRich} from './rich.mjs';
 import {applyTextStyle} from './layout.mjs';
+import { exportPresentation } from './presentation-export.mjs';
+import { exportAnimation } from './animation-export.mjs';
 const pt = n => `${n}pt`;
 export function pageRange(value, total) {
   if (!value.trim()) return Array.from({ length: total }, (_, i) => i);
@@ -56,6 +58,12 @@ export function readingHtml(doc) {
 }
 export async function exportPublication(kind, doc, layout, options = {}) {
   const pages = options.pages || doc.pages.map((_, i) => i), onProgress = options.onProgress || (() => {});
+  if (!pages.length || pages.some(page => !Number.isInteger(page) || page < 0 || page >= doc.pages.length)) throw Error('Choose at least one valid publication page.');
+  if (kind === 'gif') return exportAnimation(doc, { ...options, pages }, (page, ppi) => pageCanvas(doc, doc.pages[page], layout, ppi, 0));
+  if (kind === 'pptx' || kind === 'odp') return exportPresentation(kind, doc, { ...options, pages }, async page => {
+    const canvas = await pageCanvas(doc, doc.pages[page], layout, options.ppi || 300, options.bleed || 0);
+    try { return await canvasBlob(canvas); } finally { canvas.width = canvas.height = 1; }
+  });
   if (['writesplat', 'showsplat', 'gridsplat', 'listsplat'].includes(kind)) return exportSuite(kind, doc, layout);
   if (kind === 'json') return { blob: new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }), extension: '.layoutsplat.json' };
   if (kind === 'pdf') return { blob: await pdfProof(doc, layout, options), extension: '.pdf' };

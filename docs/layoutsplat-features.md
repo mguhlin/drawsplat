@@ -206,7 +206,7 @@ A reading edition is useful for flexible digital sharing. Its existence does not
 
 ## 18. PDF, image, and desktop interchange exports
 
-**Print / Save as PDF** uses browser-shaped selectable text and vectors. The downloadable **PDF proof** is flattened artwork. PNG/JPEG exports support **150, 300, and 600 ppi**. SVG, IDML, Scribus SLA, native JSON, and suite-native content are also available.
+**Print / Save as PDF** uses browser-shaped selectable text and vectors. The downloadable **PDF proof** is flattened artwork. PNG/JPEG exports support **150, 300, and 600 ppi**. As of v0.4.7, **PowerPoint PPTX** and **OpenDocument ODP** preserve selected pages as full-slide PNG images at the chosen resolution, including bleed. Text and objects are not separately editable. **Animated GIF** cycles selected pages in order, loops forever, and offers seconds per page and maximum pixel dimension. A single page makes a still GIF. GIF is limited to 24 million total frame pixels and ignores print settings. Embedded videos and animations use still previews in these three formats. SVG, IDML, Scribus SLA, native JSON, and suite-native content are also available.
 
 Visual exports support page ranges. Native and interchange project exports contain the publication. Interchange packages describe their conversion limits; validate them in the external application before production use.
 

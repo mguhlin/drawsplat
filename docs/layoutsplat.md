@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.6** is the SplatWorks publication editor.
+LayoutSplat **v0.4.7** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -152,8 +152,25 @@ Recipient source tables are not saved in generated templates. Batches are bounde
 
 Save produces a portable `.layoutsplat` ZIP. **File → Export** offers native JSON,
 fixed-page HTML, an HTML reading edition, PDF proofs, high-resolution PNG/JPEG,
-SVG, IDML, Scribus SLA, suite content, and Pack and Go. Visual exports support
+PowerPoint PPTX, OpenDocument ODP, animated GIF, SVG, IDML, Scribus SLA, suite content,
+and Pack and Go. Visual exports support
 page ranges; native and interchange projects contain the publication.
+
+**PPTX and ODP** create one slide per selected page as a PNG image at the chosen
+150/300/600 ppi resolution. Slide dimensions match the publication, including any
+chosen bleed. These preserve the rendered page; text and objects are not separately
+editable. Use native LayoutSplat files for full editing, or ShowSplat interchange
+for supported editable slide objects. PPTX page dimensions must be 1–56 inches.
+
+**Animated GIF** plays selected pages in page order and loops forever. Choose
+0.1–60 seconds per page and a maximum dimension of 480, 720, 1080, or 1440 pixels.
+A single selected page produces a still GIF. GIF export uses a 256-color palette
+with dithering and is limited to 24 million total frame pixels; select fewer pages
+or a smaller size for large publications. Quantization and encoding run in a local
+worker. Embedded videos and animations use still previews in GIF/PPTX/ODP; use
+HTML for their original playback. GIF ignores bleed, ppi, crop marks, and ICC
+profiles; PPTX/ODP ignore crop marks and ICC profiles. All three downloads and
+file sharing work locally without uploading the publication.
 
 **Print / Save as PDF** preserves browser-shaped selectable text and vectors.
 The downloadable PDF proof is flattened. Print preparation includes bleed, crop
