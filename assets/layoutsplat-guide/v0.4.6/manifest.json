@@ -1,0 +1,232 @@
+{
+  "app": "LayoutSplat",
+  "version": "0.4.6",
+  "sourceCommit": "a23c028",
+  "source": "Production SplatWorks.org; clean browser context and bundled original demonstration templates only",
+  "screenshots": [
+    {
+      "file": "screenshots/01-workspace.png",
+      "caption": "LayoutSplat\u2019s two-page newsletter workspace, with page thumbnails, physical rulers, guides and property panels.",
+      "alt": "LayoutSplat\u2019s two-page newsletter workspace, with page thumbnails, physical rulers, guides and property panels.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:22.553Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1680,
+        "height": 1200
+      }
+    },
+    {
+      "file": "screenshots/02-flyer-designs.png",
+      "caption": "Eight flyer compositions, including two designs with vertical tear-off contact tabs.",
+      "alt": "Eight flyer compositions, including two designs with vertical tear-off contact tabs.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:23.807Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1080,
+        "height": 984
+      }
+    },
+    {
+      "file": "screenshots/03-brochure-designs.png",
+      "caption": "Four trifold and four bifold brochure designs, selected by composition rather than industry color.",
+      "alt": "Four trifold and four bifold brochure designs, selected by composition rather than industry color.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:24.617Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1080,
+        "height": 984
+      }
+    },
+    {
+      "file": "screenshots/04-brochure-workspace.png",
+      "caption": "An editable trifold brochure, with fold divisions, picture frames, text and separate outside and inside pages.",
+      "alt": "An editable trifold brochure, with fold divisions, picture frames, text and separate outside and inside pages.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:25.487Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1680,
+        "height": 1200
+      }
+    },
+    {
+      "file": "screenshots/05-tearoff-flyer.png",
+      "caption": "A tear-off flyer with ten vertical name and telephone tabs and dotted cutting lines.",
+      "alt": "A tear-off flyer with ten vertical name and telephone tabs and dotted cutting lines.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:26.451Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1680,
+        "height": 1200
+      }
+    },
+    {
+      "file": "screenshots/06-rich-story-editor.png",
+      "caption": "The movable Edit story window, with bold, italic, underline, paragraph alignment and mixed-format editing.",
+      "alt": "The movable Edit story window, with bold, italic, underline, paragraph alignment and mixed-format editing.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:27.384Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 560,
+        "height": 514
+      }
+    },
+    {
+      "file": "screenshots/07-page-layout.png",
+      "caption": "Page layout controls for paper size, margins, column and row guides, baseline spacing, bleed, safe insets and ruler origins.",
+      "alt": "Page layout controls for paper size, margins, column and row guides, baseline spacing, bleed, safe insets and ruler origins.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:28.323Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 560,
+        "height": 906
+      }
+    },
+    {
+      "file": "screenshots/08-avery-labels.png",
+      "caption": "The labels and name badges library uses Avery stock numbers and physical sheet measurements.",
+      "alt": "The labels and name badges library uses Avery stock numbers and physical sheet measurements.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:29.328Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1080,
+        "height": 1050
+      }
+    },
+    {
+      "file": "screenshots/14-name-badges.png",
+      "caption": "Avery name badge templates with product numbers, sheet sizes and badge dimensions.",
+      "alt": "Avery name badge templates with product numbers, sheet sizes and badge dimensions.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:30.151Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1080,
+        "height": 1050
+      }
+    },
+    {
+      "file": "screenshots/09-import-menu.png",
+      "caption": "The File menu groups import sources alphabetically, including Publisher, Word, LibreOffice, Pages, PDF and SplatWorks content.",
+      "alt": "The File menu groups import sources alphabetically, including Publisher, Word, LibreOffice, Pages, PDF and SplatWorks content.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:31.173Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 326,
+        "height": 605
+      }
+    },
+    {
+      "file": "screenshots/10-print-and-export.png",
+      "caption": "Pack and Go export settings, including page ranges, resolution, bleed, crop marks and an optional printer ICC profile.",
+      "alt": "Pack and Go export settings, including page ranges, resolution, bleed, crop marks and an optional printer ICC profile.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:32.161Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 560,
+        "height": 562
+      }
+    },
+    {
+      "file": "screenshots/11-whiteboard-backgrounds.png",
+      "caption": "DrawSplat\u2019s classroom organizers, ScratchArt backgrounds, coloring pages and animal pictures are available inside LayoutSplat.",
+      "alt": "DrawSplat\u2019s classroom organizers, ScratchArt backgrounds, coloring pages and animal pictures are available inside LayoutSplat.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:33.114Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 560,
+        "height": 918
+      }
+    },
+    {
+      "file": "screenshots/12-master-pages.png",
+      "caption": "Master page controls apply reusable designs across all pages or left and right pages, with local overrides and page-number insertion.",
+      "alt": "Master page controls apply reusable designs across all pages or left and right pages, with local overrides and page-number insertion.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:33.976Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 700,
+        "height": 446
+      }
+    },
+    {
+      "file": "screenshots/13-checker-and-reading-order.png",
+      "caption": "Design checker findings and HTML reading-order controls sit beside the publication; reading order is independent of layer stacking.",
+      "alt": "Design checker findings and HTML reading-order controls sit beside the publication; reading order is independent of layer stacking.",
+      "url": "https://splatworks.org/splatworks/layoutsplat/",
+      "version": "0.4.6",
+      "capturedAt": "2026-10-15T00:13:35.022Z",
+      "viewport": {
+        "width": 1680,
+        "height": 1200
+      },
+      "imageDimensions": {
+        "width": 1680,
+        "height": 1200
+      }
+    }
+  ]
+}

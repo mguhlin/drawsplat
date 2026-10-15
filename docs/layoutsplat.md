@@ -6,6 +6,13 @@ Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
 and its existing tools; SplatWorks is the ecosystem brand.
 
+## Illustrated feature guide
+
+[Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
+It covers the workspace, all 18 template types, text, graphics, masters, labels,
+mail merge, imports, suite exchange, digital output and current print limits.
+The guide documents v0.4.6 rather than promising complete Publisher compatibility.
+
 ## Templates
 
 Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,

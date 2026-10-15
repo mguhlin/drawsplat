@@ -24,6 +24,7 @@ GROUPS={
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/writesplat.html','WriteSplat · Document editing and import','Word/LibreOffice formatting, source numbering and spacing, local saving and current compatibility.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','123 distinct compositions, Avery labels, native Publisher/Pages import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
+GROUPS['SplatWorks'].insert(2, ('wiki/layoutsplat-features.html','LayoutSplat · Illustrated feature guide','Twenty sections with production screenshots: templates, workspace, typography, imports, labels, masters, merge and print limits.'))
 GROUPS['SplatWorks'].extend([('wiki/layoutsplat-labels.html','LayoutSplat · Avery labels & name badges','All 29 Avery sheet layouts and 127 compatible product codes; physical dimensions and printer alignment.'),('wiki/layoutsplat-import-accuracy.html','LayoutSplat · Import accuracy','Private sample findings, source font differences, supported formats, and remaining compatibility work.')])
 GROUPS['Technical and updates'].insert(2, ('wiki/splatworks-domain.html','SplatWorks.org domain setup','Serve the same deployment on both domains and preserve access to existing browser drafts.'))
 GROUPS['Start here']=[row for row in GROUPS['Start here'] if row[0] not in ['docs/district-selfhost.html','guides/teacher-options-quick-start.html']]
@@ -41,7 +42,7 @@ EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.htm
 runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
 EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
 GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
-RENDER=['writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['layoutsplat-features','writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())
@@ -54,7 +55,7 @@ for name in RENDER:
   frag=('#'+url.split('#',1)[1]) if '#' in url else ''
   return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+('/' if url.split('#')[0].endswith('/') else '')+frag+'"'
  body=re.sub(r'(href|src)="([^"]+)"',rel,body)
- (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
+ (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else 'LayoutSplat: illustrated feature guide' if name=='layoutsplat-features' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
 def relative(path,current): return os.path.relpath(ROOT/path,(ROOT/current).parent)
 FAQ_SECTIONS=[(re.sub(r'[^a-z0-9]+','-',title.lower()).strip('-'),title) for title in re.findall(r'^## (.+)$',(ROOT/'docs/faq.md').read_text(),re.M)]

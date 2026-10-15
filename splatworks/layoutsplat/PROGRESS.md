@@ -1,5 +1,17 @@
 # LayoutSplat development progress
 
+## October 14, 2026 — illustrated documentation
+
+Added a 20-section feature inventory with 14 actual v0.4.6 production screenshots,
+covering all 18 publication types and explicit editability, native-format, media,
+text-flow and print limits. The README and technical guide link to it; wiki navigation
+and full-text search include it. A separate Desktop blog package contains editable
+Markdown, offline HTML, an Astro draft, captions, provenance and primary retirement
+references. It has not been posted automatically to the personal blog.
+
+Five focused v0.4.6 workflows passed on production for paragraph/list exchange,
+folios, reading order, Publisher properties and binary Word formatting.
+
 ## October 14, 2026 — v0.4.6 paragraph-aware WriteSplat exchange
 
 Native WriteSplat input now retains supported paragraph leading, spacing, indents,
