@@ -45,14 +45,17 @@ to the domain, so a redirect within one domain keeps that domain’s workspace.<
 <h2 id="google-drive-authorization">Google Drive authorization</h2>
 <p>The five office apps and AudioSplat use the shared Google web client
 <code>31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com</code>
-for their explicit Drive actions. The October 15 anonymous production check
-reached Google's sign-in screen on DrawSplat.org. SplatWorks.org returned
-<code>Error 400: origin_mismatch</code> and needs its exact origin registered:</p>
+for their explicit Drive actions. After the administrator added the SplatWorks
+origin on October 15, 2026, the anonymous production check reached Google's
+sign-in screen on both SplatWorks.org and DrawSplat.org without
+<code>origin_mismatch</code>. Both public origins are now authorized.</p>
+<p>To maintain these origins or configure the corresponding client setting:</p>
 <ol>
 <li>Open <a href="https://console.cloud.google.com/auth/clients?project=31274545407">Google Auth Platform → Clients</a>.</li>
 <li>Select the web client with the ID above.</li>
-<li>Add <code>https://splatworks.org</code> under <strong>Authorized JavaScript origins</strong>, preserving
-<code>https://drawsplat.org</code>. Use the origin without an app path or trailing slash.</li>
+<li>Keep <code>https://splatworks.org</code> and <code>https://drawsplat.org</code> under
+<strong>Authorized JavaScript origins</strong>. Use each origin without an app path or
+trailing slash.</li>
 <li>Save, allow the setting to propagate, then recheck a Drive action on both domains.</li>
 </ol>
 <p>No account was authenticated and no project was uploaded during that anonymous
