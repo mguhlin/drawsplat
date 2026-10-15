@@ -1,0 +1,10 @@
+/* Report artwork keeps its full proportions; the table is its text equivalent. */
+.protect-report-figure{margin:20px 0}
+.protect-report-figure>a{display:block}
+.protect-report-figure img{display:block;width:100%;height:auto;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px}
+.protect-report-figure figcaption{margin-top:8px;font-size:14px;line-height:1.6;color:#475569}
+.protect-report-downloads{display:flex;flex-wrap:wrap;gap:8px 20px;padding:0;list-style:none}
+.protect-report-details{margin:20px 0;padding:14px;border:1px solid #cbd5e1;border-radius:6px}
+.protect-report-details>summary{cursor:pointer;font-weight:650}
+.protect-report-scores caption{text-align:left;font-weight:650;padding:8px 0}
+@media print{.protect-report-figure{break-inside:avoid}.protect-report-downloads{display:none}}

@@ -1,0 +1,100 @@
+Built-in image_gen tool. Use case: infographic-diagram.
+
+PUBLIC REPORT CARD
+Use case: infographic-diagram.
+Asset type: finished horizontal landscape report-card infographic, 16:9, high-resolution.
+Style: polished editorial information design, crisp typography, generous spacing, white background, deep navy text, teal rules and accents, amber provisional score badge. Clean accessible contrast. No photos, no mascots, no 3D, no seals, no invented logos. Wide margins. Main reading order: title at top; large current score at left; seven-row score table in center; conditions at right. Footer explains limits. Every supplied text string must be reproduced exactly, with legible text and no extra factual claims. This is one card in a matching two-card set. Use the same design geometry for both. No red/green-only encoding. Each category scored 0,1,2; table scores sum exactly to current score. Conditional target must be visually separate from current score and prominently labeled as conditional, not earned.
+
+Title: "SplatWorks / DrawSplat"
+Subtitle: "PUBLIC WEBSITES • PROTECT v2.0"
+Scope line: "SplatWorks.org + DrawSplat.org | Supervised browser-only use"
+Scope note: "Optional AI, cloud, SSO and backends OFF. Hosting and remote-resource requests still count."
+
+Left score panel:
+"9/14"
+"PROVISIONAL EVIDENCE SCORE"
+"Approve with conditions"
+A separate outlined box below:
+"Conditional target: 13/14"
+"Only after the evidence below is verified."
+
+Center table heading: "CATEGORY • SCORE / 2"
+Rows, exact:
+"P  Parental rights & access      1"
+"R  Retention & deletion          1"
+"O  Opt-out options               2"
+"T  Transparency                  2"
+"E  Encryption & security         1"
+"C  Consent & age                 1"
+"T  Third-party management        1"
+Table legend: "0 Missing   1 Partial   2 Fully evidenced"
+
+Right column heading: "WHAT 13/14 DEPENDS ON"
+Five numbered concise conditions:
+"1  Rights rehearsal"
+"Test school-assisted access, correction, export and deletion across all relevant copies."
+"2  Retention proof"
+"Enable chosen expiry; verify host logs, exports, backup expiry and erasure on restore."
+"3  Device + security proof"
+"Verify encrypted devices/copies, access controls and the breach-response process."
+"4  Provider agreements"
+"Verify enabled providers, retention, transfer safeguards and notice/objection terms."
+"5  Keep the scope narrow"
+"School-authorized local use; connected features require separate approval."
+Small note under conditions:
+"At 13/14, consent/age remains 1 until broader verified enforcement is demonstrated."
+
+Footer full width:
+"KEY LIMIT: Local drafts are not application-encrypted. Clearing one domain does not clear the other, downloads or cloud copies."
+"Reviewed 15 Oct 2026 • Provisional desk review, not certification • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"
+
+
+DISTRICT REPORT CARD
+Use case: infographic-diagram.
+Asset type: finished horizontal landscape report-card infographic, 16:9, high-resolution.
+Style: polished editorial information design, crisp typography, generous spacing, white background, deep navy text, teal rules and accents, amber provisional score badge. Clean accessible contrast. No photos, no mascots, no 3D, no seals, no invented logos. Wide margins. Main reading order: title at top; large current score at left; seven-row score table in center; conditions at right. Footer explains limits. Every supplied text string must be reproduced exactly, with legible text and no extra factual claims. This is one card in a matching two-card set. Use the same design geometry for both. No red/green-only encoding. Each category scored 0,1,2; table scores sum exactly to current score. Conditional target must be visually separate from current score and prominently labeled as conditional, not earned.
+
+Title: "SplatWorks / DrawSplat"
+Subtitle: "DISTRICT SELF-HOSTED • PROTECT v2.0"
+Scope line: "District-hosted ecosystem + MariaDB/MySQL classroom services"
+Scope note: "External services OFF unless separately approved. No named district installation was audited."
+
+Left score panel:
+"8/14"
+"PROVISIONAL READINESS SCORE"
+"Hold for deployment evidence"
+Small explanatory sentence:
+"Missing local evidence lowers this baseline; self-hosting offers greater control."
+A separate outlined box below:
+"Conditional target: 14/14"
+"Only after district controls are verified."
+
+Center table heading: "CATEGORY • SCORE / 2"
+Rows, exact:
+"P  Parental rights & access      1"
+"R  Retention & deletion          1"
+"O  Opt-out options               2"
+"T  Transparency                  1"
+"E  Encryption & security         1"
+"C  Consent & age                 1"
+"T  Third-party management        1"
+Table legend: "0 Missing   1 Partial   2 Fully evidenced"
+
+Right column heading: "WHAT 14/14 DEPENDS ON"
+Six numbered concise conditions:
+"1  Rights + identity"
+"Name the school contact; test access, correction, export and verified erasure across all stores."
+"2  Retention + backups"
+"Enable jobs; prove 30-day active / 90-day backup termination deletion and erasure replay on restore."
+"3  Exact locations"
+"Record server, processing, log and backup regions plus every enabled data flow."
+"4  Security operations"
+"Verify TLS, encryption at rest, roles, audit logs, patching and breach response."
+"5  Consent + age"
+"Verify school authorization, required parental consent and enforced age-appropriate controls."
+"6  Provider contracts"
+"Execute applicable terms, no-training restrictions, transfer safeguards and 30-day notice/objection."
+
+Footer full width:
+"KEY LIMIT: Installation alone earns no final grade. Legacy name-only records, media, exports and backups need separate handling."
+"Reviewed 15 Oct 2026 • Readiness estimate; actual deployment remains ungraded • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"

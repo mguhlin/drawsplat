@@ -1,0 +1,59 @@
+Use case: infographic-diagram.
+Create one finished high-resolution horizontal landscape infographic, aspect ratio 16:9, containing TWO report cards side by side for easy comparison. Match a professional editorial report-card design: white background, deep navy typography, teal rules and table headers, amber current-score badges, outlined teal conditional-target boxes. Crisp, spacious, legible typography. No illustrations, no certification seals, no invented logos. All supplied wording and numbers must be exact. Strong hierarchy separating provisional current evidence score from conditional target. Do not present targets as earned grades.
+Title: "PROTECT v2.0 • Deployment report cards"
+Subtitle: "SplatWorks / DrawSplat • Reviewed 15 October 2026"
+
+LEFT report card:
+Heading: "PUBLIC WEBSITES"
+Scope: "SplatWorks.org + DrawSplat.org"
+Sub-scope: "Supervised browser-only use; AI, cloud, SSO and backends OFF."
+Large badge: "9/14"
+Badge label: "Provisional evidence score"
+Status: "Approve with conditions"
+Seven aligned compact rows, each with category and score:
+"Parental rights & access   1/2"
+"Retention & deletion   1/2"
+"Opt-out options   2/2"
+"Transparency   2/2"
+"Encryption & security   1/2"
+"Consent & age   1/2"
+"Third-party management   1/2"
+Outlined target box: "Conditional target: 13/14"
+Small heading: "Contingent on verified:"
+Four bullets:
+"School-assisted rights request rehearsal"
+"Local expiry, host-log and copy/backup retention"
+"Device encryption, access and incident controls"
+"Provider agreements and transfer safeguards"
+Small note: "Consent/age stays 1; connected use needs separate approval."
+
+RIGHT report card:
+Heading: "DISTRICT SELF-HOSTED"
+Scope: "District ecosystem + MariaDB/MySQL"
+Sub-scope: "External services OFF unless approved; no named installation audited."
+Large badge: "8/14"
+Badge label: "Provisional readiness score"
+Status: "Hold for deployment evidence"
+Seven aligned compact rows:
+"Parental rights & access   1/2"
+"Retention & deletion   1/2"
+"Opt-out options   2/2"
+"Transparency   1/2"
+"Encryption & security   1/2"
+"Consent & age   1/2"
+"Third-party management   1/2"
+Outlined target box: "Conditional target: 14/14"
+Small heading: "Contingent on verified:"
+Six bullets:
+"Rights and identity-verification drills"
+"Enabled retention; 30-day active / 90-day backup termination deletion"
+"Exact processing, log and backup locations"
+"Encryption, roles, audit logs and incident operations"
+"School authorization and required parental consent"
+"Executed provider terms and 30-day notice/objection"
+Small note: "Self-hosting offers greater control; local evidence is still required."
+
+Shared footer:
+"SCORING: 0 Missing • 1 Partial • 2 Fully evidenced"
+"Provisional review, not certification. Actual district deployment remains ungraded until verified. A target is not an earned score."
+"Sources: supplied PROTECT v2.0 rubric • splatworks.org/legal/protect-review • splatworks.org/legal/service-providers"

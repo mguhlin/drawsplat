@@ -1,0 +1,78 @@
+{
+  "reviewed": "2026-10-15",
+  "method": "Conservative provisional evidence/readiness review; not a legal certification or an audit of a named district. A 2 requires the full descriptor and relevant operating evidence. Missing evidence is treated as partial where specific controls and commitments exist, rather than inferred as verified.",
+  "public": {
+    "score": 9,
+    "maximum": 14,
+    "interpretation": "Approve with conditions",
+    "scope": "Public SplatWorks.org / DrawSplat.org, supervised browser-only baseline; optional AI/cloud/SSO/backends off. Public hosting and external resource requests remain in scope.",
+    "conditionalTarget": 13
+  },
+  "district": {
+    "score": 8,
+    "maximum": 14,
+    "interpretation": "Hold for deployment evidence",
+    "scope": "Self-hosted ecosystem with district MariaDB/MySQL classroom services; external services off unless separately approved. No particular district installation has been audited.",
+    "conditionalTarget": 14
+  },
+  "categories": [
+    {
+      "code": "P",
+      "category": "Parental rights & access",
+      "public": 1,
+      "district": 1,
+      "rationale": "Controls and deadlines exist; an end-to-end assisted request rehearsal covering all record locations is not evidenced."
+    },
+    {
+      "code": "R",
+      "category": "Retention & deletion",
+      "public": 1,
+      "district": 1,
+      "rationale": "Schedules and deletion tools exist; enabled expiry, external copies and backup destruction/restore evidence remain deployment dependent."
+    },
+    {
+      "code": "O",
+      "category": "Opt-out options",
+      "public": 2,
+      "district": 2,
+      "rationale": "Local workflows and optional connections; published no-sale, no-targeted-advertising, no-profiling and no-training restrictions. Optional processing is excluded from these scopes."
+    },
+    {
+      "code": "T",
+      "category": "Transparency",
+      "public": 2,
+      "district": 1,
+      "rationale": "Public inventory, hosting boundaries, dates and provider register are published. A particular district must add exact processing/log/backup locations and configuration."
+    },
+    {
+      "code": "E",
+      "category": "Encryption & security",
+      "public": 1,
+      "district": 1,
+      "rationale": "Public HTTPS/headers and district security controls are documented; actual endpoint/database/object/backup encryption and incident operations are not fully evidenced."
+    },
+    {
+      "code": "C",
+      "category": "Consent & age",
+      "public": 1,
+      "district": 1,
+      "rationale": "Age bands and school/parent pathways are documented; ecosystem-wide operational consent/age enforcement is not demonstrated."
+    },
+    {
+      "code": "T",
+      "category": "Third-party management",
+      "public": 1,
+      "district": 1,
+      "rationale": "Dated provider register and notice/objection process exist; complete enabled resource/provider inventory, executed terms and flow-down evidence remain pending."
+    }
+  ],
+  "sources": [
+    "https://mguhlin.org/images/frameworks/ctobs/TCEA_PROTECT_Rubric_v2-1024x576.png",
+    "https://splatworks.org/legal/protect-review",
+    "https://splatworks.org/privacy/",
+    "https://splatworks.org/legal/terms-privacy",
+    "https://splatworks.org/legal/service-providers",
+    "https://splatworks.org/data/privacy-retention.json",
+    "https://splatworks.org/data/privacy-inventory.json"
+  ]
+}
