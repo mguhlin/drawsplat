@@ -26,6 +26,10 @@ The [Teacher Quick Start](../guides/teacher-options-quick-start.html) walks thro
 | Create and practice | Try [scratch art](../guides/scratchart.html) or [classroom games](../games/index.html), including typing practice. |
 | Write or present | Use [WriteSplat](../pages/writesplat.html) for writing, [ShowSplat](../pages/showsplat.html) for slides, or [ListSplat](../pages/listsplat.html) for organized records. |
 
+## Keep a Google Drive copy
+
+The office apps and creative tools can save a file copy to your Google account after you authorize it. Follow the [Google Drive guide](../wiki/google-drive.html) for the correct action and format in each app, including PDFs, videos, media outputs, Markdown and diagram source. Local saving remains available.
+
 ## Collect work and give feedback
 
 On a configured district setup, teachers can use [classrooms and assignments](../wiki/district-classrooms.html) to collect student turn-ins and give feedback. Your school must set up accounts and rosters first.

@@ -43,3 +43,7 @@ The installation guide includes backup, restart, and update steps. Keep password
 ## Maintain the service
 
 Check [release notes](../pages/release-notes.html) before updates. Keep a backup, test changes, and confirm the school’s key workflows afterward. See [licensing](../wiki/licensing.html) for source and license duties, or [contact support](../pages/contact.html) for help.
+
+## Direct Google Drive saves
+
+The [Google Drive guide](../wiki/google-drive.html) covers app actions, file formats, authorization and district OAuth configuration. These direct file copies are separate from DrawSplat’s Apps Script rooms and turn-ins. Test with a permitted school account before rollout.

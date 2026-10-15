@@ -6,6 +6,15 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
+      <title>Save your SplatWorks work to Google Drive</title>
+      <link>https://splatworks.org/blog/google-drive-saving.html</link>
+      <guid>https://splatworks.org/blog/google-drive-saving.html</guid>
+      <pubDate>Thu, 15 Oct 2026 21:06:17 GMT</pubDate>
+      <description>Six more SplatWorks apps add optional Google Drive saving. A new wiki guide covers actions, formats, reopening and district setup; LayoutSplat adds a two-page starter newsletter.</description>
+      <source url="https://splatworks.org/blog/">SplatWorks Updates</source>
+      <media:thumbnail url="https://splatworks.org/assets/drive-guide/save-dialog.png" />
+    </item>
+    <item>
       <title>Granting Gen AI Agency - Computer Using Agent Making a Newsletter</title>
       <link>https://mguhlin.org/blog/2026-10-15-granting-gen-ai-agency-computer-using-agent-making-a-newsletter/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-15-granting-gen-ai-agency-computer-using-agent-making-a-newsletter/</guid>

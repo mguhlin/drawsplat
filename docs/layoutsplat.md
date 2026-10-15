@@ -211,9 +211,12 @@ A fresh workspace opens the first two pages of **SplatWorks News – October 202
 with its text and illustrations ready to edit. Existing saved publications,
 recovery drafts and transferred documents take priority. Choose **File → Open
 starter newsletter** for a fresh copy; Undo restores the previous publication.
-Your original imported file remains unchanged. Autosave writes the current draft
+Your original imported file remains unchanged. Use **File → Save to Google Drive**
+for a native project copy; see the [Drive guide](../wiki/google-drive.html). Autosave writes the current draft
 first, then keeps a recovery copy when browser storage has room. Download a
 project file for a separate backup.
+
+![The two-page SplatWorks News starter in LayoutSplat.](../assets/drive-guide/layoutsplat-two-page-starter.png)
 
 **File → Clear saved browser data** clears this workspace's draft/recovery and undo,
 then reloads a blank publication. Cancel preserves the current work. Other apps'

@@ -1637,7 +1637,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "46b3f7064dca51f763d4f9cb98d5ee21780ac972916b48f399fd54f1241dd030"
+      "entrySha256": "48cf2d489bef971b845188f23900e2b4648ef7524884bd4fbd3512606b32a667"
     },
     {
       "id": "templates",
@@ -1667,7 +1667,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "b21e187f2cf78af449bcd01e5c3115351faf68cb1f66bba8a3abe5f0dddebaee"
+      "entrySha256": "6fe61d23e8c51c560c2cd5e16ff9c874f52b12180c4441426f53b5f536997996"
     },
     {
       "id": "guides",
@@ -1687,16 +1687,19 @@
         "buymeacoffee.com",
         "console.cloud.google.com",
         "developers.cloudflare.com",
+        "developers.google.com",
         "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
+        "localhost",
         "localhost:8000",
         "localhost:8080",
         "localhost:8787",
         "localhost:8787.",
+        "localhost:PORT",
         "mguhlin.org",
         "openai.com",
         "privacy.anthropic.com",
@@ -1720,7 +1723,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "e08827d5b2b07dee58ee1707486c46051e1f8fd3e8fc5eadff67d5768e9f38c0"
+      "entrySha256": "e1dd39fa59876e312dad0855e2b67393b5ab92c91d0c0d2ed0fd47335f821e60"
     },
     {
       "id": "support",
@@ -1740,16 +1743,19 @@
         "buymeacoffee.com",
         "console.cloud.google.com",
         "developers.cloudflare.com",
+        "developers.google.com",
         "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
+        "localhost",
         "localhost:8000",
         "localhost:8080",
         "localhost:8787",
         "localhost:8787.",
+        "localhost:PORT",
         "mguhlin.org",
         "openai.com",
         "privacy.anthropic.com",
@@ -1773,7 +1779,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "418bc408729d9890b5743f87d132a3f03888d370500fb8b63ab2b9d0191cec7c"
+      "entrySha256": "a4ab2d870045db0b11b734afa29ea09e2e2e43d5e80c8a68ee15f16dfe737845"
     }
   ]
 }
