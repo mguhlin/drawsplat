@@ -730,7 +730,7 @@ test('updates and exports the picture graph', async ({ page }, testInfo) => {
   expect(download.suggestedFilename()).toBe('gridsplat-picture-graph.png');
 });
 
-test('autosaves sheet data in the browser and shows cloud setup status', async ({
+test('autosaves sheet data in the browser and offers optional Drive saving', async ({
   page,
 }, testInfo) => {
   test.skip(
@@ -757,8 +757,13 @@ test('autosaves sheet data in the browser and shows cloud setup status', async (
   ).toHaveCount(0);
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Save' }).click();
+  await page.evaluate(() => { const meta = document.createElement('meta'); meta.name = 'google-drive-client-id'; meta.content = 'synthetic-client.apps.googleusercontent.com'; document.head.append(meta); });
+  await page.route('https://accounts.google.com/gsi/client', route => route.fulfill({ contentType: 'application/javascript', body: 'window.google={accounts:{oauth2:{}}};' }));
   await page.getByRole('menuitem', { name: 'Save Google Drive' }).click();
-  await expect(page.getByText(/VITE_GOOGLE_DRIVE_CLIENT_ID/)).toBeVisible();
+  const drive = page.getByRole('dialog', { name: 'Save to Google Drive', exact: true });
+  await expect(drive).toContainText('new native project file');
+  await drive.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.getByTestId('cell-A1')).toContainText('Autosaved');
 });
 
 test('loads an activity dataset and toggles teacher notes', async ({

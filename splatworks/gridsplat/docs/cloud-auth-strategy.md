@@ -1,6 +1,6 @@
 # GridSplat Cloud Auth Strategy
 
-Last updated: 2026-06-13
+Last updated: 2026-10-15
 
 This note answers whether GridSplat can use the same OAuth setup as DrawSplat Community and the whiteboard.
 
@@ -10,7 +10,7 @@ Use the same Google Cloud or Microsoft Entra tenant/app family where possible, b
 
 - DrawSplat Community uses Google Identity Services and Microsoft sign-in for identity. It verifies a user's name/email and creates a Community session in the Apps Script backend.
 - DrawSplat whiteboard uses a teacher-configured Google Apps Script Web App URL for storage. The Apps Script deployment runs under the teacher or school account and writes boards, rooms, templates, and turn-ins to Drive and Sheets.
-- GridSplat currently uses browser-only OAuth 2.0 PKCE for direct user cloud save to Google Drive, Dropbox, and OneDrive. It does not use a backend or client secret.
+- GridSplat and the other four SplatWorks office apps use the shared Google Identity Services (GIS) token model for explicit native-file saves to Drive. Google tokens remain in tab memory; sign-in loads only after a Drive action. Dropbox and OneDrive retain their configured browser OAuth adapters. No client secret or storage backend is added.
 
 Those are compatible under one deployment policy, but they are not the same token or the same permission model.
 
@@ -22,7 +22,7 @@ Keep a single DrawSplat family of OAuth disclosures and deployment instructions,
 | --- | --- | --- | --- |
 | Browser-only | DrawSplat, GridSplat | Nobody | Work locally, save/open files manually, use no cloud account. |
 | DrawSplat Apps Script storage | Whiteboard today, GridSplat optional future adapter | Co-developer, teacher, or district admin | Save through a school-owned Google Apps Script backend into school-controlled Drive/Sheets. |
-| Direct cloud save with OAuth PKCE | GridSplat today | Co-developer or deployment owner | Save a `.gridsplat.json` file directly to the signed-in user's Drive, Dropbox, or OneDrive. |
+| Direct cloud save (GIS for Google; configured OAuth for other providers) | All five office apps for Drive; GridSplat for Dropbox/OneDrive | Co-developer or deployment owner | Save a `.gridsplat.json` file directly to the signed-in user's Drive, Dropbox, or OneDrive. |
 
 For public `drawsplat.org`, the cleanest user-facing message is:
 
@@ -32,12 +32,12 @@ For public `drawsplat.org`, the cleanest user-facing message is:
 
 Sometimes, with changes.
 
-Community's Google client is configured for Google Identity Services. That verifies identity and returns an ID token. GridSplat direct Google Drive save needs an OAuth authorization-code/PKCE client that is allowed to request `https://www.googleapis.com/auth/drive.file` and redirect back to the GridSplat route.
+Community's Google client is configured for Google Identity Services. That verifies identity and returns an ID token. SplatWorks Drive saving uses a Google OAuth Web application client allowed to request `https://www.googleapis.com/auth/drive.file` through the GIS token popup. The exact deployed origin must be authorized. An identity ID token cannot authorize Drive uploads. See [suite setup](../../../pages/splatworks.html#save-to-google-drive) for the HTML client-ID override.
 
 To reuse the same Google OAuth client/project for GridSplat direct Drive save, the deployment owner must confirm:
 
 - The OAuth consent screen names DrawSplat/GridSplat and links to the updated privacy policy and OAuth disclosure.
-- The GridSplat origin and route are listed in the OAuth client's authorized redirect/origin settings as required by the provider flow.
+- Each deployed HTTPS origin is listed in the Google OAuth client's authorized JavaScript origins; GIS uses a popup rather than a redirect back to an app route.
 - The requested Drive scope is present and approved.
 - Google verification is complete before broad public or student-account use.
 
@@ -53,7 +53,7 @@ The co-developer/deployment owner must do the setup that cannot be done in code:
 
 - Register or update Google, Microsoft, and Dropbox public app/client IDs.
 - Add the deployed GridSplat URL as an allowed origin/redirect URL.
-- Put the client IDs into the GridSplat build environment.
+- Configure the Google client ID in the deployed app HTML (or GridSplat build environment), and other provider IDs in the GridSplat build environment.
 - Publish the updated privacy/OAuth disclosure URLs on the provider consent screens.
 - Test with a real district-managed student account before release.
 

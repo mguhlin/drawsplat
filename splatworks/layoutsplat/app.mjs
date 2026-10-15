@@ -1,3 +1,4 @@
+import { saveToGoogleDrive } from '../shared/google-drive.js';
 import { UNITS, PAPER, uid, clone, newPublication, frame, shape, textStyle, findObject, guidePositions, snapPosition, removeObject, linkFrames, validatePublication, formatMeasure, toPoints, setStoryStyle } from './engine.mjs';
 import { createMeasurer, layoutStories, designFindings, PT_TO_PX } from './layout.mjs';
 import { objectElement, publicationPage, exportHtml } from './render.mjs';
@@ -201,11 +202,12 @@ async function rasterSample(publication) {
 function download(blob, extension) {
   const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = (doc.title.replace(/[^\p{L}\p{N} _-]/gu, '').trim() || 'publication') + extension; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
+async function projectBlob(publication = doc) {
+  const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(publication, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose File → Export → Pack and Go.\n');
+  return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+}
 async function saveProject() {
-  try {
-    const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(doc, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose File → Export → Pack and Go.\n');
-    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }); download(blob, '.layoutsplat'); status('savedProject');
-  } catch { status('saveFailed'); }
+  try { download(await projectBlob(), '.layoutsplat'); status('savedProject'); } catch { status('saveFailed'); }
 }
 async function parseProject(file, options = {}) {
   if (file.size > 192000000) throw new Error('size');
@@ -278,6 +280,11 @@ async function action(name) {
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
     case 'save': await saveProject(); break;
+    case 'save-drive': {
+      const snapshot = clone(doc);
+      await saveToGoogleDrive({ appName: 'LayoutSplat', fileName: (doc.title.replace(/[^\p{L}\p{N} _-]/gu, '').trim() || 'publication') + '.layoutsplat', buildFile: () => projectBlob(snapshot) });
+      break;
+    }
     case 'open': $('projectInput').accept='.layoutsplat,.json,.zip,.html,.htm';$('projectInput').click(); break;
     case 'clearBrowser': {
       if (!confirm(t('clearBrowserConfirm'))) break;

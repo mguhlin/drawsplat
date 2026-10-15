@@ -1,3 +1,4 @@
+import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../../shared/file-bridge.js';
 import { countDocumentStats } from './app/stats';
 import { analyzeWritingWarnings, type WritingWarnings } from './analysis/detectors';
@@ -533,6 +534,7 @@ function appHtml(): string {
           ['save-local-document', 'Save to browser'],
           ['open-local-library', 'Open browser library'],
           ['save-json', 'Save .writesplat.json'],
+          ['save-drive', 'Save to Google Drive'],
           ['open-json', 'Open .writesplat.json'],
           ['import-file', 'Import (.odt, .docx, .md, .html, .txt)'],
           ['export-pdf', 'Print / Save as PDF'],
@@ -1744,6 +1746,9 @@ function bootstrap(): void {
     } else if (action === 'save-json') {
       const file = createCurrentNativeFile();
       downloadFile(`${fileSlug(file.metadata.title)}.writesplat.json`, 'application/json', `${JSON.stringify(file, null, 2)}\n`);
+    } else if (action === 'save-drive') {
+      const file = createCurrentNativeFile();
+      await saveToGoogleDrive({ appName: 'WriteSplat', fileName: `${fileSlug(file.metadata.title)}.writesplat.json`, buildFile: () => new Blob([JSON.stringify(file, null, 2) + '\n'], { type: 'application/json' }) });
     } else if (action === 'open-json') {
       fileInput.click();
     } else if (action === 'open-export-dialog') {

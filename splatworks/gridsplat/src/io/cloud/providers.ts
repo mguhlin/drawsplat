@@ -1,3 +1,4 @@
+import { saveToGoogleDrive, openFromGoogleDrive, connectGoogleDrive } from '../../../../shared/google-drive.js';
 import type { SheetData } from '../../grid/types';
 import { exportNativeJson, importNativeJson } from '../json';
 import { getAccessToken, lastFileStorageKey } from './oauth';
@@ -42,82 +43,25 @@ function createUnconfiguredProvider(
 }
 
 function createGoogleDriveProvider(config: ProviderConfig): CloudProvider {
-  async function token() {
-    return getAccessToken({
-      authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-      clientId: config.clientId,
-      scope: 'https://www.googleapis.com/auth/drive.file',
-      storageKey: 'gridsplat:google-drive:token',
-      tokenUrl: 'https://oauth2.googleapis.com/token',
-    });
-  }
-
+  // Retire the old persisted Google token; projects and last-file references remain.
+  try { localStorage.removeItem('gridsplat:google-drive:token'); } catch { /* unavailable storage */ }
+  const options = { appName: 'GridSplat', clientId: config.clientId || undefined };
   return {
-    id: config.id,
-    name: config.name,
-    connect: async () => {
-      await token();
-    },
+    id: config.id, name: config.name,
+    connect: async () => { await connectGoogleDrive(options); },
     getLastFileId: () => getLastFileId(config.id),
-    isConfigured: () => Boolean(config.clientId),
+    isConfigured: () => Boolean(config.clientId || /^(splatworks\.org|drawsplat\.org)$/.test(location.hostname) || document.querySelector('meta[name="google-drive-client-id"]')),
     load: async (fileId: string) => {
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(
-          fileId,
-        )}?alt=media`,
-        {
-          headers: {
-            Authorization: `Bearer ${await token()}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Google Drive could not open that GridSplat™ file.');
-      }
-
-      return importNativeJson(await response.text());
+      const blob = await openFromGoogleDrive({ ...options, fileId });
+      if (!blob) throw new Error('Google Drive open cancelled. Your sheet is unchanged.');
+      return importNativeJson(await blob.text());
     },
     save: async (sheet: SheetData) => {
-      const boundary = `gridsplat-${Date.now()}`;
-      const body = [
-        `--${boundary}`,
-        'Content-Type: application/json; charset=UTF-8',
-        '',
-        JSON.stringify({
-          mimeType: 'application/json',
-          name: 'gridsplat.gridsplat.json',
-        }),
-        `--${boundary}`,
-        'Content-Type: application/json',
-        '',
-        exportNativeJson(sheet),
-        `--${boundary}--`,
-      ].join('\r\n');
-      const response = await fetch(
-        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-        {
-          body,
-          headers: {
-            Authorization: `Bearer ${await token()}`,
-            'Content-Type': `multipart/related; boundary=${boundary}`,
-          },
-          method: 'POST',
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Google Drive could not save this sheet.');
-      }
-
-      const result = (await response.json()) as { id?: string };
-      const fileId = result.id ?? '';
-
-      if (fileId) {
-        rememberFile(config.id, fileId);
-      }
-
-      return fileId;
+      const snapshot = exportNativeJson(sheet);
+      const result = await saveToGoogleDrive({ ...options, fileName: 'gridsplat.gridsplat.json', buildFile: () => new Blob([snapshot], { type: 'application/json' }) });
+      if (!result) throw new Error('Google Drive save cancelled. Your sheet is unchanged.');
+      rememberFile(config.id, result.id);
+      return result.id;
     },
   };
 }
@@ -262,17 +206,11 @@ function createOneDriveProvider(config: ProviderConfig): CloudProvider {
 }
 
 export const cloudProviders: CloudProvider[] = [
-  import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
-    ? createGoogleDriveProvider({
-        clientId: import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID,
-        id: 'google-drive',
-        name: 'Google Drive',
-      })
-    : createUnconfiguredProvider(
-        'google-drive',
-        'Google Drive',
-        'VITE_GOOGLE_DRIVE_CLIENT_ID',
-      ),
+  createGoogleDriveProvider({
+    clientId: import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID || '',
+    id: 'google-drive',
+    name: 'Google Drive',
+  }),
   import.meta.env.VITE_DROPBOX_CLIENT_ID
     ? createDropboxProvider({
         clientId: import.meta.env.VITE_DROPBOX_CLIENT_ID,

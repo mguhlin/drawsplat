@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { cloudProviders } from './providers';
 
 describe('cloud providers', () => {
-  it('defines the planned cloud save adapters', () => {
+  it('defines the supported cloud save adapters', () => {
     expect(cloudProviders.map((provider) => provider.name)).toEqual([
       'Google Drive',
       'Dropbox',
@@ -12,8 +12,8 @@ describe('cloud providers', () => {
   });
 
   it('reports unconfigured providers clearly', async () => {
-    await expect(cloudProviders[0].connect()).rejects.toThrow(
-      'VITE_GOOGLE_DRIVE_CLIENT_ID',
+    await expect(cloudProviders[1].connect()).rejects.toThrow(
+      'VITE_DROPBOX_CLIENT_ID',
     );
   });
 });

@@ -79,6 +79,8 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "accounts.google.com",
+        "drive.google.com",
         "en.wikipedia.org",
         "github.com",
         "purl.org",
@@ -88,6 +90,7 @@
         "schemas.microsoft.com",
         "schemas.openxmlformats.org",
         "stuk.github.io",
+        "www.googleapis.com",
         "www.w3.org"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -96,7 +99,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "88785ae65a33afc40b5fe7db82423124ed5e969f242f329c66b2748803991067"
+      "entrySha256": "75d2f8c2adb27d1e14bbac994a8fce72c90c88244b07a1a8cd2b355c6714455c"
     },
     {
       "id": "showsplat",
@@ -140,7 +143,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "d3a10f504ae7aafecc670d0aac0a37e32b64469c96d80c388430d99c9061847c"
+      "entrySha256": "fafc3e8d80f90eea2873253695f5e5f051f7c10293447840960fa57c712c3406"
     },
     {
       "id": "writesplat",
@@ -155,7 +158,9 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "accounts.google.com",
         "answers.microsoft.com",
+        "drive.google.com",
         "example.org",
         "prosemirror.net",
         "purl.org",
@@ -163,6 +168,7 @@
         "schemas.microsoft.com",
         "schemas.openxmlformats.org",
         "stuk.github.io",
+        "www.googleapis.com",
         "www.w3.org"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -171,7 +177,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "4541311baf6782cea137c846cd9d4f2d7c6d851d5e724a2fbd6de3823fa29072"
+      "entrySha256": "c80ba95412e08cef6458b55db9ed8a24cbf07e8bf65543057890d8bd32ce7ad4"
     },
     {
       "id": "layoutsplat",
@@ -192,7 +198,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "2fcd684ba34f6c1dd314410773b9e3cfac06cc0b9af4b1a7fbf563f1d33dea59"
+      "entrySha256": "55ddee873fa27feeebdd7f14f6054f88b351b423e4292aab989eb7588e1307f0"
     },
     {
       "id": "listsplat",
@@ -206,14 +212,18 @@
         "literalKeys": [],
         "namedConstants": []
       },
-      "literalRemoteHosts": [],
+      "literalRemoteHosts": [
+        "accounts.google.com",
+        "drive.google.com",
+        "www.googleapis.com"
+      ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
       "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "8baf63a791846d7e7691a9d96eed69d1769e35b57c45b27dc63128cdd2c6ad13"
+      "entrySha256": "605c2913e6eb840e09bba1e195086c8945319e6de46f86fe55ce342704288bd2"
     },
     {
       "id": "animated-gif",

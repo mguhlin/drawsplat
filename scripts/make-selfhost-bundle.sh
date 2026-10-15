@@ -877,6 +877,7 @@ for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAM
   copy_tree assets/css "$privacy_root/assets/css" "${MODULE_EXCLUDES[@]}"
   copy_tree assets/js "$privacy_root/assets/js" "${MODULE_EXCLUDES[@]}"
   copy_tree assets/brand "$privacy_root/assets/brand" "${MODULE_EXCLUDES[@]}"
+  copy_tree assets/privacy "$privacy_root/assets/privacy" "${MODULE_EXCLUDES[@]}"
   copy_tree privacy "$privacy_root/privacy" "${MODULE_EXCLUDES[@]}"
   copy_tree legal "$privacy_root/legal" "${MODULE_EXCLUDES[@]}"
   for privacy_file in privacy-controls.css privacy-center.css; do copy_file "assets/css/$privacy_file" "$privacy_root/assets/css/$privacy_file"; done

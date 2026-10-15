@@ -1,3 +1,4 @@
+import { saveToGoogleDrive } from '../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../shared/file-bridge.js';
 (function () {
   'use strict';
@@ -3084,6 +3085,10 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     if (action === 'save-deck') {
       workspaceStorage().setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
+    }
+    if (action === 'save-drive') {
+      const snapshot = JSON.stringify(deck, null, 2);
+      void saveToGoogleDrive({ appName: 'ShowSplat', fileName: (deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', buildFile: () => new Blob([snapshot], { type: 'application/json' }) }).catch(error => setStatus(error.message));
     }
     if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pdf' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');

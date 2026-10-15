@@ -1,3 +1,4 @@
+import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../shared/file-bridge.js';
 import { escapeCsvCell, tableFromCsv, tableToCsv } from './io/csv';
 import { downloadFile, loadAutosave, saveAutosave } from './io/storage';
@@ -2614,6 +2615,7 @@ function render(): void {
         ${createMenu('File', [
           ['new', 'New database'],
           ['save-json', 'Save .listsplat.json'],
+          ['save-drive', 'Save to Google Drive'],
           ['open-json', 'Open .listsplat.json'],
           ['import-csv', 'Import CSV or TSV'],
           ['export-csv', 'Export table CSV'],
@@ -3554,6 +3556,9 @@ appRoot.addEventListener('click', (event) => {
     setProject(next);
   } else if (action === 'save-json') {
     saveJson();
+  } else if (action === 'save-drive') {
+    const snapshot = JSON.stringify(project, null, 2);
+    void saveToGoogleDrive({ appName: 'ListSplat', fileName: `${project.metadata.title || 'listsplat-project'}.listsplat.json`, buildFile: () => new Blob([snapshot], { type: 'application/json' }) }).catch(error => { lastMessage = error.message; render(); });
   } else if (action === 'open-json') {
     appRoot.querySelector<HTMLInputElement>('[data-open-json]')?.click();
   } else if (action === 'import-csv') {

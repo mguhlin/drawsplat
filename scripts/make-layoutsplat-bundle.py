@@ -5,11 +5,10 @@ import shutil, subprocess, sys, tempfile, zipfile
 root=Path(__file__).resolve().parents[1]
 version=sys.argv[1]
 name=f'splatworks-layoutsplat-selfhost-{version}'
-(root/'.tmp/package-stage').mkdir(parents=True,exist_ok=True)
-with tempfile.TemporaryDirectory(dir=root/'.tmp/package-stage') as temporary:
+with tempfile.TemporaryDirectory(prefix='layoutsplat-package-') as temporary:
  folder=Path(temporary)/name
  ignored=shutil.ignore_patterns('node_modules','.git','.codex','.agents','.tmp','test-results','playwright-report','dist','coverage','*.log','originals')
- for relative in ['privacy','legal','splatworks/layoutsplat','splatworks/shared','splatworks/gridsplat/src','splatworks/listsplat/src','vendor','solutions/mediasplat/ffmpeg','assets/css','assets/js','assets/icons','assets/favicons','assets/backgrounds','assets/coloring-book','assets/smithsonian-animals','assets/scratch-art']:
+ for relative in ['privacy','legal','splatworks/layoutsplat','splatworks/shared','splatworks/gridsplat/src','splatworks/listsplat/src','vendor','solutions/mediasplat/ffmpeg','assets/brand','assets/privacy','assets/css','assets/js','assets/icons','assets/favicons','assets/backgrounds','assets/coloring-book','assets/smithsonian-animals','assets/scratch-art']:
   shutil.copytree(root/relative,folder/relative,ignore=ignored)
  for relative in ['scripts/build-layoutsplat-suite-data.mjs','scripts/build-layoutsplat-rich.mjs','splatworks/gridsplat/package.json','splatworks/gridsplat/package-lock.json','splatworks/writesplat/package.json','splatworks/writesplat/package-lock.json','assets/brand/SplatWorks_logo.png','assets/brand/splatworks-school-guides.png','data/drawsplat-tools.json','data/privacy-inventory.json','data/privacy-retention.json','data/privacy-providers.json','_headers']+[f'docs/{s}.md' for s in ['layoutsplat','layoutsplat-labels','layoutsplat-import-accuracy']]+[f'wiki/{s}.html' for s in ['layoutsplat','layoutsplat-labels','layoutsplat-import-accuracy']]:
   (folder/relative).parent.mkdir(parents=True,exist_ok=True)
