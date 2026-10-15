@@ -1,0 +1,13 @@
+/* Policy content uses the wiki's reading column and accessible native disclosures. */
+.policy-actions{display:flex;flex-wrap:wrap;gap:10px 22px;margin:20px 0}
+.policy-summary{border-left:4px solid var(--wiki-purple,#6d28d9);padding:4px 20px;background:#f4f0fa}
+.policy-details{border:1px solid var(--wiki-line,#d9d0e3);border-radius:6px;padding:14px 18px;margin:18px 0}
+.policy-details>summary{cursor:pointer;font-weight:650;line-height:1.5}
+.policy-details[open]>summary{margin-bottom:18px}
+.policy-details h3{margin-top:24px}
+.policy-provider{margin:22px 0}
+.policy-provider dt{font-weight:650;margin-top:10px}
+.policy-provider dd{margin:0;overflow-wrap:anywhere}
+.policy-legacy-anchor{display:block;height:0;scroll-margin-top:18px}
+[data-wiki] .policy-retention th{min-width:110px}
+@media print{.policy-actions,#deployment-review-details{display:none}.policy-details{break-inside:auto}.policy-details>summary{font-weight:700}}

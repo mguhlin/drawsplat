@@ -80,6 +80,7 @@ test('optional connection opt-out blocks external requests and preserves local r
 });
 test('review stays unscored until evidence is entered, then exports actual selected scores',async({page})=>{
  await page.goto('/legal/protect-review.html');await expect(page.locator('#score-total')).toHaveText('No score recorded.');
+ await page.getByText('Record and download a deployment review',{exact:true}).click();
  await page.locator('[name=deployment]').fill('Synthetic school review');
  for(let i=0;i<7;i++){await page.locator(`[name=score${i}]`).selectOption(i===4?'1':'2');await page.locator(`[name=evidence${i}]`).fill('Synthetic verified evidence');}
  await expect(page.locator('#score-total')).toHaveText('13/14');

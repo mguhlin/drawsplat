@@ -7,7 +7,9 @@ The [SplatWorks Wiki](https://drawsplat.org/wiki/) is the public current documen
 - Edit HTML articles at their existing `guides/`, `legal/`, or `pages/` paths. District classroom, compliance overview, and licensing articles live in `wiki/`.
 - Edit technical Markdown in `docs/`. `scripts/build-support-wiki.py` renders its registered articles into `wiki/`; do not edit those generated HTML files.
 - Edit `docs/district-selfhost.md` for installation instructions, then run `scripts/build-district-guide.py`. The Quick Start form remains in `selfhost/district/quickstart.html`.
-- The combined policy packet is generated from individual policy articles. Correct those articles rather than editing the packet.
+- Edit `legal/terms-privacy.html` for the shared security, privacy and terms policy. Retention/provider tables are rendered from their `data/privacy-*.json` registers by `scripts/policy_content.py`.
+- Former policy URLs, including the combined packet, are generated compatibility copies of that article, with production redirects to the canonical URL. Do not edit those copies. `data/policy-legacy-links.json` preserves old fragments; keep those aliases when changing headings.
+- Specialized agreement templates, the DPA Register, Google OAuth disclosure, accessibility statement, local notice builder and district review worksheet remain optional references. Do not concatenate them back into a second policy packet.
 - Update the title, description, and category registry in `scripts/build-support-wiki.py` when adding a public reference. Historical release notes and development roadmaps retain their context; they are not current setup instructions.
 
 Install the build dependency with `python3 -m pip install markdown-it-py` in a development virtual environment. Run:

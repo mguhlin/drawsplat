@@ -1,4 +1,37 @@
 const {test,expect}=require('@playwright/test');
+const policyLegacyLinks=require('../data/policy-legacy-links.json');
+
+test('one policy entry exposes the complete policy and prints optional details without losing reader choices',async({page})=>{
+ await page.goto('/wiki/');
+ const privacy=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'Privacy and district review',exact:true})});
+ await expect(privacy.getByRole('link')).toHaveCount(1);
+ await privacy.getByRole('link',{name:'Security, privacy and terms',exact:true}).click();
+ await expect(page.locator('main h1')).toHaveText('Security, privacy and terms');
+ await expect(page.getByRole('link',{name:'Manage browser data and connections',exact:true})).toBeVisible();
+ await page.getByText('Retention schedule by data type',{exact:true}).click();
+ await expect(page.getByRole('table',{name:'Retention by data type',exact:true})).toBeVisible();
+ const before=await page.locator('main .policy-details').evaluateAll(nodes=>nodes.map(n=>n.open));
+ await page.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));
+ expect(await page.locator('main .policy-details').evaluateAll(nodes=>nodes.every(n=>n.open))).toBeTruthy();
+ await page.evaluate(()=>window.dispatchEvent(new Event('afterprint')));
+ expect(await page.locator('main .policy-details').evaluateAll(nodes=>nodes.map(n=>n.open))).toEqual(before);
+ await page.goto('/wiki/?q=security+privacy+terms');
+ await expect(page.locator('.wiki-results a').first()).toHaveText('Security, privacy and terms');
+});
+
+test('legacy policy URLs retain all incoming fragments and a single canonical policy on static hosts',async({page})=>{
+ for(const entry of policyLegacyLinks){
+  const response=await page.request.get('/'+entry.path);expect(response.ok(),entry.path).toBeTruthy();
+  const html=await response.text();
+  for(const fragment of entry.fragments)expect(html,entry.path+'#'+fragment).toContain('id="'+fragment+'"');
+ }
+ await page.goto('/legal/protect-review.html#score-this-deployment');
+ await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href','https://splatworks.org/legal/terms-privacy');
+ await expect(page.locator('#protect-review')).toBeVisible();
+ const ids=await page.locator('main [id]').evaluateAll(nodes=>nodes.map(n=>n.id));expect(new Set(ids).size).toBe(ids.length);
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+});
 test('search covers article text, supports deep links and browser history',async({page})=>{
  await page.goto('/wiki/');
  await page.getByLabel('Search the wiki',{exact:true}).fill('bundled autofilled');

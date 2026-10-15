@@ -38,3 +38,21 @@
 /listsplat  /splatworks/listsplat/  301
 /listsplat/  /splatworks/listsplat/  301
 /listsplat/*  /splatworks/listsplat/:splat  301
+
+# Consolidated policy. Static hosts serve generated compatibility copies.
+/legal/combined-policy.html  /legal/terms-privacy  301
+/legal/combined-policy  /legal/terms-privacy  301
+/legal/widgets-security.html  /legal/terms-privacy  301
+/legal/widgets-security  /legal/terms-privacy  301
+/legal/service-providers.html  /legal/terms-privacy  301
+/legal/service-providers  /legal/terms-privacy  301
+/legal/compliance-gaps.html  /legal/terms-privacy  301
+/legal/compliance-gaps  /legal/terms-privacy  301
+/legal/gdpr-compliance.html  /legal/terms-privacy  301
+/legal/gdpr-compliance  /legal/terms-privacy  301
+/legal/texas-compliance.html  /legal/terms-privacy  301
+/legal/texas-compliance  /legal/terms-privacy  301
+/legal/protect-review.html  /legal/terms-privacy  301
+/legal/protect-review  /legal/terms-privacy  301
+/wiki/compliance.html  /legal/terms-privacy  301
+/wiki/compliance  /legal/terms-privacy  301

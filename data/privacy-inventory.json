@@ -64,7 +64,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "7b6bc026d35130f7eeedcef53b8b990b2e5a2b4a4ae79d7bfc4ef037d3c64feb"
+      "entrySha256": "e2774855bd6fc9a9281407f4cdb61a266f8fb9eb8f382410e666cc3edab8ce8b"
     },
     {
       "id": "gridsplat",
@@ -330,7 +330,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "367410c7615ea805b83a3cf93d3fd736afd26479645e1a7e6937e06d55a879af"
+      "entrySha256": "9932108029b9b88bca8a4f461e73178ee10f42dfe686502fd198c3efb4936e24"
     },
     {
       "id": "bingo-cards",
@@ -351,7 +351,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "e6ee4d4e29c3eec5b4229ae2f1f79940b53f350842dc875b3b7d409f1e4c2734"
+      "entrySha256": "ef7ff8b15daa59e7aeb19cc0526e6b378f1268d02882a4d38c3975f1961ea74a"
     },
     {
       "id": "brain-sort",
@@ -1592,7 +1592,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "32b934064f9fa2e4c77d557392fdd9abfc71af8d6f3eb76d0638471c8e4d4c1c"
+      "entrySha256": "aa97078c944bb0998bd3b7d42dc21bf7d0d7ad13d6f0b5871209c0676f44e819"
     },
     {
       "id": "family-access",
@@ -1619,7 +1619,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "93da6ebb0c49b8ac41fda6ae9291a21140a030c02f4b1eeeacf4585d5a9e098d"
+      "entrySha256": "46b3f7064dca51f763d4f9cb98d5ee21780ac972916b48f399fd54f1241dd030"
     },
     {
       "id": "templates",
@@ -1649,7 +1649,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "d7312b72bd90991918534f41d1abd8e2bdb637ec07cab0048136b28f7cca0dc6"
+      "entrySha256": "b21e187f2cf78af449bcd01e5c3115351faf68cb1f66bba8a3abe5f0dddebaee"
     },
     {
       "id": "guides",
@@ -1668,6 +1668,7 @@
       "literalRemoteHosts": [
         "buymeacoffee.com",
         "developers.cloudflare.com",
+        "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
@@ -1677,13 +1678,20 @@
         "localhost:8787",
         "localhost:8787.",
         "mguhlin.org",
+        "openai.com",
+        "privacy.anthropic.com",
         "script.google.com",
         "splatworks.org",
         "support.google.com",
         "translate.google.com",
+        "workspace.google.com",
+        "www.anthropic.com",
         "www.avery.co.uk",
         "www.avery.com",
+        "www.cloudflare.com",
+        "www.dropbox.com",
         "www.gnu.org",
+        "www.microsoft.com",
         "your-api.example"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -1692,7 +1700,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "a560dadf9fbcedb353cd6c7b2e68d8b1ccdb9d394db24ab7a0c76092a65c04b5"
+      "entrySha256": "e08827d5b2b07dee58ee1707486c46051e1f8fd3e8fc5eadff67d5768e9f38c0"
     },
     {
       "id": "support",
@@ -1711,6 +1719,7 @@
       "literalRemoteHosts": [
         "buymeacoffee.com",
         "developers.cloudflare.com",
+        "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
         "drawsplat.org",
@@ -1720,13 +1729,20 @@
         "localhost:8787",
         "localhost:8787.",
         "mguhlin.org",
+        "openai.com",
+        "privacy.anthropic.com",
         "script.google.com",
         "splatworks.org",
         "support.google.com",
         "translate.google.com",
+        "workspace.google.com",
+        "www.anthropic.com",
         "www.avery.co.uk",
         "www.avery.com",
+        "www.cloudflare.com",
+        "www.dropbox.com",
         "www.gnu.org",
+        "www.microsoft.com",
         "your-api.example"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -1735,7 +1751,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "bfd1cc3463e398a17e35a48e0464ca6d0814d4e7f879addc558712de2855a1dd"
+      "entrySha256": "418bc408729d9890b5743f87d132a3f03888d370500fb8b63ab2b9d0191cec7c"
     }
   ]
 }
