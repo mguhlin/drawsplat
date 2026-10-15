@@ -155,7 +155,7 @@ Once all four checks pass, return to Quick Start, save your installation plan an
 
 ### 1. Download and extract the source
 
-[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.2.6/drawsplat-district-suite-v1.2.6.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
+[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.2.7/drawsplat-district-suite-v1.2.7.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
 
 The district suite contains just `start-here.html` and a `drawsplat` folder at its top level. Open the HTML page first; it includes the complete guide and Quick Start. Keep it beside that folder so its artwork and interactive checkboxes load. The source archive has a developer-oriented layout instead.
 
@@ -166,10 +166,10 @@ For commands and installation plans, open the inner `drawsplat` folder containin
 Download the matching `.zip.sha256` file from the district release. Verify the ZIP before extraction:
 
 ```bash
-sha256sum -c drawsplat-district-suite-v1.2.6.zip.sha256
+sha256sum -c drawsplat-district-suite-v1.2.7.zip.sha256
 ```
 
-On macOS, use `shasum -a 256` on the ZIP and compare with the checksum file. In Windows PowerShell, run `Get-FileHash .\drawsplat-district-suite-v1.2.6.zip -Algorithm SHA256` and compare the result with that file. Extract the entire archive, rather than only the HTML page.
+On macOS, use `shasum -a 256` on the ZIP and compare with the checksum file. In Windows PowerShell, run `Get-FileHash .\drawsplat-district-suite-v1.2.7.zip -Algorithm SHA256` and compare the result with that file. Extract the entire archive, rather than only the HTML page.
 
 ### Debian: one staged Docker preparation
 

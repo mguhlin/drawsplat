@@ -22,7 +22,7 @@ for (const dir of (await readdir(root)).sort()) {
  await page.goto(url); await page.waitForTimeout(1500);
  const body=await page.locator('body').innerText();
  if(body.length<100)errors.push('Empty app body');
- if(config.name==='WriteSplat') {const editor=page.getByRole('textbox',{name:'WriteSplat document editor'});await editor.click();await page.keyboard.press('Control+A');await page.keyboard.type('Offline writing works.');await page.waitForTimeout(300);if(await page.locator('#statusWords').innerText()!=='3')errors.push('Word count did not update');}
+ if(config.name==='WriteSplat') {const editor=page.getByRole('textbox',{name:'WriteSplat document editor'});await editor.click();await page.keyboard.press('Control+A');await page.keyboard.type('Offline writing works.');try{await page.waitForFunction(()=>document.getElementById('statusWords')?.textContent==='3',null,{timeout:5000});}catch{errors.push('Word count did not update: '+await page.locator('#statusWords').innerText());}}
  if(config.name==='GridSplat') {await page.getByRole('button',{name:'New Sheet',exact:true}).click();await page.getByTestId('cell-A1').dblclick();await page.keyboard.type('Offline');await page.keyboard.press('Enter');if(!(await page.getByTestId('cell-A1').innerText()).includes('Offline'))errors.push('Cell edit failed');}
  results.push({app:config.name,browser:name,errors:[...errors],body:body.slice(0,1800)});
  console.log(`${config.name} ${name}: ${errors.length?JSON.stringify(errors):'PASS'}`);

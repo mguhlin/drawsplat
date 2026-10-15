@@ -14,12 +14,28 @@ Remaining priorities:
 - Dynamic page-number fields in master artwork. Ordinary-page page/total folios already update.
 - Broader large-document workloads beyond the controlled 500-page cache regression and 100-page print proof.
 - Exhaustive independent PDF/X validation, printer-supplied profile workflows and real commercial-printer acceptance.
-- Audit and publish the rebuilt download packages containing the latest v0.4.6 changes.
 
 Historical “remaining” lists below describe their dated versions; later entries
 record work completed since then. The current template library, Word/DOCX/ODT
 insertion, browser legacy Quark import, whiteboard collections and reading-order
 controls are shipped capabilities, not future milestones.
+
+## v0.4.6 package and publication verification
+
+Release v3.1.37 refreshes all 16 application/collection ZIPs; district-suite-v1.2.7
+refreshes the complete district installation. Built from committed e2eb037.
+All 17 ZIPs passed archive, checksum, path/private-file and runtime inventory checks.
+The 16 app packages passed 32 offline Chromium/Firefox checks; WriteSplat editing
+was rechecked after its audit wait was changed to await the debounced word count.
+Twelve standalone LayoutSplat import/font/template/link workflows passed. Four
+district Quick Start workflows passed against the packaged start-here.html entry.
+
+The SplatWorks blog article is published with 14 actual screenshots. The personal
+MGuhlin.org edition is scheduled for October 15, 2026 at 5:00 AM Central. Both sites
+host their own matching image assets. A future-date preview shows all 14; the
+current personal-blog build and live feeds hide its future post. Its one-minute
+Cloudflare publication timer is enabled. The Desktop package retains Markdown,
+offline HTML, the exact scheduled Astro source, captions, sources and verification.
 
 ## October 14, 2026 — illustrated documentation
 

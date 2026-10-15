@@ -1,0 +1,134 @@
+{
+  "verifiedAt": "2026-10-15T00:47:46.485068+00:00",
+  "sourceCommit": "e2eb03753003d982619e32a956d2ff33ed7b4eb4",
+  "assets": [
+    {
+      "release": "v3.1.37",
+      "file": "audiosplat-selfhost-v3.1.37.zip",
+      "bytes": 16725174,
+      "sha256": "e66686788fb68bd7d03f82a0f1e076fb686ba68f3b58a7d82f92b5762f4fe93b"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "clipsplat-selfhost-v3.1.37.zip",
+      "bytes": 55147555,
+      "sha256": "c3d9c07b25a7d15173a5657ba9814ce80a2a1535e66b368cbb81300d471e618d"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "drawsplat-games-selfhost-v3.1.37.zip",
+      "bytes": 236011688,
+      "sha256": "556aa85f7b0cb95327eeb5dfe69f4f54709b26145fd6f21594d76815f2cee379"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "drawsplat-selfhost-v3.1.37.zip",
+      "bytes": 396155750,
+      "sha256": "cf3f635b4d04788277b5a232d93c704a9760c50b413d8afe626309eac9844c3e"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "drawsplat-tools-selfhost-v3.1.37.zip",
+      "bytes": 298419207,
+      "sha256": "3e963cd0df85635ca8ec4b0e6c4f50d04f76ec945d6704131a0982b35e2cffe1"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "drawsplat-widgets-selfhost-v3.1.37.zip",
+      "bytes": 177996189,
+      "sha256": "cdc9ede840b118b1bacaeeda30f08b3736934d8a1ad86265b1ce5bd461ebf25a"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "mediasplat-selfhost-v3.1.37.zip",
+      "bytes": 38544095,
+      "sha256": "572ccb959d736ec8861d125c83fd07c9371744df98c84a100f5522f29064d75a"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "pdfsplat-selfhost-v3.1.37.zip",
+      "bytes": 14406033,
+      "sha256": "c2767197cc412706cf7aa590a0555a2e75298839a78b8beeacfe8f65ed0e10d9"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-gridsplat-selfhost-v3.1.37.zip",
+      "bytes": 18476350,
+      "sha256": "5b613c150427a461680af966f0d6a3cf5c773d676b166740b99972bd02fab6d5"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-layoutsplat-selfhost-v3.1.37.zip",
+      "bytes": 150544191,
+      "sha256": "261a58130d156ce98f31f5c52a7e923cfca90372a0955ecd4248a2ba77b5b4e9"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-listsplat-selfhost-v3.1.37.zip",
+      "bytes": 11395420,
+      "sha256": "bf66a996309560cd0b6bd1f026d0dc600e0df77cd93bcdec275914a7c37bf713"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-showsplat-selfhost-v3.1.37.zip",
+      "bytes": 13445565,
+      "sha256": "225591b4b37f7fadaf152af2d1863826c86fbce3c11f438f4a24cac526aa4584"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-suite-selfhost-v3.1.37.zip",
+      "bytes": 239285763,
+      "sha256": "145aacf07629599e9976721570f9ff25758280eabd348b32a8aa97d8da601f49"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "splatworks-writesplat-selfhost-v3.1.37.zip",
+      "bytes": 13569458,
+      "sha256": "ad3aaa5afcbc389966915f314dcfd3c00ab6afa762c2d84bd996ed8096e2b9a1"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "videosplat-selfhost-v3.1.37.zip",
+      "bytes": 27712179,
+      "sha256": "7187ac79ac4888d60e0e5cb4fe09f92d97188e61e6ede9f1df218ab9364332b1"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "CipherSplat-offline.zip",
+      "bytes": 3273295,
+      "sha256": "5b634e70d7afd3deb5bd301efc2be93ccfd4eeedf952ffda19084e797999c59f"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "README-v3.1.37.txt",
+      "bytes": 2866,
+      "sha256": "367e14b898bb88ca4373503ebd9937608e6ea0a849cf5fe5f07bc10e25d2ddb8"
+    },
+    {
+      "release": "v3.1.37",
+      "file": "SHA256SUMS-v3.1.37.txt",
+      "bytes": 1632,
+      "sha256": "d77610b398a2819d631ff319dbbedbe53ed7f7bac1e93ed7e2bef7a6d950c286"
+    },
+    {
+      "release": "district-suite-v1.2.7",
+      "file": "drawsplat-district-suite-v1.2.7.zip",
+      "bytes": 436475943,
+      "sha256": "2a03a391cab0a97dfd70207525b3ce61a2637d975248e5ad5c27de5ecf01311e"
+    },
+    {
+      "release": "district-suite-v1.2.7",
+      "file": "drawsplat-district-suite-v1.2.7.zip.sha256",
+      "bytes": 102,
+      "sha256": "738b3d81fa9de3b8c2fc5c11f7f6d0f71f78b9b1541e739ebaf6078fef8eb89d"
+    }
+  ],
+  "checks": {
+    "releaseZipArchives": 17,
+    "offlineBrowserStartupChecks": 32,
+    "standaloneLayoutWorkflows": 12,
+    "districtQuickStartChecks": 4,
+    "siteWikiNavigationChecks": 36
+  },
+  "notes": "WriteSplat startup was rechecked after awaiting its debounced count. The district mobile check uses its packaged start-here.html entry. Runtime files were unchanged by these audit helper adjustments."
+}

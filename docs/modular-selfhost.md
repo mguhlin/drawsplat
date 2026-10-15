@@ -109,9 +109,9 @@ and runtime. If you add a host CSP, permit the model download hosts listed in
 `solutions/videosplat/docs/NETWORK_INVENTORY.md`; keep runtime scripts same-origin.
 See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).
 
-## Current release: v3.1.36
+## Current release: v3.1.37
 
-All sixteen downloads are refreshed from the current source: full DrawSplat, SplatWorks suite and five individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.36.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
+All sixteen downloads are refreshed from the current source: full DrawSplat, SplatWorks suite and five individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.37.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
 
 The download page shows approximate ZIP and unpacked sizes, measured from release archives in decimal MB. Run `python3 scripts/update-download-sizes.py vX.Y.Z` after building a release, rebuild with the updated page, then use `--check` to verify displayed sizes against the final archives.
 
@@ -123,7 +123,7 @@ PDFSplat and CipherSplat’s dedicated offline edition open directly from disk i
 
 ### ClipSplat add-on
 
-ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. The v3.1.36 full/Tools bundles include ClipSplat. The v3.1.36 release also supplies a refreshed standalone ClipSplat ZIP and separate checksum file.
+ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. The v3.1.37 full/Tools bundles include ClipSplat. The v3.1.37 release also supplies a refreshed standalone ClipSplat ZIP and records its checksum in the combined SHA-256 list.
 
 ## Typing Games in v3.1.29
 
@@ -138,9 +138,23 @@ Version v3.1.35 also includes PDFSplat presentation/full-screen controls, timed 
 
 ## October 14 package refresh
 
-The v3.1.36 release includes LayoutSplat v0.4, 123 distinct compositions, a rich draggable editor and 96 shared whiteboard images, alongside standalone LayoutSplat, the five-app SplatWorks
+The v3.1.37 release includes LayoutSplat v0.4.6, 123 distinct compositions, a rich draggable editor and 96 shared whiteboard images, alongside standalone LayoutSplat, the five-app SplatWorks
 suite, official glossy SplatWorks website artwork, and current SplatWorks Wiki.
-The complete district suite is district-suite-v1.2.6. Archive/root paths remain
+The complete district suite is district-suite-v1.2.7. Archive/root paths remain
 compatible with existing installations. Branding does not rename MySQL/MariaDB
 databases, tables, service/environment names, accounts, rosters, or whiteboard files.
 Back up deployed configuration and data before replacing application files.
+
+### v3.1.37 validation and exchange update
+
+Current packages add browser-native legacy QuarkXPress 3.1–4.1 import, binary DOC
+and formatted DOCX/ODT text-box insertion, original font/style matching, updating
+folios, editable reading order, richer WriteSplat paragraph exchange and independent
+print preflight. WriteSplat v0.2.0 supplies blank documents, Letter page outlines,
+rulers, indents and paragraph tabs. [Illustrated LayoutSplat guide](layoutsplat-features.md).
+
+All 16 packages started offline in Chromium and Firefox; 12 focused LayoutSplat
+workflows passed against the extracted standalone package. Four district Quick
+Start workflows passed using the packaged entry page. The release ZIPs were checked
+for CRC, checksums, safe paths and private-file exclusions. Native INDD, modern
+Pages IWA, QuarkXPress 5+ and external print certification remain outside support.
