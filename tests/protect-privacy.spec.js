@@ -13,6 +13,21 @@ const seeded = async page => {
     });
   });
 };
+test('document headers prevent proxy analytics injection without disabling compression for app assets', async () => {
+ const rules = [];
+ let current;
+ for (const line of fs.readFileSync('_headers','utf8').split('\n')) {
+  if(line.startsWith('/'))current=line.trim();
+  else if(current && /^\s+Cache-Control:.*\bno-transform\b/.test(line))rules.push(current);
+ }
+ const protectedRoute = route => rules.some(pattern => new RegExp('^'+pattern.split('*').map(part=>part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('.*')+'$').test(route));
+ for(const entry of [...manifest.components.map(c=>c.entry),'index.html','pages/splatworks.html','wiki/index.html','legal/terms-privacy.html','docs/district-selfhost.html']) {
+  expect(protectedRoute('/'+entry),entry).toBe(true);
+  const canonical = entry==='index.html' ? '/' : entry.endsWith('/index.html') ? '/'+entry.slice(0,-10) : '/'+entry.slice(0,-5);
+  expect(protectedRoute(canonical),canonical).toBe(true);
+ }
+ for(const asset of ['/assets/js/privacy-controls.js','/splatworks/shared/google-drive.js','/splatworks/gridsplat/assets/index.js','/solutions/audiosplat/assets/runtime.wasm','/solutions/mediasplat/ffmpeg/ffmpeg-core.part-01'])expect(protectedRoute(asset),asset).toBe(false);
+});
 for (const path of ['/solutions/audiosplat/','/solutions/markdown-studio/','/solutions/memepuzzle/']) {
  test(`${path}: a fresh local workflow does not load optional external resources`,async({page,baseURL})=>{
   const origin=new URL(baseURL).origin;

@@ -19,8 +19,8 @@ const path = require('node:path');
         const context = await browser.newContext({ serviceWorkers: 'block' });
         try {
           await context.addInitScript(() => localStorage.setItem('drawsplat.consent.accepted', '1'));
-          const hosts = new Map();
-          let blockedWrites = 0, pageStatus = null, domContentLoaded = false;
+          const hosts = new Map(), attemptedHosts = new Map();
+          let blockedWrites = 0, pageStatus = null, domContentLoaded = false, documentCacheControl = null;
           await context.route('**/*', async route => {
             const request = route.request();
             const url = new URL(request.url());
@@ -34,19 +34,27 @@ const path = require('node:path');
             return route.continue();
           });
           const page = await context.newPage();
+          page.on('request', request => {
+            const url = new URL(request.url());
+            if (/^https?:$/.test(url.protocol) && url.origin !== base.origin) {
+              if (!attemptedHosts.has(url.hostname)) attemptedHosts.set(url.hostname, new Set());
+              attemptedHosts.get(url.hostname).add(request.resourceType());
+            }
+          });
           try {
             const response = await page.goto(new URL(item.path, base).href, { waitUntil: 'domcontentloaded', timeout: 15000 });
-            pageStatus = response?.status() || null; domContentLoaded = true;
+            pageStatus = response?.status() || null; documentCacheControl = response?.headers()['cache-control'] || null; domContentLoaded = true;
           } catch (_) { /* Partial observations are labeled, never treated as a pass. */ }
           await page.waitForTimeout(1200);
-          results.push({ id: item.id, path: item.path, pageStatus, domContentLoaded, blockedWrites, externalHosts: [...hosts].sort(([a], [b]) => a.localeCompare(b)).map(([host, types]) => ({ host, resourceTypes: [...types].sort() })) });
+          const describe = map => [...map].sort(([a], [b]) => a.localeCompare(b)).map(([host, types]) => ({ host, resourceTypes: [...types].sort() }));
+          results.push({ id: item.id, path: item.path, pageStatus, domContentLoaded, documentCacheControl, blockedWrites, attemptedExternalHosts: describe(attemptedHosts), externalHosts: describe(hosts) });
           if (results.length % 8 === 0) console.log('Observed', results.length, 'of', items.length);
         } finally { await context.close(); }
       }
     }));
   } finally { await browser.close(); }
   results.sort((a, b) => a.id.localeCompare(b.id));
-  const report = { reviewed: new Date().toISOString(), baseOrigin: base.origin, method: 'Fresh anonymous Chromium contexts with service workers disabled; registered destinations; 1200 ms after DOMContentLoaded or a 15-second timeout. GET/HEAD/OPTIONS only; writes blocked. No user interaction, student content or credentials. Hostnames/resource types only; later feature, worker and user-selected flows require separate review.', components: results };
+  const report = { reviewed: new Date().toISOString(), baseOrigin: base.origin, method: 'Fresh anonymous Chromium contexts with service workers disabled; registered destinations; 1200 ms after DOMContentLoaded or a 15-second timeout. GET/HEAD/OPTIONS only; writes blocked. Attempted hosts include browser-blocked requests; externalHosts records requests reaching network interception. No user interaction, student content or credentials. Hostnames/resource types and document cache headers only; later feature, worker and user-selected flows require separate review.', components: results };
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
   console.log('Saved', results.length, 'startup observations to', output);
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

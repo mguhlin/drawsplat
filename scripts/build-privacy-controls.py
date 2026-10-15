@@ -34,6 +34,23 @@ for name in sorted(set(pages)):
  s=re.sub(r'(<meta\b[^>]*charset[^>]*>)',lambda m:m.group(1)+code,s,count=1,flags=re.I)
  if '<!-- splat-privacy:start -->' not in s:s=s.replace('</head>',code+'</head>',1)
  write(name,s)
+# Decline proxy HTML rewriting (including automatically injected analytics).
+# Target document routes, preserving compression for large JS/WASM/media files.
+headers=(ROOT/'_headers').read_text()
+headers=re.sub(r'\n# splat-document-privacy:start\n.*?# splat-document-privacy:end\n?', '\n', headers, flags=re.S).rstrip()
+document_prefixes=['/pages/','/wiki/','/legal/','/guides/','/docs/','/blog/']
+routes={'/','/*/','/*.html',*(prefix+'*' for prefix in document_prefixes)}
+for name in set(pages+[str(p.relative_to(ROOT)) for p in ROOT.glob('*.html')]):
+ if name.endswith('/index.html') or name=='index.html':continue
+ route='/'+name[:-5]
+ if not any(route.startswith(prefix) for prefix in document_prefixes):routes.add(route)
+block='\n\n# splat-document-privacy:start\n# RFC no-transform prevents automatic HTML analytics injection.\n'
+block+='\n\n'.join(route+'\n  Cache-Control: no-transform' for route in sorted(routes))
+block+='\n# splat-document-privacy:end\n'
+updated_headers=headers+block
+if sum(line.startswith(('/', 'https://')) for line in updated_headers.splitlines())>100:
+ raise ValueError('Cloudflare Pages allows at most 100 header rules; consolidate document routes.')
+write('_headers',updated_headers)
 registry=json.loads((ROOT/'data/drawsplat-tools.json').read_text())
 components=[]
 for tool in registry['tools']:

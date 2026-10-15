@@ -99,3 +99,159 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+# splat-document-privacy:start
+# RFC no-transform prevents automatic HTML analytics injection.
+/
+  Cache-Control: no-transform
+
+/*.html
+  Cache-Control: no-transform
+
+/*/
+  Cache-Control: no-transform
+
+/00-START-HERE
+  Cache-Control: no-transform
+
+/404
+  Cache-Control: no-transform
+
+/START-HERE
+  Cache-Control: no-transform
+
+/admin/access
+  Cache-Control: no-transform
+
+/admin/admin
+  Cache-Control: no-transform
+
+/admin/compliance
+  Cache-Control: no-transform
+
+/admin/district-roster
+  Cache-Control: no-transform
+
+/admin/mysql-setup
+  Cache-Control: no-transform
+
+/app/whiteboard
+  Cache-Control: no-transform
+
+/blog/*
+  Cache-Control: no-transform
+
+/community/Admin
+  Cache-Control: no-transform
+
+/community/board
+  Cache-Control: no-transform
+
+/docs/*
+  Cache-Control: no-transform
+
+/games/funquiz/dwarfs
+  Cache-Control: no-transform
+
+/games/funquiz/eggquiz
+  Cache-Control: no-transform
+
+/games/funquiz/galveston-disaster-map
+  Cache-Control: no-transform
+
+/games/funquiz/looney
+  Cache-Control: no-transform
+
+/games/funquiz/smurfs
+  Cache-Control: no-transform
+
+/guides/*
+  Cache-Control: no-transform
+
+/hub/admin
+  Cache-Control: no-transform
+
+/hub/hubcampus/admin
+  Cache-Control: no-transform
+
+/hub/hubcampus/whiteboard
+  Cache-Control: no-transform
+
+/hub/teacher-admin
+  Cache-Control: no-transform
+
+/hub/teacher-onboarding
+  Cache-Control: no-transform
+
+/languages/index-ab
+  Cache-Control: no-transform
+
+/languages/index-cn
+  Cache-Control: no-transform
+
+/languages/index-sp
+  Cache-Control: no-transform
+
+/languages/index-vn
+  Cache-Control: no-transform
+
+/languages/index.uh
+  Cache-Control: no-transform
+
+/legal/*
+  Cache-Control: no-transform
+
+/pages/*
+  Cache-Control: no-transform
+
+/solutions/audiosplat/index.vite
+  Cache-Control: no-transform
+
+/solutions/clipsplat/index.vite
+  Cache-Control: no-transform
+
+/solutions/dicebreakers/play
+  Cache-Control: no-transform
+
+/solutions/fortune/student
+  Cache-Control: no-transform
+
+/solutions/graphsplat/lesson-plans
+  Cache-Control: no-transform
+
+/solutions/mediasplat/index.vite
+  Cache-Control: no-transform
+
+/solutions/memepuzzle/student
+  Cache-Control: no-transform
+
+/solutions/sketchspace-VR/play
+  Cache-Control: no-transform
+
+/solutions/sketchspace-VR/teacher
+  Cache-Control: no-transform
+
+/solutions/sketchspace-VR/viewer
+  Cache-Control: no-transform
+
+/solutions/videosplat/index.vite
+  Cache-Control: no-transform
+
+/splatworks/gridsplat/index.vite
+  Cache-Control: no-transform
+
+/splatworks/listsplat/index.vite
+  Cache-Control: no-transform
+
+/splatworks/showsplat/present
+  Cache-Control: no-transform
+
+/splatworks/writesplat/index.vite
+  Cache-Control: no-transform
+
+/start-here
+  Cache-Control: no-transform
+
+/wiki/*
+  Cache-Control: no-transform
+# splat-document-privacy:end
