@@ -1,5 +1,5 @@
 /* DrawSplatTM offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.39-privacy-controls';
+const CACHE = 'drawsplat-v3.1.40-privacy-controls';
 const SHELL = [
   './',
   './index.html',
@@ -135,7 +135,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/assets/js/privacy-controls.js','/assets/css/privacy-controls.css','/assets/js/privacy-center.js','/assets/js/protect-review.js','/splatworks/shared/file-bridge.js','/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
+const NETWORK_FIRST_PATHS = ['/splatworks/showsplat/app.js','/assets/js/privacy-controls.js','/assets/css/privacy-controls.css','/assets/js/privacy-center.js','/assets/js/protect-review.js','/splatworks/shared/file-bridge.js','/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;

@@ -883,6 +883,9 @@ for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAM
   for privacy_file in privacy-controls.css privacy-center.css; do copy_file "assets/css/$privacy_file" "$privacy_root/assets/css/$privacy_file"; done
   for privacy_file in privacy-controls.js privacy-center.js protect-review.js; do copy_file "assets/js/$privacy_file" "$privacy_root/assets/js/$privacy_file"; done
   for privacy_file in privacy-inventory.json privacy-retention.json privacy-providers.json; do copy_file "data/$privacy_file" "$privacy_root/data/$privacy_file"; done
+  for privacy_report in data/privacy-network-*.json; do
+    if [ -f "$privacy_report" ]; then copy_file "$privacy_report" "$privacy_root/$privacy_report"; fi
+  done
   copy_file _headers "$privacy_root/_headers"
 done
 

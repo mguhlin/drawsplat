@@ -240,3 +240,29 @@ test('closing a pending Google sign-in prevents a late callback from uploading a
   expect(seen.uploads).toHaveLength(0);
   expect((await localSave(page, 'showsplat')).toString()).toContain('Synthetic classroom project');
 });
+
+test('an existing offline cache cannot hide the new ShowSplat Drive action or replace a saved deck', async ({ page, baseURL }, testInfo) => {
+  test.skip(new URL(baseURL).port !== '4183', 'Legacy worker fixture requires the local repository test server.');
+  const filename = `legacy-show-cache-test-${testInfo.workerIndex}.js`;
+  const workerPath = require('node:path').join(__dirname, '..', 'splatworks', filename);
+  // Model the old worker's cache-first behavior independently of today's worker.
+  fs.writeFileSync(workerPath, `self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));self.addEventListener('fetch',event=>{if(new URL(event.request.url).pathname==='/splatworks/showsplat/app.js')event.respondWith(caches.match(event.request).then(hit=>hit||fetch(event.request)));});`);
+  try {
+    await page.addInitScript(() => { window.google = { accounts: { oauth2: {} } }; });
+    await page.goto('/privacy/');
+    await page.evaluate(async filename => {
+      const registration = await navigator.serviceWorker.register('/splatworks/'+filename, { scope: '/splatworks/' });
+      const worker = registration.installing || registration.waiting || registration.active;
+      if (worker.state !== 'activated') await new Promise(resolve => worker.addEventListener('statechange', () => { if (worker.state === 'activated') resolve(); }));
+      const cache = await caches.open('synthetic-legacy-showsplat');
+      await cache.put('/splatworks/showsplat/app.js?v=20261011-file-routing', new Response('window.legacyShowCached = true;', { headers: { 'Content-Type': 'application/javascript' } }));
+      localStorage.setItem('showsplat.deck.v1', JSON.stringify({ version: 1, title: 'Keep this classroom deck', theme: 'violet', slides: [{ id: 'slide-1', title: 'Preserved slide', notes: 'Preserved teacher notes', elements: [] }] }));
+    }, filename);
+    await page.goto('/splatworks/showsplat/?lang=en');
+    expect(await page.evaluate(() => window.legacyShowCached || false)).toBe(false);
+    await expect(page.locator('#deckTitle')).toHaveValue('Keep this classroom deck');
+    const dialog = await driveMenu(page, 'showsplat'); await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
+    expect(await page.evaluate(() => localStorage.getItem('showsplat.deck.v1'))).toContain('Preserved teacher notes');
+  } finally { fs.unlinkSync(workerPath); }
+});
