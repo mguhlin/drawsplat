@@ -1,0 +1,647 @@
+{
+  "reviewed": "2026-10-15T19:21:35.131Z",
+  "baseOrigin": "https://drawsplat.org",
+  "method": "HTTP(S) startup observations from fresh anonymous Chromium contexts with service workers disabled; registered destinations; 1200 ms after DOMContentLoaded or a 15-second timeout. HTTP interception permits GET/HEAD/OPTIONS and blocks other HTTP methods. Attempted hosts include browser-blocked requests; externalHosts records requests reaching network interception. No user interaction, student content or credentials. Hostnames/resource types and document cache headers only; DNS, WebSockets, later feature/worker and user-selected flows require separate review.",
+  "components": [
+    {
+      "id": "animated-gif",
+      "path": "/solutions/gifsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "audiosplat",
+      "path": "/solutions/audiosplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "big-link",
+      "path": "/solutions/big-link/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "bingo-caller",
+      "path": "/solutions/bingo-caller/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "bingo-cards",
+      "path": "/solutions/bingo-card-generator/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "block-zap",
+      "path": "/games/wordfall-reactor/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "brain-sort",
+      "path": "/solutions/brain-sort/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "castles",
+      "path": "/games/castles/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "ciphersplat",
+      "path": "/solutions/CipherSplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-store, no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "clipsplat",
+      "path": "/solutions/clipsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-cache, no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "clock-wizard",
+      "path": "/solutions/clock-wizard/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "coin-flipper",
+      "path": "/solutions/coinflipping/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "coloring-book",
+      "path": "/solutions/coloring-book/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "concept-map",
+      "path": "/solutions/concept-map/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "dice",
+      "path": "/solutions/dice/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "dicebreakers",
+      "path": "/solutions/dicebreakers/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "dots-boxes",
+      "path": "/solutions/dotsboxes/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "draw-sketch",
+      "path": "/solutions/drawsketch/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "family-access",
+      "path": "/parents/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "flood-fill",
+      "path": "/games/floodfill/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "flow-free",
+      "path": "/games/flowfree/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "fortune-wheel",
+      "path": "/solutions/fortune/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "fun-quiz",
+      "path": "/games/funquiz/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "gilasplat",
+      "path": "/games/gilasplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "graphsplat",
+      "path": "/solutions/graphsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "gridsplat",
+      "path": "/splatworks/gridsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "guides",
+      "path": "/wiki/for-educators.html",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "layoutsplat",
+      "path": "/splatworks/layoutsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-cache, no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "lights-out",
+      "path": "/games/lightsout/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "listsplat",
+      "path": "/splatworks/listsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "markdown-studio",
+      "path": "/solutions/markdown-studio/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "mediasplat",
+      "path": "/solutions/mediasplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "meme-puzzle",
+      "path": "/solutions/memepuzzle/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "memesplat",
+      "path": "/solutions/memesplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "mermaid",
+      "path": "/solutions/mermaid/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "passage-coach",
+      "path": "/games/story-sprint/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "paws-and-keys",
+      "path": "/games/paws-and-keys-adventure/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "pdfsplat",
+      "path": "/solutions/pdfsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-store, no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "qrsplat",
+      "path": "/solutions/qrsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "quiz-flashcards",
+      "path": "/solutions/quiz-flashcard-studio/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "road-rally",
+      "path": "/games/cipher-chase/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "rubric-builder",
+      "path": "/solutions/rubric-builder/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "showsplat",
+      "path": "/splatworks/showsplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "sketchspace-vr",
+      "path": "/solutions/sketchspace-VR/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "splatball",
+      "path": "/games/splatball/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "splatbot",
+      "path": "/solutions/splatbot-studio/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "splatimage",
+      "path": "/solutions/imagesplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "squirrel-run",
+      "path": "/games/squirrel-run-game/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "star-trek",
+      "path": "/games/super-star-trek/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "step-splat",
+      "path": "/solutions/step-splat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "story-wheel",
+      "path": "/solutions/storywheel/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "support",
+      "path": "/wiki/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform, no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "tangram",
+      "path": "/games/tangram/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "teacher-admin",
+      "path": "/admin/admin.html",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "templates",
+      "path": "/pages/background-templates.html",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "toneshifter",
+      "path": "/solutions/toneshifter/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "typing-games",
+      "path": "/games/typing-games/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "untangle",
+      "path": "/games/untangle/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "vibe-check",
+      "path": "/solutions/vibe-check/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "videosplat",
+      "path": "/solutions/videosplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "wheel-spinner",
+      "path": "/solutions/wheel-spinner/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "whiteboard",
+      "path": "/app/whiteboard.html",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "wordsearch",
+      "path": "/solutions/wordsearch/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    },
+    {
+      "id": "writesplat",
+      "path": "/splatworks/writesplat/",
+      "pageStatus": 200,
+      "domContentLoaded": true,
+      "documentCacheControl": "no-transform",
+      "blockedWrites": 0,
+      "attemptedExternalHosts": [],
+      "externalHosts": []
+    }
+  ]
+}

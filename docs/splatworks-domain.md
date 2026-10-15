@@ -1,6 +1,6 @@
 # SplatWorks.org and DrawSplat.org
 
-Updated October 14, 2026.
+Updated October 15, 2026.
 
 The user purchased SplatWorks.org and started connecting it to the existing
 Cloudflare deployment. Both domains should serve the same source and application
@@ -52,3 +52,35 @@ production domains. `_redirects` supplies Cloudflare 301 rules; each root folder
 has a static HTML fallback for GitHub Pages and local servers. Query parameters
 and fragments are preserved by the static fallback. Browser drafts remain tied
 to the domain, so a redirect within one domain keeps that domain’s workspace.
+
+
+## Google Drive authorization
+
+The five office apps and AudioSplat use the shared Google web client
+`31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com`
+for their explicit Drive actions. The October 15 anonymous production check
+reached Google's sign-in screen on DrawSplat.org. SplatWorks.org returned
+`Error 400: origin_mismatch` and needs its exact origin registered:
+
+1. Open [Google Auth Platform → Clients](https://console.cloud.google.com/auth/clients?project=31274545407).
+2. Select the web client with the ID above.
+3. Add `https://splatworks.org` under **Authorized JavaScript origins**, preserving
+   `https://drawsplat.org`. Use the origin without an app path or trailing slash.
+4. Save, allow the setting to propagate, then recheck a Drive action on both domains.
+
+No account was authenticated and no project was uploaded during that anonymous
+check. Native-file transfers, denial, cancellation, and upload failures were
+checked with simulated Google responses. A real account save also depends on
+the Google project and the account's Workspace permissions.
+
+[Drive saving and district client setup](../pages/splatworks.html#save-to-google-drive).
+
+## Public hosting and startup connections
+
+The published document headers include `Cache-Control: no-transform` to prevent
+Cloudflare from automatically inserting its browser analytics script. Large
+JavaScript, WASM and media resources keep their normal cache/compression policy.
+This follows [Cloudflare's documented behavior](https://developers.cloudflare.com/web-analytics/faq/).
+The Content Security Policy continues to restrict scripts and connections.
+Cloudflare still receives the hosting request metadata described in the shared
+[security, privacy and terms](../legal/terms-privacy.html).

@@ -54,7 +54,7 @@ const path = require('node:path');
     }));
   } finally { await browser.close(); }
   results.sort((a, b) => a.id.localeCompare(b.id));
-  const report = { reviewed: new Date().toISOString(), baseOrigin: base.origin, method: 'Fresh anonymous Chromium contexts with service workers disabled; registered destinations; 1200 ms after DOMContentLoaded or a 15-second timeout. GET/HEAD/OPTIONS only; writes blocked. Attempted hosts include browser-blocked requests; externalHosts records requests reaching network interception. No user interaction, student content or credentials. Hostnames/resource types and document cache headers only; later feature, worker and user-selected flows require separate review.', components: results };
+  const report = { reviewed: new Date().toISOString(), baseOrigin: base.origin, method: 'HTTP(S) startup observations from fresh anonymous Chromium contexts with service workers disabled; registered destinations; 1200 ms after DOMContentLoaded or a 15-second timeout. HTTP interception permits GET/HEAD/OPTIONS and blocks other HTTP methods. Attempted hosts include browser-blocked requests; externalHosts records requests reaching network interception. No user interaction, student content or credentials. Hostnames/resource types and document cache headers only; DNS, WebSockets, later feature/worker and user-selected flows require separate review.', components: results };
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
   console.log('Saved', results.length, 'startup observations to', output);
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

@@ -1676,6 +1676,7 @@
       },
       "literalRemoteHosts": [
         "buymeacoffee.com",
+        "console.cloud.google.com",
         "developers.cloudflare.com",
         "developers.openai.com",
         "docs.digitalocean.com",
@@ -1728,6 +1729,7 @@
       },
       "literalRemoteHosts": [
         "buymeacoffee.com",
+        "console.cloud.google.com",
         "developers.cloudflare.com",
         "developers.openai.com",
         "docs.digitalocean.com",
