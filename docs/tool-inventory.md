@@ -1,18 +1,18 @@
-# DrawSplat public destination inventory
+# SplatWorks public destination inventory
 
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-This inventory is the source audit behind `data/drawsplat-tools.json`. It records discovery destinations, not every internal route or alternate build file. Existing URLs remain unchanged.
+The registry currently has 64 destinations. Group rows below describe overlapping route/type views and should not be summed. This inventory is the source audit behind `data/drawsplat-tools.json`. It records discovery destinations, not every internal route or alternate build file. Existing URLs remain unchanged.
 
 ## Inventory summary
 
 | Group | Registry coverage | Notes |
 | --- | ---: | --- |
 | Main workspace | 1 | DrawSplat Whiteboard |
-| SplatWorks workspaces | 4 | GridSplat, ShowSplat, WriteSplat, ListSplat |
-| Standalone solutions | 36 | Public `/solutions/` destinations, including PDFsplat, QRSplat, and CipherSplat; legacy graph URLs route to GraphSplat |
-| Games and puzzles | 12 | Every game card currently listed on `/games/`; Dots and Boxes is hosted under `/solutions/` |
+| Office workspaces | 5 | GridSplat, ShowSplat, WriteSplat, ListSplat, LayoutSplat |
+| Standalone solutions | 37 | Public `/solutions/` destinations, including PDFsplat, QRSplat, and CipherSplat; legacy graph URLs route to GraphSplat |
+| Games and puzzles | 18 | Registry game records; Dots and Boxes is hosted under `/solutions/` and counted in both destination views |
 | Educator/family/support destinations | 5 | Teacher Admin, Family Access, templates, guides, and support |
 
 ## Classification decisions
@@ -31,7 +31,7 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | Quick conventional or CSV chart | GraphSplat — Quick Chart | GridSplat |
 | Picture-first elementary graph | GraphSplat — Picture Graph | Whiteboard |
 | Coordinates and equations | GraphSplat — Coordinate Plane or Expression Calculator | GridSplat |
-| Visual idea relationships | Concept Map Studio | Whiteboard, Mermaid Diagram |
+| Visual idea relationships | ConceptSplat | Whiteboard, DiagramSplat |
 | Slides and presentation | ShowSplat | Whiteboard, ImageSplat™ |
 | Image editing | ImageSplat™ | Draw & Sketch, Whiteboard |
 | Social video and illustrated panels | ClipSplat | VideoSplat, MediaSplat |

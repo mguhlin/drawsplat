@@ -4,7 +4,7 @@ WidgetI18n.register('chart-studio', {
 
   en: {
     'doc.title': 'Chart Studio — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Chart Studio',
     'header.subtitle': 'Paste a CSV, pick columns, choose a chart type — bar, line, or animated bar chart race. Runs entirely in the browser; no data is uploaded. Download as PNG, SVG, animated GIF, or MP4.',
     'header.allTools': 'All Tools',
@@ -62,7 +62,7 @@ WidgetI18n.register('chart-studio', {
 
   es: {
     'doc.title': 'Estudio de Gráficos — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Estudio de Gráficos',
     'header.subtitle': 'Pega un CSV, elige columnas y un tipo de gráfico — barras, líneas o carrera de barras animada. Funciona completamente en el navegador; no se sube ningún dato. Descarga como PNG, SVG, GIF animado o MP4.',
     'header.allTools': 'Todas las herramientas',
@@ -115,7 +115,7 @@ WidgetI18n.register('chart-studio', {
 
   vi: {
     'doc.title': 'Xưởng Biểu đồ — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Xưởng Biểu đồ',
     'header.subtitle': 'Dán CSV, chọn cột và loại biểu đồ — cột, đường, hoặc đua cột động. Chạy hoàn toàn trong trình duyệt; không tải dữ liệu lên. Tải xuống dưới dạng PNG, SVG, GIF động hoặc MP4.',
     'header.allTools': 'Tất cả công cụ',
@@ -168,7 +168,7 @@ WidgetI18n.register('chart-studio', {
 
   ar: {
     'doc.title': 'استوديو الرسوم البيانية — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'استوديو الرسوم البيانية',
     'header.subtitle': 'الصق ملف CSV، واختر الأعمدة ونوع الرسم — أعمدة أو خطوط أو سباق أعمدة متحرك. يعمل بالكامل في المتصفح؛ لا تُرفع أي بيانات. نزّله بصيغة PNG أو SVG أو GIF متحرك أو MP4.',
     'header.allTools': 'كل الأدوات',
@@ -221,7 +221,7 @@ WidgetI18n.register('chart-studio', {
 
   zh: {
     'doc.title': '图表工作室 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '图表工作室',
     'header.subtitle': '粘贴 CSV，选择列和图表类型——柱状图、折线图或动态柱状竞赛图。完全在浏览器中运行；不上传任何数据。可下载为 PNG、SVG、动态 GIF 或 MP4。',
     'header.allTools': '所有工具',
@@ -274,7 +274,7 @@ WidgetI18n.register('chart-studio', {
 
   uh: {
     'doc.title': 'चार्ट स्टूडियो / چارٹ اسٹوڈیو — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ टूल / ٹولز',
+    'header.eyebrow': 'SplatWorks™ टूल / ٹولز',
     'header.h1': 'चार्ट स्टूडियो / چارٹ اسٹوڈیو',
     'header.subtitle': 'CSV पेस्ट करें, कॉलम और चार्ट प्रकार चुनें — बार, लाइन, या एनिमेटेड बार रेस। पूरी तरह ब्राउज़र में चलता है; कोई डेटा अपलोड नहीं होता। PNG, SVG, GIF या MP4 के रूप में डाउनलोड करें।',
     'header.allTools': 'सभी टूल / تمام ٹولز',

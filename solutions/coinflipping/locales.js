@@ -4,7 +4,7 @@ WidgetI18n.register('coinflipping', {
 
   en: {
     'doc.title': 'Classroom Coin Flipper — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Classroom Coin Flipper',
     'header.subtitle': 'Flip one coin, flip many coins, track probability, customize both sides, and save classroom-ready setups.',
     'header.simpleMode': 'Simple Mode',
@@ -168,7 +168,7 @@ WidgetI18n.register('coinflipping', {
 
   es: {
     'doc.title': 'Lanzador de monedas — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Lanzador de monedas',
     'header.subtitle': 'Lanza una moneda, lanza muchas, registra la probabilidad, personaliza ambos lados y guarda configuraciones listas para el aula.',
     'header.simpleMode': 'Modo simple',
@@ -332,7 +332,7 @@ WidgetI18n.register('coinflipping', {
 
   vi: {
     'doc.title': 'Tung đồng xu lớp học — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Tung đồng xu lớp học',
     'header.subtitle': 'Tung một đồng xu, tung nhiều đồng xu, theo dõi xác suất, tùy chỉnh hai mặt và lưu các thiết lập sẵn cho lớp học.',
     'header.simpleMode': 'Chế độ đơn giản',
@@ -496,7 +496,7 @@ WidgetI18n.register('coinflipping', {
 
   ar: {
     'doc.title': 'قاذف العملات الصفي — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'قاذف العملات الصفي',
     'header.subtitle': 'اقذف عملة واحدة أو عدة عملات، وتتبّع الاحتمالات، وخصّص الوجهين، واحفظ إعدادات جاهزة للصف.',
     'header.simpleMode': 'الوضع المبسّط',
@@ -660,7 +660,7 @@ WidgetI18n.register('coinflipping', {
 
   zh: {
     'doc.title': '课堂抛硬币 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '课堂抛硬币',
     'header.subtitle': '抛一枚或多枚硬币、追踪概率、自定义两面，并保存课堂可用的设置。',
     'header.simpleMode': '简易模式',
@@ -824,7 +824,7 @@ WidgetI18n.register('coinflipping', {
 
   uh: {
     'doc.title': 'कक्षा का सिक्का उछालक — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'कक्षा का सिक्का उछालक',
     'header.subtitle': 'एक सिक्का उछालें, कई सिक्के उछालें, संभावना ट्रैक करें, दोनों ओर अनुकूलित करें और कक्षा-तैयार सेटअप सहेजें।',
     'header.simpleMode': 'सरल मोड',

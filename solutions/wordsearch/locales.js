@@ -10,7 +10,7 @@ WidgetI18n.register('wordsearch', {
 
   en: {
     'doc.title':            'Classroom Word Search Maker — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ Tools',
+    'header.eyebrow':       'SplatWorks™ Tools',
     'header.h1':            'Word Search Maker',
     'header.subtitle':      'Build printable word searches from TEKS-inspired vocabulary banks or paste your own classroom terms.',
     'header.home':          'Home',
@@ -103,7 +103,7 @@ WidgetI18n.register('wordsearch', {
 
   es: {
     'doc.title':            'Generador de Sopas de Letras para el Aula — DrawSplat',
-    'header.eyebrow':       'Herramientas DrawSplat™',
+    'header.eyebrow':       'Herramientas SplatWorks™',
     'header.h1':            'Generador de Sopas de Letras',
     'header.subtitle':      'Crea sopas de letras imprimibles a partir de bancos de vocabulario inspirados en TEKS o pega tus propios términos del aula.',
     'header.home':          'Inicio',
@@ -196,7 +196,7 @@ WidgetI18n.register('wordsearch', {
 
   vi: {
     'doc.title':            'Trình tạo Trò chơi Tìm chữ cho lớp học — DrawSplat',
-    'header.eyebrow':       'Công cụ DrawSplat™',
+    'header.eyebrow':       'Công cụ SplatWorks™',
     'header.h1':            'Trình tạo Trò chơi Tìm chữ',
     'header.subtitle':      'Tạo trò chơi tìm chữ có thể in từ các ngân hàng từ vựng theo chuẩn TEKS hoặc dán từ riêng của bạn.',
     'header.home':          'Trang chủ',
@@ -289,7 +289,7 @@ WidgetI18n.register('wordsearch', {
 
   ar: {
     'doc.title':            'منشئ ألغاز البحث عن الكلمات للفصول الدراسية — DrawSplat',
-    'header.eyebrow':       'أدوات DrawSplat™',
+    'header.eyebrow':       'أدوات SplatWorks™',
     'header.h1':            'منشئ ألغاز البحث عن الكلمات',
     'header.subtitle':      'أنشئ ألغاز بحث عن الكلمات قابلة للطباعة من بنوك مفردات مستوحاة من TEKS أو الصق مصطلحاتك الخاصة.',
     'header.home':          'الرئيسية',
@@ -382,7 +382,7 @@ WidgetI18n.register('wordsearch', {
 
   zh: {
     'doc.title':            '课堂找单词制作器 — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ 工具',
+    'header.eyebrow':       'SplatWorks™ 工具',
     'header.h1':            '找单词制作器',
     'header.subtitle':      '从 TEKS 启发的词汇库或粘贴你自己的课堂术语，制作可打印的找单词游戏。',
     'header.home':          '首页',
@@ -475,7 +475,7 @@ WidgetI18n.register('wordsearch', {
 
   uh: {
     'doc.title':            'कक्षा शब्द खोज निर्माता — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ टूल्स',
+    'header.eyebrow':       'SplatWorks™ टूल्स',
     'header.h1':            'शब्द खोज निर्माता',
     'header.subtitle':      'TEKS-प्रेरित शब्दावली बैंक से या अपने कक्षा शब्द चिपकाकर प्रिंट करने योग्य शब्द खोज बनाएँ।',
     'header.home':          'मुख पृष्ठ',

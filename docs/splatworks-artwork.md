@@ -38,8 +38,7 @@ watermark. Produce a finished website hero image.
 ## Official glossy logo update — October 14, 2026
 
 The website brand asset is `assets/brand/SplatWorks_logo.png`, copied without
-modification from the supplied **Glossy Purple SplatWorks™ Logo.png**. DrawSplat's
-whiteboard, tools, and widgets retain their DrawSplat branding and logo assets.
+modification from the supplied **Glossy Purple SplatWorks™ Logo.png**. SplatWorks is the ecosystem brand. DrawSplat names the whiteboard; main creative and productivity tools use their own Splat names. Existing artwork containing former names is historical and does not redefine current product scope.
 The shared hero now uses the supplied glossy purple SplatWorks™ logo in its center;
 all five app panels remain visible. Website references use the `20261014-logo2`
 cache revision. The unchanged public image path also serves the new artwork.

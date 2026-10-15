@@ -1,4 +1,4 @@
-/* Markdown Studio — locale dictionary. AI-seeded; native-speaker review
+/* MarkdownSplat — locale dictionary. AI-seeded; native-speaker review
    pending.
 
    The sample Markdown document and the AI-tells stripper rules stay
@@ -11,8 +11,8 @@ WidgetI18n.register('markdown-studio', {
 
   en: {
     'sample.md':          "# GenAI Prompt Writing Checklist\n\n## Purpose\nUse this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.\n\n### Key Takeaways for Districts\n\n### Broader Context & Historical Parallel\n\n## Strong Prompt Elements\n\n* Clear task\n* Specific audience\n* Required format\n* Source material separated in a code block\n* Desired tone or reading level\n\n## Example Prompt\n\n```text\nCreate a 5th-grade reading activity about ecosystems.\nUse short paragraphs, a vocabulary table, and five comprehension questions.\n```\n\n## Vocabulary Table\n\n| Term | Student-Friendly Meaning | Example |\n|---|---|---|\n| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |\n| Habitat | Where an organism lives | A frog lives near water. |\n| Adaptation | A trait that helps survival | A cactus stores water. |\n\n## Student Checklist\n\n- [ ] I explained my task clearly.\n- [ ] I named my audience.\n- [ ] I gave the AI a format to follow.\n- [x] I included source text when needed.\n\n> Tip: Better structure usually leads to better GenAI output.\n\n![Sample image](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'Markdown Studio — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Markdown Studio</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'Open DrawSplat<sup class="tm">TM</sup>',
     'nav.help':           'Help',
 
@@ -40,11 +40,11 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Load a sample document',
     'btn.clearAll':       'Clear All',
     'btn.clearAll.title': 'Clear everything',
-    'btn.openCm':         'Open in Concept Map Studio →',
-    'btn.openCm.title':   'Parse headings and bullets into a concept map and open it in Concept Map Studio',
+    'btn.openCm':         'Open in ConceptSplat →',
+    'btn.openCm.title':   'Parse headings and bullets into a concept map and open it in ConceptSplat',
 
     'htmlbar.aria':       'Paste HTML converter',
-    'htmlbar.note':       'Paste a full HTML page or an HTML fragment. Markdown Studio will convert headings, paragraphs, lists, links, images, quotes, code, tables, and common WordPress block markup.',
+    'htmlbar.note':       'Paste a full HTML page or an HTML fragment. MarkdownSplat will convert headings, paragraphs, lists, links, images, quotes, code, tables, and common WordPress block markup.',
     'htmlbar.placeholder':'Paste HTML here',
     'btn.htmlToMd':       'Convert to Markdown',
     'btn.htmlToMd.title': 'Convert pasted HTML into editable Markdown',
@@ -116,7 +116,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.htmlEmpty':    'Paste HTML first',
     'toast.cleared':      'Cleared',
     'toast.cmEmpty':      'Add some markdown headings first.',
-    'toast.cmOpened':     'Opened in Concept Map Studio.',
+    'toast.cmOpened':     'Opened in ConceptSplat.',
     'toast.savedWp':      'Downloaded WordPress block code',
 
     'confirm.stripAi':    'Strip common AI writing tells (em-dashes, smart quotes, "delve into", "in conclusion", emoji bullets, etc.)?\n\nReview the changes after — sometimes you actually want an em-dash.',
@@ -153,14 +153,14 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'Privacy and Storage',
     'help.privacy.body.html':'<p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Markdown Studio</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded by <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   es: {
     'sample.md':          "# Lista de verificación para escribir prompts de GenAI\n\n## Propósito\nUsa esta lista para crear prompts más claros para ChatGPT, Claude, Gemini, NotebookLM, Perplexity o herramientas similares.\n\n### Puntos clave para los distritos\n\n### Contexto amplio y paralelo histórico\n\n## Elementos de un buen prompt\n\n* Tarea clara\n* Audiencia específica\n* Formato requerido\n* Material fuente separado en un bloque de código\n* Tono o nivel de lectura deseado\n\n## Ejemplo de prompt\n\n```text\nCrea una actividad de lectura de quinto grado sobre ecosistemas.\nUsa párrafos cortos, una tabla de vocabulario y cinco preguntas de comprensión.\n```\n\n## Tabla de vocabulario\n\n| Término | Significado para estudiantes | Ejemplo |\n|---|---|---|\n| Ecosistema | Seres vivos y no vivos en un mismo lugar | Estanque, bosque, desierto |\n| Hábitat | Lugar donde vive un organismo | Una rana vive cerca del agua. |\n| Adaptación | Un rasgo que ayuda a sobrevivir | Un cactus almacena agua. |\n\n## Lista para estudiantes\n\n- [ ] Expliqué mi tarea con claridad.\n- [ ] Nombré a mi audiencia.\n- [ ] Le di a la IA un formato a seguir.\n- [x] Incluí texto fuente cuando fue necesario.\n\n> Consejo: Una mejor estructura suele producir mejores resultados de la IA.\n\n![Imagen de ejemplo](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'Estudio de Markdown — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Estudio de Markdown</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'Abrir DrawSplat<sup class="tm">TM</sup>',
     'nav.help':           'Ayuda',
 
@@ -186,8 +186,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Cargar un documento de ejemplo',
     'btn.clearAll':       'Borrar todo',
     'btn.clearAll.title': 'Borrar todo',
-    'btn.openCm':         'Abrir en Concept Map Studio →',
-    'btn.openCm.title':   'Convierte los encabezados y viñetas en un mapa conceptual y ábrelo en Concept Map Studio',
+    'btn.openCm':         'Abrir en ConceptSplat →',
+    'btn.openCm.title':   'Convierte los encabezados y viñetas en un mapa conceptual y ábrelo en ConceptSplat',
 
     'findbar.aria':       'Buscar y reemplazar',
     'find.find':          'Buscar',
@@ -250,7 +250,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.imported':     '{name} importado',
     'toast.cleared':      'Borrado',
     'toast.cmEmpty':      'Primero añade algunos encabezados Markdown.',
-    'toast.cmOpened':     'Abierto en Concept Map Studio.',
+    'toast.cmOpened':     'Abierto en ConceptSplat.',
     'toast.savedWp':      'Código de bloque WordPress descargado',
 
     'confirm.stripAi':    '¿Quitar pistas comunes de escritura de IA (guiones em, comillas curvas, "delve into", "in conclusion", viñetas con emoji, etc.)?\n\nRevisa los cambios después — a veces sí quieres un guion em.',
@@ -287,14 +287,14 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'Privacidad y almacenamiento',
     'help.privacy.body.html':'<p>Todo se ejecuta en tu navegador. Ningún contenido sale de esta página. Tu borrador se guarda en <code>localStorage</code> de este dominio para que sobreviva a las recargas — bórralo con <strong>Borrar todo</strong> o herramientas del navegador.</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Estudio de Markdown</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded por <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   vi: {
     'sample.md':          "# Danh sách kiểm tra viết prompt GenAI\n\n## Mục đích\nDùng danh sách này để tạo prompt rõ ràng hơn cho ChatGPT, Claude, Gemini, NotebookLM, Perplexity, hoặc các công cụ tương tự.\n\n### Điểm chính cho các phòng giáo dục\n\n### Bối cảnh rộng và song hành lịch sử\n\n## Yếu tố của prompt mạnh\n\n* Nhiệm vụ rõ ràng\n* Khán giả cụ thể\n* Định dạng yêu cầu\n* Tài liệu nguồn tách trong khối mã\n* Giọng văn hoặc mức đọc mong muốn\n\n## Ví dụ prompt\n\n```text\nTạo một hoạt động đọc lớp 5 về hệ sinh thái.\nDùng đoạn văn ngắn, một bảng từ vựng và năm câu hỏi hiểu.\n```\n\n## Bảng từ vựng\n\n| Thuật ngữ | Nghĩa thân thiện với học sinh | Ví dụ |\n|---|---|---|\n| Hệ sinh thái | Sinh vật sống và không sống ở cùng một nơi | Ao, rừng, sa mạc |\n| Môi trường sống | Nơi sinh vật sinh sống | Một con ếch sống gần nước. |\n| Sự thích nghi | Một đặc điểm giúp sinh tồn | Cây xương rồng tích trữ nước. |\n\n## Danh sách cho học sinh\n\n- [ ] Tôi đã giải thích nhiệm vụ rõ ràng.\n- [ ] Tôi đã nêu rõ khán giả.\n- [ ] Tôi đã cho AI một định dạng để theo.\n- [x] Tôi đã đưa văn bản nguồn khi cần.\n\n> Mẹo: Cấu trúc tốt hơn thường dẫn đến kết quả GenAI tốt hơn.\n\n![Ảnh mẫu](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'Xưởng Markdown — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Xưởng Markdown</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'Mở DrawSplat<sup class="tm">TM</sup>',
     'nav.help':           'Trợ giúp',
 
@@ -320,8 +320,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Tải một tài liệu mẫu',
     'btn.clearAll':       'Xóa tất cả',
     'btn.clearAll.title': 'Xóa mọi thứ',
-    'btn.openCm':         'Mở trong Concept Map Studio →',
-    'btn.openCm.title':   'Phân tích các tiêu đề và mục danh sách thành bản đồ khái niệm và mở trong Concept Map Studio',
+    'btn.openCm':         'Mở trong ConceptSplat →',
+    'btn.openCm.title':   'Phân tích các tiêu đề và mục danh sách thành bản đồ khái niệm và mở trong ConceptSplat',
 
     'findbar.aria':       'Tìm và thay thế',
     'find.find':          'Tìm',
@@ -384,7 +384,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.imported':     'Đã nhập {name}',
     'toast.cleared':      'Đã xóa',
     'toast.cmEmpty':      'Hãy thêm một số tiêu đề Markdown trước.',
-    'toast.cmOpened':     'Đã mở trong Concept Map Studio.',
+    'toast.cmOpened':     'Đã mở trong ConceptSplat.',
     'toast.savedWp':      'Đã tải mã khối WordPress',
 
     'confirm.stripAi':    'Loại bỏ các dấu hiệu viết AI phổ biến (gạch ngang em, dấu nháy cong, "delve into", "in conclusion", gạch đầu dòng emoji, v.v.)?\n\nXem lại các thay đổi sau — đôi khi bạn thực sự muốn một dấu gạch em.',
@@ -421,14 +421,14 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'Quyền riêng tư và Lưu trữ',
     'help.privacy.body.html':'<p>Mọi thứ chạy trong trình duyệt của bạn. Không nội dung nào rời trang này. Bản nháp lưu vào <code>localStorage</code> của miền này để giữ qua các lần tải lại — xóa bằng <strong>Xóa tất cả</strong> hoặc công cụ trình duyệt.</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Xưởng Markdown</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded bởi <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   ar: {
     'sample.md':          "# قائمة كتابة موجِّهات GenAI\n\n## الغرض\nاستخدم هذه القائمة لإنشاء موجِّهات أوضح لـ ChatGPT أو Claude أو Gemini أو NotebookLM أو Perplexity أو أدوات مشابهة.\n\n### نقاط رئيسية للمناطق التعليمية\n\n### السياق الأوسع والمقارنة التاريخية\n\n## عناصر موجِّه قوي\n\n* مهمة واضحة\n* جمهور محدد\n* تنسيق مطلوب\n* مادة مصدر مفصولة في كتلة كود\n* نبرة أو مستوى قراءة مرغوب\n\n## مثال موجِّه\n\n```text\nأنشئ نشاط قراءة للصف الخامس عن النظم البيئية.\nاستخدم فقرات قصيرة وجدول مفردات وخمسة أسئلة فهم.\n```\n\n## جدول المفردات\n\n| المصطلح | معنى ملائم للطلاب | مثال |\n|---|---|---|\n| النظام البيئي | كائنات حية وغير حية في مكان واحد | بركة، غابة، صحراء |\n| الموطن | المكان الذي يعيش فيه الكائن | الضفدع يعيش قرب الماء. |\n| التكيف | صفة تساعد على البقاء | الصبار يخزن الماء. |\n\n## قائمة الطلاب\n\n- [ ] شرحت مهمتي بوضوح.\n- [ ] حددت جمهوري.\n- [ ] أعطيت الذكاء الاصطناعي تنسيقًا يتبعه.\n- [x] أدرجت نص المصدر عند الحاجة.\n\n> نصيحة: البنية الأفضل تؤدي عادةً إلى مخرجات GenAI أفضل.\n\n![صورة عينة](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'استوديو Markdown — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>استوديو Markdown</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'فتح DrawSplat<sup class="tm">TM</sup>',
     'nav.help':           'مساعدة',
 
@@ -454,8 +454,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'تحميل مستند عينة',
     'btn.clearAll':       'مسح الكل',
     'btn.clearAll.title': 'مسح كل شيء',
-    'btn.openCm':         'افتح في Concept Map Studio ←',
-    'btn.openCm.title':   'حلل العناوين والنقاط إلى خريطة مفاهيم وافتحها في Concept Map Studio',
+    'btn.openCm':         'افتح في ConceptSplat ←',
+    'btn.openCm.title':   'حلل العناوين والنقاط إلى خريطة مفاهيم وافتحها في ConceptSplat',
 
     'findbar.aria':       'بحث واستبدال',
     'find.find':          'بحث',
@@ -518,7 +518,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.imported':     'تم استيراد {name}',
     'toast.cleared':      'تم المسح',
     'toast.cmEmpty':      'أضف بعض عناوين Markdown أولاً.',
-    'toast.cmOpened':     'تم الفتح في Concept Map Studio.',
+    'toast.cmOpened':     'تم الفتح في ConceptSplat.',
     'toast.savedWp':      'تم تنزيل كود كتلة WordPress',
 
     'confirm.stripAi':    'إزالة آثار الكتابة الشائعة للذكاء الاصطناعي (em-dashes، اقتباسات ذكية، "delve into"، "in conclusion"، تعدادات بإيموجي، إلخ)؟\n\nراجع التغييرات بعد ذلك — أحيانًا تريد بالفعل em-dash.',
@@ -555,14 +555,14 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'الخصوصية والتخزين',
     'help.privacy.body.html':'<p>كل شيء يعمل في متصفحك. لا يغادر المحتوى هذه الصفحة. تُحفظ مسودتك في <code>localStorage</code> لهذا النطاق فتنجو من إعادة التحميل — امسحها عبر <strong>مسح الكل</strong> أو أدوات المتصفح.</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>استوديو Markdown</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded بواسطة <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   zh: {
     'sample.md':          "# GenAI 提示词撰写清单\n\n## 目的\n用此清单为 ChatGPT、Claude、Gemini、NotebookLM、Perplexity 或类似工具创建更清晰的提示词。\n\n### 给学区的要点\n\n### 更宽广的背景与历史对照\n\n## 强提示词要素\n\n* 明确的任务\n* 具体的受众\n* 所需的格式\n* 在代码块中分隔的源材料\n* 期望的语气或阅读水平\n\n## 提示词示例\n\n```text\n为五年级学生创建一个关于生态系统的阅读活动。\n使用短段落、一个词汇表和五个理解问题。\n```\n\n## 词汇表\n\n| 术语 | 学生友好的含义 | 示例 |\n|---|---|---|\n| 生态系统 | 同一个地方的生物和非生物 | 池塘、森林、沙漠 |\n| 栖息地 | 生物居住的地方 | 青蛙住在水边。 |\n| 适应 | 帮助生存的特征 | 仙人掌储存水。 |\n\n## 学生清单\n\n- [ ] 我清楚地解释了任务。\n- [ ] 我指明了受众。\n- [ ] 我给了 AI 一个要遵循的格式。\n- [x] 在需要时我包含了源文本。\n\n> 提示：更好的结构通常带来更好的 GenAI 输出。\n\n![示例图片](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'Markdown 工作室 — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Markdown 工作室</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'打开 DrawSplat<sup class="tm">TM</sup>',
     'nav.help':           '帮助',
 
@@ -588,8 +588,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   '加载示例文档',
     'btn.clearAll':       '清空',
     'btn.clearAll.title': '清空所有',
-    'btn.openCm':         '在 Concept Map Studio 中打开 →',
-    'btn.openCm.title':   '将标题和项目符号解析为概念图，并在 Concept Map Studio 中打开',
+    'btn.openCm':         '在 ConceptSplat 中打开 →',
+    'btn.openCm.title':   '将标题和项目符号解析为概念图，并在 ConceptSplat 中打开',
 
     'findbar.aria':       '查找和替换',
     'find.find':          '查找',
@@ -652,7 +652,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.imported':     '已导入 {name}',
     'toast.cleared':      '已清空',
     'toast.cmEmpty':      '请先添加一些 Markdown 标题。',
-    'toast.cmOpened':     '已在 Concept Map Studio 中打开。',
+    'toast.cmOpened':     '已在 ConceptSplat 中打开。',
     'toast.savedWp':      '已下载 WordPress 块代码',
 
     'confirm.stripAi':    '剥离常见的 AI 写作痕迹（em-dashes、智能引号、"delve into"、"in conclusion"、emoji 项目符号等）？\n\n之后请审查变更——有时你确实想要 em-dash。',
@@ -689,14 +689,14 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'隐私和存储',
     'help.privacy.body.html':'<p>一切都在你的浏览器中运行。没有内容会离开此页面。你的草稿保存到此域的 <code>localStorage</code>，因此能在刷新后保留——通过<strong>清空所有</strong>或浏览器工具清除。</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Markdown 工作室</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded 由 <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   uh: {
     'sample.md':          "# GenAI प्रॉम्प्ट लेखन चेकलिस्ट\n\n## उद्देश्य\nChatGPT, Claude, Gemini, NotebookLM, Perplexity या समान टूल्स के लिए स्पष्ट प्रॉम्प्ट बनाने हेतु इस चेकलिस्ट का उपयोग करें।\n\n### जिलों के लिए मुख्य बिंदु\n\n### व्यापक संदर्भ और ऐतिहासिक समानांतर\n\n## मज़बूत प्रॉम्प्ट तत्व\n\n* स्पष्ट कार्य\n* विशिष्ट दर्शक\n* आवश्यक प्रारूप\n* कोड ब्लॉक में अलग किया स्रोत सामग्री\n* वांछित स्वर या पढ़ने का स्तर\n\n## उदाहरण प्रॉम्प्ट\n\n```text\nपारिस्थितिक तंत्र पर 5वीं कक्षा की पठन गतिविधि बनाएँ।\nछोटे पैराग्राफ़, एक शब्दावली तालिका और पाँच समझ प्रश्नों का उपयोग करें।\n```\n\n## शब्दावली तालिका\n\n| शब्द | छात्र-अनुकूल अर्थ | उदाहरण |\n|---|---|---|\n| पारिस्थितिक तंत्र | एक स्थान में जीवित और निर्जीव चीज़ें | तालाब, जंगल, रेगिस्तान |\n| आवास | जहाँ जीव रहता है | मेंढक पानी के पास रहता है। |\n| अनुकूलन | जीवित रहने में मदद करने वाला गुण | कैक्टस पानी संग्रहित करता है। |\n\n## छात्र चेकलिस्ट\n\n- [ ] मैंने अपना कार्य स्पष्ट रूप से समझाया।\n- [ ] मैंने अपने दर्शकों का नाम लिया।\n- [ ] मैंने AI को एक प्रारूप दिया जिसका पालन करना है।\n- [x] आवश्यकता पड़ने पर मैंने स्रोत पाठ शामिल किया।\n\n> सुझाव: बेहतर संरचना आमतौर पर बेहतर GenAI आउटपुट देती है।\n\n![नमूना छवि](https://mguhlin.github.io/creations/markdown/md.png)",
-    'doc.title':          'मार्कडाउन स्टूडियो — DrawSplat',
-    'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>मार्कडाउन स्टूडियो</em>',
+    'doc.title':          'MarkdownSplat — SplatWorks',
+    'nav.brandHtml':      'SplatWorks <em>MarkdownSplat</em>',
     'nav.openDrawsplatHtml':'DrawSplat<sup class="tm">TM</sup> खोलें',
     'nav.help':           'सहायता',
 
@@ -722,8 +722,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'एक नमूना दस्तावेज़ लोड करें',
     'btn.clearAll':       'सब साफ़ करें',
     'btn.clearAll.title': 'सब कुछ साफ़ करें',
-    'btn.openCm':         'Concept Map Studio में खोलें →',
-    'btn.openCm.title':   'हेडिंग और बुलेट्स को कॉन्सेप्ट मैप में पार्स करें और Concept Map Studio में खोलें',
+    'btn.openCm':         'ConceptSplat में खोलें →',
+    'btn.openCm.title':   'हेडिंग और बुलेट्स को कॉन्सेप्ट मैप में पार्स करें और ConceptSplat में खोलें',
 
     'findbar.aria':       'खोजें और बदलें',
     'find.find':          'खोजें',
@@ -786,7 +786,7 @@ WidgetI18n.register('markdown-studio', {
     'toast.imported':     '{name} आयात हुआ',
     'toast.cleared':      'साफ़ हो गया',
     'toast.cmEmpty':      'पहले कुछ Markdown हेडिंग जोड़ें।',
-    'toast.cmOpened':     'Concept Map Studio में खोल दिया।',
+    'toast.cmOpened':     'ConceptSplat में खोल दिया।',
     'toast.savedWp':      'WordPress ब्लॉक कोड डाउनलोड हुआ',
 
     'confirm.stripAi':    'आम AI लेखन निशान हटाएँ (em-dashes, स्मार्ट कोट्स, "delve into", "in conclusion", emoji बुलेट, आदि)?\n\nबाद में परिवर्तनों की समीक्षा करें — कभी-कभी आप वास्तव में em-dash चाहते हैं।',
@@ -823,7 +823,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.summary':'गोपनीयता और भंडारण',
     'help.privacy.body.html':'<p>सब कुछ आपके ब्राउज़र में चलता है। कोई सामग्री इस पृष्ठ से बाहर नहीं जाती। आपका ड्राफ्ट इस डोमेन के <code>localStorage</code> में सहेजा जाता है ताकि यह रिफ्रेश के बाद भी बना रहे — इसे <strong>सब साफ़ करें</strong> या ब्राउज़र टूल से साफ़ करें।</p>',
 
-    'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>मार्कडाउन स्टूडियो</span>',
+    'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded द्वारा <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 

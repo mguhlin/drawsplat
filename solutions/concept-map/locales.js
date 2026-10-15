@@ -1,13 +1,13 @@
-/* Concept Map Studio — locale dictionary. AI-seeded; native-speaker
+/* ConceptSplat — locale dictionary. AI-seeded; native-speaker
    review pending. Largest Wave 2 conversion: chrome, 13 graphic-organizer
    templates (with their node labels and connector relationship words),
    tool buttons, status messages, prompts, and selection-info variants. */
 WidgetI18n.register('concept-map', {
 
   en: {
-    'doc.title':            'Concept Map Studio — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ Tools',
-    'header.h1':            'Concept Map Studio',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'SplatWorks Tools',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      'Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause & effect, compare & contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.',
     'nav.allTools':         'All Tools',
     'header.home':          'Home',
@@ -219,11 +219,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': 'Embed link copied. Anyone with the link sees a read-only viewer.',
     'status.embedCopyFailed': 'Could not copy to clipboard.',
     'status.outlineCopied':   'Outline copied as Markdown.',
-    'status.outlineOpenedMd': 'Opened in Markdown Studio in a new tab.',
+    'status.outlineOpenedMd': 'Opened in MarkdownSplat in a new tab.',
 
     'outline.toggle': 'Outline view (Markdown)',
     'outline.copy':   'Copy Markdown',
-    'outline.openMd': 'Open in Markdown Studio →',
+    'outline.openMd': 'Open in MarkdownSplat →',
     'outline.hint':   'Live mirror of the map\'s hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.',
 
     'section.filterLabel': 'Section filter:',
@@ -311,15 +311,15 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ label',
     'load.errBadFile':      'File is not valid JSON object.',
-    'load.errNotConceptMap':'Not a DrawSplat concept map file.',
+    'load.errNotConceptMap':'Not a ConceptSplat concept map file.',
     'load.errMissingArrays':'Missing nodes or connectors.',
     'load.errNoNodes':      'No usable nodes in file.',
   },
 
   es: {
-    'doc.title':            'Estudio de Mapas Conceptuales — DrawSplat',
-    'header.eyebrow':       'Herramientas DrawSplat™',
-    'header.h1':            'Estudio de Mapas Conceptuales',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'Herramientas SplatWorks™',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      'Lienzo infinito con zoom, desplazamiento y deshacer/rehacer. Arrastra nodos, haz clic para conectar, etiqueta los conectores, selecciona varios, agrupa, elige entre 5 pasteles. Comienza desde una plantilla — espina de pescado, Frayer, KWL, gráfico T, 5 W, ciclo, secuencia, causa y efecto, comparar y contrastar, jerarquía, mapa de cuento — o crea desde cero. Guarda/carga JSON, exporta SVG o PNG.',
     'nav.allTools':         'Todas las herramientas',
     'header.home':          'Inicio',
@@ -519,11 +519,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': 'Enlace de inserción copiado. Cualquiera con el enlace ve un visor de solo lectura.',
     'status.embedCopyFailed': 'No se pudo copiar al portapapeles.',
     'status.outlineCopied':   'Esquema copiado como Markdown.',
-    'status.outlineOpenedMd': 'Abierto en Markdown Studio en una nueva pestaña.',
+    'status.outlineOpenedMd': 'Abierto en MarkdownSplat en una nueva pestaña.',
 
     'outline.toggle': 'Vista de esquema (Markdown)',
     'outline.copy':   'Copiar Markdown',
-    'outline.openMd': 'Abrir en Markdown Studio →',
+    'outline.openMd': 'Abrir en MarkdownSplat →',
     'outline.hint':   'Espejo en vivo de la jerarquía del mapa. Úsalo como esquema de estudio, pégalo en notas o pásalo a una IA como contexto.',
 
     'section.filterLabel': 'Filtro de sección:',
@@ -606,15 +606,15 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ etiqueta',
     'load.errBadFile':      'El archivo no es un objeto JSON válido.',
-    'load.errNotConceptMap':'No es un archivo de mapa conceptual de DrawSplat.',
+    'load.errNotConceptMap':'No es un archivo de mapa conceptual de ConceptSplat.',
     'load.errMissingArrays':'Faltan nodos o conectores.',
     'load.errNoNodes':      'No hay nodos utilizables en el archivo.',
   },
 
   vi: {
-    'doc.title':            'Xưởng Bản đồ Khái niệm — DrawSplat',
-    'header.eyebrow':       'Công cụ DrawSplat™',
-    'header.h1':            'Xưởng Bản đồ Khái niệm',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'Công cụ SplatWorks™',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      'Khung vẽ vô hạn với phóng to/thu nhỏ, kéo, hoàn tác/làm lại. Kéo các nút, nhấp để kết nối, đặt nhãn cho liên kết, chọn nhiều, nhóm, chọn từ 5 màu pastel. Bắt đầu từ mẫu — xương cá, Frayer, KWL, biểu đồ chữ T, 5W, chu trình, chuỗi, nhân-quả, so sánh-đối chiếu, phân cấp, bản đồ truyện — hoặc tạo từ đầu. Lưu/tải JSON, xuất SVG hoặc PNG.',
     'nav.allTools':         'Tất cả công cụ',
     'header.home':          'Trang chủ',
@@ -814,11 +814,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': 'Đã sao chép liên kết nhúng. Ai có liên kết sẽ xem ở chế độ chỉ đọc.',
     'status.embedCopyFailed': 'Không thể sao chép vào bộ nhớ tạm.',
     'status.outlineCopied':   'Đã sao chép dàn ý dưới dạng Markdown.',
-    'status.outlineOpenedMd': 'Đã mở trong Markdown Studio ở tab mới.',
+    'status.outlineOpenedMd': 'Đã mở trong MarkdownSplat ở tab mới.',
 
     'outline.toggle': 'Chế độ dàn ý (Markdown)',
     'outline.copy':   'Sao chép Markdown',
-    'outline.openMd': 'Mở trong Markdown Studio →',
+    'outline.openMd': 'Mở trong MarkdownSplat →',
     'outline.hint':   'Bản sao trực tiếp của cấu trúc bản đồ. Dùng làm dàn ý ôn tập, dán vào ghi chú, hoặc đưa cho AI làm ngữ cảnh.',
 
     'section.filterLabel': 'Bộ lọc phần:',
@@ -901,15 +901,15 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ nhãn',
     'load.errBadFile':      'Tệp không phải đối tượng JSON hợp lệ.',
-    'load.errNotConceptMap':'Không phải tệp bản đồ khái niệm DrawSplat.',
+    'load.errNotConceptMap':'Không phải tệp bản đồ khái niệm ConceptSplat.',
     'load.errMissingArrays':'Thiếu mảng nút hoặc liên kết.',
     'load.errNoNodes':      'Tệp không có nút sử dụng được.',
   },
 
   ar: {
-    'doc.title':            'استوديو الخرائط المفاهيمية — DrawSplat',
-    'header.eyebrow':       'أدوات DrawSplat™',
-    'header.h1':            'استوديو الخرائط المفاهيمية',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'أدوات SplatWorks™',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      'لوحة لا نهائية مع تكبير وتحريك وتراجع/إعادة. اسحب العقد، انقر للربط، سمّ الموصلات، اختر عدة، جمّع، اختر من خمسة ألوان باستيلية. ابدأ من قالب — هيكل سمكي، فراير، KWL، مخطط T، 5 W، دورة، تسلسل، سبب وأثر، مقارنة وتباين، تسلسل هرمي، خريطة قصة — أو ابنِ من الصفر. احفظ/حمّل JSON، صدّر SVG أو PNG.',
     'nav.allTools':         'كل الأدوات',
     'header.home':          'الرئيسية',
@@ -1109,11 +1109,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': 'تم نسخ رابط التضمين. أي شخص لديه الرابط يرى عارضًا للقراءة فقط.',
     'status.embedCopyFailed': 'تعذر النسخ إلى الحافظة.',
     'status.outlineCopied':   'تم نسخ المخطط بصيغة Markdown.',
-    'status.outlineOpenedMd': 'تم الفتح في Markdown Studio في علامة تبويب جديدة.',
+    'status.outlineOpenedMd': 'تم الفتح في MarkdownSplat في علامة تبويب جديدة.',
 
     'outline.toggle': 'عرض المخطط (Markdown)',
     'outline.copy':   'نسخ Markdown',
-    'outline.openMd': 'فتح في Markdown Studio ←',
+    'outline.openMd': 'فتح في MarkdownSplat ←',
     'outline.hint':   'انعكاس حي لتسلسل الخريطة. استخدمه كمخطط دراسة، الصقه في الملاحظات، أو أعطه لذكاء اصطناعي كسياق.',
 
     'section.filterLabel': 'مرشح القسم:',
@@ -1196,15 +1196,15 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ تسمية',
     'load.errBadFile':      'الملف ليس كائن JSON صالحًا.',
-    'load.errNotConceptMap':'ليس ملف خريطة مفاهيمية من DrawSplat.',
+    'load.errNotConceptMap':'ليس ملف خريطة مفاهيمية من ConceptSplat.',
     'load.errMissingArrays':'العقد أو الموصلات مفقودة.',
     'load.errNoNodes':      'لا توجد عقد قابلة للاستخدام في الملف.',
   },
 
   zh: {
-    'doc.title':            '概念图工作室 — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ 工具',
-    'header.h1':            '概念图工作室',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'SplatWorks™ 工具',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      '无限画布，支持缩放、平移和撤销/重做。拖动节点，点击连接，标注连线，多选、分组，从 5 种粉彩中选择。从模板开始 — 鱼骨图、Frayer、KWL、T形图、5W、循环、序列、因果、比较与对比、层级、故事地图 — 或从零开始。保存/加载 JSON，导出 SVG 或 PNG。',
     'nav.allTools':         '所有工具',
     'header.home':          '首页',
@@ -1404,11 +1404,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': '嵌入链接已复制。任何持有链接的人都能看到只读查看器。',
     'status.embedCopyFailed': '无法复制到剪贴板。',
     'status.outlineCopied':   '大纲已复制为 Markdown。',
-    'status.outlineOpenedMd': '已在新标签页中打开 Markdown Studio。',
+    'status.outlineOpenedMd': '已在新标签页中打开 MarkdownSplat。',
 
     'outline.toggle': '大纲视图 (Markdown)',
     'outline.copy':   '复制 Markdown',
-    'outline.openMd': '在 Markdown Studio 中打开 →',
+    'outline.openMd': '在 MarkdownSplat 中打开 →',
     'outline.hint':   '地图层级的实时镜像。可作为学习大纲、粘贴到笔记，或交给 AI 作为上下文。',
 
     'section.filterLabel': '章节过滤：',
@@ -1491,15 +1491,15 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ 标签',
     'load.errBadFile':      '文件不是有效的 JSON 对象。',
-    'load.errNotConceptMap':'不是 DrawSplat 概念图文件。',
+    'load.errNotConceptMap':'不是 ConceptSplat 概念图文件。',
     'load.errMissingArrays':'缺少节点或连线数组。',
     'load.errNoNodes':      '文件中没有可用的节点。',
   },
 
   uh: {
-    'doc.title':            'अवधारणा मानचित्र स्टूडियो — DrawSplat',
-    'header.eyebrow':       'DrawSplat™ टूल्स',
-    'header.h1':            'अवधारणा मानचित्र स्टूडियो',
+    'doc.title':            'ConceptSplat — SplatWorks',
+    'header.eyebrow':       'SplatWorks™ टूल्स',
+    'header.h1':            'ConceptSplat',
     'header.subtitle':      'ज़ूम, पैन और पूर्ववत/पुनः करने वाला अनंत कैनवस। नोड्स खींचें, जोड़ने के लिए क्लिक करें, कनेक्टर्स को लेबल करें, बहु-चयन, समूह, 5 पेस्टल रंगों में से चुनें। टेम्पलेट से शुरू करें — फिशबोन, फ्रेयर, KWL, टी-चार्ट, 5W, चक्र, अनुक्रम, कारण और प्रभाव, तुलना और अंतर, पदानुक्रम, कहानी मानचित्र — या शून्य से बनाएँ। JSON सहेजें/लोड करें, SVG या PNG में निर्यात करें।',
     'nav.allTools':         'सभी टूल्स',
     'header.home':          'मुख पृष्ठ',
@@ -1699,11 +1699,11 @@ WidgetI18n.register('concept-map', {
     'status.embedLinkCopied': 'एम्बेड लिंक कॉपी हो गया। लिंक रखने वाले को रीड-ओनली व्यू मिलता है।',
     'status.embedCopyFailed': 'क्लिपबोर्ड पर कॉपी नहीं हो सका।',
     'status.outlineCopied':   'आउटलाइन Markdown के रूप में कॉपी हो गई।',
-    'status.outlineOpenedMd': 'नए टैब में Markdown Studio खोला गया।',
+    'status.outlineOpenedMd': 'नए टैब में MarkdownSplat खोला गया।',
 
     'outline.toggle': 'आउटलाइन व्यू (Markdown)',
     'outline.copy':   'Markdown कॉपी करें',
-    'outline.openMd': 'Markdown Studio में खोलें →',
+    'outline.openMd': 'MarkdownSplat में खोलें →',
     'outline.hint':   'मानचित्र की पदानुक्रम का लाइव प्रतिबिंब। अध्ययन आउटलाइन के रूप में, नोट्स में पेस्ट करें, या AI को संदर्भ के रूप में दें।',
 
     'section.filterLabel': 'सेक्शन फ़िल्टर:',
@@ -1786,7 +1786,7 @@ WidgetI18n.register('concept-map', {
 
     'connector.pillLabel':  '+ लेबल',
     'load.errBadFile':      'फ़ाइल वैध JSON ऑब्जेक्ट नहीं है।',
-    'load.errNotConceptMap':'DrawSplat अवधारणा मानचित्र फ़ाइल नहीं।',
+    'load.errNotConceptMap':'ConceptSplat अवधारणा मानचित्र फ़ाइल नहीं।',
     'load.errMissingArrays':'नोड्स या कनेक्टर्स गायब हैं।',
     'load.errNoNodes':      'फ़ाइल में कोई उपयोग योग्य नोड्स नहीं।',
   },

@@ -1,9 +1,9 @@
-# DrawSplat&trade; — Setup
+# SplatWorks — Setup
 
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-DrawSplat is an ecosystem of standalone tools, widgets, games, SplatWorks, and the whiteboard. [Explore features by category](../wiki/tools-widgets-features.html). The complete district installation deploys the suite; the browser-only, Apps Script, and separate MySQL guides below describe particular usage or saving paths. Components keep their own storage and optional integrations.
+SplatWorks is the ecosystem of standalone tools, widgets, games, office applications, and the DrawSplat whiteboard. [Explore features by category](../wiki/tools-widgets-features.html). The complete district installation deploys the suite; the browser-only, Apps Script, and separate MySQL guides below describe particular usage or saving paths. Components keep their own storage and optional integrations.
 
 Pick the scenario that matches what you're trying to do. Each one is its own focused doc — no need to read the others.
 
@@ -51,4 +51,4 @@ The published site needs a separately deployed API/database to use MySQL saving.
 
 ## The free-pricing posture
 
-DrawSplat&trade; is free under AGPL-3.0-or-later. Every mode above costs $0 in software. If your district wants paid **setup, professional learning, or compliance review**, that's a separate service — see [pricing](../pages/pricing.html). Otherwise, pick a setup doc above and you're done.
+SplatWorks software is free. DrawSplat and the standalone tools generally use AGPL-3.0-or-later; the five office apps use GPL-3.0-only. Keep each component’s license notices. Every mode above costs $0 in software. If your district wants paid **setup, professional learning, or compliance review**, that's a separate service — see [pricing](../pages/pricing.html). Otherwise, pick a setup doc above and you're done.

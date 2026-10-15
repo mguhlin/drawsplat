@@ -4,7 +4,7 @@ WidgetI18n.register('big-link', {
 
   en: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Big Link',
     'header.subtitle': 'Make a poster-style "type this URL" card to project on the board. Big bold link, an optional title and note line, your accent color. Download as PNG or SVG and project, print, or paste into a slide.',
     'header.allTools': 'All Tools',
@@ -52,7 +52,7 @@ WidgetI18n.register('big-link', {
 
   es: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Big Link',
     'header.subtitle': 'Crea una tarjeta tipo póster con la URL para proyectar en clase. Enlace grande y llamativo, un título y una nota opcionales, tu color de acento. Descarga como PNG o SVG y proyecta, imprime o pega en una diapositiva.',
     'header.allTools': 'Todas las Herramientas',
@@ -100,7 +100,7 @@ WidgetI18n.register('big-link', {
 
   vi: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Big Link',
     'header.subtitle': 'Tạo thẻ "gõ địa chỉ này" kiểu áp-phích để chiếu lên bảng. Liên kết to in đậm, tiêu đề và ghi chú tùy chọn, màu nhấn riêng. Tải về dạng PNG hoặc SVG để chiếu, in hoặc dán vào slide.',
     'header.allTools': 'Tất cả Công cụ',
@@ -148,7 +148,7 @@ WidgetI18n.register('big-link', {
 
   ar: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'Big Link',
     'header.subtitle': 'أنشئ بطاقة على شكل ملصق "اكتب هذا العنوان" لعرضها على السبورة. رابط كبير وواضح، عنوان وملاحظة اختيارية، ولون التميز الخاص بك. نزّلها كـ PNG أو SVG لعرضها أو طباعتها أو لصقها في شريحة.',
     'header.allTools': 'كل الأدوات',
@@ -196,7 +196,7 @@ WidgetI18n.register('big-link', {
 
   zh: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Big Link',
     'header.subtitle': '制作海报式的"请输入此网址"卡片，方便投影到教室。粗体大字链接，可选标题和注释行，自定义强调色。下载为 PNG 或 SVG，可投影、打印或粘贴到幻灯片中。',
     'header.allTools': '全部工具',
@@ -244,7 +244,7 @@ WidgetI18n.register('big-link', {
 
   uh: {
     'doc.title': 'Big Link — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ ٹولز',
+    'header.eyebrow': 'SplatWorks™ ٹولز',
     'header.h1': 'Big Link',
     'header.subtitle': 'کلاس روم میں دکھانے کے لیے پوسٹر طرز کا "یہ URL ٹائپ کریں" کارڈ بنائیں۔ بڑا اور نمایاں لنک، اختیاری ٹائٹل اور نوٹ، آپ کا اپنا ایکسنٹ رنگ۔ PNG یا SVG کے طور پر ڈاؤن لوڈ کریں، پروجیکٹ کریں، پرنٹ کریں، یا سلائیڈ میں پیسٹ کریں۔',
     'header.allTools': 'تمام ٹولز',

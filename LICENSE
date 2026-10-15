@@ -1,23 +1,23 @@
-DrawSplatTM License
+SplatWorks ecosystem license summary
 Copyright (c) 2026 DrawSplat Developer(s) <drawsplat@gmail.com>
 
 DrawSplatTM whiteboard code, tools, widgets, Apps Script backend, MySQL backend,
-compliance features, and other non-GridSplat parts of this repository are
+compliance features, and other non-office-app parts of this repository are
 free/open source under the GNU Affero General Public License, version 3.0 or
 later (AGPL-3.0-or-later).
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 
-SplatWorksTM exception
+Office app license exception
 ----------------------
 
-The SplatWorksTM app family is released under the GNU General Public License,
-version 3.0 only (GPL-3.0-only). This currently includes GridSplatTM in
-`splatworks/gridsplat/` and ShowSplatTM in `splatworks/showsplat/`. See
+The five office apps within the SplatWorksTM ecosystem is released under the GNU General Public License,
+version 3.0 only (GPL-3.0-only). This includes WriteSplat, GridSplat, ListSplat, ShowSplat, and LayoutSplat
+in their respective `splatworks/` directories. See
 `splatworks/gridsplat/LICENSE.md` and `splatworks/gridsplat/COPYING` for the
 GPL-3.0-only license text currently bundled with the SplatWorksTM apps.
 
-This license split lets SplatWorksTM apps ship with GPL-3.0-only dependencies
+This license split lets the office apps ship with GPL-3.0-only dependencies
 while DrawSplatTM whiteboard and the existing tools/widgets continue under the
 current AGPL-3.0-or-later licensing.
 

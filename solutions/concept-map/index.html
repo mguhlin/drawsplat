@@ -3,13 +3,13 @@
 <head>
 <!-- DrawSplat favicons -->
 <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="../../assets/brand/DrawSplat_logo.png" />
+<link rel="apple-touch-icon" href="../../assets/brand/SplatWorks_logo.png" />
 <link rel="manifest" href="../../site.webmanifest" />
 <meta name="theme-color" content="#7c3aed" />
 <!-- /DrawSplat favicons -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-i18n="doc.title">Concept Map Studio — DrawSplat™</title>
+  <title data-i18n="doc.title">ConceptSplat — SplatWorks™</title>
   <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <script src="../../assets/js/widget-i18n.js"></script>
@@ -1023,14 +1023,14 @@
 <script src="../../assets/js/action-cards.js?v=1.0" defer></script>
 </head>
 <body>
-  <button class="ds-apps-link ds-apps-floating" type="button" data-ds-app-launcher aria-label="Open DrawSplat apps">Apps ▦</button>
-  <a class="embed-credit" href="https://drawsplat.org/solutions/concept-map/" target="_blank" rel="noopener noreferrer">Made with DrawSplat™ Concept Map Studio →</a>
+  <button class="ds-apps-link ds-apps-floating" type="button" data-ds-app-launcher aria-label="Open SplatWorks apps">Apps ▦</button>
+  <a class="embed-credit" href="https://drawsplat.org/solutions/concept-map/" target="_blank" rel="noopener noreferrer">Made with SplatWorks ConceptSplat →</a>
   <div class="top-bar" aria-hidden="true"></div>
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../index.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
-        <h1 data-i18n="header.h1">Concept Map Studio</h1>
+        <p class="eyebrow"><a href="../../index.html" data-i18n-html="header.eyebrow">SplatWorks Tools</a></p>
+        <h1 data-i18n="header.h1">ConceptSplat</h1>
       </div>
       <div class="header-actions">
         <details class="about-menu">
@@ -1046,7 +1046,7 @@
     </header>
 
     <main class="app-grid">
-      <nav class="studio-menu-bar" aria-label="Concept Map Studio menus">
+      <nav class="studio-menu-bar" aria-label="ConceptSplat menus">
         <button class="quick-action-btn primary-link" id="quickSaveWorkBtn" type="button" title="Save your concept map as a local JSON file">
           <span class="quick-action-icon" aria-hidden="true">▣</span>
           Save your work
@@ -1119,7 +1119,7 @@
           <div class="studio-menu-panel">
             <div class="outline-actions">
               <button type="button" class="outline-copy-btn" id="copyOutlineBtn" data-i18n="outline.copy">Copy Markdown</button>
-              <button type="button" class="outline-copy-btn" id="openInMarkdownStudioBtn" data-i18n="outline.openMd">Open in Markdown Studio →</button>
+              <button type="button" class="outline-copy-btn" id="openInMarkdownStudioBtn" data-i18n="outline.openMd">Open in MarkdownSplat →</button>
               <span class="outline-hint" data-i18n="outline.hint">Live mirror of the map's hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.</span>
             </div>
             <pre id="outlineMarkdown" class="outline-md" aria-live="polite"></pre>
@@ -1271,7 +1271,7 @@
     </main>
   </div>
 
-<script src="./locales.js"></script>
+<script src="locales.js?v=20261015"></script>
 <script>
 (function(){
   const t = (k, vars) => WidgetI18n.t(k, vars);
@@ -4440,7 +4440,7 @@
       return false;
     }
   }
-  // Inbound handoff from Markdown Studio's "Open in Concept Map Studio"
+  // Inbound handoff from MarkdownSplat's "Open in ConceptSplat"
   // button — a JSON map object (already parsed from markdown by the sender).
   function loadFromHandoff(){
     if (!window.DrawSplatHandoff) return false;
@@ -4460,7 +4460,7 @@
   if (isEmbedMode) {
     document.body.classList.add('embed-mode');
   }
-  // Priority: localStorage handoff (Markdown Studio sender) → URL hash
+  // Priority: localStorage handoff (MarkdownSplat sender) → URL hash
   // (embed mode) → default map.
   const loadedFromAnywhere = loadFromHandoff() || loadFromHash();
   if (!loadedFromAnywhere) defaultMap();

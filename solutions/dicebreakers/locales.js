@@ -10,7 +10,7 @@ WidgetI18n.register('dicebreakers', {
   en: {
     'doc.title':          'Dicebreaker Creator — DrawSplat',
     'doc.title.play':     'Dicebreaker — Roll — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ Tools',
+    'header.eyebrow':     'SplatWorks™ Tools',
     'header.h1':          'Dicebreaker Creator',
     'header.tag':         'Roll a die, answer a prompt. Make your own template in seconds.',
     'header.allTools':    'All Tools',
@@ -148,7 +148,7 @@ WidgetI18n.register('dicebreakers', {
   es: {
     'doc.title':          'Creador de Rompehielos con Dado — DrawSplat',
     'doc.title.play':     'Rompehielos con Dado — Tira — DrawSplat',
-    'header.eyebrow':     'Herramientas DrawSplat™',
+    'header.eyebrow':     'Herramientas SplatWorks™',
     'header.h1':          'Creador de Rompehielos con Dado',
     'header.tag':         'Tira un dado, responde una pregunta. Crea tu propia plantilla en segundos.',
     'header.allTools':    'Todas las herramientas',
@@ -284,7 +284,7 @@ WidgetI18n.register('dicebreakers', {
   vi: {
     'doc.title':          'Trình tạo Phá băng bằng Xúc xắc — DrawSplat',
     'doc.title.play':     'Phá băng bằng Xúc xắc — Tung — DrawSplat',
-    'header.eyebrow':     'Công cụ DrawSplat™',
+    'header.eyebrow':     'Công cụ SplatWorks™',
     'header.h1':          'Trình tạo Phá băng bằng Xúc xắc',
     'header.tag':         'Tung xúc xắc, trả lời câu hỏi. Tạo mẫu của riêng bạn trong vài giây.',
     'header.allTools':    'Tất cả công cụ',
@@ -420,7 +420,7 @@ WidgetI18n.register('dicebreakers', {
   ar: {
     'doc.title':          'منشئ كسر الجليد بالنرد — DrawSplat',
     'doc.title.play':     'كسر الجليد بالنرد — رمي — DrawSplat',
-    'header.eyebrow':     'أدوات DrawSplat™',
+    'header.eyebrow':     'أدوات SplatWorks™',
     'header.h1':          'منشئ كسر الجليد بالنرد',
     'header.tag':         'ارمِ النرد، أجب عن سؤال. أنشئ قالبك الخاص في ثوانٍ.',
     'header.allTools':    'كل الأدوات',
@@ -556,7 +556,7 @@ WidgetI18n.register('dicebreakers', {
   zh: {
     'doc.title':          '骰子破冰器制作工具 — DrawSplat',
     'doc.title.play':     '骰子破冰器 — 投掷 — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ 工具',
+    'header.eyebrow':     'SplatWorks™ 工具',
     'header.h1':          '骰子破冰器制作工具',
     'header.tag':         '投掷骰子，回答一个问题。几秒内制作你自己的模板。',
     'header.allTools':    '所有工具',
@@ -692,7 +692,7 @@ WidgetI18n.register('dicebreakers', {
   uh: {
     'doc.title':          'पासे का बर्फ़तोड़ निर्माता — DrawSplat',
     'doc.title.play':     'पासे का बर्फ़तोड़ — फेंकें — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ टूल्स',
+    'header.eyebrow':     'SplatWorks™ टूल्स',
     'header.h1':          'पासे का बर्फ़तोड़ निर्माता',
     'header.tag':         'पासा फेंकें, एक प्रश्न का उत्तर दें। सेकंडों में अपना खाका बनाएं।',
     'header.allTools':    'सभी उपकरण',

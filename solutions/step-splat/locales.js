@@ -12,7 +12,7 @@ WidgetI18n.register('step-splat', {
     'doc.title': 'Step-Splat — DrawSplat™ Tools',
 
     // Header
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Step-Splat',
     'header.tagline.html': 'Splat any task into bite-size steps. Slide the <strong>spiciness</strong> for shorter or chunkier breakdowns. Click <strong>↳</strong> on any step to splat it further.',
     'header.home': 'Home',
@@ -277,7 +277,7 @@ WidgetI18n.register('step-splat', {
   // ===========================================================
   es: {
     'doc.title': 'Paso-Splat — Herramientas DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Paso-Splat',
     'header.tagline.html': 'Divide cualquier tarea en pasos pequeños. Ajusta la <strong>intensidad</strong> para obtener resúmenes más cortos o más detallados. Pulsa <strong>↳</strong> en cualquier paso para dividirlo aún más.',
     'header.home': 'Inicio',
@@ -528,7 +528,7 @@ WidgetI18n.register('step-splat', {
   // ===========================================================
   vi: {
     'doc.title': 'Step-Splat — Công cụ DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Step-Splat',
     'header.tagline.html': 'Chia bất kỳ nhiệm vụ nào thành các bước nhỏ. Kéo <strong>độ cay</strong> để có bản chia ngắn hoặc chi tiết hơn. Bấm <strong>↳</strong> trên bước nào đó để chia nhỏ thêm.',
     'header.home': 'Trang chủ',
@@ -779,7 +779,7 @@ WidgetI18n.register('step-splat', {
   // ===========================================================
   ar: {
     'doc.title': 'ستيب-سبلات — أدوات DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'ستيب-سبلات',
     'header.tagline.html': 'قسّم أي مهمة إلى خطوات صغيرة. حرّك <strong>الشدّة</strong> للحصول على تقسيم أقصر أو أكثر تفصيلاً. اضغط <strong>↳</strong> على أي خطوة لتقسيمها أكثر.',
     'header.home': 'الرئيسية',
@@ -1030,7 +1030,7 @@ WidgetI18n.register('step-splat', {
   // ===========================================================
   zh: {
     'doc.title': 'Step-Splat — DrawSplat 工具',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Step-Splat',
     'header.tagline.html': '把任何任务拆成小步骤。拖动<strong>辣度</strong>调整拆分粗细。点击任意步骤上的 <strong>↳</strong> 继续细分。',
     'header.home': '首页',
@@ -1281,7 +1281,7 @@ WidgetI18n.register('step-splat', {
   // ===========================================================
   uh: {
     'doc.title': 'Step-Splat — DrawSplat उपकरण',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'Step-Splat',
     'header.tagline.html': 'किसी भी काम को छोटे चरणों में बाँटें। छोटे या विस्तृत विभाजन के लिए <strong>तीखापन</strong> स्लाइड करें। किसी भी चरण पर <strong>↳</strong> क्लिक करके उसे और बाँटें।',
     'header.home': 'मुख्य पृष्ठ',

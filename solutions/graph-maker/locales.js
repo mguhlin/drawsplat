@@ -8,7 +8,7 @@
   // English (source of truth)
   reg('en', {
     'page.title': 'Graph Maker — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': 'All Tools',
     'header.home': 'Home',
     'hero.title': 'Graph Maker',
@@ -82,7 +82,7 @@
   // Spanish — AI-seeded; native-speaker review pending.
   reg('es', {
     'page.title': 'Creador de Gráficas — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': 'Todas las herramientas',
     'header.home': 'Inicio',
     'hero.title': 'Creador de Gráficas',
@@ -156,7 +156,7 @@
   // Vietnamese — AI-seeded; native-speaker review pending.
   reg('vi', {
     'page.title': 'Trình Tạo Đồ Thị — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': 'Tất cả công cụ',
     'header.home': 'Trang chủ',
     'hero.title': 'Trình Tạo Đồ Thị',
@@ -230,7 +230,7 @@
   // Arabic — AI-seeded; native-speaker review pending.
   reg('ar', {
     'page.title': 'صانع الرسوم البيانية — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': 'كل الأدوات',
     'header.home': 'الرئيسية',
     'hero.title': 'صانع الرسوم البيانية',
@@ -304,7 +304,7 @@
   // Chinese (Simplified) — AI-seeded; native-speaker review pending.
   reg('zh', {
     'page.title': '坐标图制作器 — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': '所有工具',
     'header.home': '主页',
     'hero.title': '坐标图制作器',
@@ -378,7 +378,7 @@
   // Hindi / Urdu — AI-seeded; native-speaker review pending.
   reg('uh', {
     'page.title': 'ग्राफ़ मेकर / گراف میکر — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.allTools': 'सभी टूल / تمام ٹولز',
     'header.home': 'होम / ہوم',
     'hero.title': 'ग्राफ़ मेकर / گراف میکر',

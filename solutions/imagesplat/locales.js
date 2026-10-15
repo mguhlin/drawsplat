@@ -6,7 +6,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "Save changes",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'ImageSplat™',
     'header.subtitle': 'A browser-based image editor for screenshots, classroom visuals, annotations, layers, crops, and GIF-ready frame exports. Nothing is uploaded.',
     'header.allTools': 'All Tools',
@@ -150,7 +150,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "Guardar cambios",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'ImageSplat™',
     'header.subtitle': 'Editor de imagen en el navegador para capturas, anotaciones, capas, recortes y exportaciones listas para GIF. No se sube nada.',
     'header.allTools': 'Todas las herramientas',
@@ -175,7 +175,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "Lưu thay đổi",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'Cong cu DrawSplat™',
+    'header.eyebrow': 'Cong cu SplatWorks™',
     'header.h1': 'ImageSplat™',
     'header.subtitle': 'Trinh sua anh tren trinh duyet cho anh chup man hinh, chu thich, lop, cat anh va xuat khung san sang lam GIF. Khong tai len may chu.',
     'header.allTools': 'Tat ca cong cu', 'header.home': 'Trang chu',
@@ -199,7 +199,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "حفظ التغييرات",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'ادوات DrawSplat™',
+    'header.eyebrow': 'ادوات SplatWorks™',
     'header.h1': 'ImageSplat™',
     'header.subtitle': 'محرر صور داخل المتصفح للقطات الشاشة والتعليقات والطبقات والقص وتصدير اطارات GIF. لا يتم رفع اي شيء.',
     'header.allTools': 'كل الادوات', 'header.home': 'الرئيسية',
@@ -223,7 +223,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "保存更改",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'ImageSplat™',
     'header.subtitle': '浏览器图像编辑器，适合截图、标注、图层、裁剪和 GIF 帧导出。不会上传文件。',
     'header.allTools': '全部工具', 'header.home': '首页',
@@ -247,7 +247,7 @@ WidgetI18n.register('splatimage-studio', {
     "textDialog.save": "परिवर्तन सहेजें / تبدیلیاں محفوظ کریں",
 
     'doc.title': 'ImageSplat™ - DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'ImageSplat™',
     'header.subtitle': 'Browser me image editor: screenshots, notes, layers, crop, aur GIF frames. Kuch upload nahi hota.',
     'header.allTools': 'All Tools', 'header.home': 'Home',

@@ -8,7 +8,7 @@ drop-in modules that share the same folder structure.
 
 ## Complete district setup
 
-For the complete DrawSplat + SplatWorks suite, [download the full source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip), extract it, and open `start-here.html`. Quick Start offers each component checked by default and a rerunnable installation plan. The [district setup guide](district-selfhost.html) covers accounts, classrooms, Google, HTTPS and backups. The drop-in static packages below remain available separately.
+For the complete SplatWorks ecosystem, including the DrawSplat whiteboard, [download the full source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip), extract it, and open `start-here.html`. Quick Start offers each component checked by default and a rerunnable installation plan. The [district setup guide](district-selfhost.html) covers accounts, classrooms, Google, HTTPS and backups. The drop-in static packages below remain available separately.
 
 ## Package model
 
@@ -23,9 +23,9 @@ step. To combine modules, unzip them into the same web root.
 | ShowSplatTM | `/splatworks/showsplat/` | You only need the presentation/WebDeck app. |
 | WriteSplatTM | `/splatworks/writesplat/` | You only need the writing app. |
 | ListSplatTM | `/splatworks/listsplat/` | You only need the database app. |
-| DrawSplatTM Tools | `/pages/tools.html`, `/solutions/` selected tools | You only need standalone creation tools. |
-| DrawSplatTM Widgets | `/pages/tools.html#widgets`, `/solutions/` selected widgets | You only need quick classroom utilities. |
-| DrawSplatTM Games | `/games/` | You only need standalone classroom games. |
+| SplatWorks Tools (legacy DrawSplat package name) | `/pages/tools.html`, `/solutions/` selected tools | You only need standalone creation tools. |
+| SplatWorks Widgets (legacy DrawSplat package name) | `/pages/tools.html#widgets`, `/solutions/` selected widgets | You only need quick classroom utilities. |
+| SplatWorks Games (legacy DrawSplat package name) | `/games/` | You only need standalone classroom games. |
 | AudioSplat | `/solutions/audiosplat/` | You only need the multitrack browser recorder/editor. |
 | ClipSplat | `/solutions/clipsplat/` plus `/solutions/mediasplat/ffmpeg/` | Record video, add panels and image cards, cut sections, and export MP4. Use its standalone ZIP with included Python 3 launcher. |
 | VideoSplat | `/solutions/videosplat/` | You only need the private browser video editor, subtitle burn-in, and anonymization workflow. |
@@ -55,7 +55,7 @@ drawsplat-site/
 The modules connect because they keep the same paths used by the full
 DrawSplatTM download.
 
-## Standalone SplatWorks
+## Standalone office apps
 
 SplatWorksTM can be hosted without the DrawSplatTM whiteboard. Install the
 SplatWorksTM suite package and open:
@@ -111,7 +111,7 @@ See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).
 
 ## Current release: v3.1.37
 
-All sixteen downloads are refreshed from the current source: full DrawSplat, SplatWorks suite and five individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.37.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
+The versioned v3.1.37 release contains these downloads: full DrawSplat, SplatWorks suite and five individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.37.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
 
 The download page shows approximate ZIP and unpacked sizes, measured from release archives in decimal MB. Run `python3 scripts/update-download-sizes.py vX.Y.Z` after building a release, rebuild with the updated page, then use `--check` to verify displayed sizes against the final archives.
 
@@ -158,3 +158,7 @@ workflows passed against the extracted standalone package. Four district Quick
 Start workflows passed using the packaged entry page. The release ZIPs were checked
 for CRC, checksums, safe paths and private-file exclusions. Native INDD, modern
 Pages IWA, QuarkXPress 5+ and external print certification remain outside support.
+
+## Current names and versioned archives
+
+SplatWorks is the ecosystem and DrawSplat is its whiteboard. Existing release ZIP filenames and bundled labels retain the names used when built. For the current tool names and privacy documentation, use the [wiki](../wiki/) or build from the current source archive; do not assume a previously published ZIP was rebuilt by a documentation update.

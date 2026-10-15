@@ -1,5 +1,4 @@
-// Shared "open in other tool" handoff used by Concept Map Studio ⇄ Markdown
-// Studio. URL-hash transfer turned out to be flaky in production — browsers
+// Shared "open in other tool" handoff used by ConceptSplat ⇄ MarkdownSplat. URL-hash transfer turned out to be flaky in production — browsers
 // strip the hash on noopener+target=_blank in some Safari versions, and
 // service-worker / CDN caching can serve stale recipient JS that mishandles
 // the fragment. localStorage is bulletproof across same-origin tabs and

@@ -8,7 +8,7 @@ WidgetI18n.register('toneshifter', {
 
   en: {
     'doc.title': 'Toneshifter — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Toneshifter',
     'header.tagline.html': 'Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English. Slide <strong>intensity</strong> for a light tweak vs. a full structural rewrite.',
     'header.home': 'Home',
@@ -117,7 +117,7 @@ WidgetI18n.register('toneshifter', {
 
   es: {
     'doc.title': 'Toneshifter — Herramientas DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Toneshifter',
     'header.tagline.html': 'Pega un borrador y cámbialo al tono que realmente querías — formal, amigable, conciso, diplomático, alentador o inglés sencillo. Ajusta la <strong>intensidad</strong> para un retoque ligero o una reescritura completa.',
     'header.home': 'Inicio',
@@ -222,7 +222,7 @@ WidgetI18n.register('toneshifter', {
 
   vi: {
     'doc.title': 'Toneshifter — Công cụ DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Toneshifter',
     'header.tagline.html': 'Dán bản nháp và chuyển sang giọng văn bạn thực sự muốn — trang trọng, thân thiện, ngắn gọn, ngoại giao, khích lệ, hoặc tiếng Anh đơn giản. Trượt <strong>cường độ</strong> để chỉnh nhẹ hoặc viết lại toàn bộ.',
     'header.home': 'Trang chủ',
@@ -327,7 +327,7 @@ WidgetI18n.register('toneshifter', {
 
   ar: {
     'doc.title': 'مُحوِّل النبرة — أدوات DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'مُحوِّل النبرة',
     'header.tagline.html': 'الصق أي مسودة وحوّلها إلى النبرة التي قصدت فعلاً — رسمية، ودودة، موجزة، دبلوماسية، مشجِّعة، أو إنجليزية بسيطة. حرّك <strong>الشدة</strong> للحصول على تعديل خفيف أو إعادة كتابة كاملة.',
     'header.home': 'الرئيسية',
@@ -432,7 +432,7 @@ WidgetI18n.register('toneshifter', {
 
   zh: {
     'doc.title': 'Toneshifter — DrawSplat 工具',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Toneshifter',
     'header.tagline.html': '粘贴任何草稿，将其转换为你真正想要的语气 — 正式、友好、简洁、外交、鼓励或浅显英文。拖动<strong>强度</strong>滑块以进行轻微调整或完整重写。',
     'header.home': '首页',
@@ -537,7 +537,7 @@ WidgetI18n.register('toneshifter', {
 
   uh: {
     'doc.title': 'Toneshifter — DrawSplat उपकरण',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'Toneshifter',
     'header.tagline.html': 'किसी भी मसौदे को चिपकाएँ और उस स्वर में बदलें जो आप वास्तव में चाहते थे — औपचारिक, मित्रवत, संक्षिप्त, राजनयिक, प्रोत्साहक, या सरल अंग्रेज़ी। <strong>तीव्रता</strong> स्लाइड करें।',
     'header.home': 'मुख्य पृष्ठ',

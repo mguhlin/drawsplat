@@ -4,7 +4,7 @@ WidgetI18n.register('drawsketch', {
 
   en: {
     'doc.title': 'Draw and Sketch — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Draw and Sketch',
     'header.subtitle': 'Turn the left knob to draw left and right, the right knob to draw up and down, and turn both knobs together to curve.',
     'header.home': 'Home',
@@ -37,7 +37,7 @@ WidgetI18n.register('drawsketch', {
 
   es: {
     'doc.title': 'Dibujo y boceto — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Dibujo y boceto',
     'header.subtitle': 'Gira la perilla izquierda para dibujar a izquierda y derecha, la derecha para arriba y abajo, y ambas a la vez para curvar.',
     'header.home': 'Inicio',
@@ -70,7 +70,7 @@ WidgetI18n.register('drawsketch', {
 
   vi: {
     'doc.title': 'Vẽ và phác — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Vẽ và phác',
     'header.subtitle': 'Xoay núm trái để vẽ ngang, núm phải để vẽ dọc, và xoay cả hai cùng lúc để vẽ đường cong.',
     'header.home': 'Trang chủ',
@@ -103,7 +103,7 @@ WidgetI18n.register('drawsketch', {
 
   ar: {
     'doc.title': 'الرسم والتخطيط — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'الرسم والتخطيط',
     'header.subtitle': 'أدِر المقبض الأيسر للرسم يمينًا ويسارًا، والمقبض الأيمن للرسم لأعلى ولأسفل، وأدر كليهما معًا لرسم منحنى.',
     'header.home': 'الرئيسية',
@@ -136,7 +136,7 @@ WidgetI18n.register('drawsketch', {
 
   zh: {
     'doc.title': '画与速写 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '画与速写',
     'header.subtitle': '转动左旋钮左右画线,转动右旋钮上下画线,同时转动两个旋钮即可画出曲线。',
     'header.home': '首页',
@@ -169,7 +169,7 @@ WidgetI18n.register('drawsketch', {
 
   uh: {
     'doc.title': 'चित्र और रेखाचित्र — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'चित्र और रेखाचित्र',
     'header.subtitle': 'बाएँ नॉब को घुमाकर दाएँ-बाएँ बनाएँ, दाएँ नॉब को घुमाकर ऊपर-नीचे, और दोनों को एक साथ घुमाकर वक्र बनाएँ।',
     'header.home': 'मुखपृष्ठ',

@@ -10,7 +10,7 @@ WidgetI18n.register('fortune', {
   en: {
     'doc.title.teacher':  'Classroom Fortune Wheel Teacher — DrawSplat',
     'doc.title.student':  'Classroom Fortune Wheel Student — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ Tools',
+    'header.eyebrow':     'SplatWorks™ Tools',
     'header.h1':          'Classroom Fortune Wheel',
     'header.subtitle.teacher': 'Teacher setup page: choose an education category or custom puzzle set, then share the student wheel link.',
     'header.subtitle.student': 'Spin the wheel, call a consonant, buy a vowel for $250, or solve the puzzle.',
@@ -125,7 +125,7 @@ WidgetI18n.register('fortune', {
   es: {
     'doc.title.teacher':  'Ruleta de la fortuna — Profesor — DrawSplat',
     'doc.title.student':  'Ruleta de la fortuna — Estudiante — DrawSplat',
-    'header.eyebrow':     'Herramientas DrawSplat™',
+    'header.eyebrow':     'Herramientas SplatWorks™',
     'header.h1':          'Ruleta de la fortuna',
     'header.subtitle.teacher': 'Página del profesor: elige una categoría educativa o un conjunto personalizado, luego comparte el enlace de la ruleta del estudiante.',
     'header.subtitle.student': 'Gira la ruleta, di una consonante, compra una vocal por $250 o resuelve el rompecabezas.',
@@ -238,7 +238,7 @@ WidgetI18n.register('fortune', {
   vi: {
     'doc.title.teacher':  'Vòng quay may mắn — Giáo viên — DrawSplat',
     'doc.title.student':  'Vòng quay may mắn — Học sinh — DrawSplat',
-    'header.eyebrow':     'Công cụ DrawSplat™',
+    'header.eyebrow':     'Công cụ SplatWorks™',
     'header.h1':          'Vòng quay may mắn lớp học',
     'header.subtitle.teacher': 'Trang giáo viên: chọn danh mục giáo dục hoặc bộ câu đố tự soạn, sau đó chia sẻ liên kết vòng quay cho học sinh.',
     'header.subtitle.student': 'Quay vòng quay, đoán phụ âm, mua nguyên âm với $250, hoặc giải câu đố.',
@@ -351,7 +351,7 @@ WidgetI18n.register('fortune', {
   ar: {
     'doc.title.teacher':  'عجلة الحظ الصفية — المعلم — DrawSplat',
     'doc.title.student':  'عجلة الحظ الصفية — الطالب — DrawSplat',
-    'header.eyebrow':     'أدوات DrawSplat™',
+    'header.eyebrow':     'أدوات SplatWorks™',
     'header.h1':          'عجلة الحظ الصفية',
     'header.subtitle.teacher': 'صفحة المعلم: اختر تصنيفًا تربويًا أو مجموعة ألغاز مخصصة، ثم شارك رابط عجلة الطالب.',
     'header.subtitle.student': 'أدِر العجلة، خمّن حرفًا ساكنًا، اشترِ حرف علة بـ $250، أو حلّ اللغز.',
@@ -464,7 +464,7 @@ WidgetI18n.register('fortune', {
   zh: {
     'doc.title.teacher':  '课堂幸运转盘 — 教师 — DrawSplat',
     'doc.title.student':  '课堂幸运转盘 — 学生 — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ 工具',
+    'header.eyebrow':     'SplatWorks™ 工具',
     'header.h1':          '课堂幸运转盘',
     'header.subtitle.teacher': '教师设置页:选择教育类别或自定义谜题集,然后分享学生转盘链接。',
     'header.subtitle.student': '转动转盘、猜辅音、用 $250 买元音,或直接解谜。',
@@ -577,7 +577,7 @@ WidgetI18n.register('fortune', {
   uh: {
     'doc.title.teacher':  'कक्षा भाग्य चक्र — शिक्षक — DrawSplat',
     'doc.title.student':  'कक्षा भाग्य चक्र — छात्र — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ उपकरण',
+    'header.eyebrow':     'SplatWorks™ उपकरण',
     'header.h1':          'कक्षा भाग्य चक्र',
     'header.subtitle.teacher': 'शिक्षक सेटअप पृष्ठ: एक शिक्षा श्रेणी या कस्टम पहेली सेट चुनें, फिर छात्र चक्र लिंक साझा करें।',
     'header.subtitle.student': 'चक्र घुमाएँ, व्यंजन बोलें, $250 में स्वर खरीदें, या पहेली हल करें।',

@@ -1,6 +1,6 @@
 # For technology admins
 
-Set up DrawSplat for your school, connect accounts, and keep saved work safe. Choose the hosting path first, then test it with a teacher and student account.
+Set up SplatWorks for your school, connect accounts, and keep saved work safe. Choose the hosting path first, then test it with a teacher and student account.
 
 ## Choose your setup
 
@@ -11,7 +11,7 @@ Set up DrawSplat for your school, connect accounts, and keep saved work safe. Ch
 | Individual apps | Selected apps served from your own website. | [Modular self-hosting](../wiki/modular-selfhost.html) |
 | Apps Script connection | Optional Google Drive and Sheets workflows. This is separate from district database hosting. | [Apps Script setup](../guides/google-setup.html) |
 
-Get current packages from [Downloads](../pages/download.html). The complete suite includes SplatWorks; choose the components your school needs.
+Get current packages from [Downloads](../pages/download.html). The complete SplatWorks suite includes DrawSplat, office apps, creative tools, widgets, and games; choose the components your school needs.
 
 ## Connect saving and school accounts
 

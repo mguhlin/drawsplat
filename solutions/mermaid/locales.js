@@ -1,4 +1,4 @@
-/* Mermaid Diagram Studio — locale dictionary. Loaded by solutions/mermaid/index.html
+/* DiagramSplat — locale dictionary. Loaded by solutions/mermaid/index.html
    after assets/js/widget-i18n.js. AI-seeded; native-speaker review pending.
 
    Note: the existing #langSelect dropdown controls DIAGRAM TEMPLATE language
@@ -10,9 +10,9 @@
 WidgetI18n.register('mermaid', {
 
   en: {
-    'doc.title': 'Mermaid Diagram Studio — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
-    'header.h1': 'Mermaid Diagram Studio',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'SplatWorks Tools',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': 'Type or paste Mermaid syntax on the left, preview on the right. Use templates for flowcharts, sequence diagrams, mind maps, pie charts, Gantt charts, timelines, class diagrams, and state diagrams. Download as SVG or PNG, or copy to clipboard.',
     'header.allTools': 'All Tools',
     'header.home': 'Home',
@@ -43,7 +43,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        'Color palette',
     'palette.label':     'Palette',
-    'palette.drawsplat': 'DrawSplat Purple (high contrast)',
+    'palette.drawsplat': 'SplatWorks Purple (high contrast)',
     'palette.navy':      'Navy Professional',
     'palette.forest':    'Forest Green',
     'palette.sunset':    'Sunset Orange',
@@ -85,9 +85,9 @@ WidgetI18n.register('mermaid', {
   },
 
   es: {
-    'doc.title': 'Estudio de diagramas Mermaid — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
-    'header.h1': 'Estudio de diagramas Mermaid',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'Herramientas SplatWorks™',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': 'Escribe o pega sintaxis Mermaid a la izquierda; verás la vista previa a la derecha. Usa plantillas para diagramas de flujo, secuencia, mapas mentales, gráficos circulares, Gantt, líneas de tiempo, clases y estados. Descarga como SVG o PNG, o copia al portapapeles.',
     'header.allTools': 'Todas las herramientas',
     'header.home': 'Inicio',
@@ -109,7 +109,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        'Paleta de colores',
     'palette.label':     'Paleta',
-    'palette.drawsplat': 'Morado DrawSplat (alto contraste)',
+    'palette.drawsplat': 'Morado SplatWorks (alto contraste)',
     'palette.navy':      'Azul profesional',
     'palette.forest':    'Verde bosque',
     'palette.sunset':    'Naranja atardecer',
@@ -159,9 +159,9 @@ WidgetI18n.register('mermaid', {
   },
 
   vi: {
-    'doc.title': 'Xưởng sơ đồ Mermaid — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
-    'header.h1': 'Xưởng sơ đồ Mermaid',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'Công cụ SplatWorks™',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': 'Gõ hoặc dán cú pháp Mermaid bên trái, xem trước bên phải. Dùng mẫu cho lưu đồ, sơ đồ tuần tự, sơ đồ tư duy, biểu đồ tròn, Gantt, dòng thời gian, sơ đồ lớp và sơ đồ trạng thái. Tải xuống SVG hoặc PNG, hoặc sao chép vào clipboard.',
     'header.allTools': 'Tất cả công cụ',
     'header.home': 'Trang chủ',
@@ -183,7 +183,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        'Bảng màu',
     'palette.label':     'Bảng màu',
-    'palette.drawsplat': 'Tím DrawSplat (tương phản cao)',
+    'palette.drawsplat': 'Tím SplatWorks (tương phản cao)',
     'palette.navy':      'Xanh chuyên nghiệp',
     'palette.forest':    'Xanh rừng',
     'palette.sunset':    'Cam hoàng hôn',
@@ -233,9 +233,9 @@ WidgetI18n.register('mermaid', {
   },
 
   ar: {
-    'doc.title': 'استوديو مخططات Mermaid — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
-    'header.h1': 'استوديو مخططات Mermaid',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'أدوات SplatWorks™',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': 'اكتب أو الصق صيغة Mermaid على اليسار، وشاهد المعاينة على اليمين. استخدم القوالب لمخططات الانسياب، التسلسل، الخرائط الذهنية، المخططات الدائرية، Gantt، الخطوط الزمنية، الفئات، والحالات. نزّل بصيغة SVG أو PNG، أو انسخ إلى الحافظة.',
     'header.allTools': 'كل الأدوات',
     'header.home': 'الرئيسية',
@@ -257,7 +257,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        'لوحة الألوان',
     'palette.label':     'اللوحة',
-    'palette.drawsplat': 'بنفسجي DrawSplat (تباين عالٍ)',
+    'palette.drawsplat': 'بنفسجي SplatWorks (تباين عالٍ)',
     'palette.navy':      'كحلي احترافي',
     'palette.forest':    'أخضر غابي',
     'palette.sunset':    'برتقالي غروب',
@@ -307,9 +307,9 @@ WidgetI18n.register('mermaid', {
   },
 
   zh: {
-    'doc.title': 'Mermaid 图表工作室 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
-    'header.h1': 'Mermaid 图表工作室',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'SplatWorks™ 工具',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': '左侧输入或粘贴 Mermaid 语法,右侧预览。使用模板创建流程图、时序图、思维导图、饼图、甘特图、时间线、类图和状态图。可下载为 SVG 或 PNG,或复制到剪贴板。',
     'header.allTools': '所有工具',
     'header.home': '首页',
@@ -331,7 +331,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        '配色方案',
     'palette.label':     '调色板',
-    'palette.drawsplat': 'DrawSplat 紫色（高对比度）',
+    'palette.drawsplat': 'SplatWorks 紫色（高对比度）',
     'palette.navy':      '专业海军蓝',
     'palette.forest':    '森林绿',
     'palette.sunset':    '夕阳橙',
@@ -381,9 +381,9 @@ WidgetI18n.register('mermaid', {
   },
 
   uh: {
-    'doc.title': 'Mermaid आरेख स्टूडियो — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
-    'header.h1': 'Mermaid आरेख स्टूडियो',
+    'doc.title': 'DiagramSplat — SplatWorks',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
+    'header.h1': 'DiagramSplat',
     'header.subtitle': 'बाईं ओर Mermaid सिंटैक्स टाइप या पेस्ट करें, दाईं ओर पूर्वावलोकन देखें। फ्लोचार्ट, सीक्वेंस, माइंड मैप, पाई, गैंट, टाइमलाइन, क्लास और स्टेट के लिए टेम्पलेट उपयोग करें। SVG या PNG में डाउनलोड करें, या क्लिपबोर्ड पर कॉपी करें।',
     'header.allTools': 'सभी उपकरण',
     'header.home': 'मुखपृष्ठ',
@@ -405,7 +405,7 @@ WidgetI18n.register('mermaid', {
 
     'palette.h3':        'رنگ پیلیٹ',
     'palette.label':     'پیلیٹ',
-    'palette.drawsplat': 'DrawSplat پرپل (ہائی کنٹراسٹ)',
+    'palette.drawsplat': 'SplatWorks پرپل (ہائی کنٹراسٹ)',
     'palette.navy':      'نیوی پروفیشنل',
     'palette.forest':    'فاریسٹ گرین',
     'palette.sunset':    'سن سیٹ آرنج',

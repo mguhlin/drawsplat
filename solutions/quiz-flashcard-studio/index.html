@@ -3,7 +3,7 @@
 <head>
 <!-- DrawSplat favicons -->
 <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="../../assets/brand/DrawSplat_logo.png" />
+<link rel="apple-touch-icon" href="../../assets/brand/SplatWorks_logo.png" />
 <link rel="manifest" href="../../site.webmanifest" />
 <meta name="theme-color" content="#7c3aed" />
 <!-- /DrawSplat favicons -->
@@ -11,10 +11,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'">
-<title data-i18n="doc.title">Quiz &amp; Flashcard Studio | DrawSplat™</title>
+<title data-i18n="doc.title">QuizSplat | DrawSplat™</title>
 <meta name="description" content="Create, import, export, play, and review classroom quizzes and transfer them into flashcards.">
 <script src="../../assets/js/widget-i18n.js"></script>
-<script src="./locales.js"></script>
+<script src="locales.js?v=20261015"></script>
 <script src="../../vendor/jszip.min.js"></script>
 <script src="./science-sample-data.js"></script>
 <style>
@@ -34,8 +34,8 @@
 <div class="page">
 <header class="site">
   <div class="title-block">
-    <p class="eyebrow"><a href="../../index.html" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-    <h1 data-i18n="header.h1">Quiz &amp; Flashcard Studio</h1>
+    <p class="eyebrow"><a href="../../index.html" data-i18n-html="header.eyebrow">SplatWorks Tools</a></p>
+    <h1 data-i18n="header.h1">QuizSplat</h1>
     <p class="tagline" data-i18n="header.tagline">Create a quiz, import a question bank, run a self-paced classroom round, export the content, then transfer the same questions into study flashcards.</p>
   </div>
   <div class="header-actions">
@@ -157,7 +157,7 @@
   </section>
 </main>
 <div class="print-deck" id="printDeck" aria-hidden="true"></div>
-<footer class="footer" data-i18n-html="footer.html"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup>TM</sup> Quiz &amp; Flashcard Studio. Browser-only imports, exports, quiz runs, and flashcards.</span> <a href="../../pages/features.html">Explore more</a>.</footer>
+<footer class="footer" data-i18n-html="footer.html"><img src="../../assets/brand/SplatWorks_logo.png" alt=""><span>DrawSplat<sup>TM</sup> QuizSplat. Browser-only imports, exports, quiz runs, and flashcards.</span> <a href="../../pages/features.html">Explore more</a>.</footer>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -221,7 +221,7 @@ function prevFlash(){if(!state.cards.length)return;state.cardIndex=(state.cardIn
 function renderReports(){if(!state.reports.length){$('reportArea').innerHTML=`<div class="empty">${esc(t('reports.empty'))}</div>`;return}$('reportArea').innerHTML=`<table class="report-table"><thead><tr><th>${esc(t('reports.time'))}</th><th>${esc(t('reports.player'))}</th><th>${esc(t('build.question'))}</th><th>${esc(t('reports.answer'))}</th><th>${esc(t('reports.result'))}</th><th>${esc(t('stat.points'))}</th></tr></thead><tbody>${state.reports.map(r=>`<tr><td>${esc(new Date(r.time).toLocaleString())}</td><td>${esc(r.player)}</td><td>${esc(r.question)}</td><td>${esc(r.answer)}</td><td>${r.correct?esc(t('reports.correct')):esc(t('reports.incorrect'))}</td><td>${r.points}</td></tr>`).join('')}</tbody></table>`}
 function exportReport(){const rows=[['time','quiz','player','question','answer','correct','points'],...state.reports.map(r=>[r.time,r.quiz,r.player,r.question,r.answer,r.correct,r.points])];download('quiz-report.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv')}
 function flashcardsForPrint(){if(!state.cards.length)syncCards(false);if($('printScope')?.value==='current'&&state.cards[state.cardIndex])return[state.cards[state.cardIndex]];return state.cards}
-function renderPrintDeck(cards){$('printDeck').innerHTML=cards.map((card,i)=>`<section class="print-page"><div class="print-half question"><div class="print-frame"><p class="print-label">${esc(t('build.question'))} ${i+1}</p><div class="print-content">${esc(card.front)}</div><div class="print-brand"><img src="../../assets/brand/DrawSplat_logo.png" alt="">drawsplat.org</div></div></div><div class="cut-line"></div><div class="print-half answer"><div class="print-frame"><p class="print-label">${esc(t('reports.answer'))} ${i+1}</p><div class="print-content">${esc(cardBackText(card))}</div><div class="print-brand"><img src="../../assets/brand/DrawSplat_logo.png" alt="">drawsplat.org</div></div></div></section>`).join('')}
+function renderPrintDeck(cards){$('printDeck').innerHTML=cards.map((card,i)=>`<section class="print-page"><div class="print-half question"><div class="print-frame"><p class="print-label">${esc(t('build.question'))} ${i+1}</p><div class="print-content">${esc(card.front)}</div><div class="print-brand"><img src="../../assets/brand/SplatWorks_logo.png" alt="">drawsplat.org</div></div></div><div class="cut-line"></div><div class="print-half answer"><div class="print-frame"><p class="print-label">${esc(t('reports.answer'))} ${i+1}</p><div class="print-content">${esc(cardBackText(card))}</div><div class="print-brand"><img src="../../assets/brand/SplatWorks_logo.png" alt="">drawsplat.org</div></div></div></section>`).join('')}
 function printFlashcards(){const cards=flashcardsForPrint();if(!cards.length){alert(t('flash.printEmpty'));return}renderPrintDeck(cards);document.body.classList.add('flashcard-printing');const cleanup=()=>{document.body.classList.remove('flashcard-printing');window.removeEventListener('afterprint',cleanup)};window.addEventListener('afterprint',cleanup);window.print();setTimeout(cleanup,1200)}
 function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('[data-view-btn]').forEach(b=>b.classList.toggle('active',b.dataset.viewBtn===name));if(name==='reports')renderReports();if(name==='flashcards')renderFlash();if(name==='play')renderPlay()}
 document.querySelectorAll('[data-view-btn]').forEach(b=>b.onclick=()=>showView(b.dataset.viewBtn));

@@ -4,7 +4,7 @@ WidgetI18n.register('coloring-book', {
 
   en: {
     'doc.title': 'Coloring Book — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Coloring Book',
     'header.subtitle': 'A digital coloring book for the classroom. Pick a page, choose a color, then paint it in with a brush. Erase, undo, or clear, then download as PNG or SVG, or print. Everything happens in your browser.',
     'header.allTools': 'All Tools',
@@ -58,7 +58,7 @@ WidgetI18n.register('coloring-book', {
 
   es: {
     'doc.title': 'Libro para Colorear — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Libro para Colorear',
     'header.subtitle': 'Un libro de colorear digital para el aula. Elige una página, escoge un color y píntala con un pincel. Borra, deshaz o limpia, luego descarga como PNG o SVG, o imprime. Todo ocurre en tu navegador.',
     'header.allTools': 'Todas las Herramientas',
@@ -112,7 +112,7 @@ WidgetI18n.register('coloring-book', {
 
   vi: {
     'doc.title': 'Sách Tô Màu — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Sách Tô Màu',
     'header.subtitle': 'Sách tô màu kỹ thuật số cho lớp học. Chọn một trang, chọn một màu, rồi dùng cọ để tô. Tẩy, hoàn tác hoặc xóa hết, sau đó tải về dạng PNG hoặc SVG, hoặc in. Mọi thứ diễn ra trong trình duyệt của bạn.',
     'header.allTools': 'Tất cả Công cụ',
@@ -166,7 +166,7 @@ WidgetI18n.register('coloring-book', {
 
   ar: {
     'doc.title': 'كتاب التلوين — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'كتاب التلوين',
     'header.subtitle': 'كتاب تلوين رقمي للفصل الدراسي. اختر صفحة، واختر لونًا، ثم لوّنها بالفرشاة. امسح أو تراجع أو امسح الكل، ثم نزّل كـ PNG أو SVG، أو اطبع. كل شيء يحدث في متصفحك.',
     'header.allTools': 'كل الأدوات',
@@ -220,7 +220,7 @@ WidgetI18n.register('coloring-book', {
 
   zh: {
     'doc.title': '涂色书 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '涂色书',
     'header.subtitle': '面向课堂的数字涂色书。挑选一页，选择颜色，然后用画笔涂色。可擦除、撤销或清空，再下载为 PNG 或 SVG，或直接打印。一切都在你的浏览器中完成。',
     'header.allTools': '全部工具',
@@ -274,7 +274,7 @@ WidgetI18n.register('coloring-book', {
 
   uh: {
     'doc.title': 'کلرنگ بک — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ ٹولز',
+    'header.eyebrow': 'SplatWorks™ ٹولز',
     'header.h1': 'کلرنگ بک',
     'header.subtitle': 'کلاس روم کے لیے ایک ڈیجیٹل کلرنگ بک۔ ایک صفحہ منتخب کریں، رنگ چنیں، پھر برش سے رنگ بھریں۔ مٹائیں، واپس کریں، یا سب صاف کریں، پھر PNG یا SVG کے طور پر ڈاؤن لوڈ کریں، یا پرنٹ کریں۔ سب کچھ آپ کے براؤزر میں ہوتا ہے۔',
     'header.allTools': 'تمام ٹولز',

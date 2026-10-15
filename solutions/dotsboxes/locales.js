@@ -4,7 +4,7 @@ WidgetI18n.register('dotsboxes', {
 
   en: {
     'doc.title': 'Dots and Boxes — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Dots and Boxes',
     'header.subtitle': 'Take turns drawing one line at a time. Close the fourth side of a box to claim it and earn another turn. Most boxes wins.',
     'header.home': 'Home',
@@ -53,7 +53,7 @@ WidgetI18n.register('dotsboxes', {
 
   es: {
     'doc.title': 'Puntos y cajas — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Puntos y cajas',
     'header.subtitle': 'Por turnos, dibuja una línea a la vez. Cierra el cuarto lado de una caja para reclamarla y ganar otro turno. Gana quien tenga más cajas.',
     'header.home': 'Inicio',
@@ -102,7 +102,7 @@ WidgetI18n.register('dotsboxes', {
 
   vi: {
     'doc.title': 'Chấm và ô — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Chấm và ô',
     'header.subtitle': 'Luân phiên vẽ một đường mỗi lượt. Đóng cạnh thứ tư của một ô để chiếm nó và được thêm lượt. Nhiều ô nhất thắng.',
     'header.home': 'Trang chủ',
@@ -151,7 +151,7 @@ WidgetI18n.register('dotsboxes', {
 
   ar: {
     'doc.title': 'النقاط والصناديق — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'النقاط والصناديق',
     'header.subtitle': 'بالتناوب، ارسم خطًا واحدًا في كل مرة. أغلِق الضلع الرابع لصندوق لتفوز به وتحصل على دور إضافي. من يجمع أكبر عدد من الصناديق يفوز.',
     'header.home': 'الرئيسية',
@@ -200,7 +200,7 @@ WidgetI18n.register('dotsboxes', {
 
   zh: {
     'doc.title': '点和方格 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '点和方格',
     'header.subtitle': '轮流画一条线。封闭方格的第四边即可占有它,并再得一回合。方格最多者获胜。',
     'header.home': '首页',
@@ -249,7 +249,7 @@ WidgetI18n.register('dotsboxes', {
 
   uh: {
     'doc.title': 'बिंदु और बॉक्स — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'बिंदु और बॉक्स',
     'header.subtitle': 'बारी-बारी से एक रेखा खींचें। बॉक्स के चौथे किनारे को बंद कर उसे जीतें और एक और बारी पाएँ। सबसे ज्यादा बॉक्स वाला जीतता है।',
     'header.home': 'मुखपृष्ठ',

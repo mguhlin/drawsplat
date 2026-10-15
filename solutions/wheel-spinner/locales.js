@@ -4,7 +4,7 @@ WidgetI18n.register('wheel-spinner', {
 
   en: {
     'doc.title': 'Wheel Spinner — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Wheel Spinner',
     'header.home': 'Home',
 
@@ -51,7 +51,7 @@ WidgetI18n.register('wheel-spinner', {
 
   es: {
     'doc.title': 'Ruleta — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Ruleta',
     'header.home': 'Inicio',
 
@@ -98,7 +98,7 @@ WidgetI18n.register('wheel-spinner', {
 
   vi: {
     'doc.title': 'Vòng quay — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Vòng quay',
     'header.home': 'Trang chủ',
 
@@ -145,7 +145,7 @@ WidgetI18n.register('wheel-spinner', {
 
   ar: {
     'doc.title': 'عجلة العشوائية — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'عجلة العشوائية',
     'header.home': 'الرئيسية',
 
@@ -192,7 +192,7 @@ WidgetI18n.register('wheel-spinner', {
 
   zh: {
     'doc.title': '转盘 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '转盘',
     'header.home': '首页',
 
@@ -239,7 +239,7 @@ WidgetI18n.register('wheel-spinner', {
 
   uh: {
     'doc.title': 'व्हील स्पिनर — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'व्हील स्पिनर',
     'header.home': 'मुखपृष्ठ',
 

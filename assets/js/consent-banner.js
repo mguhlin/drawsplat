@@ -1,18 +1,8 @@
-// DrawSplat localStorage / cookie consent banner.
-//
-// Shows once on first visit, dismisses on either button. Choice is stored in
-// localStorage.drawsplat.consent.accepted so the banner stays out of the way
-// on return visits. The banner is intentionally lightweight: no tracking, no
-// "reject all" granularity (we don't have categories — everything we store is
-// either strictly-necessary or a single-feature preference like "audio
-// muted"). The accompanying GDPR Compliance Summary page documents what each
-// localStorage key is for.
-//
-// Load this on every public-facing page that uses localStorage:
-//   <script src="/assets/js/consent-banner.js" defer></script>
-//
-// Schools self-hosting who prefer a different UX (full cookie wall, granular
-// consent, district branding) can replace this single file with their own.
+// SplatWorks browser storage notice. This is an acknowledgement, not a
+// granular consent manager. Keep the existing storage key and dismissal event
+// so returning visitors and component integrations remain compatible.
+// Local drafts, hosting metadata and optional connections have different
+// boundaries; see the component inventory and the deployment privacy notice.
 (function(){
   const KEY = 'drawsplat.consent.accepted';
   // Skip if already accepted, or if the page opted out via data-no-consent
@@ -40,18 +30,17 @@
     ].join(';');
     wrap.innerHTML = ''
       + '<div style="flex:1 1 320px;min-width:240px">'
-      +   '<strong style="color:#5b21b6">DrawSplat saves your preferences in this browser.</strong> '
-      +   'Things like your language, in-progress board, and Audio On/Off toggle live in your browser\'s '
-      +   'localStorage so they persist between visits. We do not use cookies for tracking, do not run third-party '
-      +   'analytics, and never send your data anywhere unless you opt into Cloud Save.'
-      +   ' <a href="/legal/gdpr-compliance.html#localStorage" style="color:#6d28d9;font-weight:700">See the full storage inventory →</a>'
+      +   '<strong style="color:#5b21b6">SplatWorks keeps app drafts and settings in this browser.</strong> '
+      +   'They may remain until cleared. Public hosting receives request metadata; enabled cloud, AI, '
+      +   'and sharing features send selected data to their providers.'
+      +   ' <a href="/legal/widgets-security.html" style="color:#6d28d9;font-weight:700">Review storage and connections →</a>'
       + '</div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap">'
       +   '<button type="button" id="drawsplatConsentOk" '
       +     'style="padding:8px 14px;border:0;border-radius:8px;background:#7c3aed;color:#fff;font-weight:800;cursor:pointer;font:inherit;font-weight:800">'
       +     'Got it'
       +   '</button>'
-      +   '<a href="/legal/gdpr-compliance.html" id="drawsplatConsentNotice" '
+      +   '<a href="/legal/terms-privacy.html" id="drawsplatConsentNotice" '
       +     'style="padding:8px 14px;border:1.5px solid #7c3aed;border-radius:8px;background:#fff;color:#7c3aed;font-weight:800;text-decoration:none">'
       +     'Read full notice'
       +   '</a>'

@@ -1,4 +1,4 @@
-/* Rubric Builder — locale dictionary. AI-seeded; native-speaker review
+/* RubricSplat — locale dictionary. AI-seeded; native-speaker review
    pending.
 
    The five rubric templates (project/writing/presentation/collaboration/
@@ -8,9 +8,9 @@
 WidgetI18n.register('rubric-builder', {
 
   en: {
-    'doc.title':          'Rubric Builder — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ Classroom Widget',
-    'header.h1':          'Rubric Builder',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'SplatWorks™ Classroom Widget',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    'Create a classroom rubric with editable criteria, performance levels, point values, and ready-to-print descriptors.',
     'header.home':        'Home',
 
@@ -106,9 +106,9 @@ WidgetI18n.register('rubric-builder', {
   },
 
   es: {
-    'doc.title':          'Generador de Rúbricas — DrawSplat',
-    'header.eyebrow':     'Widget de aula DrawSplat™',
-    'header.h1':          'Generador de Rúbricas',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'Widget de aula SplatWorks™',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    'Crea una rúbrica de aula con criterios editables, niveles de desempeño, puntajes y descriptores listos para imprimir.',
     'header.home':        'Inicio',
 
@@ -204,9 +204,9 @@ WidgetI18n.register('rubric-builder', {
   },
 
   vi: {
-    'doc.title':          'Trình tạo Rubric — DrawSplat',
-    'header.eyebrow':     'Tiện ích lớp học DrawSplat™',
-    'header.h1':          'Trình tạo Rubric',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'Tiện ích lớp học SplatWorks™',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    'Tạo rubric lớp học với tiêu chí có thể chỉnh sửa, cấp độ hiệu suất, giá trị điểm và mô tả sẵn để in.',
     'header.home':        'Trang chủ',
 
@@ -302,9 +302,9 @@ WidgetI18n.register('rubric-builder', {
   },
 
   ar: {
-    'doc.title':          'منشئ التقييم — DrawSplat',
-    'header.eyebrow':     'أداة فصل DrawSplat™',
-    'header.h1':          'منشئ التقييم',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'أداة فصل SplatWorks™',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    'أنشئ تقييمًا للفصل بمعايير قابلة للتحرير ومستويات أداء ودرجات ووصف جاهز للطباعة.',
     'header.home':        'الرئيسية',
 
@@ -400,9 +400,9 @@ WidgetI18n.register('rubric-builder', {
   },
 
   zh: {
-    'doc.title':          '评分量规生成器 — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ 课堂小工具',
-    'header.h1':          '评分量规生成器',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'SplatWorks™ 课堂小工具',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    '创建可编辑的课堂评分量规，包含可编辑标准、表现等级、分值和可直接打印的描述。',
     'header.home':        '首页',
 
@@ -498,9 +498,9 @@ WidgetI18n.register('rubric-builder', {
   },
 
   uh: {
-    'doc.title':          'रूब्रिक निर्माता — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ कक्षा विजेट',
-    'header.h1':          'रूब्रिक निर्माता',
+    'doc.title':          'RubricSplat — SplatWorks',
+    'header.eyebrow':     'SplatWorks™ कक्षा विजेट',
+    'header.h1':          'RubricSplat',
     'header.subtitle':    'संपादन योग्य मानदंडों, प्रदर्शन स्तरों, अंक मूल्यों, और प्रिंट के लिए तैयार वर्णनकर्ताओं के साथ एक कक्षा रूब्रिक बनाएँ।',
     'header.home':        'मुख पृष्ठ',
 

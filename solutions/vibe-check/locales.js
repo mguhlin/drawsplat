@@ -5,7 +5,7 @@ WidgetI18n.register('vibe-check', {
 
   en: {
     'doc.title': 'Vibe Check — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Vibe Check',
     'header.tagline': 'Paste a message you received and get an honest read on its tone — so you can stop spiraling about what your boss / mom / professor "really meant."',
     'header.home': 'Home',
@@ -158,7 +158,7 @@ WidgetI18n.register('vibe-check', {
 
   es: {
     'doc.title': 'Termómetro de tono — Herramientas DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Termómetro de tono',
     'header.tagline': 'Pega un mensaje que recibiste y obtén una lectura honesta de su tono — para dejar de darle vueltas a lo que "realmente quiso decir" tu jefe / mamá / profesor.',
     'header.home': 'Inicio',
@@ -303,7 +303,7 @@ WidgetI18n.register('vibe-check', {
 
   vi: {
     'doc.title': 'Vibe Check — Công cụ DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Vibe Check',
     'header.tagline': 'Dán tin nhắn bạn nhận được và nhận đọc giọng văn trung thực — để bạn ngừng suy diễn về điều sếp / mẹ / giáo sư "thực sự muốn nói".',
     'header.home': 'Trang chủ',
@@ -448,7 +448,7 @@ WidgetI18n.register('vibe-check', {
 
   ar: {
     'doc.title': 'فحص النبرة — أدوات DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'فحص النبرة',
     'header.tagline': 'الصق رسالة تلقّيتها واحصل على قراءة صريحة لنبرتها — لكي تتوقف عن التفكير الزائد فيما "قصده فعلاً" مديرك / والدتك / أستاذك.',
     'header.home': 'الرئيسية',
@@ -593,7 +593,7 @@ WidgetI18n.register('vibe-check', {
 
   zh: {
     'doc.title': 'Vibe Check — DrawSplat 工具',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Vibe Check',
     'header.tagline': '粘贴你收到的信息，获得对其语气的诚实解读 — 这样你就不必反复琢磨老板/妈妈/教授"到底是什么意思"。',
     'header.home': '首页',
@@ -738,7 +738,7 @@ WidgetI18n.register('vibe-check', {
 
   uh: {
     'doc.title': 'Vibe Check — DrawSplat उपकरण',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'Vibe Check',
     'header.tagline': 'मिला हुआ संदेश चिपकाएँ और उसके स्वर की ईमानदार पढ़त पाएँ — ताकि आप यह सोचना बंद कर सकें कि बॉस/माँ/प्रोफ़ेसर का "असली मतलब" क्या था।',
     'header.home': 'मुख्य पृष्ठ',

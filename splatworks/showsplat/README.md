@@ -16,7 +16,7 @@ This static browser app includes:
 - drag and resize for slide objects
 - notes panel
 - template slides and themes
-- Markdown Studio import/export
+- MarkdownSplat import/export
 - WebDeck HTML, PDF, ODP, and PowerPoint/PPTX import options
 - WebDeck HTML export with optional frontend password hash
 - WebDeck HTML import for compatible `SLIDES` array decks
@@ -46,7 +46,7 @@ This static browser app includes:
 ## In-App Help
 
 The Help menu now opens product-facing guidance inside ShowSplatTM for building
-decks, editing slide objects, using Markdown Studio, presenting, saving,
+decks, editing slide objects, using MarkdownSplat, presenting, saving,
 exporting, importing, and privacy. Technical planning documents stay in
 `docs/` for maintainers rather than appearing in the user-facing Help menu.
 

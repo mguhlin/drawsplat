@@ -1,4 +1,4 @@
-const REGISTRY_URL = "/data/drawsplat-tools.json?v=5";
+const REGISTRY_URL = "/data/drawsplat-tools.json?v=6";
 let registryPromise;
 
 function validate(registry) {
@@ -7,7 +7,7 @@ function validate(registry) {
     !Array.isArray(registry.categories) ||
     !Array.isArray(registry.tools)
   )
-    throw Error("The DrawSplat tool registry has an unsupported format.");
+    throw Error("The SplatWorks tool registry has an unsupported format.");
   const categories = new Set(
     registry.categories.map((category) => category.id),
   );
@@ -37,7 +37,7 @@ export async function getRegistry() {
   })
     .then((response) => {
       if (!response.ok)
-        throw Error(`Could not load DrawSplat tools (${response.status}).`);
+        throw Error(`Could not load SplatWorks tools (${response.status}).`);
       return response.json();
     })
     .then(validate);

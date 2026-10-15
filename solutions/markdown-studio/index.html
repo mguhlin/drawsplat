@@ -2,14 +2,14 @@
 <html lang="en"><head>
 <!-- DrawSplat favicons -->
 <link rel="icon" href="../../assets/favicons/markdown.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="../../assets/brand/DrawSplat_logo.png" />
+<link rel="apple-touch-icon" href="../../assets/brand/SplatWorks_logo.png" />
 <link rel="manifest" href="../../site.webmanifest" />
 <meta name="theme-color" content="#7c3aed" />
 <!-- /DrawSplat favicons -->
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="doc.title">Markdown Studio — DrawSplat™</title>
+<title data-i18n="doc.title">MarkdownSplat — SplatWorks™</title>
 <meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML, WordPress block code, Microsoft Word DOCX, or OpenDocument ODT.">
 <script src="../../assets/js/widget-i18n.js"></script>
 <script src="../../assets/js/cm-md-handoff.js"></script>
@@ -690,7 +690,7 @@ footer .credit a:hover {
 </head>
 <body>
 <nav class="topnav">
-  <a href="../../index.html" class="topnav-brand" data-i18n-html="nav.brandHtml">DrawSplat<sup class="tm">TM</sup> <em>Markdown Studio</em></a>
+  <a href="../../index.html" class="topnav-brand" data-i18n-html="nav.brandHtml">SplatWorks <em>MarkdownSplat</em></a>
   <div class="topnav-spacer"></div>
   <div class="i18n-picker" data-i18n-picker></div>
   <a href="../../app/whiteboard.html" class="topnav-link" data-i18n-html="nav.openDrawsplatHtml">Open DrawSplat<sup class="tm">TM</sup></a>
@@ -734,7 +734,7 @@ Custom HTML block.</p>
     </div>
     <div class="toolbar-divider"></div>
     <div class="toolbar-group">
-      <button class="btn" id="btn-open-concept-map" data-i18n="btn.openCm" data-i18n-title="btn.openCm.title" title="Parse headings + bullets into a concept map and open in Concept Map Studio">Open in Concept Map Studio →</button>
+      <button class="btn" id="btn-open-concept-map" data-i18n="btn.openCm" data-i18n-title="btn.openCm.title" title="Parse headings + bullets into a concept map and open in ConceptSplat">Open in ConceptSplat →</button>
     </div>
   </div>
 
@@ -766,7 +766,7 @@ Custom HTML block.</p>
   </div>
 
   <div class="htmlbar" id="htmlbar" role="region" data-i18n-aria-label="htmlbar.aria" aria-label="Paste HTML converter">
-    <p class="htmlbar-note" data-i18n="htmlbar.note">Paste a full HTML page or an HTML fragment. Markdown Studio will convert headings, paragraphs, lists, links, images, quotes, code, tables, and common WordPress block markup.</p>
+    <p class="htmlbar-note" data-i18n="htmlbar.note">Paste a full HTML page or an HTML fragment. MarkdownSplat will convert headings, paragraphs, lists, links, images, quotes, code, tables, and common WordPress block markup.</p>
     <textarea id="html-paste-input" spellcheck="false" data-i18n-placeholder="htmlbar.placeholder" placeholder="Paste HTML here"></textarea>
     <div class="htmlbar-actions">
       <button class="btn btn-primary" id="btn-html-to-md" data-i18n="btn.htmlToMd" data-i18n-title="btn.htmlToMd.title" title="Convert pasted HTML into editable Markdown">Convert to Markdown</button>
@@ -994,7 +994,7 @@ def hello():
 </section>
 
 <footer>
-  <div class="brand" data-i18n-html="footer.brandHtml">DrawSplat<sup class="tm">TM</sup> <span>Markdown Studio</span></div>
+  <div class="brand" data-i18n-html="footer.brandHtml">SplatWorks <span>MarkdownSplat</span></div>
   <div class="credit" data-i18n-html="footer.credit.html">Vibe-coded by <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a></div>
   <div></div>
 </footer>
@@ -1003,7 +1003,7 @@ def hello():
 <div class="drop-overlay" id="drop-overlay"><span data-i18n="drop.overlay">Drop your .md file to import</span></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="./locales.js"></script>
+<script src="locales.js?v=20261015"></script>
 <script>
 (function () {
   'use strict';
@@ -1930,7 +1930,7 @@ def hello():
     const title = documentTitle();
     zip.file('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>');
     zip.folder('_rels').file('.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>');
-    zip.folder('docProps').file('core.xml', '<?xml version="1.0" encoding="UTF-8"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>DrawSplat Markdown Studio</dc:creator></cp:coreProperties>');
+    zip.folder('docProps').file('core.xml', '<?xml version="1.0" encoding="UTF-8"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>SplatWorks MarkdownSplat</dc:creator></cp:coreProperties>');
     const word = zip.folder('word');
     word.file('document.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + htmlBlocksToOffice('docx') + '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>');
     word.file('styles.xml', '<?xml version="1.0" encoding="UTF-8"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>' + [1,2,3,4,5,6].map(n => '<w:style w:type="paragraph" w:styleId="Heading' + n + '"><w:name w:val="heading ' + n + '"/><w:basedOn w:val="Normal"/><w:pPr><w:outlineLvl w:val="' + (n-1) + '"/></w:pPr><w:rPr><w:b/><w:sz w:val="' + (34-n*2) + '"/></w:rPr></w:style>').join('') + '<w:style w:type="paragraph" w:styleId="NoSpacing"><w:name w:val="No Spacing"/></w:style></w:styles>');
@@ -1946,7 +1946,7 @@ def hello():
     zip.file('mimetype', 'application/vnd.oasis.opendocument.text', {compression:'STORE'});
     zip.file('content.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"><office:body><office:text>' + htmlBlocksToOffice('odt') + '</office:text></office:body></office:document-content>');
     zip.file('styles.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.2"><office:styles><style:style style:name="Bold" style:family="text"><style:text-properties fo:font-weight="bold"/></style:style><style:style style:name="Italic" style:family="text"><style:text-properties fo:font-style="italic"/></style:style><style:style style:name="Strike" style:family="text"><style:text-properties style:text-line-through-style="solid"/></style:style><style:style style:name="Code" style:family="text"><style:text-properties style:font-name="monospace"/></style:style><style:style style:name="Blockquote" style:family="paragraph"><style:paragraph-properties fo:margin-left="0.3in"/></style:style></office:styles></office:document-styles>');
-    zip.file('meta.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" office:version="1.2"><office:meta><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>DrawSplat Markdown Studio</dc:creator></office:meta></office:document-meta>');
+    zip.file('meta.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" office:version="1.2"><office:meta><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>SplatWorks MarkdownSplat</dc:creator></office:meta></office:document-meta>');
     zip.folder('META-INF').file('manifest.xml', '<?xml version="1.0" encoding="UTF-8"?><manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2"><manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.text"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="meta.xml" manifest:media-type="text/xml"/></manifest:manifest>');
     downloadBlob(suggestFilename('odt'), await zip.generateAsync({type:'blob', compression:'DEFLATE', mimeType:'application/vnd.oasis.opendocument.text'}));
     showToast('Downloaded OpenDocument text document');
@@ -2078,7 +2078,7 @@ def hello():
     const mapJson = window.DrawSplatHandoff.parseMarkdownToConceptMap(md);
     window.DrawSplatHandoff.write(JSON.stringify(mapJson), 'conceptmap');
     window.open('../concept-map/', '_blank', 'noopener');
-    showToast(t('toast.cmOpened') || 'Opened in Concept Map Studio.');
+    showToast(t('toast.cmOpened') || 'Opened in ConceptSplat.');
   });
 
   $('btn-copy-md').addEventListener('click', (e) => copyText(input.value, e.currentTarget));
@@ -2155,12 +2155,12 @@ def hello():
   // Track which sample text the editor last loaded, so a language switch
   // can swap it for the same locale's sample only when the user hasn't
   // started editing.
-  // Hash-prefill: another DrawSplat tool (e.g. Concept Map Studio's "Open
-  // in Markdown Studio" button) can hand off content via the URL hash —
+  // Hash-prefill: another SplatWorks tool (e.g. ConceptSplat's "Open
+  // in MarkdownSplat" button) can hand off content via the URL hash —
   // #md=<encodeURIComponent>. If present, we use that and skip the saved
   // draft / sample to avoid overwriting the just-handed-off content.
-  // Receive a handoff from another DrawSplat tool (Concept Map Studio's
-  // Outline view → Open in Markdown Studio button). Primary channel is
+  // Receive a handoff from another SplatWorks tool (ConceptSplat's
+  // Outline view → Open in MarkdownSplat button). Primary channel is
   // localStorage via DrawSplatHandoff — bulletproof across same-origin
   // tabs and survives the recipient's cached HTML. URL hash kept as a
   // fallback for when the sender wasn't able to write localStorage.

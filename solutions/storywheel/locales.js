@@ -6,7 +6,7 @@ WidgetI18n.register('storywheel', {
 
   en: {
     'doc.title':          'Story Wheel Maker — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ Tools',
+    'header.eyebrow':     'SplatWorks™ Tools',
     'header.h1':          'Story Wheel Maker',
     'header.subtitle':    'Choose the 3, 5, or 7 most important events, put them in order, illustrate each wedge, and share a visual story summary.',
     'header.home':        'Home',
@@ -69,7 +69,7 @@ WidgetI18n.register('storywheel', {
 
   es: {
     'doc.title':          'Creador de Rueda Narrativa — DrawSplat',
-    'header.eyebrow':     'Herramientas DrawSplat™',
+    'header.eyebrow':     'Herramientas SplatWorks™',
     'header.h1':          'Creador de Rueda Narrativa',
     'header.subtitle':    'Elige los 3, 5 o 7 eventos más importantes, ordénalos, ilustra cada gajo y comparte un resumen visual de la historia.',
     'header.home':        'Inicio',
@@ -132,7 +132,7 @@ WidgetI18n.register('storywheel', {
 
   vi: {
     'doc.title':          'Trình tạo Bánh xe Câu chuyện — DrawSplat',
-    'header.eyebrow':     'Công cụ DrawSplat™',
+    'header.eyebrow':     'Công cụ SplatWorks™',
     'header.h1':          'Trình tạo Bánh xe Câu chuyện',
     'header.subtitle':    'Chọn 3, 5 hoặc 7 sự kiện quan trọng nhất, sắp xếp theo thứ tự, minh họa từng nan và chia sẻ một bản tóm tắt câu chuyện trực quan.',
     'header.home':        'Trang chủ',
@@ -195,7 +195,7 @@ WidgetI18n.register('storywheel', {
 
   ar: {
     'doc.title':          'منشئ عجلة القصة — DrawSplat',
-    'header.eyebrow':     'أدوات DrawSplat™',
+    'header.eyebrow':     'أدوات SplatWorks™',
     'header.h1':          'منشئ عجلة القصة',
     'header.subtitle':    'اختر أهم 3 أو 5 أو 7 أحداث، ورتّبها، وارسم كل قطاع، وشارك ملخصًا مرئيًا للقصة.',
     'header.home':        'الرئيسية',
@@ -258,7 +258,7 @@ WidgetI18n.register('storywheel', {
 
   zh: {
     'doc.title':          '故事轮制作工具 — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ 工具',
+    'header.eyebrow':     'SplatWorks™ 工具',
     'header.h1':          '故事轮制作工具',
     'header.subtitle':    '选择 3、5 或 7 个最重要的事件，按顺序排列，为每个扇形配图，分享一份直观的故事摘要。',
     'header.home':        '首页',
@@ -321,7 +321,7 @@ WidgetI18n.register('storywheel', {
 
   uh: {
     'doc.title':          'कहानी पहिया निर्माता — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ टूल्स',
+    'header.eyebrow':     'SplatWorks™ टूल्स',
     'header.h1':          'कहानी पहिया निर्माता',
     'header.subtitle':    '3, 5 या 7 सबसे महत्वपूर्ण घटनाओं को चुनें, उन्हें क्रम में रखें, प्रत्येक खंड को चित्रित करें, और एक दृश्य कहानी सारांश साझा करें।',
     'header.home':        'मुख पृष्ठ',

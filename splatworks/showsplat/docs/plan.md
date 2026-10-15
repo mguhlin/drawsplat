@@ -68,7 +68,7 @@ PowerPoint, and HTML slide tools such as reveal.js.
   number placement.
 - Minimalist information bars across the bottom of slides.
 
-### Markdown Studio
+### MarkdownSplat
 
 - Built-in Markdown editor for outline-first deck creation.
 - Markdown import using `---` as slide separators.

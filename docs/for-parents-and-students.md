@@ -1,6 +1,6 @@
 # For parents and students
 
-DrawSplat lets students show ideas with drawings, text, pictures, and recorded notes. SplatWorks adds tools for writing, slides, spreadsheets, and organized lists.
+SplatWorks is the ecosystem for creating and learning. Its DrawSplat whiteboard lets students show ideas with drawings, text, pictures, and recorded notes. Other apps support writing, slides, spreadsheets, publications, organized lists, and media projects.
 
 ## Students: start your work
 

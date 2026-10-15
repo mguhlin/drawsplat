@@ -8,7 +8,7 @@ WidgetI18n.register('clock-wizard', {
   // ===========================================================
   en: {
     'doc.title': 'Clock Wizard — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Clock Wizard',
     'header.tagline': "Describe a task, get an honest time estimate — with phase breakdown and an ADHD-tax allowance so you don't over-promise.",
     'header.home': 'Home',
@@ -261,7 +261,7 @@ WidgetI18n.register('clock-wizard', {
 
   es: {
     'doc.title': 'Reloj-Mago — Herramientas DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Reloj-Mago',
     'header.tagline': 'Describe una tarea y obtén una estimación honesta de tiempo — con desglose por fases y un margen para el "impuesto TDAH" para no prometer de más.',
     'header.home': 'Inicio',
@@ -483,7 +483,7 @@ WidgetI18n.register('clock-wizard', {
 
   vi: {
     'doc.title': 'Phù Thuỷ Đồng Hồ — Công cụ DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Phù Thuỷ Đồng Hồ',
     'header.tagline': 'Mô tả nhiệm vụ, nhận ước lượng thời gian trung thực — kèm chia giai đoạn và phụ phí ADHD để bạn không hứa quá.',
     'header.home': 'Trang chủ',
@@ -705,7 +705,7 @@ WidgetI18n.register('clock-wizard', {
 
   ar: {
     'doc.title': 'ساحر الساعة — أدوات DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'ساحر الساعة',
     'header.tagline': 'صف مهمة وستحصل على تقدير زمني صادق — مع تقسيم المراحل وبدل لـ ADHD حتى لا تَعِد بأكثر مما تستطيع.',
     'header.home': 'الرئيسية',
@@ -927,7 +927,7 @@ WidgetI18n.register('clock-wizard', {
 
   zh: {
     'doc.title': 'Clock Wizard — DrawSplat 工具',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Clock Wizard',
     'header.tagline': '描述任务即获得诚实的时间估算 — 含阶段拆分和 ADHD 税额，让你不至于过度承诺。',
     'header.home': '首页',
@@ -1149,7 +1149,7 @@ WidgetI18n.register('clock-wizard', {
 
   uh: {
     'doc.title': 'घड़ी जादूगर — DrawSplat उपकरण',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'घड़ी जादूगर',
     'header.tagline': 'काम बताएँ, ईमानदार समय अनुमान पाएँ — चरण विभाजन और ADHD-कर भत्ते सहित, ताकि आप अधिक वादा न करें।',
     'header.home': 'मुख्य पृष्ठ',

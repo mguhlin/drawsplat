@@ -5,14 +5,14 @@
 
 [View HTML](district-selfhost.html) · [Download Markdown](district-selfhost.md)
 
-Install the complete SplatWorks ecosystem: the whiteboard, standalone tools and widgets, games, and SplatWorks. Choose the components your district needs, create its administrator account, and set up teacher and student classrooms. MariaDB/MySQL powers whiteboard accounts, saved boards, and classroom workflows; other components keep their own storage and optional integrations. [Explore component features by category](../wiki/tools-widgets-features.html).
+Install the complete SplatWorks ecosystem: the DrawSplat whiteboard, standalone tools and widgets, games, and five office apps. Choose the components your district needs, create its administrator account, and set up teacher and student classrooms. MariaDB/MySQL powers whiteboard accounts, saved boards, and classroom workflows; other components keep their own storage and optional integrations. [Explore component features by category](../wiki/tools-widgets-features.html).
 
 ## Quick Start
 
-Open **start-here.html** immediately after extracting the **complete DrawSplat + SplatWorks suite**. The same guided setup is available at the top of [the HTML guide](district-selfhost.html#quick-start-hub).
+Open **start-here.html** immediately after extracting the **complete SplatWorks suite (including DrawSplat)**. The same guided setup is available at the top of [the HTML guide](district-selfhost.html#quick-start-hub).
 
 1. Choose **Docker (preferred)** or **Without Docker** at the top of the checklist. Docker manages the services together; native installation uses software installed directly on your server.
-2. Review the component checkboxes. The whiteboard, all four SplatWorks apps, tools, widgets and games are **checked by default**. Uncheck anything your district does not want to serve.
+2. Review the component checkboxes. The whiteboard, all five office apps, tools, widgets and games are **checked by default**. Uncheck anything your district does not want to serve.
 3. Choose MariaDB or MySQL and optionally enter your district hostname.
 4. Select **Save plan in extracted folder** in a supported browser and choose the extracted package folder or its inner `drawsplat` folder. The page saves into the application folder automatically. Alternatively, select **Download installation plan** and save `drawsplat-district-plan.json` inside the `drawsplat` folder next to `start-district.sh`.
 5. Open the inner `drawsplat` folder. **Docker:** run `bash start-district.sh` or `start-district.bat`. **Without Docker:** follow [native setup](#install-without-docker), run `bash start-native.sh` or `start-native.bat`. If you skip the plan, every component is enabled.
@@ -149,7 +149,7 @@ docker run --rm hello-world
 
 Once all four checks pass, return to Quick Start, save your installation plan and run the DrawSplat launcher. Docker already supplies Node, Caddy and the bundled database for this path.
 
-## Install DrawSplat
+## Install SplatWorks
 
 **Docker path (preferred).** For the alternative, go to [Install without Docker](#install-without-docker). The account, roster and classroom steps are shared by both paths.
 

@@ -4,7 +4,7 @@ WidgetI18n.register('picture-graph', {
 
   en: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Picture Graph',
     'header.subtitle': 'Build a classroom pictograph where one icon equals a chosen number of units. Add rows, pick an emoji per row, set the key, and download a clean PNG or SVG to project, print, or paste into a slide.',
     'header.allTools': 'All Tools',
@@ -67,7 +67,7 @@ WidgetI18n.register('picture-graph', {
 
   es: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Picture Graph',
     'header.subtitle': 'Crea un pictograma para clase donde un icono equivale a un número de unidades elegido. Agrega filas, elige un emoji por fila, define la clave y descarga un PNG o SVG limpio para proyectar, imprimir o pegar en una diapositiva.',
     'header.allTools': 'Todas las Herramientas',
@@ -130,7 +130,7 @@ WidgetI18n.register('picture-graph', {
 
   vi: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Picture Graph',
     'header.subtitle': 'Tạo biểu đồ tranh cho lớp học, trong đó một biểu tượng tương ứng với số đơn vị bạn chọn. Thêm hàng, chọn emoji cho mỗi hàng, đặt khóa và tải về PNG hoặc SVG gọn gàng để chiếu, in hoặc dán vào slide.',
     'header.allTools': 'Tất cả Công cụ',
@@ -193,7 +193,7 @@ WidgetI18n.register('picture-graph', {
 
   ar: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'Picture Graph',
     'header.subtitle': 'أنشئ رسمًا تصويريًا للصف حيث يساوي الرمز الواحد عددًا تختاره من الوحدات. أضف صفوفًا، واختر رمزًا تعبيريًا لكل صف، واضبط المفتاح، ونزّل ملف PNG أو SVG نظيفًا لعرضه أو طباعته أو لصقه في شريحة.',
     'header.allTools': 'كل الأدوات',
@@ -256,7 +256,7 @@ WidgetI18n.register('picture-graph', {
 
   zh: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Picture Graph',
     'header.subtitle': '制作课堂象形图，让一个图标代表你设定的若干单位。添加行、为每行选择表情符号、设置图例，然后下载干净的 PNG 或 SVG，可投影、打印或粘贴到幻灯片中。',
     'header.allTools': '全部工具',
@@ -319,7 +319,7 @@ WidgetI18n.register('picture-graph', {
 
   uh: {
     'doc.title': 'Picture Graph — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ ٹولز',
+    'header.eyebrow': 'SplatWorks™ ٹولز',
     'header.h1': 'Picture Graph',
     'header.subtitle': 'کلاس روم کے لیے ایک تصویری گراف بنائیں جہاں ایک آئیکن آپ کے منتخب کردہ یونٹس کی تعداد کے برابر ہو۔ قطاریں شامل کریں، ہر قطار کے لیے ایموجی چنیں، کلید مقرر کریں، اور پروجیکٹ، پرنٹ یا سلائیڈ میں پیسٹ کرنے کے لیے صاف ستھرا PNG یا SVG ڈاؤن لوڈ کریں۔',
     'header.allTools': 'تمام ٹولز',

@@ -45,3 +45,11 @@ Use LayoutSplat File → Clear saved browser data separately when erasing a draf
 ## Shared site navigation
 
 The five top-level items are Apps (including Whiteboard), SplatWorks, Blog, Guestbook, and Wiki. `scripts/site_navigation.py` defines the links; `scripts/build-site-navigation.py` applies them to public site headers. The Wiki builder runs this step automatically. Typing Games belongs in the Games directory. Educator resources belong in the Wiki’s For educators section. Do not add independent copies of the old Support, Technical, or For Educators top menus.
+
+## Ecosystem and tool naming
+
+SplatWorks is the ecosystem. DrawSplat refers to the whiteboard. Main creative and productivity tools use their own names: ConceptSplat, MarkdownSplat, DiagramSplat, QuizSplat, RubricSplat, and SketchSplat VR. Keep games and small classroom controls descriptive. Update the registry, app headings/locales, cross-links, and feature-reference source together; retain former names as search aliases. Do not rename URLs, native format markers, browser storage keys, or backend endpoints for a branding change.
+
+The five office apps use GPL-3.0-only; the ecosystem brand does not relicense DrawSplat or standalone tools. Historical releases, archive filenames, and signed proposals retain their context and approved scope. New versioned packages must be rebuilt before claiming that existing downloads contain current naming or policies. The current source archive always follows the repository.
+
+After a privacy change, rebuild the combined packet and verify the local notice builder, component/service disclosures, backend-specific controls, and agreement register status. Preserve signed originals; a naming change never establishes a district signature or expands an agreement.

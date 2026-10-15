@@ -1,4 +1,4 @@
-# DrawSplat typing games
+# SplatWorks typing games
 
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 

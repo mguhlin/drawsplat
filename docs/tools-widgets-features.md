@@ -1,12 +1,25 @@
 # SplatWorks ecosystem: tools, widgets, and features
 
-DrawSplat is an ecosystem of creative tools, classroom widgets, games, and SplatWorks applications. The whiteboard is one component. Open any linked component directly, or browse [Studio](../studio/index.html).
+SplatWorks is the ecosystem of creative tools, classroom widgets, games, and office applications. DrawSplat is its whiteboard. Open any linked component directly, or browse [Studio](../studio/index.html).
 
 This reference follows the same categories as Studio. Components appear in every category they support. Each entry links to the application and lists its main features. The complete suite installation includes these components; selected tools keep their own saving and integration behavior.
 
 [Install the complete ecosystem](district-selfhost.html) · [Download packages](../pages/download.html) · [Whiteboard classroom guide](../guides/project-reference.html)
 
 Most tools work locally in the browser. Brain Sort, Clock Wizard, Step-Splat, Toneshifter, and Vibe Check offer optional external AI connections. Editable QR codes and cloud integrations require their own configuration. See the individual application for supported formats and options.
+
+## Current tool names
+
+Main creative and productivity tools use their own Splat names. Existing URLs, saved-project formats, and search aliases remain available. Games and small classroom controls keep descriptive names.
+
+| Current name | Former name / search alias |
+| --- | --- |
+| ConceptSplat | Concept Map Studio |
+| MarkdownSplat | Markdown Studio |
+| DiagramSplat | Mermaid Diagram Studio; Mermaid Diagram |
+| QuizSplat | Quiz & Flashcard Studio |
+| RubricSplat | Rubric Builder |
+| SketchSplat VR | SketchSpace VR |
 
 ## Choosing a keyboarding activity
 
@@ -58,9 +71,9 @@ Category: **Create** · 19 components
 - Download PNG/SVG or print
 - Suggested classroom uses: art practice, fine-motor/color exploration, and annotated visual responses using printable line-art pages
 
-### Concept Map Studio
+### ConceptSplat
 
-**Tool** · [Open Concept Map Studio](../solutions/concept-map/)
+**Tool** · [Open ConceptSplat](../solutions/concept-map/)
 
 - Connect and label ideas with nodes and connectors
 - Start from mind map, Frayer, KWL, fishbone, and other layouts
@@ -69,6 +82,16 @@ Category: **Create** · 19 components
 - Save JSON, PNG, SVG, or Markdown
 - Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
 - Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
+
+### DiagramSplat
+
+**Tool** · [Open DiagramSplat](../solutions/mermaid/)
+
+- Create diagrams from text with live preview
+- Start with flowchart, sequence, mind map, Gantt, and other templates
+- Choose language and palette
+- Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### Draw & Sketch
 
@@ -181,16 +204,6 @@ Category: **Create** · 19 components
 - Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues
 - Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content
 
-### Mermaid Diagram
-
-**Tool** · [Open Mermaid Diagram](../solutions/mermaid/)
-
-- Create diagrams from text with live preview
-- Start with flowchart, sequence, mind map, Gantt, and other templates
-- Choose language and palette
-- Export SVG/PNG or copy PNG
-- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
-
 ### QRSplat Studio
 
 **Tool** · [Open QRSplat Studio](../solutions/qrsplat/)
@@ -212,9 +225,9 @@ Category: **Create** · 19 components
 - Import and export WebDeck v5
 - Export PDF and ODP
 
-### SketchSpace VR
+### SketchSplat VR
 
-**Tool** · [Open SketchSpace VR](../solutions/sketchspace-VR/)
+**Tool** · [Open SketchSplat VR](../solutions/sketchspace-VR/)
 
 - Print a student room template
 - Upload a photographed drawing and crop its panels
@@ -312,9 +325,9 @@ Category: **Organize** · 11 components
 - Optionally use a configured external AI provider
 - Suggested classroom uses: estimate project phases, plan work time, and reflect on an estimate versus actual time
 
-### Concept Map Studio
+### ConceptSplat
 
-**Tool** · [Open Concept Map Studio](../solutions/concept-map/)
+**Tool** · [Open ConceptSplat](../solutions/concept-map/)
 
 - Connect and label ideas with nodes and connectors
 - Start from mind map, Frayer, KWL, fishbone, and other layouts
@@ -323,6 +336,16 @@ Category: **Organize** · 11 components
 - Save JSON, PNG, SVG, or Markdown
 - Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
 - Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
+
+### DiagramSplat
+
+**Tool** · [Open DiagramSplat](../solutions/mermaid/)
+
+- Create diagrams from text with live preview
+- Start with flowchart, sequence, mind map, Gantt, and other templates
+- Choose language and palette
+- Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### DrawSplat Whiteboard
 
@@ -353,9 +376,9 @@ Category: **Organize** · 11 components
 - Create labels and reports
 - Import and export CSV
 
-### Markdown Studio
+### MarkdownSplat
 
-**Tool** · [Open Markdown Studio](../solutions/markdown-studio/)
+**Tool** · [Open MarkdownSplat](../solutions/markdown-studio/)
 
 - Write Markdown with rendered preview and HTML output
 - Import files or convert pasted HTML
@@ -363,16 +386,6 @@ Category: **Organize** · 11 components
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
 - Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
-
-### Mermaid Diagram
-
-**Tool** · [Open Mermaid Diagram](../solutions/mermaid/)
-
-- Create diagrams from text with live preview
-- Start with flowchart, sequence, mind map, Gantt, and other templates
-- Choose language and palette
-- Export SVG/PNG or copy PNG
-- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### PDFsplat
 
@@ -548,6 +561,16 @@ Category: **Writing** · 21 components
 - Check file integrity
 - Suggested classroom uses: demonstrate encryption, passwords, keys, integrity checks, and responsible protection of files using sample data
 
+### DiagramSplat
+
+**Tool** · [Open DiagramSplat](../solutions/mermaid/)
+
+- Create diagrams from text with live preview
+- Start with flowchart, sequence, mind map, Gantt, and other templates
+- Choose language and palette
+- Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
+
 ### GridSplat
 
 **Workspace** · [Open GridSplat](../splatworks/gridsplat/)
@@ -580,9 +603,9 @@ Category: **Writing** · 21 components
 - Create labels and reports
 - Import and export CSV
 
-### Markdown Studio
+### MarkdownSplat
 
-**Tool** · [Open Markdown Studio](../solutions/markdown-studio/)
+**Tool** · [Open MarkdownSplat](../solutions/markdown-studio/)
 
 - Write Markdown with rendered preview and HTML output
 - Import files or convert pasted HTML
@@ -590,16 +613,6 @@ Category: **Writing** · 21 components
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
 - Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
-
-### Mermaid Diagram
-
-**Tool** · [Open Mermaid Diagram](../solutions/mermaid/)
-
-- Create diagrams from text with live preview
-- Start with flowchart, sequence, mind map, Gantt, and other templates
-- Choose language and palette
-- Export SVG/PNG or copy PNG
-- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### Paws & Keys Adventure
 
@@ -623,9 +636,9 @@ Category: **Writing** · 21 components
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 
-### Rubric Builder
+### RubricSplat
 
-**Tool** · [Open Rubric Builder](../solutions/rubric-builder/)
+**Tool** · [Open RubricSplat](../solutions/rubric-builder/)
 
 - Start from project, writing, presentation, or collaboration templates
 - Edit criteria and performance levels
@@ -830,9 +843,9 @@ Category: **Assessment** · 18 components
 - Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard
 - Suggested learners: ages 4–9; beginning keyboard users
 
-### Quiz & Flashcard Studio
+### QuizSplat
 
-**Tool** · [Open Quiz & Flashcard Studio](../solutions/quiz-flashcard-studio/)
+**Tool** · [Open QuizSplat](../solutions/quiz-flashcard-studio/)
 
 - Build multiple-choice, true/false, and short-answer questions
 - Run self-paced or teacher-led quizzes with players or teams
@@ -842,9 +855,9 @@ Category: **Assessment** · 18 components
 - Built-in science question sets include 20-question samples for grade 3 science, grade 5 science, and grade 10 biology, aligned to TEKS topics
 - Suggested classroom uses: formative checks, self-paced retrieval practice, team review, and printable vocabulary or concept flashcards
 
-### Rubric Builder
+### RubricSplat
 
-**Tool** · [Open Rubric Builder](../solutions/rubric-builder/)
+**Tool** · [Open RubricSplat](../solutions/rubric-builder/)
 
 - Start from project, writing, presentation, or collaboration templates
 - Edit criteria and performance levels
@@ -1086,9 +1099,9 @@ Category: **Classroom** · 22 components
 - Create and update editable QR codes with a separately configured service
 - Suggested classroom uses: link printed activity stations, displays, or handouts to classroom resources; editable codes need a configured service
 
-### Quiz & Flashcard Studio
+### QuizSplat
 
-**Tool** · [Open Quiz & Flashcard Studio](../solutions/quiz-flashcard-studio/)
+**Tool** · [Open QuizSplat](../solutions/quiz-flashcard-studio/)
 
 - Build multiple-choice, true/false, and short-answer questions
 - Run self-paced or teacher-led quizzes with players or teams
@@ -1108,9 +1121,9 @@ Category: **Classroom** · 22 components
 - Import and export WebDeck v5
 - Export PDF and ODP
 
-### SketchSpace VR
+### SketchSplat VR
 
-**Tool** · [Open SketchSpace VR](../solutions/sketchspace-VR/)
+**Tool** · [Open SketchSplat VR](../solutions/sketchspace-VR/)
 
 - Print a student room template
 - Upload a photographed drawing and crop its panels

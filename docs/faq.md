@@ -1,8 +1,12 @@
 # Frequently asked questions (FAQs)
 
-Find quick answers about DrawSplat and SplatWorks. Each answer links to a guide when you need more detail. Use **Search the wiki** to find a topic across all guides.
+Find quick answers about the SplatWorks ecosystem and its DrawSplat whiteboard. Each answer links to a guide when you need more detail. Use **Search the wiki** to find a topic across all guides.
 
 ## Getting started
+
+### What is SplatWorks?
+
+SplatWorks is the ecosystem: DrawSplat whiteboard, five office apps, creative and productivity tools, classroom widgets, and games. Main tool names include ConceptSplat, MarkdownSplat, DiagramSplat, QuizSplat, RubricSplat, and SketchSplat VR. Former names such as Concept Map Studio remain search aliases; existing links and project formats still work. See the [tool names and features](../wiki/tools-widgets-features.html#current-tool-names).
 
 ### What is DrawSplat?
 
@@ -94,7 +98,7 @@ School sign-in and Drive access are separate. Optional Google-backed saving has 
 
 ### Can a district host the whole suite?
 
-Yes. Download the complete district package, extract it, and open `start-here.html`. The checklist includes the whiteboard, SplatWorks, tools, widgets, and games. Components start checked; uncheck anything you do not need. See [district Quick Start](../docs/district-selfhost.html).
+Yes. Download the complete district package, extract it, and open `start-here.html`. The checklist includes the DrawSplat whiteboard, office apps, tools, widgets, and games. Components start checked; uncheck anything you do not need. See [district Quick Start](../docs/district-selfhost.html).
 
 ### Do I have to use Docker?
 
@@ -176,7 +180,7 @@ No. It manages its own Google-backed workflows. District database records need t
 
 ### Can we modify and self-host DrawSplat?
 
-Yes, under the applicable open-source licenses. DrawSplat generally uses AGPL; some components, including SplatWorks apps, have their own notices. Keep those notices and meet the source-sharing duties that apply. See [licensing](../wiki/licensing.html).
+Yes, under the applicable open-source licenses. DrawSplat generally uses AGPL; some components, including the five office apps, have their own notices. Keep those notices and meet the source-sharing duties that apply. See [licensing](../wiki/licensing.html).
 
 ### Who owns the work I create?
 
@@ -188,15 +192,15 @@ Work belongs to its respective authors. Images, music, templates, and other medi
 
 ### What is included in SplatWorks?
 
-[WriteSplat](../pages/writesplat.html) is for writing, [ShowSplat](../pages/showsplat.html) for slides, [GridSplat](../pages/gridsplat.html) for spreadsheets, and [ListSplat](../pages/listsplat.html) for structured records. The [suite overview](../pages/splatworks.html) helps you choose.
+[WriteSplat](../pages/writesplat.html) is for writing, [ShowSplat](../pages/showsplat.html) for slides, [GridSplat](../pages/gridsplat.html) for spreadsheets, and [ListSplat](../pages/listsplat.html) for structured records, and [LayoutSplat](../wiki/layoutsplat.html) for publications. The ecosystem also includes the DrawSplat whiteboard, main creative tools, classroom widgets, and games. The [office app overview](../pages/splatworks.html) helps you choose.
 
 ### Do SplatWorks apps need a database or an account?
 
-You can use them as browser apps without either. Hosting them with the district suite does not automatically connect every project file to whiteboard account-based saving. Save project backups regularly. See [the suite guide](../pages/splatworks.html).
+The five office apps can edit local projects without a database or account. Optional connected services and whiteboard classroom accounts have separate requirements. Hosting them with the district suite does not automatically connect every project file to whiteboard account-based saving. Save project backups regularly. See [the suite guide](../pages/splatworks.html).
 
 ### What happens if I open a file in the wrong SplatWorks app?
 
-SplatWorks opens a new tab in the matching app and carries the file over. Word documents go to WriteSplat, presentations to ShowSplat, and spreadsheets to GridSplat. Native SplatWorks project files also open in their matching app. Allow popups if your browser asks. The matching app must be installed at the same website.
+The office-app file router opens a new tab in the matching app and carries the file over. Word documents go to WriteSplat, presentations to ShowSplat, and spreadsheets to GridSplat. Native SplatWorks project files also open in their matching app. Allow popups if your browser asks. The matching app must be installed at the same website.
 
 Your existing saved projects stay in place. Save the imported project before closing its new tab. Transfers stay in your browser; the file is not uploaded. Older DOC, XLS, and PPT files need to be saved in a supported modern format first.
 

@@ -150,7 +150,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     } else if (template === 'concept-map') {
       slide.title = 'Concept Map Explanation';
       slide.elements.push(textElement('How the ideas connect', 90, 82, 900, 92, 46, true));
-      slide.elements.push(shapeElement(100, 175, 920, 540, 'Import a Concept Map Studio image here'));
+      slide.elements.push(shapeElement(100, 175, 920, 540, 'Import a ConceptSplat image here'));
       slide.elements.push(textElement('Explain the relationships and examples here.', 1070, 205, 390, 280, 30));
     } else if (template === 'purple-title') {
       slide.title = 'Purple Title';
@@ -3204,7 +3204,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     if (action === 'print-pdf') printPdf();
     if (action === 'export-pptx') exportPptx();
     if (action === 'export-odp') exportOdp();
-    if (action === 'planned-import') alert(target.dataset.kind + ' import is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML, Markdown Studio, or .showsplat.json for editable decks right now.');
+    if (action === 'planned-import') alert(target.dataset.kind + ' import is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML, MarkdownSplat, or .showsplat.json for editable decks right now.');
     if (action === 'planned-export') alert(target.dataset.kind + ' export is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML or browser PDF export in this first release.');
     if (action === 'present-first') present(0);
     if (action === 'present-current') present(activeSlide);

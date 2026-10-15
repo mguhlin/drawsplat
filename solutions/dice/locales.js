@@ -5,7 +5,7 @@ WidgetI18n.register('dice', {
 
   en: {
     'doc.title': 'Classroom Dice Roller — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Classroom Dice Roller',
     'header.subtitle': 'Roll clean classroom dice with a simple default view, then switch on advanced options for multiple dice, die types, modifiers, sound, totals, products, and history.',
     'header.advanced': 'Advanced',
@@ -61,7 +61,7 @@ WidgetI18n.register('dice', {
 
   es: {
     'doc.title': 'Lanzador de dados — DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Lanzador de dados',
     'header.subtitle': 'Lanza dados de aula con una vista simple por defecto y activa opciones avanzadas para varios dados, tipos, modificadores, sonido, totales, productos e historial.',
     'header.advanced': 'Avanzado',
@@ -117,7 +117,7 @@ WidgetI18n.register('dice', {
 
   vi: {
     'doc.title': 'Đổ xúc xắc lớp học — DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Đổ xúc xắc lớp học',
     'header.subtitle': 'Đổ xúc xắc lớp học với chế độ đơn giản mặc định, rồi bật chế độ nâng cao cho nhiều xúc xắc, loại, hệ số cộng, âm thanh, tổng, tích và lịch sử.',
     'header.advanced': 'Nâng cao',
@@ -173,7 +173,7 @@ WidgetI18n.register('dice', {
 
   ar: {
     'doc.title': 'قاذف النرد الصفي — DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'قاذف النرد الصفي',
     'header.subtitle': 'ارمِ نردًا نظيفًا للصف بعرض بسيط افتراضيًا، ثم فعّل خيارات متقدّمة لعدّة أحجار وأنواع ومعدّلات وصوت ومجاميع وحاصل ضرب وسجلّ.',
     'header.advanced': 'متقدّم',
@@ -229,7 +229,7 @@ WidgetI18n.register('dice', {
 
   zh: {
     'doc.title': '课堂掷骰子 — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': '课堂掷骰子',
     'header.subtitle': '默认以简洁的课堂视图掷骰子,然后开启高级选项以使用多颗骰子、多种类型、修正值、音效、总和、乘积和历史记录。',
     'header.advanced': '高级',
@@ -285,7 +285,7 @@ WidgetI18n.register('dice', {
 
   uh: {
     'doc.title': 'कक्षा का पासा रोलर — DrawSplat',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'कक्षा का पासा रोलर',
     'header.subtitle': 'सरल डिफ़ॉल्ट दृश्य में साफ कक्षा पासे रोल करें, फिर कई पासों, प्रकारों, संशोधक, ध्वनि, कुल, गुणनफल और इतिहास के लिए उन्नत विकल्प चालू करें।',
     'header.advanced': 'उन्नत',

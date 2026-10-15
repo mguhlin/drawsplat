@@ -1,10 +1,10 @@
-# DrawSplatTM Licensing Summary
+# SplatWorks Licensing Summary
 
-**The DrawSplatTM software and every compliance feature shipped in it are free for all users — teachers, students, classrooms, campuses, districts, and self-hosting organizations. No individual or per-seat license is required to run DrawSplatTM on district devices.**
+**The SplatWorks ecosystem software and every compliance feature shipped in it are free for all users — teachers, students, classrooms, campuses, districts, and self-hosting organizations. No individual or per-seat license is required to run the software on district devices.**
 
-DrawSplatTM is published under the **GNU AGPL-3.0-or-later**. Any school, district, or organization may use, host, modify, and redistribute the software under those terms. The full text of the licence ships in the repository at `LICENSE`.
+DrawSplat whiteboard, standalone tools/widgets, and backends generally use **GNU AGPL-3.0-or-later**. The five office apps — WriteSplat, GridSplat, ListSplat, ShowSplat, and LayoutSplat — use **GPL-3.0-only**. Retain all component and dependency notices. Any school, district, or organization may use, host, modify, and redistribute the software under those terms. The full text of the licence ships in the repository at `LICENSE`.
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — [licensing](https://drawsplat.org/wiki/licensing) and [pricing](https://drawsplat.org/pages/pricing). SplatWorks applications carry their own component license notices, including GPL-3.0-only; retain all applicable notices.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — [licensing](https://drawsplat.org/wiki/licensing) and [pricing](https://drawsplat.org/pages/pricing). Office applications carry their own component license notices, including GPL-3.0-only; retain all applicable notices.
 
 ## What is free
 
@@ -29,7 +29,7 @@ These are described in plain language at `pages/pricing.html` and quoted on requ
 
 - DrawSplatTM does not sell, require, or check individual or per-seat licences.
 - A district can deploy DrawSplatTM to any number of students and teachers at no cost.
-- A district may purchase support, PD, or compliance review under a separate services agreement; the product itself remains AGPL-licensed and free.
+- A district may purchase support, PD, or compliance review under a separate services agreement; the components remain free under their applicable open-source licenses.
 - The District Data Privacy Addendum at `legal/district-addendum.html` and the NDPA / DPA review packet at `legal/ndpa-packet.html` cover the contracting language districts typically need.
 
 ## Contact

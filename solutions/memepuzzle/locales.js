@@ -9,7 +9,7 @@ WidgetI18n.register('memepuzzle', {
   en: {
     'doc.title':          'Meme Puzzle Maker — DrawSplat',
     'doc.title.student':  'Meme Puzzle Student — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ Tools',
+    'header.eyebrow':     'SplatWorks™ Tools',
     'header.h1':          'Meme Puzzle Maker',
     'header.h1.student':  'Meme Puzzle',
     'header.subtitle':    'Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.',
@@ -86,7 +86,7 @@ WidgetI18n.register('memepuzzle', {
   es: {
     'doc.title':          'Creador de Rompecabezas Meme — DrawSplat',
     'doc.title.student':  'Estudiante de Rompecabezas Meme — DrawSplat',
-    'header.eyebrow':     'Herramientas DrawSplat™',
+    'header.eyebrow':     'Herramientas SplatWorks™',
     'header.h1':          'Creador de Rompecabezas Meme',
     'header.h1.student':  'Rompecabezas Meme',
     'header.subtitle':    'Crea un rompecabezas tipo cuestionario de bajo riesgo donde cada respuesta correcta retira una pieza y revela una imagen meme oculta.',
@@ -162,7 +162,7 @@ WidgetI18n.register('memepuzzle', {
   vi: {
     'doc.title':          'Trình tạo Câu đố Meme — DrawSplat',
     'doc.title.student':  'Học sinh Câu đố Meme — DrawSplat',
-    'header.eyebrow':     'Công cụ DrawSplat™',
+    'header.eyebrow':     'Công cụ SplatWorks™',
     'header.h1':          'Trình tạo Câu đố Meme',
     'header.h1.student':  'Câu đố Meme',
     'header.subtitle':    'Tạo một câu đố dạng trắc nghiệm nhẹ nhàng, mỗi câu trả lời đúng sẽ gỡ bỏ một ô và để lộ hình ảnh meme ẩn.',
@@ -238,7 +238,7 @@ WidgetI18n.register('memepuzzle', {
   ar: {
     'doc.title':          'منشئ ألغاز الميمز — DrawSplat',
     'doc.title.student':  'طالب ألغاز الميمز — DrawSplat',
-    'header.eyebrow':     'أدوات DrawSplat™',
+    'header.eyebrow':     'أدوات SplatWorks™',
     'header.h1':          'منشئ ألغاز الميمز',
     'header.h1.student':  'لغز الميم',
     'header.subtitle':    'أنشئ لغزًا تدريبيًا منخفض المخاطر — كل إجابة صحيحة تزيل مربعًا وتكشف صورة ميم مخفية.',
@@ -314,7 +314,7 @@ WidgetI18n.register('memepuzzle', {
   zh: {
     'doc.title':          '梗图拼图制作器 — DrawSplat',
     'doc.title.student':  '梗图拼图学生 — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ 工具',
+    'header.eyebrow':     'SplatWorks™ 工具',
     'header.h1':          '梗图拼图制作器',
     'header.h1.student':  '梗图拼图',
     'header.subtitle':    '制作一个低压力的拼图测验：每答对一题即移除一块拼板，逐渐露出隐藏的梗图。',
@@ -390,7 +390,7 @@ WidgetI18n.register('memepuzzle', {
   uh: {
     'doc.title':          'मीम पहेली निर्माता — DrawSplat',
     'doc.title.student':  'मीम पहेली छात्र — DrawSplat',
-    'header.eyebrow':     'DrawSplat™ टूल्स',
+    'header.eyebrow':     'SplatWorks™ टूल्स',
     'header.h1':          'मीम पहेली निर्माता',
     'header.h1.student':  'मीम पहेली',
     'header.subtitle':    'एक कम-दबाव वाली प्रश्नोत्तरी पहेली बनाएँ जहाँ हर सही उत्तर एक टाइल हटाता है और एक छिपी मीम छवि प्रकट करता है।',

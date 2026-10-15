@@ -8,7 +8,7 @@ WidgetI18n.register('brain-sort', {
   // ===========================================================
   en: {
     'doc.title': 'Brain Sort — DrawSplat™ Tools',
-    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.eyebrow': 'SplatWorks™ Tools',
     'header.h1': 'Brain Sort',
     'header.tagline': "Dump everything that's in your head — one thought per line. Brain Sort groups it into a tidy checklist by category, so you can stop juggling.",
     'header.home': 'Home',
@@ -113,7 +113,7 @@ WidgetI18n.register('brain-sort', {
 
   es: {
     'doc.title': 'Ordena-Mente — Herramientas DrawSplat',
-    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.eyebrow': 'Herramientas SplatWorks™',
     'header.h1': 'Ordena-Mente',
     'header.tagline': 'Vuelca todo lo que tienes en la cabeza — un pensamiento por línea. Ordena-Mente lo agrupa en una lista ordenada por categoría para que dejes de hacer malabarismos.',
     'header.home': 'Inicio',
@@ -210,7 +210,7 @@ WidgetI18n.register('brain-sort', {
 
   vi: {
     'doc.title': 'Brain Sort — Công cụ DrawSplat',
-    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.eyebrow': 'Công cụ SplatWorks™',
     'header.h1': 'Brain Sort',
     'header.tagline': 'Đổ hết mọi thứ trong đầu — mỗi suy nghĩ một dòng. Brain Sort gom thành danh sách gọn theo nhóm để bạn không phải nhớ tất cả cùng lúc.',
     'header.home': 'Trang chủ',
@@ -307,7 +307,7 @@ WidgetI18n.register('brain-sort', {
 
   ar: {
     'doc.title': 'فرز الذهن — أدوات DrawSplat',
-    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.eyebrow': 'أدوات SplatWorks™',
     'header.h1': 'فرز الذهن',
     'header.tagline': 'فرّغ كل ما يدور في رأسك — فكرة واحدة في كل سطر. ‏فرز الذهن يجمعها في قائمة مرتبة حسب الفئة، فلا تحتاج للموازنة في عقلك.',
     'header.home': 'الرئيسية',
@@ -404,7 +404,7 @@ WidgetI18n.register('brain-sort', {
 
   zh: {
     'doc.title': 'Brain Sort — DrawSplat 工具',
-    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.eyebrow': 'SplatWorks™ 工具',
     'header.h1': 'Brain Sort',
     'header.tagline': '把脑中所有想法倾倒出来 — 每行一条。Brain Sort 将它们按类别整理成清单，让你不再头脑混乱。',
     'header.home': '首页',
@@ -501,7 +501,7 @@ WidgetI18n.register('brain-sort', {
 
   uh: {
     'doc.title': 'दिमाग़ क्रम — DrawSplat उपकरण',
-    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.eyebrow': 'SplatWorks™ उपकरण',
     'header.h1': 'दिमाग़ क्रम',
     'header.tagline': 'दिमाग़ में जो भी है सब उगल दीजिए — एक पंक्ति एक विचार। दिमाग़ क्रम उन्हें श्रेणी अनुसार साफ़ सूची में रख देता है।',
     'header.home': 'मुख्य पृष्ठ',
