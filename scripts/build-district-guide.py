@@ -37,11 +37,11 @@ page = '''<!doctype html>
 <div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li>''' + ''.join(contents) + '''</ul></nav></aside>
 <main id="guide"><img class="guide-banner" src="../assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724">''' + heading + '<p class="guide-format-links"><a href="district-selfhost.md">View Markdown</a> · <a href="district-selfhost.md" download>Download Markdown</a></p>' + quickstart + body + '''</main></div>
 <footer>DrawSplat district installation · <a href="district-selfhost.md">Markdown source</a></footer><script src="../assets/js/site-navigation.js" defer></script><script src="../assets/js/district-components.js"></script><script src="../assets/js/district-quickstart.js"></script></body></html>'''
-(root / 'docs/district-selfhost.html').write_text(page)
+(root / 'docs/district-selfhost.html').write_text(page + '\n')
 
 start = page.replace('../assets/', 'assets/').replace('../pages/', 'pages/').replace('../wiki/', 'wiki/').replace('href="../"', 'href="index.html"').replace('href="district-selfhost.md"', 'href="docs/district-selfhost.md"')
 start = start.replace('href="district-selfhost.html', 'href="docs/district-selfhost.html')
-(root / 'START-HERE.html').write_text(start)
-(root / '00-START-HERE.html').write_text(start)
+(root / 'START-HERE.html').write_text(start + '\n')
+(root / '00-START-HERE.html').write_text(start + '\n')
 
-(root / 'start-here.html').write_text(start)
+(root / 'start-here.html').write_text(start + '\n')
