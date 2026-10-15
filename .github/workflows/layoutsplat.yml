@@ -17,11 +17,11 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: node scripts/build-whiteboard-gallery.mjs --check && node scripts/check-word-legacy.mjs && node scripts/check-layoutsplat-native.mjs
-      - run: node --test splatworks/layoutsplat/engine.test.mjs splatworks/layoutsplat/publishing.test.mjs
+      - run: node --test splatworks/layoutsplat/engine.test.mjs splatworks/layoutsplat/publishing.test.mjs splatworks/layoutsplat/presentation.test.mjs
       - run: node scripts/check-splatworks-builds.mjs && node scripts/validate-tool-registry.mjs
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test --config=playwright.layoutsplat.config.js
-      - run: python -m pip install 'pypdf>=5,<7' 'Pillow>=10,<13' && python scripts/check-layoutsplat-pdf.py && python scripts/check-layoutsplat-large-pdf.py && python scripts/check-layoutsplat-exports.py && python tests/layoutsplat-preflight.test.py
+      - run: python -m pip install 'pypdf>=5,<7' 'Pillow>=10,<13' && python scripts/check-layoutsplat-pdf.py && python scripts/check-layoutsplat-large-pdf.py && python scripts/check-layoutsplat-exports.py && python scripts/check-layoutsplat-editable.py && python tests/layoutsplat-preflight.test.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

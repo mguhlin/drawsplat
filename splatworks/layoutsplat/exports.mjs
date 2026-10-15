@@ -16,13 +16,14 @@ export function pageRange(value, total) {
   for (const part of value.split(',')) { const match = /^\s*(\d+)(?:\s*-\s*(\d+))?\s*$/.exec(part); if (!match) throw Error('Use page numbers or ranges, such as 1, 3-5.'); const a = Number(match[1]), b = Number(match[2] || a); if (a < 1 || b < a || b > total) throw Error('Page range is outside this publication.'); for (let i = a; i <= b; i++) pages.add(i - 1); }
   return [...pages].sort((a, b) => a - b);
 }
-export async function pageCanvas(doc, page, layout, ppi = 300, bleed = 0) {
+export async function pageCanvas(doc, page, layout, ppi = 300, bleed = 0, background = '#ffffff') {
   await document.fonts.ready;
   const width = doc.width + 2 * bleed, height = doc.height + 2 * bleed;
   if (width * ppi / 72 * height * ppi / 72 > 60000000) throw Error('This page exceeds 60 megapixels. Choose a lower resolution.');
-  const holder = document.createElement('div'); Object.assign(holder.style, { position: 'fixed', left: '-30000px', top: '0', width: pt(width), height: pt(height), background: '#ffffff', overflow: 'hidden' });
+  const holder = document.createElement('div'); Object.assign(holder.style, { position: 'fixed', left: '-30000px', top: '0', width: pt(width), height: pt(height), background: background || 'transparent', overflow: 'hidden' });
   const rendered = publicationPage(doc, page, layout); Object.assign(rendered.style, { position: 'absolute', margin: '0', left: pt(bleed), top: pt(bleed), overflow: 'visible' }); holder.append(rendered); document.body.append(holder);
-  try { await Promise.all([...holder.querySelectorAll('img')].map(image => image.decode().catch(() => {}))); return await html2canvas(holder, { scale: ppi / 96, backgroundColor: '#ffffff', logging: false, useCORS: false, windowWidth: Math.max(1200, Math.ceil(width * 96 / 72)), windowHeight: Math.max(1200, Math.ceil(height * 96 / 72)) }); }
+  rendered.style.background = background || 'transparent';
+  try { await Promise.all([...holder.querySelectorAll('img')].map(image => image.decode().catch(() => {}))); return await html2canvas(holder, { scale: ppi / 96, backgroundColor: background, logging: false, useCORS: false, windowWidth: Math.max(1200, Math.ceil(width * 96 / 72)), windowHeight: Math.max(1200, Math.ceil(height * 96 / 72)) }); }
   finally { holder.remove(); }
 }
 export const canvasBlob = (canvas, type = 'image/png') => new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(Error('Image export failed.')), type, .95));
@@ -63,6 +64,9 @@ export async function exportPublication(kind, doc, layout, options = {}) {
   if (kind === 'pptx' || kind === 'odp') return exportPresentation(kind, doc, { ...options, pages }, async page => {
     const canvas = await pageCanvas(doc, doc.pages[page], layout, options.ppi || 300, options.bleed || 0);
     try { return await canvasBlob(canvas); } finally { canvas.width = canvas.height = 1; }
+  }, layout, async object => {
+    const canvas = await pageCanvas({ ...doc, width: object.w, height: object.h }, { objects: [{ ...object, x: 0, y: 0, rotation: 0, opacity: 1 }] }, layout, options.ppi || 300, 0, null);
+    try { return { blob: await canvasBlob(canvas), width: canvas.width, height: canvas.height }; } finally { canvas.width = canvas.height = 1; }
   });
   if (['writesplat', 'showsplat', 'gridsplat', 'listsplat'].includes(kind)) return exportSuite(kind, doc, layout);
   if (kind === 'json') return { blob: new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }), extension: '.layoutsplat.json' };

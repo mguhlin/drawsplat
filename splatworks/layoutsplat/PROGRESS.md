@@ -1,5 +1,32 @@
 # LayoutSplat development progress
 
+## October 15, 2026 — v0.4.8 editable office presentations
+
+PPTX and ODP now default to native editable text, pictures, shapes and tables.
+Rich runs, paragraph metrics, RTL direction, physical positions, rotations,
+stacking, pictures/crops and supported vector paths are converted. Masters copy
+onto each slide while respecting overrides; linked stories and columns use the
+computed visible fragments. Custom fonts retain their family names without font
+file embedding. Optional page-image mode retains the v0.4.7 appearance workflow.
+
+Decorative borders, masked pictures, PPTX elliptical-arc paths and complex ODP
+gradients fall back only at object level. WordArt/drop caps become ordinary text;
+group membership is not retained. Conversion reports identify individual picture
+fallbacks and typography limitations, and are embedded in each native package.
+An actual LibreOffice import check caught and corrected nested hyperlink text loss
+in ODP. Transparent object fallbacks preserve underlying slide artwork.
+
+Verification uses mixed-content browser downloads, independent XML/object checks,
+character conservation across linked fragments, native rich-run checks, target-app
+rendering after editing text and table values, and LibreOffice PPTX→ODP / ODP→PPTX
+round trips that retain native tables, text and vectors. Five model tests cover
+text slicing, rotated columns/bleed, picture crop geometry, Bezier conversion and
+integer ODF viewports. All 59 browser workflows and 15 model checks passed; focused
+export reruns cover the final schema fixes. The native ODP sample validates against
+the official ODF 1.3 schema, and original/edited LibreOffice renders and cross-format
+round trips retain native content. Existing two-page/100-page print proofs and ten
+preflight checks also passed.
+
 ## October 15, 2026 — v0.4.7 presentation and animated GIF exports
 
 File → Export adds PPTX, ODP and animated GIF, also available in Export & share.

@@ -30,6 +30,8 @@ async function open(page, kind) {
 
 for (const kind of ['pptx', 'odp']) test(`${kind} downloads selected physical pages as a valid presentation package`, async ({ page }, info) => {
   await ready(page); const before = await fixture(page); await open(page, kind);
+  await expect(page.locator('#exportPresentationMode')).toHaveValue('editable');
+  await page.locator('#exportPresentationMode').selectOption('image');
   await expect(page.locator('#exportFormatHint')).toContainText('not separately editable');
   await expect(page.locator('#exportGifOptions')).toBeHidden();
   await page.locator('#exportPages').fill('1, 3-4'); await page.locator('#exportPpi').selectOption('150');

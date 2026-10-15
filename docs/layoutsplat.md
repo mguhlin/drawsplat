@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.7** is the SplatWorks publication editor.
+LayoutSplat **v0.4.8** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -156,11 +156,33 @@ PowerPoint PPTX, OpenDocument ODP, animated GIF, SVG, IDML, Scribus SLA, suite c
 and Pack and Go. Visual exports support
 page ranges; native and interchange projects contain the publication.
 
-**PPTX and ODP** create one slide per selected page as a PNG image at the chosen
-150/300/600 ppi resolution. Slide dimensions match the publication, including any
-chosen bleed. These preserve the rendered page; text and objects are not separately
-editable. Use native LayoutSplat files for full editing, or ShowSplat interchange
-for supported editable slide objects. PPTX page dimensions must be 1–56 inches.
+**PPTX and ODP default to editable objects.** Text boxes keep supported inline
+font/size/color/bold/italic/underline, hyperlinks and paragraph spacing, alignment,
+indents and direction. Pictures remain separate picture objects with crop/fit,
+rotation and opacity; common shapes and supported Bezier paths remain vectors;
+tables retain editable cells. Native slide dimensions match the publication,
+including optional bleed. PPTX page dimensions must be 1–56 inches.
+
+Master artwork is copied onto each slide as editable objects, respecting overrides.
+Columns and linked stories become independent text boxes containing the visible
+fragments on the selected pages; overflow text stays in the LayoutSplat project.
+Groups become individual objects in their original stacking order. Built-in browser
+font aliases use the corresponding Liberation Sans/Serif and DejaVu Sans families.
+Custom font family names survive, but font files are not embedded: install those
+fonts on the receiving device. Office text metrics and table row heights may differ.
+
+Decorative borders, masked pictures, unsupported PPTX arc paths and complex ODP
+gradients become **individual picture objects**, with each fallback identified in
+the conversion report. WordArt/drop caps become ordinary editable text; advanced
+character scaling, ligature controls, custom dash patterns and some effects may
+differ. The package includes `LayoutSplat-conversion.txt`, and Download shows its
+warnings. Save the native LayoutSplat project for complete story and design editing.
+
+Choose **Slide content → Page images — preserve appearance** for the previous
+one-PNG-per-slide output at 150/300/600 ppi. This optional mode preserves the rendered
+page but does not provide separately editable text or shapes. Resolution affects
+page images and individual picture fallbacks; native objects remain vectors/text.
+PPTX/ODP ignore crop marks and ICC profiles.
 
 **Animated GIF** plays selected pages in page order and loops forever. Choose
 0.1–60 seconds per page and a maximum dimension of 480, 720, 1080, or 1440 pixels.
