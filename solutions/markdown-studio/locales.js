@@ -151,7 +151,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'Drag a <code>.md</code> or <code>.txt</code> file onto the page',
 
     'help.privacy.summary':'Privacy and Storage',
-    'help.privacy.body.html':'<p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>',
+    'help.privacy.body.html':'<p>Everything runs in your browser. Only an authorized Save to Google Drive action uploads a copy. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded by <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
@@ -285,7 +285,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'Arrastra un archivo <code>.md</code> o <code>.txt</code> a la página',
 
     'help.privacy.summary':'Privacidad y almacenamiento',
-    'help.privacy.body.html':'<p>Todo se ejecuta en tu navegador. Ningún contenido sale de esta página. Tu borrador se guarda en <code>localStorage</code> de este dominio para que sobreviva a las recargas — bórralo con <strong>Borrar todo</strong> o herramientas del navegador.</p>',
+    'help.privacy.body.html':'<p>Todo se ejecuta en tu navegador. Solo Guardar en Google Drive sube una copia con tu autorización. Tu borrador se guarda en <code>localStorage</code> de este dominio para que sobreviva a las recargas — bórralo con <strong>Borrar todo</strong> o herramientas del navegador.</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded por <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
@@ -419,7 +419,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'Kéo tệp <code>.md</code> hoặc <code>.txt</code> vào trang',
 
     'help.privacy.summary':'Quyền riêng tư và Lưu trữ',
-    'help.privacy.body.html':'<p>Mọi thứ chạy trong trình duyệt của bạn. Không nội dung nào rời trang này. Bản nháp lưu vào <code>localStorage</code> của miền này để giữ qua các lần tải lại — xóa bằng <strong>Xóa tất cả</strong> hoặc công cụ trình duyệt.</p>',
+    'help.privacy.body.html':'<p>Mọi thứ chạy trong trình duyệt của bạn. Chỉ tải bản sao lên Google Drive khi bạn cho phép lưu. Bản nháp lưu vào <code>localStorage</code> của miền này để giữ qua các lần tải lại — xóa bằng <strong>Xóa tất cả</strong> hoặc công cụ trình duyệt.</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded bởi <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
@@ -553,7 +553,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'اسحب ملف <code>.md</code> أو <code>.txt</code> إلى الصفحة',
 
     'help.privacy.summary':'الخصوصية والتخزين',
-    'help.privacy.body.html':'<p>كل شيء يعمل في متصفحك. لا يغادر المحتوى هذه الصفحة. تُحفظ مسودتك في <code>localStorage</code> لهذا النطاق فتنجو من إعادة التحميل — امسحها عبر <strong>مسح الكل</strong> أو أدوات المتصفح.</p>',
+    'help.privacy.body.html':'<p>كل شيء يعمل في متصفحك. تُرفع نسخة إلى Google Drive فقط عند الحفظ بموافقتك. تُحفظ مسودتك في <code>localStorage</code> لهذا النطاق فتنجو من إعادة التحميل — امسحها عبر <strong>مسح الكل</strong> أو أدوات المتصفح.</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded بواسطة <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
@@ -687,7 +687,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'将 <code>.md</code> 或 <code>.txt</code> 文件拖到页面上',
 
     'help.privacy.summary':'隐私和存储',
-    'help.privacy.body.html':'<p>一切都在你的浏览器中运行。没有内容会离开此页面。你的草稿保存到此域的 <code>localStorage</code>，因此能在刷新后保留——通过<strong>清空所有</strong>或浏览器工具清除。</p>',
+    'help.privacy.body.html':'<p>一切都在你的浏览器中运行。仅在你授权保存到 Google Drive 时上传副本。你的草稿保存到此域的 <code>localStorage</code>，因此能在刷新后保留——通过<strong>清空所有</strong>或浏览器工具清除。</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded 由 <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
@@ -821,7 +821,7 @@ WidgetI18n.register('markdown-studio', {
     'help.kbd.dropVal.html':'पृष्ठ पर <code>.md</code> या <code>.txt</code> फ़ाइल खींचें',
 
     'help.privacy.summary':'गोपनीयता और भंडारण',
-    'help.privacy.body.html':'<p>सब कुछ आपके ब्राउज़र में चलता है। कोई सामग्री इस पृष्ठ से बाहर नहीं जाती। आपका ड्राफ्ट इस डोमेन के <code>localStorage</code> में सहेजा जाता है ताकि यह रिफ्रेश के बाद भी बना रहे — इसे <strong>सब साफ़ करें</strong> या ब्राउज़र टूल से साफ़ करें।</p>',
+    'help.privacy.body.html':'<p>सब कुछ आपके ब्राउज़र में चलता है। Google Drive पर प्रति केवल आपकी अनुमति से सहेजी जाती है। आपका ड्राफ्ट इस डोमेन के <code>localStorage</code> में सहेजा जाता है ताकि यह रिफ्रेश के बाद भी बना रहे — इसे <strong>सब साफ़ करें</strong> या ब्राउज़र टूल से साफ़ करें।</p>',
 
     'footer.brandHtml':   'SplatWorks <span>MarkdownSplat</span>',
     'footer.credit.html': 'Vibe-coded द्वारा <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',

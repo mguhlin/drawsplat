@@ -1,6 +1,7 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
+starterNewsletter|Open starter newsletter|Abrir boletín inicial|Mở bản tin mẫu|فتح النشرة النموذجية|打开入门简报|शुरुआती समाचार पत्र खोलें
 saveDrive|Save to Google Drive|Guardar en Google Drive|Lưu vào Google Drive|حفظ في Google Drive|保存到 Google Drive|Google Drive में सहेजें
 presentationMode|Slide content|Contenido de diapositiva|Nội dung slide|محتوى الشريحة|幻灯片内容|स्लाइड सामग्री
 editableSlides|Editable objects|Objetos editables|Đối tượng có thể sửa|عناصر قابلة للتحرير|可编辑对象|संपादन योग्य वस्तुएँ

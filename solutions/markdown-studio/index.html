@@ -723,6 +723,7 @@ Custom HTML block.</p>
       <input type="file" id="file-input" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" hidden="">
       <button class="btn" id="btn-paste-html" data-i18n="btn.pasteHtml" data-i18n-title="btn.pasteHtml.title" title="Paste HTML and convert it to Markdown or WordPress block code">Paste HTML</button>
       <button class="btn" id="btn-save-md" data-i18n="btn.saveMd" data-i18n-title="btn.saveMd.title" title="Download as .md (Ctrl+S)">Save .md</button>
+      <button class="btn" id="btn-save-drive" type="button">Save to Google Drive</button>
       <button class="btn" id="btn-save-html" data-i18n="btn.saveHtml" data-i18n-title="btn.saveHtml.title" title="Download as .html">Save .html</button>
       <button class="btn" id="btn-save-docx" title="Download as a Microsoft Word document">Save .docx</button>
       <button class="btn" id="btn-save-odt" title="Download as an OpenDocument Text document">Save .odt</button>
@@ -988,7 +989,7 @@ def hello():
   <details class="help-card">
     <summary class="help-summary" data-i18n="help.privacy.summary">Privacy and Storage</summary>
     <div class="help-body" data-i18n-html="help.privacy.body.html">
-      <p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>
+      <p>Everything runs in your browser. Only an authorized Save to Google Drive action uploads a copy. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>
     </div>
   </details>
 </section>
@@ -2056,6 +2057,13 @@ def hello():
   $('file-input').addEventListener('change', (e) => {
     if (e.target.files && e.target.files[0]) importFile(e.target.files[0]);
     e.target.value = '';
+  });
+  $('btn-save-drive').addEventListener('click', async () => {
+    const content = input.value;
+    try {
+      const { saveToGoogleDrive } = await import('../../splatworks/shared/google-drive.js?v=20261015-creative-drive');
+      await saveToGoogleDrive({ appName: 'MarkdownSplat', fileName: suggestFilename('md'), buildFile: () => new Blob([content], { type: 'text/markdown;charset=utf-8' }) });
+    } catch (error) { showToast(error.message); }
   });
   $('btn-save-md').addEventListener('click', saveMd);
   $('btn-save-html').addEventListener('click', saveHtml);

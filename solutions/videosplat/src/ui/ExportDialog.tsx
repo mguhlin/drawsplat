@@ -1,3 +1,4 @@
+import { saveToGoogleDrive } from "../../../../splatworks/shared/google-drive.js";
 import { ExportProgress } from "./ExportProgress";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { VideoSplatProject } from "../domain/project";
@@ -119,7 +120,7 @@ export function ExportDialog({
       </button>
       <h2 id="export-title">Export video locally</h2>
       <p className="lead">
-        Render the complete timeline in this browser. Media is not uploaded.
+        Render the complete timeline in this browser. A copy is uploaded only if you choose Google Drive saving.
         Auto uses fast frame export and requests hardware encoding when supported. Compatible export runs in real time; OGM also needs conversion afterward. Keep this dialog open until the export finishes.
       </p>
       <fieldset className="export-settings" disabled={busy}>
@@ -302,6 +303,10 @@ export function ExportDialog({
           <button className="primary" onClick={download}>
             Save another {result.format.toUpperCase()} copy
           </button>
+          <button onClick={async () => {
+            try { await saveToGoogleDrive({ appName: 'VideoSplat', authorizationWindow: true, fileName: exportName(project.name, result.format), buildFile: () => result.blob }); }
+            catch (error) { onStatus(error instanceof Error ? error.message : 'Google Drive saving could not start'); }
+          }}>Save video to Google Drive</button>
           <button onClick={run}>Render again</button>
           {report && (
             <button onClick={() => downloadExportReport(report)}>

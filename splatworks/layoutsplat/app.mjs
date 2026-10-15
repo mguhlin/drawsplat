@@ -1,4 +1,5 @@
-import { saveToGoogleDrive } from '../shared/google-drive.js';
+import { loadStarterPublication } from './starter.mjs';
+import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
 import { UNITS, PAPER, uid, clone, newPublication, frame, shape, textStyle, findObject, guidePositions, snapPosition, removeObject, linkFrames, validatePublication, formatMeasure, toPoints, setStoryStyle } from './engine.mjs';
 import { createMeasurer, layoutStories, designFindings, PT_TO_PX } from './layout.mjs';
 import { objectElement, publicationPage, exportHtml } from './render.mjs';
@@ -33,8 +34,11 @@ function remember() {
 function saveLocal() {
   try {
     const storage = workspaceStorage(), json = JSON.stringify(doc);
-    if (lastSaved) storage.setItem(BACKUP, lastSaved);
-    storage.setItem(STORE, json); lastSaved = json; unsaved = false;
+    // Save the current draft first. Large illustrated publications can fit
+    // individually while a second recovery copy exceeds localStorage's quota.
+    storage.setItem(STORE, json);
+    if (lastSaved) { try { storage.setItem(BACKUP, lastSaved); } catch { /* Keep the saved current draft and any older recovery copy. */ } }
+    lastSaved = json; unsaved = false;
     storage.removeItem(START_BLANK);
     status(isTransferredWorkspace() ? 'isolatedDraft' : 'savedLocal');
   } catch { status('storageUnavailable'); }
@@ -279,6 +283,9 @@ async function action(name) {
   if (await publishing?.action(name)) { document.querySelectorAll('.more-tools[open]').forEach(menu => menu.open = false); return; }
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
+    case 'starter': {
+      const next = await loadStarterPublication(); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
+    }
     case 'save': await saveProject(); break;
     case 'save-drive': {
       const snapshot = clone(doc);
@@ -449,6 +456,10 @@ async function boot() {
     else doc = newPublication();
   } catch {
     try { doc = validatePublication(JSON.parse(workspaceStorage().getItem(BACKUP))); loaded = true; lastStatus = 'recovered'; } catch { doc = newPublication(); loaded = true; lastStatus = 'storageUnavailable'; }
+  }
+  if (!loaded && !isTransferredWorkspace()) {
+    try { doc = await loadStarterPublication(); }
+    catch (error) { console.warn('Starter newsletter unavailable; using the built-in example.', error); }
   }
   installPublishingUI();
   $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.html,.htm,.pub,.pages,.ai,.eps,.ps,.indd,.indt,.qxp,.qxd,.qxt';

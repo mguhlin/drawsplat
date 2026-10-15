@@ -162,3 +162,16 @@ Pages IWA, QuarkXPress 5+ and external print certification remain outside suppor
 ## Current names and versioned archives
 
 SplatWorks is the ecosystem and DrawSplat is its whiteboard. Existing release ZIP filenames and bundled labels retain the names used when built. For the current tool names and privacy documentation, use the [wiki](../wiki/) or build from the current source archive; do not assume a previously published ZIP was rebuilt by a documentation update.
+
+## Optional Google Drive saving
+
+The office suite and PDFSplat, VideoSplat, MediaSplat, MarkdownSplat, ConceptSplat,
+and MermaidSplat include optional file saving to Google Drive. Keep the shared
+`splatworks/shared/` folder and configure your district’s OAuth web client and
+exact HTTPS origin. Editing and local downloads do not require Google.
+
+PDFSplat, VideoSplat and MediaSplat use a separate authorization page so their
+processing isolation can be preserved. Apply the included `_headers` rules (or
+your server’s equivalents) to both the editor and `/splatworks/shared/google-drive-auth`
+with or without `.html`. Follow the
+[format table and district setup](../pages/splatworks.html#save-to-google-drive).

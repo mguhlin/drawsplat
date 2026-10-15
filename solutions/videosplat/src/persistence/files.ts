@@ -1,11 +1,13 @@
 import { validateProject, type VideoSplatProject } from "../domain/project";
 
+export const projectFileName = (project: VideoSplatProject) => `${project.name.replace(/[^a-z0-9-_]+/gi, "-").replace(/^-|-$/g, "") || "project"}.videosplat.json`;
+export const projectFile = (project: VideoSplatProject) => new Blob([JSON.stringify(project, null, 2)], { type: "application/json" });
 export function downloadProject(project: VideoSplatProject) {
-  const blob = new Blob([JSON.stringify(project, null, 2)], { type: "application/json" });
+  const blob = projectFile(project);
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${project.name.replace(/[^a-z0-9-_]+/gi, "-").replace(/^-|-$/g, "") || "project"}.videosplat.json`;
+  link.download = projectFileName(project);
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }

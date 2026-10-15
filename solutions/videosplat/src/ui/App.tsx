@@ -35,7 +35,8 @@ import {
   saveMedia,
   saveProject,
 } from "../persistence/database";
-import { downloadProject, readProject } from "../persistence/files";
+import { saveToGoogleDrive } from "../../../../splatworks/shared/google-drive.js";
+import { projectFile, projectFileName, downloadProject, readProject } from "../persistence/files";
 import { downloadMlt, readMlt } from "../persistence/mlt";
 import { getCapabilities, storageEstimate } from "../privacy/capabilities";
 import { importMedia } from "../media/importer";
@@ -1052,7 +1053,7 @@ export function App() {
           </h1>
           <b className="splash-version">{APP_VERSION}</b>
           <p>Private video editing. Right in your browser.</p>
-          <span>Local-first · No media uploads</span>
+          <span>Local processing · Optional Drive saving</span>
           {!splashMode && <div className="splash-choice" aria-labelledby="splash-choice-title">
             <strong id="splash-choice-title">What would you like to do?</strong>
             <div>
@@ -1139,6 +1140,12 @@ export function App() {
               <button role="menuitem" onClick={() => menuAction(newProject)}>New project</button>
               <button role="menuitem" onClick={() => menuAction(() => { void refreshProjects(); setDialog("projects"); })}>Open project…</button>
               <button role="menuitem" onClick={() => menuAction(() => { downloadProject(project); setStatus("Project copy downloaded"); })}>Save project copy</button>
+              <button role="menuitem" onClick={() => menuAction(async () => {
+                const blob = projectFile(project);
+                try { await saveToGoogleDrive({ appName: 'VideoSplat', authorizationWindow: true, fileName: projectFileName(project), buildFile: () => blob,
+                  note: 'This project file contains timeline edits and references to source media. Keep the original media and relink it when reopening on another device. Save a rendered video from Export video for a playable copy.' }); }
+                catch (error) { setStatus(error instanceof Error ? error.message : 'Google Drive saving could not start'); }
+              })}>Save project to Google Drive</button>
               <hr />
               <button role="menuitem" disabled={importing} onClick={() => menuAction(() => mediaInput.current?.click())}>{importing ? "Importing…" : "Import media…"}</button>
               <button role="menuitem" disabled={!selectedAsset || !mediaUrls[selectedAsset.id]} onClick={() => menuAction(() => {
@@ -2129,7 +2136,7 @@ export function App() {
               </label>
               <div className="trust-card">
                 <strong>Privacy by design</strong>
-                <p>No account, analytics, ads, trackers, or media uploads.</p>
+                <p>Local editing needs no account. Google Drive uploads only the copy you choose after authorization. No analytics, ads, or trackers.</p>
                 <button
                   onClick={async () => {
                     setStorage(await storageEstimate());

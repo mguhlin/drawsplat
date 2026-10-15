@@ -49,7 +49,7 @@ export function installPublishingUI() {
   const divider=()=>filePanel.append(document.createElement('hr'));
   const submenu=(id,key,label)=>{const details=document.createElement('details');details.id=id;details.className='file-submenu';const summary=document.createElement('summary');summary.dataset.i18n=key;summary.textContent=label;const panel=document.createElement('div');panel.className='submenu-panel';details.append(summary,panel);filePanel.append(details);return panel;};
   filePanel.replaceChildren();
-  for(const [action,key,label] of [['blank','newBlank','New blank publication'],['open','openLayoutProject','Open LayoutSplat project'],['save','saveProject','Save project'],['save-drive','saveDrive','Save to Google Drive']])filePanel.append(command(action,key,label));
+  for(const [action,key,label] of [['starter','starterNewsletter','Open starter newsletter'],['blank','newBlank','New blank publication'],['open','openLayoutProject','Open LayoutSplat project'],['save','saveProject','Save project'],['save-drive','saveDrive','Save to Google Drive']])filePanel.append(command(action,key,label));
   divider();const templatePanel=submenu('fileTemplates','templates','Templates');
   for(const [action,key,label] of [['browseTemplates','browseAllTemplates','Browse all designs'],['labelTemplates','labelTemplates','Avery labels & name badges'],['cardTemplates','business-card','Business cards'],['menuTemplates','menu','Menus'],['whiteboardBackgrounds','whiteboardCollection','Whiteboard backgrounds & images'],['saveTemplate','saveTemplate','Save as template']])templatePanel.append(command(action,key,label));
   divider();const importPanel=submenu('fileImport','import','Import');

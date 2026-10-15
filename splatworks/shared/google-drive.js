@@ -1,66 +1,14 @@
+import { connectionsAllowed, loadIdentity, requestToken, requestTokenInWindow } from './google-drive-auth.js?v=20261015-creative-drive';
 /* Optional Google Drive file transfer. MIT; see LICENSE.txt.
  * No startup Google requests, stored tokens, background uploads or public sharing.
  */
 const SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const PUBLIC_CLIENT = '31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com';
-let identityLoading = null, activeDialog = null;
-
-function connectionsAllowed() {
-  if (window.SplatPrivacy?.getState().optionalConnections === false) throw new Error('External connections are off. Enable them in Privacy before using Google Drive.');
-  if (navigator.onLine === false) throw new Error('Google Drive needs an internet connection. You can still save to your device.');
-}
+let activeDialog = null;
 
 function clientId(configured) {
   return configured || document.querySelector('meta[name="google-drive-client-id"]')?.content ||
     (/^(splatworks\.org|drawsplat\.org)$/.test(location.hostname) ? PUBLIC_CLIENT : '');
-}
-
-function loadIdentity() {
-  connectionsAllowed();
-  if (window.google?.accounts?.oauth2) return Promise.resolve();
-  if (identityLoading) return identityLoading;
-  identityLoading = new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    const failed = () => { clearTimeout(timer); script.remove(); identityLoading = null; reject(new Error('Google sign-in could not load. Check your connection and try again.')); };
-    const timer = setTimeout(failed, 15000);
-    script.src = 'https://accounts.google.com/gsi/client'; script.async = true;
-    script.onerror = failed;
-    script.onload = () => { clearTimeout(timer); if (window.google?.accounts?.oauth2) resolve(); else failed(); };
-    document.head.append(script);
-  });
-  return identityLoading;
-}
-
-// Called directly by the dialog's button, before any asynchronous file preparation.
-// This preserves the user gesture required for Google's popup.
-function requestToken(id, signal) {
-  connectionsAllowed();
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    const finish = (error, token) => {
-      if (settled) return; settled = true; clearTimeout(timer); signal.removeEventListener('abort', aborted);
-      if (error) reject(error); else resolve(token);
-    };
-    const aborted = () => finish(new DOMException('Cancelled', 'AbortError'));
-    const timer = setTimeout(() => finish(new Error('Google sign-in timed out. Try again.')), 120000);
-    signal.addEventListener('abort', aborted, { once: true });
-    if (signal.aborted) { aborted(); return; }
-    try {
-      const oauth = window.google.accounts.oauth2;
-      const tokenClient = oauth.initTokenClient({
-        client_id: id, scope: SCOPE, include_granted_scopes: false,
-        callback(response) {
-          if (response.error || !response.access_token) { finish(new Error('Google Drive permission was not granted. Your local work is unchanged.')); return; }
-          if ((oauth.hasGrantedAllScopes && !oauth.hasGrantedAllScopes(response, SCOPE)) || (response.scope && !response.scope.split(/\s+/).includes(SCOPE))) {
-            finish(new Error('Allow access to the files you use with this app to continue.')); return;
-          }
-          finish(null, response.access_token);
-        },
-        error_callback() { finish(new Error('Google sign-in was closed or blocked. Allow the popup and try again.')); }
-      });
-      tokenClient.requestAccessToken({ prompt: 'select_account' });
-    } catch (error) { finish(error); }
-  });
 }
 
 async function checkedFetch(url, options, token, signal) {
@@ -122,8 +70,9 @@ function transfer(options, mode) {
   const action = mode === 'save' ? 'Save to Google Drive' : mode === 'open' ? 'Open from Google Drive' : 'Connect Google Drive';
   dialog.querySelector('h2').textContent = action;
   dialog.querySelector('.splat-drive-note').textContent = mode === 'save'
-    ? options.appName + ' saves a new native project file to the Google account you choose. Local work stays here. Sharing is not enabled; manage access in Drive. Download the file from Drive and open it in ' + options.appName + ' to edit.'
+    ? options.appName + ' saves a new file copy to the Google account you choose. Local work stays here. Sharing is not enabled; manage access in Drive. You can download the file from Drive later.'
     : 'Choose your Google account to ' + (mode === 'open' ? 'reopen the last ' + options.appName + ' file saved from this browser.' : 'connect ' + options.appName + '.') + ' Access is limited to files you use with this app.';
+  if (options.note) { const note = document.createElement('p'); note.textContent = options.note; dialog.querySelector('form').before(note); }
   field.value = options.fileName || 'project.json'; field.parentElement.hidden = mode !== 'save';
   submit.textContent = action;
   document.body.append(dialog); activeDialog = dialog; dialog.showModal();
@@ -137,30 +86,36 @@ function transfer(options, mode) {
   });
   close.onclick = () => dialog.close();
   const id = clientId(options.clientId);
+  const separateAuthorization = options.authorizationWindow === true || window.crossOriginIsolated === true;
   try {
     connectionsAllowed();
     if (location.protocol !== 'https:' && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) throw new Error('Google Drive needs a hosted HTTPS site. Save to your device here.');
     if (!id) throw new Error('This site needs Google Drive setup. Ask your administrator to configure a Google OAuth client. Local saving is available.');
     status.textContent = 'Loading Google sign-in…';
-    loadIdentity().then(() => { if (!finished) { connectionsAllowed(); status.textContent = 'Choose ' + action + ' to sign in and authorize this file transfer.'; submit.disabled = false; } }).catch(error => { if (!finished) status.textContent = error.message; });
+    (separateAuthorization ? Promise.resolve() : loadIdentity()).then(() => { if (!finished) { connectionsAllowed(); status.textContent = 'Choose ' + action + ' to sign in and authorize this file transfer.'; submit.disabled = false; } }).catch(error => { if (!finished) status.textContent = error.message; });
   } catch (error) { status.textContent = error.message; }
   form.onsubmit = async event => {
     event.preventDefault(); if (submit.disabled || finished) return;
     let name = field.value.replace(/[\x00-\x1f/\\]/g, '-').trim();
-    const suffix = options.fileName?.match(/\.(?:(?:grid|show|write|list)splat\.json|layoutsplat)$/i)?.[0];
+    const suffix = options.fileName?.match(/(?:\.(?:grid|show|write|list|video)splat\.json|\.drawsplat-cmap\.json|\.[a-z0-9]{1,12})$/i)?.[0];
     if (name && suffix && !name.toLowerCase().endsWith(suffix.toLowerCase())) name += suffix;
     if (mode === 'save' && !name) { field.focus(); return; }
     submit.disabled = true; field.disabled = true; controller = new AbortController();
     let timeout;
     try {
       status.textContent = 'Choose your Google account and allow file access…';
-      const token = await requestToken(id, controller.signal);
+      const token = await (separateAuthorization ? requestTokenInWindow(id, controller.signal) : requestToken(id, controller.signal));
       if (finished) return;
       connectionsAllowed();
       timeout = setTimeout(() => controller.abort(), 180000);
       if (mode === 'save') {
-        status.textContent = 'Preparing and uploading your project…';
+        status.textContent = 'Preparing your file…';
         const blob = await options.buildFile();
+        if (!(blob instanceof Blob)) throw new Error('The file could not be prepared. Save a local copy and try again.');
+        clearTimeout(timeout);
+        const uploadBudget = Math.min(1800000, Math.max(180000, Math.ceil(blob.size / (256 * 1024)) * 1000 + 60000));
+        timeout = setTimeout(() => controller.abort(), uploadBudget);
+        status.textContent = 'Uploading ' + name + ' (' + (blob.size / 1048576).toFixed(1) + ' MB). Keep this tab open…';
         outcome = await upload(blob, name, token, controller.signal);
         if (finished) return;
         resultLink.querySelector('a').href = outcome.webViewLink; resultLink.hidden = false;

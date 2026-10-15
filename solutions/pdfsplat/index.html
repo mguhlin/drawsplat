@@ -37,6 +37,7 @@
         <option value="epub">EPUB (.epub)</option>
         <option value="json">JSON (.json)</option>
       </select>
+      <button id="saveDriveButton" type="button" disabled>Save PDF to Google Drive</button>
       <button id="presentButton" type="button" disabled aria-keyshortcuts="Control+L Meta+L"><span>Present PDF</span></button>
       <button id="fullscreenButton" type="button" disabled>⛶ <span>Full screen</span></button>
       <button id="websiteButton" type="button">Capture to PDF</button>
@@ -194,7 +195,7 @@
   <dialog id="privacyDialog">
     <form method="dialog">
       <h2>Your files stay here</h2>
-      <p>PDF bytes, page images, extracted text, and edits are processed in this browser. DrawSplat does not upload your PDF.</p>
+      <p>PDF bytes, page images, extracted text, and edits are processed in this browser. A copy is uploaded to your chosen Google account only when you select Save PDF to Google Drive and authorize it.</p>
       <p>This prototype stores no document or recovery data after the tab closes.</p>
       <button class="primary" value="close">Close</button>
     </form>
@@ -410,7 +411,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=20261012-epub-images"></script>
+  <script src="./src/boot.js?v=20261015-creative-drive"></script>
   <script src="../../assets/js/pdf-ui-strings.js?v=20261009-presentation"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>

@@ -376,7 +376,7 @@
         <p class="footer-note" data-i18n="palette.hint">Selecting a palette injects a Mermaid <code>%%{init}%%</code> directive at the top of the editor with the hex codes below. Copy any swatch to use it elsewhere.</p>
 
         <h3 data-i18n="about.h3">About</h3>
-        <p class="footer-note" data-i18n-html="about.html">Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
+        <p class="footer-note" data-i18n-html="about.html">Diagrams are rendered locally in your browser. Only an authorized Save to Google Drive action uploads a source-file copy. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
       </aside>
 
       <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Mermaid editor">
@@ -389,6 +389,9 @@
         </div>
         <div class="actions">
           <button class="button primary" id="renderBtn" type="button" data-i18n="button.render">Render Now</button>
+          <button class="button" id="saveSourceBtn" type="button">Save .mmd</button>
+          <button class="button" id="openSourceBtn" type="button">Open .mmd</button><input id="sourceFile" type="file" accept=".mmd,.mermaid,.txt,text/plain" hidden>
+          <button class="button" id="saveDriveBtn" type="button">Save to Google Drive</button>
           <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.dlSvg">Download SVG</button>
           <button class="button" id="downloadPngBtn" type="button" data-i18n="button.dlPng">Download PNG</button>
           <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
@@ -700,6 +703,22 @@
     setStatus(t('status.editorCleared'), 'info');
   });
 
+  $('saveSourceBtn').addEventListener('click', () => downloadBlob(new Blob([$('mermaidSource').value], { type: 'text/plain;charset=utf-8' }), defaultBaseName() + '.mmd'));
+  $('openSourceBtn').addEventListener('click', () => $('sourceFile').click());
+  $('sourceFile').addEventListener('change', async event => {
+    const file = event.target.files[0]; event.target.value = '';
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return setStatus('Choose a source file smaller than 5 MB.', 'danger');
+    try { $('mermaidSource').value = await file.text(); $('mermaidSource').dispatchEvent(new Event('input')); }
+    catch { setStatus('The source file could not be opened.', 'danger'); }
+  });
+  $('saveDriveBtn').addEventListener('click', async () => {
+    const content = $('mermaidSource').value;
+    try {
+      const { saveToGoogleDrive } = await import('../../splatworks/shared/google-drive.js?v=20261015-creative-drive');
+      await saveToGoogleDrive({ appName: 'MermaidSplat', fileName: defaultBaseName() + '.mmd', buildFile: () => new Blob([content], { type: 'text/plain;charset=utf-8' }) });
+    } catch (error) { setStatus(error.message, 'danger'); }
+  });
   $('downloadSvgBtn').addEventListener('click', async () => {
     const source = sourceEl.value.trim();
     if(!source) return setStatus(t('status.addFirst'), 'danger');

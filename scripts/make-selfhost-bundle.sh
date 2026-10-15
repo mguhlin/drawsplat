@@ -886,6 +886,7 @@ for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAM
   for privacy_report in data/privacy-network-*.json; do
     if [ -f "$privacy_report" ]; then copy_file "$privacy_report" "$privacy_root/$privacy_report"; fi
   done
+  copy_tree splatworks/shared "$privacy_root/splatworks/shared" "${MODULE_EXCLUDES[@]}"
   copy_file _headers "$privacy_root/_headers"
 done
 

@@ -1,4 +1,4 @@
-import { saveToGoogleDrive } from '../shared/google-drive.js';
+import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../shared/file-bridge.js';
 (function () {
   'use strict';

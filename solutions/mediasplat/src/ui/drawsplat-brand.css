@@ -14,3 +14,5 @@ header { background:linear-gradient(90deg,#5b21b6ee,#7c3aedee 58%,#a855f7ee); bo
 .presets button { border-color:#7c3aed; background:#291443; color:#f3e8ff; }
 .segmented button[aria-pressed=true] { background:#5b21b6; }
 :focus-visible { outline:3px solid #a855f7; outline-offset:2px; }
+
+.results-head,.results article{flex-wrap:wrap}.results article>div{flex-basis:12rem;overflow-wrap:anywhere}.results article>button{padding:.65rem .8rem;border-radius:.5rem}

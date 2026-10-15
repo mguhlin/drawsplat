@@ -590,7 +590,7 @@ test("imports captions and exposes the local composition exporter", async ({
   await expect(
     page.getByRole("heading", { name: "Export video locally" }),
   ).toBeVisible();
-  await expect(page.getByText("Media is not uploaded")).toBeVisible();
+  await expect(page.getByText("A copy is uploaded only if you choose Google Drive saving.", {exact:false})).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Render local WebM" }),
   ).toBeEnabled();

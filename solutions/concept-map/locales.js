@@ -165,7 +165,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'Label: <em>{label}</em>',
     'selection.group.noLabel':'No label yet. Use Edit Group Label.',
 
-    'footer.note.html':     'Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.',
+    'footer.note.html':     'Editing stays in your browser. Save to Google Drive uploads a copy only after you authorize it. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.',
 
     'modePill.select':      'Mode: Select / Drag',
     'modePill.connect':     'Mode: Connect Nodes',
@@ -473,7 +473,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'Etiqueta: <em>{label}</em>',
     'selection.group.noLabel':'Aún sin etiqueta. Usa Editar etiqueta del grupo.',
 
-    'footer.note.html':     'Los mapas conceptuales quedan solo en tu navegador — nada se sube. Usa <strong>Guardar .json</strong> para conservar tu trabajo como archivo local y luego <strong>Cargar .json</strong> para reabrirlo. Ctrl/Cmd+clic en un nodo con enlace para abrirlo en una nueva pestaña. <strong>Copiar / Descargar con nodos seleccionados</strong> exporta solo la selección (con los conectores entre ellos y los grupos completamente seleccionados), recortada y ampliada.',
+    'footer.note.html':     'La edición ocurre en tu navegador. Guardar en Google Drive sube una copia solo con tu autorización. Usa <strong>Guardar .json</strong> para conservar tu trabajo como archivo local y luego <strong>Cargar .json</strong> para reabrirlo. Ctrl/Cmd+clic en un nodo con enlace para abrirlo en una nueva pestaña. <strong>Copiar / Descargar con nodos seleccionados</strong> exporta solo la selección (con los conectores entre ellos y los grupos completamente seleccionados), recortada y ampliada.',
 
     'modePill.select':      'Modo: Seleccionar / Arrastrar',
     'modePill.connect':     'Modo: Conectar nodos',
@@ -768,7 +768,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'Nhãn: <em>{label}</em>',
     'selection.group.noLabel':'Chưa có nhãn. Dùng "Sửa nhãn nhóm".',
 
-    'footer.note.html':     'Bản đồ khái niệm chỉ lưu trong trình duyệt của bạn — không gì được tải lên. Dùng <strong>Lưu .json</strong> để giữ tệp cục bộ, rồi <strong>Tải .json</strong> để mở lại sau. Ctrl/Cmd+nhấp một nút có liên kết để mở trong tab mới. <strong>Sao chép / Tải xuống khi đã chọn nút</strong> chỉ xuất phần đã chọn (kèm các liên kết giữa chúng và các nhóm chọn đủ), được cắt sát và phóng to.',
+    'footer.note.html':     'Chỉnh sửa trong trình duyệt. Chỉ tải bản sao lên Google Drive khi bạn cho phép. Dùng <strong>Lưu .json</strong> để giữ tệp cục bộ, rồi <strong>Tải .json</strong> để mở lại sau. Ctrl/Cmd+nhấp một nút có liên kết để mở trong tab mới. <strong>Sao chép / Tải xuống khi đã chọn nút</strong> chỉ xuất phần đã chọn (kèm các liên kết giữa chúng và các nhóm chọn đủ), được cắt sát và phóng to.',
 
     'modePill.select':      'Chế độ: Chọn / Kéo',
     'modePill.connect':     'Chế độ: Kết nối nút',
@@ -1063,7 +1063,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'التسمية: <em>{label}</em>',
     'selection.group.noLabel':'لا توجد تسمية بعد. استخدم "تحرير تسمية المجموعة".',
 
-    'footer.note.html':     'تبقى الخرائط في متصفحك فقط — لا شيء يُرفع. استخدم <strong>حفظ .json</strong> لحفظ عملك ملفًا محليًا، ثم <strong>تحميل .json</strong> لإعادة فتحه. Ctrl/Cmd+نقر على عقدة بها رابط لفتحه في تبويب جديد. <strong>نسخ / تنزيل مع تحديد عقد</strong> يصدّر التحديد فقط (مع الموصلات بينها والمجموعات المحددة بالكامل)، مقصوصًا ومكبّرًا.',
+    'footer.note.html':     'يتم التحرير في المتصفح. تُرفع نسخة إلى Google Drive فقط بعد موافقتك. استخدم <strong>حفظ .json</strong> لحفظ عملك ملفًا محليًا، ثم <strong>تحميل .json</strong> لإعادة فتحه. Ctrl/Cmd+نقر على عقدة بها رابط لفتحه في تبويب جديد. <strong>نسخ / تنزيل مع تحديد عقد</strong> يصدّر التحديد فقط (مع الموصلات بينها والمجموعات المحددة بالكامل)، مقصوصًا ومكبّرًا.',
 
     'modePill.select':      'الوضع: تحديد / سحب',
     'modePill.connect':     'الوضع: ربط العقد',
@@ -1358,7 +1358,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'标签: <em>{label}</em>',
     'selection.group.noLabel':'尚无标签。使用"编辑分组标签"。',
 
-    'footer.note.html':     '概念图仅保留在你的浏览器中 — 不会上传任何内容。使用<strong>保存 .json</strong>将作品保存为本地文件，然后用<strong>加载 .json</strong>再次打开。Ctrl/Cmd+点击带链接的节点可在新标签页中打开。<strong>在选中节点时复制 / 下载</strong>会只导出所选（含两端都被选中的连线和成员全选的分组），紧凑裁切并放大。',
+    'footer.note.html':     '编辑在浏览器中进行。仅在你授权保存到 Google Drive 时上传副本。使用<strong>保存 .json</strong>将作品保存为本地文件，然后用<strong>加载 .json</strong>再次打开。Ctrl/Cmd+点击带链接的节点可在新标签页中打开。<strong>在选中节点时复制 / 下载</strong>会只导出所选（含两端都被选中的连线和成员全选的分组），紧凑裁切并放大。',
 
     'modePill.select':      '模式：选择 / 拖动',
     'modePill.connect':     '模式：连接节点',
@@ -1653,7 +1653,7 @@ WidgetI18n.register('concept-map', {
     'selection.group.label':'लेबल: <em>{label}</em>',
     'selection.group.noLabel':'अभी कोई लेबल नहीं। "समूह लेबल संपादित करें" का उपयोग करें।',
 
-    'footer.note.html':     'अवधारणा मानचित्र केवल आपके ब्राउज़र में रहते हैं — कुछ भी अपलोड नहीं होता। अपने कार्य को स्थानीय फ़ाइल के रूप में रखने के लिए <strong>.json सहेजें</strong> का उपयोग करें, फिर बाद में पुनः खोलने के लिए <strong>.json लोड करें</strong>। लिंक वाले नोड को नए टैब में खोलने के लिए Ctrl/Cmd+क्लिक करें। <strong>नोड्स चयनित होने पर कॉपी / डाउनलोड</strong> केवल चयन को निर्यात करता है (उनके बीच के कनेक्टर्स और पूरी तरह चयनित समूहों के साथ), सख्ती से क्रॉप और बड़ा किया गया।',
+    'footer.note.html':     'संपादन आपके ब्राउज़र में होता है। Google Drive पर प्रति केवल आपकी अनुमति से अपलोड होती है। अपने कार्य को स्थानीय फ़ाइल के रूप में रखने के लिए <strong>.json सहेजें</strong> का उपयोग करें, फिर बाद में पुनः खोलने के लिए <strong>.json लोड करें</strong>। लिंक वाले नोड को नए टैब में खोलने के लिए Ctrl/Cmd+क्लिक करें। <strong>नोड्स चयनित होने पर कॉपी / डाउनलोड</strong> केवल चयन को निर्यात करता है (उनके बीच के कनेक्टर्स और पूरी तरह चयनित समूहों के साथ), सख्ती से क्रॉप और बड़ा किया गया।',
 
     'modePill.select':      'मोड: चुनें / खींचें',
     'modePill.connect':     'मोड: नोड्स जोड़ें',

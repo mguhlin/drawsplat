@@ -1,0 +1,352 @@
+{
+  "app": "LayoutSplat",
+  "version": 1,
+  "id": "efe84a3e-0c9f-44c5-b28d-42fac2ac57e4",
+  "title": "Our community newsletter",
+  "width": 612,
+  "height": 792,
+  "margin": 36,
+  "guides": {
+    "columns": 2,
+    "rows": 1,
+    "gap": 18,
+    "baseline": 14,
+    "vertical": [],
+    "horizontal": []
+  },
+  "pages": [
+    {
+      "id": "af144544-68b0-4c84-b85d-e85b639d01d7",
+      "objects": [
+        {
+          "id": "49045962-4ee7-474f-a0f0-706a29dc4731",
+          "type": "shape",
+          "kind": "rect",
+          "x": 36,
+          "y": 36,
+          "w": 540,
+          "h": 8,
+          "rotation": 0,
+          "fill": "#ff9f2f",
+          "stroke": "#ff9f2f",
+          "strokeWidth": 0,
+          "opacity": 1,
+          "locked": false
+        },
+        {
+          "id": "9fd89cef-bdd8-4ff2-883a-e0522473ea48",
+          "type": "text",
+          "storyId": "67376d94-3797-4234-9bcf-1e83a7eebb29",
+          "x": 36,
+          "y": 58,
+          "w": 540,
+          "h": 25,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "7adc0afa-0976-4317-87c1-7ce6efe9dab8",
+          "type": "text",
+          "storyId": "f8b9d441-6ad8-40bd-b0ea-038660f8a8d5",
+          "x": 36,
+          "y": 97,
+          "w": 540,
+          "h": 125,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "29cad8a8-cc96-4b9a-852d-fb095e3f4cc2",
+          "type": "text",
+          "storyId": "8b42262a-1fb9-4fa0-871a-2d76a5bb4f10",
+          "x": 36,
+          "y": 228,
+          "w": 540,
+          "h": 32,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "9ab754e5-44c2-41ea-949c-b06c5723b559",
+          "type": "image",
+          "assetId": "95dd3f58-1c32-4891-99cf-434e8db86e27",
+          "x": 36,
+          "y": 281,
+          "w": 540,
+          "h": 210,
+          "rotation": 0,
+          "fit": "contain",
+          "locked": false
+        },
+        {
+          "id": "79d1de21-2e6c-44d8-bfc1-7bf942c6b8d4",
+          "type": "text",
+          "storyId": "4b9bcb10-3477-4efc-92a1-ad12f7b3bf7d",
+          "x": 36,
+          "y": 515,
+          "w": 261,
+          "h": 175,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "f8a57407-1d6e-4d10-856c-86a28469efcc",
+          "type": "text",
+          "storyId": "f6f24ec2-d248-407b-bed0-524e64a611b1",
+          "x": 315,
+          "y": 515,
+          "w": 261,
+          "h": 105,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "89e51a7e-0ca6-4850-a8f8-c42611fe1d5e",
+          "type": "text",
+          "storyId": "2af0e231-06e4-4fe6-a4b2-4e0192c9d6ca",
+          "x": 315,
+          "y": 636,
+          "w": 261,
+          "h": 67,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "c82dbe7e-82e1-43f1-bb73-19940ace0d8b",
+          "type": "text",
+          "storyId": "b4c379f1-9588-4155-8550-a8894b2d926b",
+          "x": 36,
+          "y": 724,
+          "w": 540,
+          "h": 22,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "id": "35bff8da-658d-4760-b2fd-398e0503732e",
+      "objects": [
+        {
+          "id": "90e7e33c-4ba7-4361-85e8-b9d0a7e678e8",
+          "type": "shape",
+          "kind": "rect",
+          "x": 36,
+          "y": 36,
+          "w": 540,
+          "h": 8,
+          "rotation": 0,
+          "fill": "#ff9f2f",
+          "stroke": "#ff9f2f",
+          "strokeWidth": 0,
+          "opacity": 1,
+          "locked": false
+        },
+        {
+          "id": "5c65e080-dc37-4d3c-92a2-77cfca630684",
+          "type": "text",
+          "storyId": "f10ad9ef-4fe8-43b7-9453-6224dc46684f",
+          "x": 36,
+          "y": 57,
+          "w": 540,
+          "h": 43,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "cb60125a-15b1-4fcd-a944-8e3a34cd67ef",
+          "type": "text",
+          "storyId": "4b9bcb10-3477-4efc-92a1-ad12f7b3bf7d",
+          "x": 36,
+          "y": 117,
+          "w": 261,
+          "h": 495,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "6794fe8f-0e04-47e2-becb-4825c549270a",
+          "type": "text",
+          "storyId": "4b9bcb10-3477-4efc-92a1-ad12f7b3bf7d",
+          "x": 315,
+          "y": 117,
+          "w": 261,
+          "h": 495,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        },
+        {
+          "id": "4838d8a0-aaed-4b54-b5e2-a502eec8a2e5",
+          "type": "text",
+          "storyId": "442c9634-8728-4574-b4ab-e94cc95b191b",
+          "x": 36,
+          "y": 724,
+          "w": 540,
+          "h": 22,
+          "rotation": 0,
+          "padding": 0,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "stories": {
+    "67376d94-3797-4234-9bcf-1e83a7eebb29": {
+      "text": "THE COMMUNITY EDITION",
+      "style": {
+        "font": "Arial",
+        "size": 10,
+        "weight": "bold",
+        "color": "#7c3aed",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "9fd89cef-bdd8-4ff2-883a-e0522473ea48"
+      ]
+    },
+    "f8b9d441-6ad8-40bd-b0ea-038660f8a8d5": {
+      "text": "Small ideas.\nShared possibilities.",
+      "style": {
+        "font": "Arial",
+        "size": 38,
+        "weight": "bold",
+        "color": "#34205c",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.08
+      },
+      "frames": [
+        "7adc0afa-0976-4317-87c1-7ce6efe9dab8"
+      ]
+    },
+    "8b42262a-1fb9-4fa0-871a-2d76a5bb4f10": {
+      "text": "A newsletter made together",
+      "style": {
+        "font": "Arial",
+        "size": 17,
+        "weight": "normal",
+        "color": "#7c3aed",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "29cad8a8-cc96-4b9a-852d-fb095e3f4cc2"
+      ]
+    },
+    "4b9bcb10-3477-4efc-92a1-ad12f7b3bf7d": {
+      "text": "A good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\nA good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\n",
+      "style": {
+        "font": "Arial",
+        "size": 12,
+        "weight": "normal",
+        "color": "#25304b",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "79d1de21-2e6c-44d8-bfc1-7bf942c6b8d4",
+        "cb60125a-15b1-4fcd-a944-8e3a34cd67ef",
+        "6794fe8f-0e04-47e2-becb-4825c549270a"
+      ]
+    },
+    "f10ad9ef-4fe8-43b7-9453-6224dc46684f": {
+      "text": "The story continues",
+      "style": {
+        "font": "Arial",
+        "size": 25,
+        "weight": "bold",
+        "color": "#34205c",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "5c65e080-dc37-4d3c-92a2-77cfca630684"
+      ]
+    },
+    "f6f24ec2-d248-407b-bed0-524e64a611b1": {
+      "text": "مرحباً بكم في مجتمعنا\nنصنع مساحة للأفكار والإبداع.",
+      "style": {
+        "font": "Arial",
+        "size": 17,
+        "weight": "normal",
+        "color": "#25304b",
+        "align": "right",
+        "direction": "rtl",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "f8a57407-1d6e-4d10-856c-86a28469efcc"
+      ]
+    },
+    "2af0e231-06e4-4fe6-a4b2-4e0192c9d6ca": {
+      "text": "Select any text frame to edit its story.\nLinked frames keep the words together.",
+      "style": {
+        "font": "Arial",
+        "size": 10,
+        "weight": "normal",
+        "color": "#667085",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "89e51a7e-0ca6-4850-a8f8-c42611fe1d5e"
+      ]
+    },
+    "b4c379f1-9588-4155-8550-a8894b2d926b": {
+      "text": "COMMUNITY NEWS  /  1",
+      "style": {
+        "font": "Arial",
+        "size": 9,
+        "weight": "normal",
+        "color": "#667085",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "c82dbe7e-82e1-43f1-bb73-19940ace0d8b"
+      ]
+    },
+    "442c9634-8728-4574-b4ab-e94cc95b191b": {
+      "text": "COMMUNITY NEWS  /  2",
+      "style": {
+        "font": "Arial",
+        "size": 9,
+        "weight": "normal",
+        "color": "#667085",
+        "align": "left",
+        "direction": "ltr",
+        "lineHeight": 1.45
+      },
+      "frames": [
+        "4838d8a0-aaed-4b54-b5e2-a502eec8a2e5"
+      ]
+    }
+  },
+  "assets": {
+    "95dd3f58-1c32-4891-99cf-434e8db86e27": {
+      "name": "Community illustration",
+      "width": 1080,
+      "height": 420,
+      "src": "sample-art.svg",
+      "sample": true
+    }
+  },
+  "createdAt": "2026-10-15T20:53:55.898Z"
+}

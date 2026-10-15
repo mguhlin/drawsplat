@@ -82,6 +82,7 @@ Category: **Create** · 19 components
 - Save JSON, PNG, SVG, or Markdown
 - Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
 - Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
+- Optionally save the full editable concept map JSON to Google Drive
 
 ### DiagramSplat
 
@@ -92,6 +93,7 @@ Category: **Create** · 19 components
 - Choose language and palette
 - Export SVG/PNG or copy PNG
 - Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
+- Save and reopen editable Mermaid .mmd source locally, or save a copy to Google Drive
 
 ### Draw & Sketch
 
@@ -178,6 +180,7 @@ Category: **Create** · 19 components
 - Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
 - Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
 - Suggested classroom uses: cut lesson recordings into shorter sections, join student recordings, and create subtitles/transcripts for learning resources
+- Optionally save processed media, a ZIP of outputs, or generated SRT/TXT files to Google Drive
 
 ### Meme Puzzle
 
@@ -263,6 +266,7 @@ Category: **Create** · 19 components
 - Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
 - Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
 - Suggested classroom uses: student documentaries, demonstrations, screencasts, narrated explanations, and captioned learning resources
+- Optionally save a native timeline project or rendered video to Google Drive; project manifests still need their source media
 
 ## Graph & Visualize Data
 
@@ -336,6 +340,7 @@ Category: **Organize** · 11 components
 - Save JSON, PNG, SVG, or Markdown
 - Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
 - Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
+- Optionally save the full editable concept map JSON to Google Drive
 
 ### DiagramSplat
 
@@ -346,6 +351,7 @@ Category: **Organize** · 11 components
 - Choose language and palette
 - Export SVG/PNG or copy PNG
 - Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
+- Save and reopen editable Mermaid .mmd source locally, or save a copy to Google Drive
 
 ### DrawSplat Whiteboard
 
@@ -386,6 +392,7 @@ Category: **Organize** · 11 components
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
 - Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
+- Optionally save editable Markdown source to Google Drive
 
 ### PDFsplat
 
@@ -398,6 +405,7 @@ Category: **Organize** · 11 components
 - Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
+- Optionally save the current edited PDF to Google Drive after authorization
 
 ### Step-Splat
 
@@ -486,6 +494,7 @@ Category: **Media** · 7 components
 - Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
 - Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
 - Suggested classroom uses: cut lesson recordings into shorter sections, join student recordings, and create subtitles/transcripts for learning resources
+- Optionally save processed media, a ZIP of outputs, or generated SRT/TXT files to Google Drive
 
 ### MemeSplat™
 
@@ -514,6 +523,7 @@ Category: **Media** · 7 components
 - Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
 - Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
 - Suggested classroom uses: student documentaries, demonstrations, screencasts, narrated explanations, and captioned learning resources
+- Optionally save a native timeline project or rendered video to Google Drive; project manifests still need their source media
 
 ## Write, Present & Organize Work
 
@@ -570,6 +580,7 @@ Category: **Writing** · 21 components
 - Choose language and palette
 - Export SVG/PNG or copy PNG
 - Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
+- Save and reopen editable Mermaid .mmd source locally, or save a copy to Google Drive
 
 ### GridSplat
 
@@ -613,6 +624,7 @@ Category: **Writing** · 21 components
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
 - Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
+- Optionally save editable Markdown source to Google Drive
 
 ### Paws & Keys Adventure
 
@@ -635,6 +647,7 @@ Category: **Writing** · 21 components
 - Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
+- Optionally save the current edited PDF to Google Drive after authorization
 
 ### RubricSplat
 

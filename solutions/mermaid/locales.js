@@ -52,7 +52,7 @@ WidgetI18n.register('mermaid', {
     'palette.hint':      'Selecting a palette injects a Mermaid %%{init}%% directive at the top of the editor with the hex codes below. Click any hex to copy it.',
 
     'about.h3': 'About',
-    'about.html': 'Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat™ whiteboard</a> to drop a diagram onto a board.',
+    'about.html': 'Diagrams are rendered locally in your browser. Only an authorized Save to Google Drive action uploads a source-file copy. Pair with the <a href="../../app/whiteboard.html">DrawSplat™ whiteboard</a> to drop a diagram onto a board.',
 
     'panel.stage.aria':   'Mermaid editor',
     'stage.h2':           'Editor & Preview',
@@ -126,7 +126,7 @@ WidgetI18n.register('mermaid', {
     'langOpt.uh': 'Urdu / Hindi',
 
     'about.h3': 'Acerca de',
-    'about.html': 'Los diagramas se generan localmente en tu navegador. Nada se sube. Combínalo con la <a href="../../app/whiteboard.html">pizarra DrawSplat™</a> para colocar un diagrama en un tablero.',
+    'about.html': 'Los diagramas se generan localmente en tu navegador. Solo se sube una copia del código al guardar en Google Drive con tu autorización. Combínalo con la <a href="../../app/whiteboard.html">pizarra DrawSplat™</a> para colocar un diagrama en un tablero.',
 
     'panel.stage.aria':   'Editor de Mermaid',
     'stage.h2':           'Editor y vista previa',
@@ -202,7 +202,7 @@ WidgetI18n.register('mermaid', {
     'langOpt.uh': 'Tiếng Urdu / Hindi',
 
     'about.h3': 'Giới thiệu',
-    'about.html': 'Sơ đồ được dựng cục bộ trong trình duyệt. Không có gì được tải lên. Kết hợp với <a href="../../app/whiteboard.html">bảng DrawSplat™</a> để đặt sơ đồ lên một bảng.',
+    'about.html': 'Sơ đồ được dựng cục bộ trong trình duyệt. Chỉ tải bản sao mã nguồn lên Google Drive khi bạn cho phép lưu. Kết hợp với <a href="../../app/whiteboard.html">bảng DrawSplat™</a> để đặt sơ đồ lên một bảng.',
 
     'panel.stage.aria':   'Trình soạn Mermaid',
     'stage.h2':           'Soạn và xem trước',
@@ -276,7 +276,7 @@ WidgetI18n.register('mermaid', {
     'langOpt.uh': 'الأردية / الهندية',
 
     'about.h3': 'حول',
-    'about.html': 'تُرسم المخططات محليًا في متصفحك. لا يُرفع شيء. اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat™</a> لإسقاط مخطط على لوحة.',
+    'about.html': 'تُرسم المخططات محليًا في متصفحك. تُرفع نسخة من المصدر إلى Google Drive فقط عند الحفظ بموافقتك. اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat™</a> لإسقاط مخطط على لوحة.',
 
     'panel.stage.aria':   'محرر Mermaid',
     'stage.h2':           'المحرر والمعاينة',
@@ -350,7 +350,7 @@ WidgetI18n.register('mermaid', {
     'langOpt.uh': '乌尔都语 / 印地语',
 
     'about.h3': '关于',
-    'about.html': '图表在你的浏览器中本地生成,不会上传。可搭配 <a href="../../app/whiteboard.html">DrawSplat™ 白板</a>,将图表拖到白板上。',
+    'about.html': '图表在你的浏览器中本地生成,仅在你授权保存到 Google Drive 时上传源文件副本。可搭配 <a href="../../app/whiteboard.html">DrawSplat™ 白板</a>,将图表拖到白板上。',
 
     'panel.stage.aria':   'Mermaid 编辑器',
     'stage.h2':           '编辑器和预览',
@@ -424,7 +424,7 @@ WidgetI18n.register('mermaid', {
     'langOpt.uh': 'उर्दू / हिन्दी',
 
     'about.h3': 'विवरण',
-    'about.html': 'आरेख आपके ब्राउज़र में स्थानीय रूप से बनते हैं। कुछ भी अपलोड नहीं होता। आरेख को बोर्ड पर रखने के लिए <a href="../../app/whiteboard.html">DrawSplat™ व्हाइटबोर्ड</a> के साथ उपयोग करें।',
+    'about.html': 'आरेख आपके ब्राउज़र में स्थानीय रूप से बनते हैं। Google Drive पर स्रोत की प्रति केवल आपकी अनुमति से सहेजी जाती है। आरेख को बोर्ड पर रखने के लिए <a href="../../app/whiteboard.html">DrawSplat™ व्हाइटबोर्ड</a> के साथ उपयोग करें।',
 
     'panel.stage.aria':   'Mermaid संपादक',
     'stage.h2':           'संपादक और पूर्वावलोकन',

@@ -207,6 +207,14 @@ verifies all 100 linked-story fragments on exactly 100 Letter pages with embedde
 fonts. Exhaustive PDF/X certification and printer acceptance remain separate
 validation work.
 
+A fresh workspace opens the first two pages of **SplatWorks News – October 2026**,
+with its text and illustrations ready to edit. Existing saved publications,
+recovery drafts and transferred documents take priority. Choose **File → Open
+starter newsletter** for a fresh copy; Undo restores the previous publication.
+Your original imported file remains unchanged. Autosave writes the current draft
+first, then keeps a recovery copy when browser storage has room. Download a
+project file for a separate backup.
+
 **File → Clear saved browser data** clears this workspace's draft/recovery and undo,
 then reloads a blank publication. Cancel preserves the current work. Other apps'
 drafts and downloaded projects remain available. Browser drafts are specific to

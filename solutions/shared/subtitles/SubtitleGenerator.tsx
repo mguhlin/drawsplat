@@ -6,8 +6,8 @@ import { transcribe, type Source, type TranscriptionProgress } from './client';
 import { cuesToSrt, validateCues, type Cue } from './core';
 import './styles.css';
 export type { Source, Cue };
-export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabel = 'Use these subtitles', downloadTranscript = false }: {
-  source: Source; onUse?: (cues: Cue[]) => void | Promise<void>; autoStart?: boolean; actionLabel?: string; downloadTranscript?: boolean;
+export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabel = 'Use these subtitles', downloadTranscript = false, onSaveFile }: {
+  source: Source; onUse?: (cues: Cue[]) => void | Promise<void>; autoStart?: boolean; actionLabel?: string; downloadTranscript?: boolean; onSaveFile?: (name: string, blob: Blob) => void | Promise<void>;
 }) {
   const [model, setModel] = useState<SpeechModelId>(preferredModel);
   const [acceleration, setAcceleration] = useState<Acceleration>(preferredAcceleration);
@@ -41,7 +41,7 @@ export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabe
   const edit = (index: number, patch: Partial<Cue>) => setCues(current => current.map((cue, i) => i === index ? { ...cue, ...patch } : cue));
   return <section className="subtitle-generator" aria-label="Automatic subtitles">
     <h3>Generate subtitles</h3>
-    <p>Transcribe English speech in <strong>{source.name}</strong> on this device. {selectedModel ? <>First use downloads the selected model from Hugging Face (CPU: about {selectedModel.downloadMB} MB{acceleration === 'auto' && <>; GPU variants: up to {selectedModel.gpuDownloadMB} MB</>}), then caches it when browser storage allows.</> : <>Your selected model is read from this device. Only the app’s bundled engine needs to load.</>} Your audio and video are never uploaded.</p>
+    <p>Transcribe English speech in <strong>{source.name}</strong> on this device. {selectedModel ? <>First use downloads the selected model from Hugging Face (CPU: about {selectedModel.downloadMB} MB{acceleration === 'auto' && <>; GPU variants: up to {selectedModel.gpuDownloadMB} MB</>}), then caches it when browser storage allows.</> : <>Your selected model is read from this device. Only the app’s bundled engine needs to load.</>} Speech recognition runs on this device.</p>
     <p>Up to 120 minutes (2 hours) per clip and 512 MB per file. Long clips can take several minutes. Keep this tab open and review automatic captions for mistakes. Completed sections are saved on this device when storage allows. Select the same file and generate again to resume after an interruption. Reviewed edits are only kept in your downloads.</p>
     <label className="subtitle-model">English speech model<select aria-describedby="subtitle-model-help" value={model} disabled={busy} onChange={event => {
       const next = event.target.value === 'local' ? 'local' : getWhisperModel(event.target.value).id;
@@ -75,7 +75,10 @@ export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabe
       })}>Download SRT</button>{downloadTranscript && <button type="button" onClick={() => void attempt(() => {
         const url = URL.createObjectURL(new Blob([cues.map(cue => cue.text.trim()).join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' }));
         const link = document.createElement('a'); link.href = url; link.download = `${source.name.replace(/\.[^.]+$/, '') || 'transcript'}${complete ? '' : '.partial'}.txt`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-      })}>Download transcript (.txt)</button>}</div>
+      })}>Download transcript (.txt)</button>}{onSaveFile && <>
+        <button type="button" onClick={() => void attempt(() => onSaveFile(`${source.name.replace(/\.[^.]+$/, '') || 'subtitles'}${complete ? '' : '.partial'}.srt`, new Blob([cuesToSrt(cues)], { type: 'application/x-subrip' })))}>Save SRT to Google Drive</button>
+        {downloadTranscript && <button type="button" onClick={() => void attempt(() => onSaveFile(`${source.name.replace(/\.[^.]+$/, '') || 'transcript'}${complete ? '' : '.partial'}.txt`, new Blob([cues.map(cue => cue.text.trim()).join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' })))}>Save transcript to Google Drive</button>}
+      </>}</div>
     </>}
   </section>;
 }

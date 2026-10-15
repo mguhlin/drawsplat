@@ -143,7 +143,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "dbc5eca60a3c8d3ccaa109c80166a8638b0b55556c2fecd114af889b66c4ea0a"
+      "entrySha256": "3578a81ad6124b158c60e518fa4919d29ecb2a201d570a81655fbcc34ee86cd2"
     },
     {
       "id": "writesplat",
@@ -198,7 +198,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "55ddee873fa27feeebdd7f14f6054f88b351b423e4292aab989eb7588e1307f0"
+      "entrySha256": "d6cc42011cff5d4bf37131d4d6a6764ae114b3122b2b12fc0ab8eb58b0d020dd"
     },
     {
       "id": "listsplat",
@@ -515,7 +515,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "9795c1d7945d44a9fb415a99a28e3bf746e21b757c03d15ae216cda96c783abc"
+      "entrySha256": "90c0fd75d2326e6afd7b2f1372c27fd23e01051813f2ad30487c7edd2a5b18ad"
     },
     {
       "id": "dice",
@@ -689,7 +689,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "51805d0db93ca0afc3d89402f668e8864d09dd9b4c9c2f689d3678e290a82672"
+      "entrySha256": "486903840d3c9480ad9c1b442f7d091ef61e6c426289a0ef257f46e313527a02"
     },
     {
       "id": "mediasplat",
@@ -704,8 +704,10 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "accounts.google.com",
         "cdn.jsdelivr.net",
         "developer.mozilla.org",
+        "drive.google.com",
         "emscripten.org",
         "gist.github.com",
         "github.com",
@@ -715,6 +717,7 @@
         "unpkg.com",
         "web.dev",
         "www.apache.org",
+        "www.googleapis.com",
         "www.w3.org"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -723,7 +726,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "030bf5d157cf70c2d8abeccfdf764678006f32c33d217f2adc3532c2a61ece83"
+      "entrySha256": "81774f6bf24a7c4b774a2f9b0ca527d1af4a5755e0c276d2a280d9550e8b9909"
     },
     {
       "id": "meme-puzzle",
@@ -801,7 +804,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "0b93db99293ce8e5ec95ad7be9878361748c82e0b895021261e87286363f116c"
+      "entrySha256": "c15417ceee205b1de9eb74072318c4a017d6ffba0848ef4e3f8a287a63858278"
     },
     {
       "id": "pdfsplat",
@@ -822,12 +825,15 @@
       },
       "literalRemoteHosts": [
         "127.0.0.1:4182",
+        "accounts.google.com",
         "drawsplat.org",
+        "drive.google.com",
         "mguhlin.github.io",
         "purl.org",
         "schema.org",
         "schemas.openxmlformats.org",
         "www.daisy.org",
+        "www.googleapis.com",
         "www.idpf.org",
         "www.w3.org"
       ],
@@ -837,7 +843,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "d1ab9970affc80e4cea37ea52e2570de46065052b879737de011253a77dded2c"
+      "entrySha256": "8d7e2834e01540815136d27d567a51c1acd8ddfd606a1f36bbd9dd08a4149b02"
     },
     {
       "id": "qrsplat",
@@ -1126,10 +1132,12 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "accounts.google.com",
         "aomediacodec.github.io",
         "bugzil.la",
         "cdn.jsdelivr.net",
         "developer.mozilla.org",
+        "drive.google.com",
         "en.wikipedia.org",
         "gist.github.com",
         "github.com",
@@ -1146,6 +1154,7 @@
         "web.dev",
         "webkit.org",
         "www.apache.org",
+        "www.googleapis.com",
         "www.ietf.org",
         "www.khronos.org",
         "www.w3.org",
@@ -1157,7 +1166,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "6ee5c539a88573e6e7ac01a6c3ae34b84aef07ca4ff94dfd78b0c9cc6b9ac0cc"
+      "entrySha256": "14694d0c44b2bdc1d7ed6cb248908701bf4d01b2277fdf1883af1c5c5b365977"
     },
     {
       "id": "wheel-spinner",

@@ -1,4 +1,4 @@
-export interface DriveOptions { appName: string; clientId?: string }
+export interface DriveOptions { appName: string; clientId?: string; authorizationWindow?: boolean; note?: string }
 export interface DriveSaveOptions extends DriveOptions { fileName: string; buildFile: () => Blob | Promise<Blob> }
 export interface DriveFile { id: string; name: string; webViewLink: string }
 export function saveToGoogleDrive(options: DriveSaveOptions): Promise<DriveFile | null>;

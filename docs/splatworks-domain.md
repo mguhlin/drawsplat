@@ -56,7 +56,8 @@ to the domain, so a redirect within one domain keeps that domain’s workspace.
 
 ## Google Drive authorization
 
-The five office apps and AudioSplat use the shared Google web client
+The five office apps, AudioSplat, PDFSplat, VideoSplat, MediaSplat,
+MarkdownSplat, ConceptSplat and MermaidSplat use the shared Google web client
 `31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com`
 for their explicit Drive actions. After the administrator added the SplatWorks
 origin on October 15, 2026, the anonymous production check reached Google's
