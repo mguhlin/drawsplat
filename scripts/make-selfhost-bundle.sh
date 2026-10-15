@@ -872,6 +872,9 @@ for module_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAME
   copy_file data/drawsplat-tools.json "$module_root/data/drawsplat-tools.json"
 done
 
+# The DrawSplat bundle excludes office apps but its creative tools use this MIT runtime.
+copy_tree splatworks/shared "$DRAWSPLAT_ROOT/splatworks/shared" "${MODULE_EXCLUDES[@]}"
+
 # Every independently hosted module keeps the common privacy surface and baseline.
 for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"; do
   copy_tree assets/css "$privacy_root/assets/css" "${MODULE_EXCLUDES[@]}"
