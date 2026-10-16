@@ -1,6 +1,6 @@
 # Save to Google Drive
 
-Keep a file copy in your Google Drive from the SplatWorks office apps and creative tools. Drive saving is optional: local downloads and existing browser drafts remain available. These saves create files in Drive; they do not convert your work into Google Docs, Sheets or Slides, or automatically sync later edits. **PlanSplat has a separate connected planner workflow:** after sign-in it loads your planner and automatically updates its Drive files while authorization is active. See the [PlanSplat guide](plansplat.md).
+Keep a file copy in your Google Drive from the SplatWorks office apps and creative tools. Drive saving is optional: local downloads and existing browser drafts remain available. These saves create files in Drive; they do not convert your work into Google Docs, Sheets or Slides, or automatically sync later edits. **PlanSplat has a separate connected planner workflow:** one Google sign-in loads your planner, automatically updates its Drive files and connects its separate PlanSplat calendar while authorization is active. See the [PlanSplat guide](plansplat.md).
 
 ## Save your work
 
@@ -18,7 +18,7 @@ Keep a file copy in your Google Drive from the SplatWorks office apps and creati
 
 | App | Where to save | What Drive receives |
 | --- | --- | --- |
-| PlanSplat | **Continue with Google** | Planner autoload/autosave, account-separated device drafts, and per-browser recovery files; reconnect when authorization expires. |
+| PlanSplat | **Continue with Google** | One sign-in for planner autoload/autosave and Calendar updates, account-separated device drafts, and per-browser recovery files; reconnect when authorization expires. |
 | WriteSplat, ShowSplat, ListSplat, LayoutSplat | **File → Save to Google Drive** | A native editable project copy. |
 | GridSplat | **File → Save → Save Google Drive** | A native editable spreadsheet project. **File → Open → Open Google Drive** reopens its last Drive save from this browser. |
 | PDFSplat | **Save PDF to Google Drive** in the toolbar | A PDF with the current edits and page arrangement. |
@@ -62,10 +62,10 @@ Local editing needs no Google configuration. The public SplatWorks.org and DrawS
 
 ## PlanSplat Calendar setup
 
-PlanSplat's optional **Backups & settings → Connect Google Calendar** has its own consent step after Drive sign-in. In the same Google Cloud project as the site's web OAuth client, enable **Google Calendar API** and add `https://www.googleapis.com/auth/calendar.app.created` to the OAuth consent configuration for the intended audience. Keep the existing `drive.file` permission. No client secret or server-side token renewal is needed for the browser reconnect workflow.
+PlanSplat's **Continue with Google** requests Drive and app-created Calendar permissions together and connects both services with one authorization. Declining Calendar permission keeps Drive saving available; **Connect Calendar** in the header can enable it later. In the same Google Cloud project as the site's web OAuth client, enable **Google Calendar API** and add `https://www.googleapis.com/auth/calendar.app.created` to the OAuth consent configuration for the intended audience. Keep the existing `drive.file` permission. No client secret or server-side token renewal is needed for the browser reconnect workflow.
 
 The app requests access to secondary calendars created by the app, rather than all calendars. It verifies that Calendar and Drive belong to the same account, creates a separate PlanSplat calendar and stores its ID in the main planner file's Drive app properties. It updates only marked PlanSplat deadline/study events in that calendar. Calendar tokens stay in tab memory. Reloading requires reconnecting; closing the app pauses sync. Calendar changes do not update the planner.
 
-If Calendar returns access denied, check API enablement, consent/audience restrictions and school Workspace policy. Drive autoload/autosave remains available independently. Test the live connection with an intended personal/school account before rollout. [Google's scope reference](https://developers.google.com/workspace/calendar/api/auth) documents this permission.
+If Calendar returns access denied, check API enablement, consent/audience restrictions and school Workspace policy. Drive autoload/autosave remains available independently. The public project owner enabled Calendar API on October 16, 2026, and a Google Workspace user confirmed dated-task creation in the PlanSplat calendar. Test the intended account and operations for each deployment before rollout. [Google's scope reference](https://developers.google.com/workspace/calendar/api/auth) documents this permission.
 
 See [Google’s OAuth client setup](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid), [modular hosting](../wiki/modular-selfhost.html) and [district installation](../docs/district-selfhost.html).

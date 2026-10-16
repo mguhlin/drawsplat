@@ -1,5 +1,19 @@
 # PlanSplat progress
 
+## Version 1.2.0 October 16 2026
+
+Added the shared six-language switcher (English, Spanish, Vietnamese, Arabic, Chinese and Hindi under the shared Hindi/Urdu option), Arabic RTL layout, suite-matching purple and Ocean/Forest/High contrast themes. Language and theme preferences persist on the device. Translations touch app-authored UI only; student text and open task/course drafts remain unchanged. The offline shell includes every translation resource.
+
+Calendar updates now use a complete event update to replace nested start/end fields when switching between all-day and timed deadlines. This prevents date and dateTime coexisting after a patch. Existing reminders are retained. Other Calendar errors expose Google's diagnostic text while Drive saving continues. Automated regression covers both date-mode directions.
+
+JSON download/reimport is verified in a fresh browser: IDs and data survive, and newer work merges without removal. All 28 branded tool shortcuts now target actual apps on both domains; the SplatWorks menu opens the six suite tools directly.
+
+Release checks: five model workflows, 25 Chromium planner workflows, 54 shared wiki/navigation checks and 29 privacy checks passed. The standalone package creates/reopens data with external networking blocked. Theme primary buttons meet 4.5:1 contrast in all four themes; Arabic phone layout, saved preferences, open-draft preservation and fresh-browser JSON restore/merge are covered.
+
+Google sign-in now connects Drive and Calendar together with one token request. Calendar reuses the authorization after Drive loads the correct account's planner. Declining the optional Calendar permission retains Drive saving and offers Connect Calendar in the header. Header retries remove the need to visit settings. Reload/expiry uses the main Reconnect Google flow for both; a session-level Calendar disconnect remains available.
+
+Real verification on October 16: a Google Workspace account granted Calendar consent; the app correctly reported disabled Calendar API. The project owner enabled the API, and the user confirmed that a task with a Due date appeared in the PlanSplat calendar. This verifies real dated-task creation in the original separate-connect workflow. Combined sign-in, subsequent event edits/deletion/restoration and cross-device operations have automated API simulations; do not claim those have all been manually verified.
+
 ## Version 1.1.1 October 16 2026
 
 The live review added a cross-device safeguard: managed events whose records have not yet arrived from Drive are preserved. Removal requires an explicit deletion marker or cleared schedule in a known planner record. Calendar account and API acceptance remain pending a real signed-in trial.

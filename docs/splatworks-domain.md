@@ -46,13 +46,47 @@ on both Cloudflare Pages and Workers. Both domains remain attached.
 
 ## Short app links
 
-The paths `/layoutsplat`, `/writesplat`, `/showsplat`, `/gridsplat`, and
-`/listsplat` redirect to their existing `/splatworks/<app>/` addresses on both
-production domains. `_redirects` supplies Cloudflare 301 rules; each root folder
-has a static HTML fallback for GitHub Pages and local servers. Query parameters
-and fragments are preserved by the static fallback. Browser drafts remain tied
-to the domain, so a redirect within one domain keeps that domain’s workspace.
+On both SplatWorks.org and DrawSplat.org, branded app names open the actual tools.
+Use `/plansplat` or `/plansplat/`, for example. The SplatWorks navigation menu
+also opens the six office/planner apps directly. Guides remain available at their
+explicit `/wiki/` addresses and in the wiki sidebar.
 
+Cloudflare `_redirects` supplies HTTP 301 rules. Matching root folders provide
+static-host fallbacks that preserve query parameters and fragments. Redirects
+stay on the current domain, preserving that domain's browser workspace.
+`scripts/build-splatworks-short-urls.py` derives these targets from the component
+registry and updates the rules, static fallbacks and shortcut manifest.
+
+| App | Short path | Tool target |
+| --- | --- | --- |
+| AudioSplat | [/audiosplat](../audiosplat/) | `/solutions/audiosplat/` |
+| CipherSplat | [/ciphersplat](../ciphersplat/) | `/solutions/CipherSplat/` |
+| ClipSplat | [/clipsplat](../clipsplat/) | `/solutions/clipsplat/` |
+| ConceptSplat | [/conceptsplat](../conceptsplat/) | `/solutions/concept-map/` |
+| DiagramSplat | [/diagramsplat](../diagramsplat/) | `/solutions/mermaid/` |
+| DrawSplat Whiteboard | [/drawsplat](../drawsplat/) | `/app/whiteboard.html` |
+| GIFsplat™ | [/gifsplat](../gifsplat/) | `/solutions/gifsplat/` |
+| GilaSplat | [/gilasplat](../gilasplat/) | `/games/gilasplat/` |
+| GraphSplat | [/graphsplat](../graphsplat/) | `/solutions/graphsplat/` |
+| GridSplat | [/gridsplat](../gridsplat/) | `/splatworks/gridsplat/` |
+| ImageSplat™ | [/imagesplat](../imagesplat/) | `/solutions/imagesplat/` |
+| LayoutSplat | [/layoutsplat](../layoutsplat/) | `/splatworks/layoutsplat/` |
+| ListSplat | [/listsplat](../listsplat/) | `/splatworks/listsplat/` |
+| MarkdownSplat | [/markdownsplat](../markdownsplat/) | `/solutions/markdown-studio/` |
+| MediaSplat | [/mediasplat](../mediasplat/) | `/solutions/mediasplat/` |
+| MemeSplat™ | [/memesplat](../memesplat/) | `/solutions/memesplat/` |
+| PDFsplat | [/pdfsplat](../pdfsplat/) | `/solutions/pdfsplat/` |
+| PlanSplat | [/plansplat](../plansplat/) | `/splatworks/plansplat/` |
+| QRSplat Studio | [/qrsplat](../qrsplat/) | `/solutions/qrsplat/` |
+| QuizSplat | [/quizsplat](../quizsplat/) | `/solutions/quiz-flashcard-studio/` |
+| RubricSplat | [/rubricsplat](../rubricsplat/) | `/solutions/rubric-builder/` |
+| ShowSplat | [/showsplat](../showsplat/) | `/splatworks/showsplat/` |
+| SketchSplat VR | [/sketchsplat](../sketchsplat/) | `/solutions/sketchspace-VR/` |
+| Splatball | [/splatball](../splatball/) | `/games/splatball/` |
+| SplatBot Studio | [/splatbot](../splatbot/) | `/solutions/splatbot-studio/` |
+| Step-Splat | [/step-splat](../step-splat/) | `/solutions/step-splat/` |
+| VideoSplat | [/videosplat](../videosplat/) | `/solutions/videosplat/` |
+| WriteSplat | [/writesplat](../writesplat/) | `/splatworks/writesplat/` |
 
 ## Google Drive authorization
 

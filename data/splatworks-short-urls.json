@@ -1,0 +1,170 @@
+[
+  {
+    "id": "audiosplat",
+    "name": "AudioSplat",
+    "path": "/audiosplat",
+    "target": "/solutions/audiosplat/"
+  },
+  {
+    "id": "ciphersplat",
+    "name": "CipherSplat",
+    "path": "/ciphersplat",
+    "target": "/solutions/CipherSplat/"
+  },
+  {
+    "id": "clipsplat",
+    "name": "ClipSplat",
+    "path": "/clipsplat",
+    "target": "/solutions/clipsplat/"
+  },
+  {
+    "id": "concept-map",
+    "name": "ConceptSplat",
+    "path": "/conceptsplat",
+    "target": "/solutions/concept-map/"
+  },
+  {
+    "id": "mermaid",
+    "name": "DiagramSplat",
+    "path": "/diagramsplat",
+    "target": "/solutions/mermaid/"
+  },
+  {
+    "id": "whiteboard",
+    "name": "DrawSplat Whiteboard",
+    "path": "/drawsplat",
+    "target": "/app/whiteboard.html"
+  },
+  {
+    "id": "animated-gif",
+    "name": "GIFsplat™",
+    "path": "/gifsplat",
+    "target": "/solutions/gifsplat/"
+  },
+  {
+    "id": "gilasplat",
+    "name": "GilaSplat",
+    "path": "/gilasplat",
+    "target": "/games/gilasplat/"
+  },
+  {
+    "id": "graphsplat",
+    "name": "GraphSplat",
+    "path": "/graphsplat",
+    "target": "/solutions/graphsplat/"
+  },
+  {
+    "id": "gridsplat",
+    "name": "GridSplat",
+    "path": "/gridsplat",
+    "target": "/splatworks/gridsplat/"
+  },
+  {
+    "id": "splatimage",
+    "name": "ImageSplat™",
+    "path": "/imagesplat",
+    "target": "/solutions/imagesplat/"
+  },
+  {
+    "id": "layoutsplat",
+    "name": "LayoutSplat",
+    "path": "/layoutsplat",
+    "target": "/splatworks/layoutsplat/"
+  },
+  {
+    "id": "listsplat",
+    "name": "ListSplat",
+    "path": "/listsplat",
+    "target": "/splatworks/listsplat/"
+  },
+  {
+    "id": "markdown-studio",
+    "name": "MarkdownSplat",
+    "path": "/markdownsplat",
+    "target": "/solutions/markdown-studio/"
+  },
+  {
+    "id": "mediasplat",
+    "name": "MediaSplat",
+    "path": "/mediasplat",
+    "target": "/solutions/mediasplat/"
+  },
+  {
+    "id": "memesplat",
+    "name": "MemeSplat™",
+    "path": "/memesplat",
+    "target": "/solutions/memesplat/"
+  },
+  {
+    "id": "pdfsplat",
+    "name": "PDFsplat",
+    "path": "/pdfsplat",
+    "target": "/solutions/pdfsplat/"
+  },
+  {
+    "id": "plansplat",
+    "name": "PlanSplat",
+    "path": "/plansplat",
+    "target": "/splatworks/plansplat/"
+  },
+  {
+    "id": "qrsplat",
+    "name": "QRSplat Studio",
+    "path": "/qrsplat",
+    "target": "/solutions/qrsplat/"
+  },
+  {
+    "id": "quiz-flashcards",
+    "name": "QuizSplat",
+    "path": "/quizsplat",
+    "target": "/solutions/quiz-flashcard-studio/"
+  },
+  {
+    "id": "rubric-builder",
+    "name": "RubricSplat",
+    "path": "/rubricsplat",
+    "target": "/solutions/rubric-builder/"
+  },
+  {
+    "id": "showsplat",
+    "name": "ShowSplat",
+    "path": "/showsplat",
+    "target": "/splatworks/showsplat/"
+  },
+  {
+    "id": "sketchspace-vr",
+    "name": "SketchSplat VR",
+    "path": "/sketchsplat",
+    "target": "/solutions/sketchspace-VR/"
+  },
+  {
+    "id": "splatball",
+    "name": "Splatball",
+    "path": "/splatball",
+    "target": "/games/splatball/"
+  },
+  {
+    "id": "splatbot",
+    "name": "SplatBot Studio",
+    "path": "/splatbot",
+    "target": "/solutions/splatbot-studio/"
+  },
+  {
+    "id": "step-splat",
+    "name": "Step-Splat",
+    "path": "/step-splat",
+    "target": "/solutions/step-splat/"
+  },
+  {
+    "id": "videosplat",
+    "name": "VideoSplat",
+    "path": "/videosplat",
+    "target": "/solutions/videosplat/"
+  },
+  {
+    "id": "writesplat",
+    "name": "WriteSplat",
+    "path": "/writesplat",
+    "target": "/splatworks/writesplat/"
+  }
+]

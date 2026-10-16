@@ -6,7 +6,7 @@ test('one policy entry exposes the complete policy and prints optional details w
  const privacy=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'Privacy and district review',exact:true})});
  await expect(privacy.getByRole('link')).toHaveCount(1);
  await privacy.getByRole('link',{name:'Security, privacy and terms',exact:true}).click();
- await expect(page.locator('main h1')).toHaveText('Security, privacy and terms');
+ await expect(page.locator('main h1')).toHaveText('Security, privacy and terms');await page.waitForLoadState('load');
  await expect(page.getByRole('link',{name:'Manage browser data and connections',exact:true})).toBeVisible();
  await page.getByText('Retention schedule by data type',{exact:true}).click();
  await expect(page.getByRole('table',{name:'Retention by data type',exact:true})).toBeVisible();

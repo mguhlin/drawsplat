@@ -1,6 +1,6 @@
 # DrawSplatTM
 
-**PlanSplat v1.1.1 — October 16, 2026:** Adds inline course creation and optional one-way Google Calendar updates for deadlines and study blocks. A student planner for assignments, exams, courses, weekly class/study schedules, routines and focus sessions. Google sign-in loads your planner and automatically saves changes to Drive while authorization is active; reconnect after expiry. Local account drafts and browser recovery files protect pending edits. [Open PlanSplat](https://splatworks.org/plansplat/) · [Planner guide](docs/plansplat.md) · [Development plan](splatworks/plansplat/IMPLEMENTATION_PLAN.md).
+**PlanSplat v1.2.0 — October 16, 2026:** One Google sign-in now connects Drive and Calendar together, with no settings detour. Includes a Calendar date-mode update fix, six interface language choices, suite-matching Purple plus Ocean/Forest/High contrast themes, JSON backup/reload, inline course creation and one-way Calendar updates for deadlines and study blocks. A student planner for assignments, exams, courses, weekly class/study schedules, routines and focus sessions. Google sign-in loads your planner and automatically saves changes to Drive while authorization is active; reconnect after expiry. Local account drafts and browser recovery files protect pending edits. [Open PlanSplat](https://splatworks.org/plansplat/) · [Planner guide](docs/plansplat.md) · [Development plan](splatworks/plansplat/IMPLEMENTATION_PLAN.md).
 
 **LayoutSplat v0.6.0 — October 16, 2026:** EPUB 2/3 import, reflowable and fixed-layout EPUB 3 export, three original ebook starters, metadata, heading navigation and a searchable reading preview with themes and text size. Native Publisher export remains available. [Ebook guide](docs/layoutsplat-ebooks.md) · [Current feature guide](docs/layoutsplat-features.md) · [PUB export limits](docs/layoutsplat.md#publisher-pub-export).
 
@@ -1404,8 +1404,8 @@ Recommended public-hosting protections:
 
 ## ClipSplat™
 
-[Open ClipSplat](https://drawsplat.org/solutions/clipsplat/) · [Tutorial](https://drawsplat.org/solutions/clipsplat/tutorial/) · [Introduction](blog/clipsplat.html) · [Self-host download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1)
+[Open ClipSplat](https://drawsplat.org/solutions/clipsplat/) · [Tutorial](https://drawsplat.org/solutions/clipsplat/tutorial/) · [Introduction](blog/clipsplat.html) · [Self-host download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.2.0)
 
 Record or import video, add opening and closing panels, insert full-image cards, cut unwanted sections, and export H.264/AAC MP4. Illustrated frames, draggable text, font controls, bold/italic/alignment icons, and six interface languages are included. Reel/Story use 9:16; Feed uses 4:5 and supports up to 60 minutes including panels. Practical limits depend on the device. Media stays on your device; no account is required. ClipSplat is listed under Media and Create.
 
-The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. The v3.1.29 full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.1.1`.
+The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. The v3.1.29 full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.2.0`.

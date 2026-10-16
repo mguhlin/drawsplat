@@ -64,7 +64,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "96abd0374d749a8c2fe666e5b5e81f6d8033009c565314c71d230e74a0b16669"
+      "entrySha256": "5678c78b07137cab95a966a3a7bd9ba5cdc0eaf5c2c874ccf5ec46022bfee3bc"
     },
     {
       "id": "gridsplat",
@@ -229,6 +229,7 @@
         "indexedDB": true,
         "literalKeys": [
           "plansplat.device.v1",
+          "plansplat.theme.v1",
           "plansplat.timer.v1"
         ],
         "namedConstants": []
@@ -245,7 +246,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "dfe0d6c6f96e9e71ef112af3522086048bf3c122ab705ae8ced8fb541d08f4eb"
+      "entrySha256": "dd3f447cd6540e715a22dc7f3b574bac88204470b6b679485bb497890232ee3b"
     },
     {
       "id": "listsplat",
@@ -387,7 +388,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "425ca5739b4ff2d21f49ed437156d37e14c87a6dac43d6e90cd1fdeab104da97"
+      "entrySha256": "418149155270305e5a78a70c4001c8e9096a0705ebbb833b96dbc6d7ba242969"
     },
     {
       "id": "bingo-cards",
@@ -408,7 +409,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "8a20ee9d69e8e5c8e268215bea2783d27310fd925d62317bc88f2d5ce5999889"
+      "entrySha256": "a2e10a4073baba633f25491ecd2cbf25037ec4e6cd5e9e313575fb41a73f0074"
     },
     {
       "id": "brain-sort",
@@ -1657,7 +1658,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "2825fe3879da83539525816bb2637ffb2b536b6d2041f7029f87ce221778c537"
+      "entrySha256": "29862849778acf64efd2c3d207e296c7db73fa1a93549fdbcd3f55722dff8860"
     },
     {
       "id": "family-access",
@@ -1684,7 +1685,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "cef171c4becc339ffa067326772b22035e8c98da76b08c52859ec62d4b8763d3"
+      "entrySha256": "5c7b28c101429956aa1a7a14e6abe75d17e36537aaf56fc71fa272bebcf55a89"
     },
     {
       "id": "templates",
@@ -1714,7 +1715,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "f300c7f0417afd2693bbff4847e78752f5ff84f159e34f73befd505d6b487884"
+      "entrySha256": "404aa9cfcce0ede62fb85fd73e9b631f5c87b6083deddc1a7efea201927f9b6a"
     },
     {
       "id": "guides",
@@ -1773,7 +1774,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "adcbd729c9714896161381d9f3dfd617de53a2255617e326d6d1215fe1abc192"
+      "entrySha256": "c17b5a091e5850f5413619ad7c8a278df4c135e0c61973c7df3c596272955879"
     },
     {
       "id": "support",
@@ -1832,7 +1833,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "0788df7fcc61fa82e3ebe0151f5475c9f576f0ec0f7d31bdb30bcb4c2ae183ef"
+      "entrySha256": "40250a1c0e0085ea9ca6ff10e86872da7763c6ae8a2ed709a765ad0b05cebb92"
     }
   ]
 }

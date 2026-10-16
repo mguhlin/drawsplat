@@ -2,9 +2,9 @@ name: PlanSplat student planner
 on:
   push:
     branches: [main]
-    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
+    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'assets/js/widget-i18n.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
   pull_request:
-    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
+    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'assets/js/widget-i18n.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
 permissions:
   contents: read
 jobs:

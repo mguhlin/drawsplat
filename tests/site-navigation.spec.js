@@ -35,3 +35,7 @@ test('pricing and downloads have no standalone Whiteboard call to action',async(
   await expect(page.getByRole('navigation',{name:'Primary navigation'}).getByRole('link',{name:'Whiteboard',exact:true})).toBeVisible();
  }
 });
+
+test('SplatWorks navigation links open all six suite tools directly',async({page})=>{
+ for(const url of ['/','/wiki/','/pages/splatworks.html']){await page.goto(url);const nav=page.getByRole('navigation',{name:'Primary navigation',exact:true});await nav.locator('summary').filter({hasText:/^SplatWorks$/}).click();for(const [name,id]of [['PlanSplat','plansplat'],['LayoutSplat','layoutsplat'],['WriteSplat','writesplat'],['ShowSplat','showsplat'],['GridSplat','gridsplat'],['ListSplat','listsplat']]){const link=nav.getByRole('link',{name,exact:true});await expect(link).toBeVisible();const href=await link.getAttribute('href');expect(new URL(href,page.url()).pathname).toBe('/splatworks/'+id+'/');}}
+});

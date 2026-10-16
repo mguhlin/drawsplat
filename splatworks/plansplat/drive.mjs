@@ -1,23 +1,25 @@
+import {localizeUI} from './i18n.mjs';
 import {loadIdentity,connectionsAllowed} from '../shared/google-drive-auth.js';
 import {newPlanner,validatePlanner,mergePlanners} from './model.mjs';
 import {readDraft,writeDraft} from './storage.mjs';
 const SCOPE='https://www.googleapis.com/auth/drive.file',API='https://www.googleapis.com/drive/v3/files',UPLOAD='https://www.googleapis.com/upload/drive/v3/files';
+const CALENDAR_SCOPE='https://www.googleapis.com/auth/calendar.app.created';
 const CLIENT='31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com';
 const id=value=>{if(typeof value!=='string'||! /^[\w-]+$/.test(value))throw Error('Google returned an invalid file ID.');return value;};
-export async function authorizeGoogle({scope=SCOPE,title="Connect your planner",message="Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file."}={}){
+export async function authorizeGoogle({scope=SCOPE,requiredScope=scope,title="Connect your planner",message="Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file."}={}){
   connectionsAllowed();const clientId=document.querySelector('meta[name="google-drive-client-id"]')?.content||(/^(splatworks\.org|drawsplat\.org)$/.test(location.hostname)?CLIENT:'');if(!clientId)throw Error('Google sign-in needs a configured OAuth client on this host. Use a device backup for now.');
   // Loading uses a separate Continue button so token requests retain activation.
   await loadIdentity();return new Promise((resolve,reject)=>{
-   const dialog=document.createElement('dialog');dialog.className='connect-dialog';dialog.innerHTML='<form method="dialog"><h2>Connect your planner</h2><p>Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file.</p><p>Google may ask you to reconnect later. Pending edits stay on this device.</p><div class="dialog-actions"><button value="cancel">Cancel</button><button type="button" class="primary">Continue with Google</button></div></form>';dialog.querySelector('h2').textContent=title;dialog.querySelector('p').textContent=message;document.body.append(dialog);let settled=false;
+   const dialog=document.createElement('dialog');dialog.className='connect-dialog';dialog.innerHTML='<form method="dialog"><h2>Connect your planner</h2><p>Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file.</p><p>Google may ask you to reconnect later. Pending edits stay on this device.</p><div class="dialog-actions"><button value="cancel">Cancel</button><button type="button" class="primary">Continue with Google</button></div></form>';dialog.querySelector('h2').textContent=title;dialog.querySelector('p').textContent=message;localizeUI(dialog);document.body.append(dialog);let settled=false;
    const finish=(error,result)=>{if(settled)return;settled=true;clearTimeout(timeout);dialog.close();dialog.remove();error?reject(error):resolve(result);};
    const timeout=setTimeout(()=>finish(Error('Google sign-in timed out. Try connecting again.')),120000);dialog.addEventListener('close',()=>finish(Error('Google sign-in cancelled. Device work is preserved.')));
-   dialog.querySelector('button[type=button]').onclick=()=>{const client=google.accounts.oauth2.initTokenClient({client_id:clientId,scope,include_granted_scopes:false,callback:r=>{if(r.error||!r.access_token||!google.accounts.oauth2.hasGrantedAllScopes(r,...scope.split(" "))){finish(Error('Allow the requested Google permissions to connect.'));return;}finish(null,r);},error_callback:()=>finish(Error('Google sign-in was closed or blocked. Allow the popup and reconnect.'))});client.requestAccessToken({prompt:'select_account'});};dialog.showModal();
+   dialog.querySelector('button[type=button]').onclick=()=>{const client=google.accounts.oauth2.initTokenClient({client_id:clientId,scope,include_granted_scopes:false,callback:r=>{if(r.error||!r.access_token||!google.accounts.oauth2.hasGrantedAllScopes(r,...requiredScope.split(" "))){finish(Error('Allow the requested Google permissions to connect.'));return;}finish(null,{...r,calendarGranted:google.accounts.oauth2.hasGrantedAllScopes(r,CALENDAR_SCOPE)});},error_callback:()=>finish(Error('Google sign-in was closed or blocked. Allow the popup and reconnect.'))});client.requestAccessToken({prompt:'select_account'});};dialog.showModal();
   });
  }
 export class DriveSync{
  constructor({getDoc,onDocument,onState,onAccount,deviceId}){Object.assign(this,{getDoc,onDocument,onState,onAccount,deviceId});this.generation=0;this.account=null;this.token=null;this.fileId=null;this.replicaId=null;this.running=null;this.timer=null;this.retry=null;this.backoff=2000;this.expiry=0;this.abort=new AbortController();}
  state(kind,message){this.onState({kind,message});}
- async authorize(){return authorizeGoogle();}
+ async authorize(){return authorizeGoogle({scope:SCOPE+' '+CALENDAR_SCOPE,requiredScope:SCOPE,title:'Connect your planner and calendar',message:'Choose your Google account to load and automatically save your planner in Drive and update a separate PlanSplat Google Calendar. You can allow Drive access even if you decline Calendar access.'});}
  async fetch(url,options={}){
   connectionsAllowed();if(!this.token||Date.now()>=this.expiry){this.token=null;const error=Error('Reconnect Google to save pending changes.');error.reconnect=true;throw error;}
   const response=await fetch(url,{...options,signal:this.abort.signal,redirect:'error',headers:{...options.headers,Authorization:'Bearer '+this.token}});
@@ -31,7 +33,7 @@ export class DriveSync{
    const auth=await this.authorize();this.generation++;this.abort.abort();this.abort=new AbortController();if(this.running)await this.running;this.again=false;this.token=auth.access_token;this.expiry=Date.now()+Math.max(1,Number(auth.expires_in)||3600)*1000-10000;
    const response=await this.fetch('https://www.googleapis.com/drive/v3/about?fields=user(permissionId,emailAddress,displayName)'),{user}=await response.json();if(!user?.permissionId)throw Error('Google could not identify this account.');
    this.account={id:id(user.permissionId),name:user.displayName||'Student',email:user.emailAddress||''};this.fileId=null;this.replicaId=null;
-   const local=await readDraft('account:'+this.account.id);this.onAccount(this.account);this.onDocument(local?validatePlanner(local):newPlanner());await this.discover();await this.sync();
+   const local=await readDraft('account:'+this.account.id);this.onAccount(this.account);this.onDocument(local?validatePlanner(local):newPlanner());await this.discover();await this.sync();return auth;
   }catch(error){this.token=null;this.state(error.reconnect?'reconnect':'error',error.message);}finally{this.connecting=false;}
  }
  async discover(){

@@ -13,7 +13,7 @@ The opening screen is Today: a quick-add field, upcoming deadlines, a short list
 | Routines | Daily, weekday, weekly and monthly recurrence; habit check-ins | Custom recurrence and term exceptions |
 | Focus | Adjustable study/break timer, task association, session history | Longer-term study summaries |
 | Portability | Native JSON, CSV, calendar export and printable agenda | Guided Todoist/TickTick mappings and calendar subscriptions |
-| Access | Responsive phone/Chromebook/desktop interface, keyboard operation, meaningful focus states, reduced motion | Student usability sessions and additional translations |
+| Access | Responsive phone/Chromebook/desktop interface, keyboard operation, meaningful focus states, reduced motion; six UI languages and four device-saved color themes | Student usability sessions and translation review |
 
 Todoist informs quick capture, subtasks, priorities and Today/Upcoming views. TickTick informs calendar planning, focus sessions and routines. The interface and implementation remain original. See [Todoist features](https://www.todoist.com/features) and [TickTick features](https://ticktick.com/?language=en_us).
 
@@ -41,7 +41,7 @@ The user selected a browser-token launch on October 16, 2026. It autoloads and a
 
 Use a small native JavaScript application with separate model, recurrence/date helpers, IndexedDB storage, Google Drive sync and UI modules. A versioned document contains courses, tasks, habits/check-ins, study blocks, focus sessions and settings. Records use stable IDs, per-field change stamps, and deletion markers. Native imports validate types and limits before replacing anything. Browser storage and Drive content contain student-entered planning data; credentials never enter exports or persistent browser storage.
 
-Keep personal tasks private by default. Calendar export prepares a file without granting access to Google Calendar. Version 1.1 adds separately authorized one-way live updates to an app-created PlanSplat calendar using calendar.app.created; Drive sign-in alone grants no Calendar access. Browser reconnect remains the selected authorization model. Do not request Classroom, Gmail, contacts or whole-Drive access. Group projects, teacher dashboards, push notifications while the app is closed and Classroom imports are separate stages with their own data and authorization requirements.
+Keep personal tasks private by default. Calendar export prepares a file without granting access to Google Calendar. Version 1.1 adds one-way live updates to an app-created PlanSplat calendar using calendar.app.created. Version 1.2 requests Drive and Calendar access in a single Google sign-in and reuses that authorization for both; declining Calendar permission preserves Drive saving. Calendar can be connected/retried directly in the header. Browser reconnect remains the selected authorization model. Do not request Classroom, Gmail, contacts or whole-Drive access. Group projects, teacher dashboards, push notifications while the app is closed and Classroom imports are separate stages with their own data and authorization requirements.
 
 ## Release stages and acceptance
 

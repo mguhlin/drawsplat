@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 from site_navigation import nav_html
 from policy_content import refresh as refresh_policy, write_aliases as write_policy_aliases
 ROOT=Path(__file__).resolve().parents[1]
+runpy.run_path(str(ROOT/'scripts/build-splatworks-short-urls.py'))
 refresh_policy(ROOT)
 WIKI_CSS_VERSION=hashlib.sha256((ROOT/'assets/css/support-wiki.css').read_bytes()).hexdigest()[:10]
 GROUPS={
