@@ -1,5 +1,13 @@
 # PlanSplat progress
 
+## Version 1.1.0 October 16 2026
+
+Added optional one-way Google Calendar updates for task deadlines and scheduled study blocks in a dedicated app-created calendar. Google Drive sign-in is a prerequisite; Calendar asks for separate calendar.app.created consent and confirms the same account using drive.file. Calendar ID discovery uses the main Drive file's app properties. Tokens remain in tab memory, with reconnect after reload/expiry. Edits, completion, deletions and restoration update deterministic managed events; unrelated manually added events remain. Calendar failure does not stop Drive saving. Study durations remain accurate across daylight-saving transitions; nonexistent local times are reported for correction.
+
+Tasks now offer + New course… and + Add course within the editor. Creating/selecting/cancelling a course preserves the unsaved task fields, including on phones.
+
+Validation adds Calendar API simulations for account matching, fresh-device calendar reuse, event updates/removal/restoration, authorization expiry, denied API access, sign-out and time-zone transitions. The guide, permission/provider disclosures, offline shell and standalone package are refreshed. Real Google-account acceptance remains pending because no signed-in browser is connected. Hosts must enable Google Calendar API and configure the optional scope; no OAuth client secret is required for the selected browser reconnect model.
+
 ## Version 1.0.0 October 16 2026
 
 Implemented assignments/exams/projects/personal tasks, course timetables, due and study dates, priorities, notes/resource links, checklists, recurring tasks, weekly study blocks, routines, focus/break timer, session history, search, CSV/JSON/calendar export/import, printing and deleted-item restoration.

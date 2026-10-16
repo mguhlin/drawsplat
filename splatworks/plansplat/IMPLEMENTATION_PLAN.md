@@ -41,7 +41,7 @@ The user selected a browser-token launch on October 16, 2026. It autoloads and a
 
 Use a small native JavaScript application with separate model, recurrence/date helpers, IndexedDB storage, Google Drive sync and UI modules. A versioned document contains courses, tasks, habits/check-ins, study blocks, focus sessions and settings. Records use stable IDs, per-field change stamps, and deletion markers. Native imports validate types and limits before replacing anything. Browser storage and Drive content contain student-entered planning data; credentials never enter exports or persistent browser storage.
 
-Keep personal tasks private by default. Calendar export prepares a file without granting access to Google Calendar. Do not request Classroom, Gmail, contacts or whole-Drive access. Group projects, teacher dashboards, push notifications while the app is closed and Classroom imports are separate stages with their own data and authorization requirements.
+Keep personal tasks private by default. Calendar export prepares a file without granting access to Google Calendar. Version 1.1 adds separately authorized one-way live updates to an app-created PlanSplat calendar using calendar.app.created; Drive sign-in alone grants no Calendar access. Browser reconnect remains the selected authorization model. Do not request Classroom, Gmail, contacts or whole-Drive access. Group projects, teacher dashboards, push notifications while the app is closed and Classroom imports are separate stages with their own data and authorization requirements.
 
 ## Release stages and acceptance
 

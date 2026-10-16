@@ -3,7 +3,7 @@
 from pathlib import Path
 import shutil,subprocess,sys,tempfile,zipfile,json,hashlib,re
 root=Path(__file__).resolve().parents[1]
-version=sys.argv[1] if len(sys.argv)>1 else 'v1.0.0'
+version=sys.argv[1] if len(sys.argv)>1 else 'v1.1.0'
 name='splatworks-plansplat-selfhost-'+version
 with tempfile.TemporaryDirectory(prefix='plansplat-package-') as temporary:
  folder=Path(temporary)/name
@@ -15,7 +15,7 @@ with tempfile.TemporaryDirectory(prefix='plansplat-package-') as temporary:
   for resource in re.findall(r'assets/brand/[^\"\'<>? ]+',page.read_text()):
    original=root/resource
    if original.is_file():(folder/resource).parent.mkdir(parents=True,exist_ok=True);shutil.copy2(original,folder/resource)
- (folder/'PLANSPLAT-README.txt').write_text('PlanSplat student planner '+version+'\nExtract all files and open START-HERE.html. Includes local/offline planning, courses, tasks, study schedules, routines, focus timer and exports. Google Drive needs an internet connection and a configured OAuth client for this exact origin. The public site uses its existing client. Reconnect when Google authorization expires. Planner and recovery files remain in your Google Drive. Interface: English. License: AGPL-3.0-or-later; shared utilities retain MIT.\n')
+ (folder/'PLANSPLAT-README.txt').write_text('PlanSplat student planner '+version+'\nExtract all files and open START-HERE.html. Includes local/offline planning, courses, tasks, study schedules, routines, focus timer and exports. Optional Google Calendar updates need Calendar API enablement and separate app-created-calendar consent. Sync runs while the app is open. Google Drive needs an internet connection and a configured OAuth client for this exact origin. The public site uses its existing client. Reconnect when Google authorization expires. Planner and recovery files remain in your Google Drive. Interface: English. License: AGPL-3.0-or-later; shared utilities retain MIT.\n')
  subprocess.run([sys.executable,str(root/'scripts/add-offline-launcher.py'),str(folder),'PlanSplat','splatworks/plansplat/'],check=True)
  registry=json.loads((folder/'data/drawsplat-tools.json').read_text());ids={t['id'] for t in registry['tools']};inventory=json.loads((folder/'data/privacy-inventory.json').read_text());inventory['components']=[c for c in inventory['components'] if c['id'] in ids]
  for c in inventory['components']:c['entrySha256']=hashlib.sha256((folder/c['entry']).read_bytes()).hexdigest()

@@ -60,4 +60,12 @@ Local editing needs no Google configuration. The public SplatWorks.org and DrawS
 4. Deploy the included `splatworks/shared/` folder. For PDFSplat, VideoSplat and MediaSplat, retain the editors’ isolation headers. Give `/splatworks/shared/google-drive-auth` and its `.html` form `Cross-Origin-Opener-Policy: same-origin-allow-popups` and `Cross-Origin-Embedder-Policy: unsafe-none`.
 5. For Cloudflare Pages, use the [current `_headers` file](https://github.com/mguhlin/drawsplat/blob/main/_headers) from the source repository, including when deploying an extracted ZIP. Configure equivalent rules on other servers. Allow Google Drive API connections from the editor and Google identity scripts/frames on the authorization page. Test using a permitted school account before student rollout.
 
+## PlanSplat Calendar setup
+
+PlanSplat's optional **Backups & settings → Connect Google Calendar** has its own consent step after Drive sign-in. In the same Google Cloud project as the site's web OAuth client, enable **Google Calendar API** and add `https://www.googleapis.com/auth/calendar.app.created` to the OAuth consent configuration for the intended audience. Keep the existing `drive.file` permission. No client secret or server-side token renewal is needed for the browser reconnect workflow.
+
+The app requests access to secondary calendars created by the app, rather than all calendars. It verifies that Calendar and Drive belong to the same account, creates a separate PlanSplat calendar and stores its ID in the main planner file's Drive app properties. It updates only marked PlanSplat deadline/study events in that calendar. Calendar tokens stay in tab memory. Reloading requires reconnecting; closing the app pauses sync. Calendar changes do not update the planner.
+
+If Calendar returns access denied, check API enablement, consent/audience restrictions and school Workspace policy. Drive autoload/autosave remains available independently. Test the live connection with an intended personal/school account before rollout. [Google's scope reference](https://developers.google.com/workspace/calendar/api/auth) documents this permission.
+
 See [Google’s OAuth client setup](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid), [modular hosting](../wiki/modular-selfhost.html) and [district installation](../docs/district-selfhost.html).

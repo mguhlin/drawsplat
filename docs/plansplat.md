@@ -16,7 +16,8 @@ If you started a separate device-only planner, **Add device planner** explicitly
 
 ## Plan schoolwork
 
-- **Add task** records an assignment, exam, project or personal task. Add a course, due date/time, day to work on it, estimated minutes, priority, notes, resource link and checklist.
+- **Add task** records an assignment, exam, project or personal task. Choose a course, due date/time, day to work on it, estimated minutes, priority, notes, resource link and checklist.
+- While adding or editing a task, choose **+ New course…** in Course or use **+ Add course** beside it. Saving selects the new course and returns to the task with its title, notes and checklist intact. Cancelling keeps the previous course.
 - **Today** shows overdue work and work due or planned today. **Upcoming** lists future deadlines. **All tasks** includes undated work. Filter/search by title, notes, course or type.
 - **Courses** stores class names, teacher, location and weekly meeting times. The course controls are available on phones through **Courses** above the task list.
 - **This week** combines class meetings, task deadlines and study blocks. Choose **Plan time** on a task or **Study time** in the weekly view. Scroll the timetable horizontally on small screens.
@@ -26,19 +27,33 @@ If you started a separate device-only planner, **Add device planner** explicitly
 
 Dates use your device's local calendar and time zone. A task deadline and a planned study date are separate fields. Review dates and class times after travel or a time-zone change.
 
+## Connect Google Calendar
+
+First connect Google Drive. Open **Backups & settings → Connect Google Calendar**, continue with Google and choose the same account. Allow the extra permission for calendars created by the app. PlanSplat creates a separate **PlanSplat** calendar and remembers its ID in the main Drive file's app properties, so another device can reuse it.
+
+While PlanSplat is open and authorized, task deadlines and study blocks sync after edits, periodically and when you return to the tab. **Sync now** updates Drive and Calendar. The Calendar button in the header reports saved, updating or reconnect status and opens settings. Reconnect Calendar after a reload or authorization expiry. Drive saving works independently of Calendar permission.
+
+- Deadlines without a due time are all-day events. A timed deadline uses a 15-minute marker starting at the due time; it does not reserve study time. Study blocks use their scheduled duration.
+- Completion adds a check mark to the deadline title. Deleting a task/block or removing its due date removes its managed event; restoring the item recreates it.
+- The calendar's time zone is set from the device on creation and retained on other devices. Class meetings and routines appear in the planner only.
+- Updates flow **from PlanSplat to Google Calendar**. Google Calendar edits do not change planner tasks and may be overwritten after the corresponding planner item changes. Events added manually in Google Calendar are preserved.
+- **Disconnect Calendar** stops updates and leaves existing events in Google Calendar. Reconnecting reuses that calendar. No sharing or invitations are created. Sync pauses when the app is closed.
+
+The host's Google Cloud project must enable **Google Calendar API** and allow the `calendar.app.created` OAuth scope. School policy can restrict authorization. See [Google setup](google-drive.md#plansplat-calendar-setup) if permission is denied. Real personal/school-account acceptance remains pending; automated tests simulate Google responses.
+
 ## Backups and reminders
 
 **Backups & settings** provides a native JSON backup, CSV task export/import, calendar export and reminder permission. Importing a native backup merges it with current work. Download a backup before clearing browser storage. **Recently deleted** restores removed tasks, courses, routines and study blocks.
 
 CSV import accepts a Title, Content, Task Name, Task or Name column, common notes/description columns, ISO due dates, priorities and supported status values. Todoist/TickTick exports vary: review imported dates, recurrence, checklists and course assignments. CSV imports do not automatically recreate every feature from another service.
 
-Calendar export creates an `.ics` file containing task deadlines as all-day events and study blocks at their scheduled times. Task due times appear in event descriptions. It does not connect to or grant access to Google Calendar. **Print agenda** prints the current task or weekly view.
+Calendar export creates an `.ics` file containing task deadlines as all-day events and study blocks at their scheduled times. Task due times appear in event descriptions. This file export is a separate one-time snapshot; importing it into Google Calendar does not enable ongoing updates. **Print agenda** prints the current task or weekly view.
 
 Reminders and timer notifications require browser permission and an open app. Sleeping tabs, device sleep and browser settings can delay notifications. PlanSplat does not deliver push notifications after the app is closed.
 
 ## Privacy and limits
 
-Planner content stays in this browser until you connect Drive or export a file. Connected saving sends planner data directly to Google's Drive API. Access uses the `drive.file` scope; Google tokens remain in tab memory and are excluded from backups. No Gmail, Classroom, contacts, whole-Drive or Calendar access is requested. No file sharing is enabled automatically.
+Planner content stays in this browser until you connect a Google service or export a file. Connected saving sends planner data directly to Google's Drive API. Access uses the `drive.file` scope; Google tokens remain in tab memory and are excluded from backups. Calendar access is requested only by **Connect Google Calendar**, using `calendar.app.created` alongside `drive.file` to confirm the account. It sends task titles, notes, course names, status, deadlines and study-block details to the app-created calendar. No Gmail, Classroom, contacts or whole-Drive access is requested. No file sharing is enabled automatically.
 
 Browser drafts and cached app resources are separate on each domain/device/profile. Use [Privacy](../privacy/) to export or clear origin-local data and control optional connections. School Google Workspace policy may block authorization. Follow the school's account and device requirements. See [Google Drive setup](google-drive.md) for exact-origin OAuth configuration on another host.
 

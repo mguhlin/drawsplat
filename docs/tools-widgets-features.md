@@ -412,10 +412,10 @@ Category: **Organize** · 12 components
 
 **Workspace** · [Open PlanSplat](../splatworks/plansplat/)
 
-- Student assignments, exams and projects with courses, priorities, due dates, work dates, notes, resource links and checklists.
+- Student assignments, exams and projects with inline course creation, priorities, due dates, work dates, notes, resource links and checklists.
 - Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.
 - Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.
-- Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
+- Optional one-way Google Calendar updates for deadlines and study blocks in an app-created calendar; reconnect when needed. Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
 
 ### Step-Splat
 
@@ -1116,10 +1116,10 @@ Category: **Classroom** · 23 components
 
 **Workspace** · [Open PlanSplat](../splatworks/plansplat/)
 
-- Student assignments, exams and projects with courses, priorities, due dates, work dates, notes, resource links and checklists.
+- Student assignments, exams and projects with inline course creation, priorities, due dates, work dates, notes, resource links and checklists.
 - Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.
 - Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.
-- Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
+- Optional one-way Google Calendar updates for deadlines and study blocks in an app-created calendar; reconnect when needed. Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
 
 ### QRSplat Studio
 

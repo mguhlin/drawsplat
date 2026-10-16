@@ -4,19 +4,20 @@ import {readDraft,writeDraft} from './storage.mjs';
 const SCOPE='https://www.googleapis.com/auth/drive.file',API='https://www.googleapis.com/drive/v3/files',UPLOAD='https://www.googleapis.com/upload/drive/v3/files';
 const CLIENT='31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com';
 const id=value=>{if(typeof value!=='string'||! /^[\w-]+$/.test(value))throw Error('Google returned an invalid file ID.');return value;};
-export class DriveSync{
- constructor({getDoc,onDocument,onState,onAccount,deviceId}){Object.assign(this,{getDoc,onDocument,onState,onAccount,deviceId});this.generation=0;this.account=null;this.token=null;this.fileId=null;this.replicaId=null;this.running=null;this.timer=null;this.retry=null;this.backoff=2000;this.expiry=0;this.abort=new AbortController();}
- state(kind,message){this.onState({kind,message});}
- async authorize(){
+export async function authorizeGoogle({scope=SCOPE,title="Connect your planner",message="Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file."}={}){
   connectionsAllowed();const clientId=document.querySelector('meta[name="google-drive-client-id"]')?.content||(/^(splatworks\.org|drawsplat\.org)$/.test(location.hostname)?CLIENT:'');if(!clientId)throw Error('Google sign-in needs a configured OAuth client on this host. Use a device backup for now.');
   // Loading uses a separate Continue button so token requests retain activation.
   await loadIdentity();return new Promise((resolve,reject)=>{
-   const dialog=document.createElement('dialog');dialog.className='connect-dialog';dialog.innerHTML='<form method="dialog"><h2>Connect your planner</h2><p>Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file.</p><p>Google may ask you to reconnect later. Pending edits stay on this device.</p><div class="dialog-actions"><button value="cancel">Cancel</button><button type="button" class="primary">Continue with Google</button></div></form>';document.body.append(dialog);let settled=false;
+   const dialog=document.createElement('dialog');dialog.className='connect-dialog';dialog.innerHTML='<form method="dialog"><h2>Connect your planner</h2><p>Choose your Google account. PlanSplat will load your planner and automatically save changes to the same Drive file.</p><p>Google may ask you to reconnect later. Pending edits stay on this device.</p><div class="dialog-actions"><button value="cancel">Cancel</button><button type="button" class="primary">Continue with Google</button></div></form>';dialog.querySelector('h2').textContent=title;dialog.querySelector('p').textContent=message;document.body.append(dialog);let settled=false;
    const finish=(error,result)=>{if(settled)return;settled=true;clearTimeout(timeout);dialog.close();dialog.remove();error?reject(error):resolve(result);};
    const timeout=setTimeout(()=>finish(Error('Google sign-in timed out. Try connecting again.')),120000);dialog.addEventListener('close',()=>finish(Error('Google sign-in cancelled. Device work is preserved.')));
-   dialog.querySelector('button[type=button]').onclick=()=>{const client=google.accounts.oauth2.initTokenClient({client_id:clientId,scope:SCOPE,include_granted_scopes:false,callback:r=>{if(r.error||!r.access_token||!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){finish(Error('Allow access to files used by PlanSplat to enable Drive sync.'));return;}finish(null,r);},error_callback:()=>finish(Error('Google sign-in was closed or blocked. Allow the popup and reconnect.'))});client.requestAccessToken({prompt:'select_account'});};dialog.showModal();
+   dialog.querySelector('button[type=button]').onclick=()=>{const client=google.accounts.oauth2.initTokenClient({client_id:clientId,scope,include_granted_scopes:false,callback:r=>{if(r.error||!r.access_token||!google.accounts.oauth2.hasGrantedAllScopes(r,...scope.split(" "))){finish(Error('Allow the requested Google permissions to connect.'));return;}finish(null,r);},error_callback:()=>finish(Error('Google sign-in was closed or blocked. Allow the popup and reconnect.'))});client.requestAccessToken({prompt:'select_account'});};dialog.showModal();
   });
  }
+export class DriveSync{
+ constructor({getDoc,onDocument,onState,onAccount,deviceId}){Object.assign(this,{getDoc,onDocument,onState,onAccount,deviceId});this.generation=0;this.account=null;this.token=null;this.fileId=null;this.replicaId=null;this.running=null;this.timer=null;this.retry=null;this.backoff=2000;this.expiry=0;this.abort=new AbortController();}
+ state(kind,message){this.onState({kind,message});}
+ async authorize(){return authorizeGoogle();}
  async fetch(url,options={}){
   connectionsAllowed();if(!this.token||Date.now()>=this.expiry){this.token=null;const error=Error('Reconnect Google to save pending changes.');error.reconnect=true;throw error;}
   const response=await fetch(url,{...options,signal:this.abort.signal,redirect:'error',headers:{...options.headers,Authorization:'Bearer '+this.token}});
@@ -47,6 +48,14 @@ export class DriveSync{
  async createFile(name,properties){
   const content=JSON.stringify(this.getDoc()),boundary='plansplat_'+crypto.randomUUID(),metadata=JSON.stringify({name,mimeType:'application/json',appProperties:{splatworksApp:'plansplat',schema:'1',...properties}}),body=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${content}\r\n--${boundary}--\r\n`;
   const result=await(await this.fetch(UPLOAD+'?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body})).json();return id(result.id);
+ }
+
+ async calendarSettings(values){
+  if(!this.account||!this.fileId||!this.token)throw Error('Connect Google Drive before connecting Calendar.');
+  const generation=this.generation,url=API+'/'+id(this.fileId)+'?fields=appProperties',properties=(await(await this.fetch(url)).json()).appProperties||{};
+  if(generation!==this.generation)throw new DOMException('Account changed','AbortError');
+  if(values){Object.assign(properties,values);await this.fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({appProperties:properties})});}
+  return properties;
  }
 
  async readFile(fileId){const response=await this.fetch(API+'/'+id(fileId)+'?alt=media');if(Number(response.headers.get('Content-Length'))>6000000)throw Error('This Drive planner exceeds 6 MB.');const text=await response.text();if(text.length>6000000)throw Error('This Drive planner exceeds 6 MB.');return validatePlanner(JSON.parse(text));}

@@ -234,7 +234,9 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "calendar.google.com",
         "drive.google.com",
+        "splatworks.org",
         "www.googleapis.com"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -243,7 +245,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "15b049201a85d45c4df028e34cc235abfa4b31ee3cb643de63be725b08b55fa7"
+      "entrySha256": "6bc235497cf4b05ff83c9555cc44e642d8e766bba113a2e6c9ab8116fd1481f4"
     },
     {
       "id": "listsplat",
@@ -1760,6 +1762,7 @@
         "www.cloudflare.com",
         "www.dropbox.com",
         "www.gnu.org",
+        "www.googleapis.com",
         "www.microsoft.com",
         "www.w3.org",
         "your-api.example"
@@ -1818,6 +1821,7 @@
         "www.cloudflare.com",
         "www.dropbox.com",
         "www.gnu.org",
+        "www.googleapis.com",
         "www.microsoft.com",
         "www.w3.org",
         "your-api.example"
