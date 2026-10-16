@@ -3,7 +3,7 @@ async function ready(page){await page.goto('/splatworks/layoutsplat/');await exp
 async function templates(page,action){await page.locator('#fileMenu > summary').click();if(!await page.locator('#fileTemplates').evaluate(e=>e.open))await page.locator('#fileTemplates > summary').click();await page.locator(`[data-action=${action}]`).click();}
 test('story dialog moves and selected formatting survives applying and undo',async({page})=>{
  await ready(page);await page.locator('#fileMenu > summary').click();await page.locator('[data-action=blank]').click();await page.locator('[data-action=text]').click();await page.locator('[data-action=editStory]').first().click();
- const editor=page.locator('#storyText');await editor.fill('Selected words');await editor.press('ControlOrMeta+a');
+ const editor=page.locator('#storyText');await editor.click();await editor.press('ControlOrMeta+a');await page.keyboard.insertText('Selected words');await editor.press('ControlOrMeta+a');
  for(const mark of ['strong','em','underline']){await page.locator(`[data-story-mark=${mark}]`).click();await expect(page.locator(`[data-story-mark=${mark}]`)).toHaveAttribute('aria-pressed','true');}
  await page.locator('[data-story-align=center]').click();const before=await page.locator('#storyDialog').boundingBox(),head=await page.locator('#storyDialog .dialog-head h2').boundingBox();
  await page.mouse.move(head.x+10,head.y+10);await page.mouse.down();await page.mouse.move(head.x+90,head.y+50);await page.mouse.up();const after=await page.locator('#storyDialog').boundingBox();expect(after.x-before.x).toBeCloseTo(80,0);expect(after.y-before.y).toBeCloseTo(40,0);

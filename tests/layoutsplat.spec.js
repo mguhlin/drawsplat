@@ -3,6 +3,13 @@ const fs = require('node:fs/promises');
 async function ready(page) { await page.goto('/splatworks/layoutsplat/'); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); }
 async function snapshot(page) { return page.evaluate(() => LayoutSplat.getPublication()); }
 async function selectStory(page) { const doc = await snapshot(page); const story = Object.values(doc.stories).find(s => s.frames.length === 3); await page.locator('#pageSurface').locator(`[data-object-id="${story.frames[0]}"]`).click(); return story; }
+async function replaceStoryText(page, text) {
+  // Use real selection events: fill() sets a DOM range which ProseMirror's
+  // delayed focus handler can reset before Playwright inserts the replacement.
+  const editor = page.locator('#storyText');
+  await editor.click(); await editor.press('ControlOrMeta+a');
+  await page.keyboard.insertText(text);
+}
 test('the two-page proof renders with real pictures, Arabic text, and all local resources', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1050 });
   const errors = []; page.on('pageerror', e => errors.push(e.message)); const failures = []; page.on('response', r => { if (r.status() >= 400 && !r.url().includes('favicon')) failures.push(r.url()); });
@@ -25,7 +32,7 @@ test('changing all five units and zoom preserves the exact publication geometry'
 });
 test('linked flow conserves story content through editing, resizing, continuation, and undo', async ({ page }) => {
   await ready(page); const story = await selectStory(page);
-  await page.locator('[data-action=editStory]').click(); const text = ('Every word stays in its story. مرحباً بكم. 👩🏽‍🏫\n\n').repeat(50); await page.locator('#storyText').fill(text); await page.locator('#applyStory').click();
+  await page.locator('[data-action=editStory]').click(); const text = ('Every word stays in its story. مرحباً بكم. 👩🏽‍🏫\n\n').repeat(50); await replaceStoryText(page, text); await page.locator('#applyStory').click();
   async function conservation() {
     return page.evaluate(() => { const d = LayoutSplat.getPublication(), l = LayoutSplat.getLayout(); const s = Object.values(d.stories).find(s => s.frames.length >= 3); const parts = s.frames.map(id => l.fragments.find(([key]) => key === id)[1]); return { source: s.text, flowed: parts.map(p => p.text).join(''), overflow: l.overflows.find(o => o.storyId === Object.keys(d.stories).find(id => d.stories[id] === s))?.remaining || 0, fragments: parts }; });
   }
@@ -76,7 +83,7 @@ test('double-click editing, keyboard placement, dragging, resizing and custom gu
   expect((await snapshot(page)).guides.vertical).toHaveLength(1);
 });
 test('design checking finds overflow and small pictures; imported text stays inert', async ({ page }) => {
-  await ready(page); await selectStory(page); await page.locator('[data-action=editStory]').click(); const content = '<img src=x onerror=alert(1)>\n' + 'Long text '.repeat(3000); await page.locator('#storyText').fill(content); await page.locator('#applyStory').click();
+  await ready(page); await selectStory(page); await page.locator('[data-action=editStory]').click(); const content = '<img src=x onerror=alert(1)>\n' + 'Long text '.repeat(3000); await replaceStoryText(page, content); await page.locator('#applyStory').click();
   await page.locator('#fileMenu > summary').click(); await page.locator('#fileMenu [data-action=check]').click(); await expect(page.locator('.finding.error').first()).toContainText('characters');
   expect(await page.locator('#pageSurface .text-content img').count()).toBe(0);
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=', 'base64');
