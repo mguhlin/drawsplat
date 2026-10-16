@@ -17,3 +17,11 @@ composition, proprietary native formats, richer suite exchange, large-document
 workloads and commercial-printer acceptance remain on the roadmap.
 
 [Feature guide](../layoutsplat-features.md) · [PUB export limits](../layoutsplat.md#publisher-pub-export) · [Drive instructions](../google-drive.md)
+
+All 16 application/collection downloads and the complete district suite are
+refreshed. The 17 ZIPs passed archive, path/private-file and LayoutSplat runtime
+inventory checks. Five focused workflows passed from the extracted standalone ZIP;
+12 production workflows passed on each public domain. The real user Drive test
+was separate from the automated synthetic-response Drive regressions.
+
+Application source: `3c3962f`. [Package verification](v3.1.42-verification.json).

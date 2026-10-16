@@ -2,6 +2,17 @@
 
 ## October 16, 2026 — v0.5.0 Publisher interchange and dynamic masters
 
+Publication follow-up: source `3c3962f` is committed and pushed. GitHub's
+LayoutSplat publication proof, SplatWorks interoperability and support-wiki checks
+passed. Production was activated on the existing Cloudflare Pages project and
+12 live workflows passed on each of SplatWorks.org and DrawSplat.org. Five focused
+workflows also passed from the extracted standalone ZIP. The v3.1.42 application
+and district downloads contain the current runtime; 17 ZIPs passed CRC/path/private-
+file checks, and the LayoutSplat-bearing packages match the source runtime hashes.
+Package builders now exclude Python bytecode caches and tracked test-result
+artifacts. Download links, measured sizes and portable checksums are refreshed.
+
+
 Publisher decoding retains reusable source master definitions and page associations
 instead of flattening the master artwork into each page. Source text IDs now join
 matching text/formatting into one linked story, with inferred source page/object

@@ -1,0 +1,137 @@
+{
+  "applicationSource": "3c3962f",
+  "packages": [
+    {
+      "file": "audiosplat-selfhost-v3.1.42.zip",
+      "bytes": 57301237,
+      "entries": 407,
+      "sha256": "f676a7ce44f821a2c54af00c991d92054b89abe4c4650b591198f429d51e4f2c"
+    },
+    {
+      "file": "clipsplat-selfhost-v3.1.42.zip",
+      "bytes": 95036115,
+      "entries": 215,
+      "sha256": "69e24a53af8a451da044e70b2c71cccca03d4261fb135e12d93677230f3d76bc"
+    },
+    {
+      "file": "drawsplat-district-suite-v3.1.42.zip",
+      "bytes": 445346808,
+      "entries": 2622,
+      "sha256": "c2aa38895cd746458185ce5122a29cc2d4b1ea7700a6c9f71c22237c9ab77110"
+    },
+    {
+      "file": "drawsplat-games-selfhost-v3.1.42.zip",
+      "bytes": 242571185,
+      "entries": 791,
+      "sha256": "b9f3b4ce7311740b1a7b6664d3fab7971137835bb3d43bd8e2f18f081c2f7abe"
+    },
+    {
+      "file": "drawsplat-selfhost-v3.1.42.zip",
+      "bytes": 404677749,
+      "entries": 2210,
+      "sha256": "f477555f3429acac6d9a2a8413050c98f898088cc86baf5d2e3cae3698705047"
+    },
+    {
+      "file": "drawsplat-tools-selfhost-v3.1.42.zip",
+      "bytes": 307016044,
+      "entries": 1333,
+      "sha256": "9e74e13b738c43cbd5968202b10650c536069084a65dce6ec0accb30837371a8"
+    },
+    {
+      "file": "drawsplat-widgets-selfhost-v3.1.42.zip",
+      "bytes": 184556297,
+      "entries": 749,
+      "sha256": "4574f6cc79a9361d731ad2f9f18158a6553fd865a9c07190da1603609168e346"
+    },
+    {
+      "file": "mediasplat-selfhost-v3.1.42.zip",
+      "bytes": 79191659,
+      "entries": 441,
+      "sha256": "71aa99648a1097239cc918333b515d99c42035bc8f67ed1c66e33014b90abeb6"
+    },
+    {
+      "file": "pdfsplat-selfhost-v3.1.42.zip",
+      "bytes": 54847642,
+      "entries": 459,
+      "sha256": "1547198cea57005944ab28b833d9f82080a0575f3438d7bb37f0c9e460679d12"
+    },
+    {
+      "file": "splatworks-gridsplat-selfhost-v3.1.42.zip",
+      "bytes": 58438796,
+      "entries": 462,
+      "sha256": "fafd10b45a0e5cd1dde53d1970816d67b2eb958e0fb7f50070dc7bbfc465bd5a"
+    },
+    {
+      "file": "splatworks-layoutsplat-selfhost-v3.1.42.zip",
+      "bytes": 189738635,
+      "entries": 681,
+      "sha256": "419f94c22c15f4e49047cc39cde1dc74d39580bccbaded42470224f32c9aa734"
+    },
+    {
+      "file": "splatworks-listsplat-selfhost-v3.1.42.zip",
+      "bytes": 51298627,
+      "entries": 354,
+      "sha256": "56c4a5dedfc32e089231d35e14a8d14c9504df8dc2d7248203c83ff3cfaa2c33"
+    },
+    {
+      "file": "splatworks-showsplat-selfhost-v3.1.42.zip",
+      "bytes": 53295496,
+      "entries": 343,
+      "sha256": "4468e680e57878fc3a9b31c34bc548ddac3d325f238d6225cd3ddef2437b1feb"
+    },
+    {
+      "file": "splatworks-suite-selfhost-v3.1.42.zip",
+      "bytes": 246196439,
+      "entries": 1131,
+      "sha256": "ef159b2844a99a689a96a9edad6e5bef01de77e932d7e13777a7d0b4194e2536"
+    },
+    {
+      "file": "splatworks-writesplat-selfhost-v3.1.42.zip",
+      "bytes": 53658605,
+      "entries": 410,
+      "sha256": "c511ffa9278eed4d13049a47833df3d2c01faf99607c77e336171f8d33e93fa6"
+    },
+    {
+      "file": "videosplat-selfhost-v3.1.42.zip",
+      "bytes": 68497121,
+      "entries": 523,
+      "sha256": "d27416d2a493a96b3a9c97583435c97bd5e87762cab64b65f97e089255e4bb46"
+    },
+    {
+      "file": "CipherSplat-offline.zip",
+      "bytes": 3273302,
+      "entries": 77,
+      "sha256": "c2c250096a3ab57dff4d7ceb236429dcdc92b97f339e9faac7147f0cd1493a6c"
+    }
+  ],
+  "applicationVersion": "0.5.0",
+  "localChromiumWorkflows": 69,
+  "focusedFirefoxWorkflows": 3,
+  "liveWorkflows": {
+    "splatworks.org": 12,
+    "drawsplat.org": 12
+  },
+  "extractedStandaloneWorkflows": 5,
+  "drive": {
+    "realRoundTrip": "User performed upload/download/reopen; archive and native model independently validated.",
+    "downloadedProject": {
+      "pages": 1,
+      "stories": 5,
+      "embeddedPngPictures": 2,
+      "objects": 9
+    },
+    "syntheticRegressionChecks": 3
+  },
+  "nativePub": {
+    "externalReader": "LibreOffice 25.2.3.2",
+    "verified": [
+      "Two exact Letter pages",
+      "Selectable styled Unicode text",
+      "Native rectangle and ellipse colors",
+      "WMF table artwork",
+      "Native decoding without embedded project",
+      "External stream edits invalidate embedded recovery"
+    ],
+    "microsoftPublisherTested": false
+  }
+}

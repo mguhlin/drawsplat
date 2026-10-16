@@ -112,6 +112,8 @@ EXCLUDES=(
   ".tmp"
   "test-results"
   "playwright-report"
+  "__pycache__"
+  "*.pyc"
   ".DS_Store"
   "audit_instructions.md"
   ".env"
@@ -265,6 +267,8 @@ Support
 EOF
 
 SPLATWORKS_EXCLUDES=(
+  "__pycache__"
+  "*.pyc"
   ".codex"
   ".agents"
   "node_modules"
@@ -312,6 +316,8 @@ copy_file() {
 }
 
 MODULE_EXCLUDES=(
+  "__pycache__"
+  "*.pyc"
   ".tmp"
   "tmp"
   "audit_instructions.md"

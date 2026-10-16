@@ -17,6 +17,8 @@ with ZipFile(source) as archive, ZipFile(target, 'w', ZIP_DEFLATED, compressleve
     root_page.compress_type = ZIP_DEFLATED
     output.writestr(root_page, start)
     for info in archive.infolist():
+        if 'test-results' in Path(info.filename).parts or '__pycache__' in Path(info.filename).parts or info.filename.endswith('.pyc'):
+            continue
         if info.filename in ('00-START-HERE.html', 'START-HERE.html'):
             continue
         copied = ZipInfo(prefix+'drawsplat/'+info.filename, info.date_time)
