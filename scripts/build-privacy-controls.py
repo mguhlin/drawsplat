@@ -68,7 +68,7 @@ for tool in registry['tools']:
  # Scan first-party runtime scripts, exclude vendor/minified libraries and sources not shipped.
  for p in folder.rglob('*'):
   if p.suffix not in ['.js','.mjs','.html'] or p==entry:continue
-  if any(v in p.parts for v in ['vendor','node_modules','tests','test','src','webdeck']):continue
+  if any(v in p.parts for v in ['vendor','node_modules','tests','test','src','webdeck','.tmp','.git','.codex','.agents','test-results','playwright-report']):continue
   if p.stat().st_size>2500000:continue
   files.append(p)
  text='\n'.join(p.read_text(errors='replace') for p in files)

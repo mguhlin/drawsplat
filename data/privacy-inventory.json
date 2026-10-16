@@ -1173,9 +1173,7 @@
         "localStorage": true,
         "sessionStorage": true,
         "indexedDB": true,
-        "literalKeys": [
-          "videosplat-splash-seen"
-        ],
+        "literalKeys": [],
         "namedConstants": []
       },
       "literalRemoteHosts": [
@@ -1184,7 +1182,6 @@
         "bugzil.la",
         "cdn.jsdelivr.net",
         "developer.mozilla.org",
-        "drawsplat.org",
         "drive.google.com",
         "en.wikipedia.org",
         "gist.github.com",
