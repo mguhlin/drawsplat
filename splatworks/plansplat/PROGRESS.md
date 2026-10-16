@@ -1,5 +1,9 @@
 # PlanSplat progress
 
+## Version 1.1.1 October 16 2026
+
+The live review added a cross-device safeguard: managed events whose records have not yet arrived from Drive are preserved. Removal requires an explicit deletion marker or cleared schedule in a known planner record. Calendar account and API acceptance remain pending a real signed-in trial.
+
 ## Version 1.1.0 October 16 2026
 
 Added optional one-way Google Calendar updates for task deadlines and scheduled study blocks in a dedicated app-created calendar. Google Drive sign-in is a prerequisite; Calendar asks for separate calendar.app.created consent and confirms the same account using drive.file. Calendar ID discovery uses the main Drive file's app properties. Tokens remain in tab memory, with reconnect after reload/expiry. Edits, completion, deletions and restoration update deterministic managed events; unrelated manually added events remain. Calendar failure does not stop Drive saving. Study durations remain accurate across daylight-saving transitions; nonexistent local times are reported for correction.

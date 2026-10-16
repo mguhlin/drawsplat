@@ -36,7 +36,7 @@ While PlanSplat is open and authorized, task deadlines and study blocks sync aft
 - Deadlines without a due time are all-day events. A timed deadline uses a 15-minute marker starting at the due time; it does not reserve study time. Study blocks use their scheduled duration.
 - Completion adds a check mark to the deadline title. Deleting a task/block or removing its due date removes its managed event; restoring the item recreates it.
 - The calendar's time zone is set from the device on creation and retained on other devices. Class meetings and routines appear in the planner only.
-- Updates flow **from PlanSplat to Google Calendar**. Google Calendar edits do not change planner tasks and may be overwritten after the corresponding planner item changes. Events added manually in Google Calendar are preserved.
+- Updates flow **from PlanSplat to Google Calendar**. Google Calendar edits do not change planner tasks and may be overwritten after the corresponding planner item changes. Events added manually in Google Calendar are preserved. Managed events whose tasks have not yet loaded from another device are also retained until an explicit planner deletion or cleared schedule is received.
 - **Disconnect Calendar** stops updates and leaves existing events in Google Calendar. Reconnecting reuses that calendar. No sharing or invitations are created. Sync pauses when the app is closed.
 
 The host's Google Cloud project must enable **Google Calendar API** and allow the `calendar.app.created` OAuth scope. School policy can restrict authorization. See [Google setup](google-drive.md#plansplat-calendar-setup) if permission is denied. Real personal/school-account acceptance remains pending; automated tests simulate Google responses.

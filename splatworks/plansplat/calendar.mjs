@@ -54,13 +54,18 @@ export class CalendarSync{
   if(!this.token||!this.calendarId)return;if(this.running){this.again=true;return this.running;}
   const generation=this.generation,check=()=>{if(generation!==this.generation)throw new DOMException('Account changed','AbortError');};
   const run=async()=>{try{
-   check();this.state('syncing','Updating Google Calendar…');const desired=await calendarEvents(this.getDoc(),this.timeZone);check();const base=API+'/'+encodeURIComponent(this.calendarId)+'/events',existing=new Map();let next='';
+   check();if(this.drive.running)await this.drive.running;check();this.state('syncing','Updating Google Calendar…');const snapshot=this.getDoc(),desired=await calendarEvents(snapshot,this.timeZone);check();const base=API+'/'+encodeURIComponent(this.calendarId)+'/events',existing=new Map();let next='';
    do{const result=await this.request(base+'?privateExtendedProperty=splatworksApp%3Dplansplat&maxResults=2500'+(next?'&pageToken='+encodeURIComponent(next):''));check();for(const e of result.items||[])if(e.extendedProperties?.private?.splatworksApp==='plansplat'&&/^ps[0-9a-f]{64}$/.test(e.id))existing.set(e.id,e);next=result.nextPageToken||'';}while(next);
    for(const event of desired){check();const prior=existing.get(event.id);existing.delete(event.id);if(prior?.extendedProperties?.private?.fingerprint===event.extendedProperties.private.fingerprint)continue;
     if(prior)await this.request(base+'/'+event.id,{method:'PATCH',headers:prior.etag?{'If-Match':prior.etag}:{},body:JSON.stringify({...event,status:'confirmed'})});
     else try{await this.request(base,{method:'POST',body:JSON.stringify(event)});}catch(error){if(error.status!==409)throw error;check();const occupied=await this.request(base+'/'+event.id);check();if(occupied.status!=='cancelled'&&occupied.extendedProperties?.private?.splatworksApp!=='plansplat')throw Error('An event ID is already in use. No unrelated event was changed.');await this.request(base+'/'+event.id,{method:'PATCH',headers:occupied.etag?{'If-Match':occupied.etag}:{},body:JSON.stringify({...event,status:'confirmed'})});}
    }
-   for(const event of existing.values()){check();await this.request(base+'/'+event.id,{method:'DELETE',headers:event.etag?{'If-Match':event.etag}:{}});}
+   for(const event of existing.values()){
+    // Missing records may still be arriving from another device's Drive file.
+    // Only an explicit tombstone or cleared schedule authorizes removal.
+    const reference=event.extendedProperties?.private?.record||'',split=reference.indexOf(':'),kind=reference.slice(0,split),recordId=reference.slice(split+1),record=['tasks','blocks'].includes(kind)?snapshot[kind][recordId]:null;
+    if(!record||!record._deleted&&(kind==='tasks'?!!record.dueDate:!!record.date&&!!record.startTime))continue;
+    check();await this.request(base+'/'+event.id,{method:'DELETE',headers:event.etag?{'If-Match':event.etag}:{}});}
    check();this.state('saved','Google Calendar is up to date.');
   }catch(error){if(error.name!=='AbortError'&&generation===this.generation)this.state('error',error.message);}finally{if(generation===this.generation)this.running=null;if(this.again&&generation===this.generation){this.again=false;this.changed();}}};
   this.running=navigator.locks?navigator.locks.request('plansplat-calendar-'+this.calendarId,run):run();return this.running;

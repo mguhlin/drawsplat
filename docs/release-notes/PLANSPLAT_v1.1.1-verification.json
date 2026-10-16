@@ -1,0 +1,25 @@
+{
+  "app": "PlanSplat",
+  "version": "1.1.1",
+  "date": "2026-10-16",
+  "validation": {
+    "modelWorkflows": 5,
+    "plannerChromiumWorkflows": 19,
+    "sharedWikiNavigationChecks": 46,
+    "privacyChecks": 29,
+    "phoneWidths": [
+      390
+    ],
+    "standaloneExternalNetworkBlocked": true,
+    "actualGoogleAccount": "pending user trial",
+    "actualGoogleCalendar": "pending user trial; host Calendar API and optional OAuth scope must be enabled",
+    "calendarUnknownRecordPreservation": true
+  },
+  "package": {
+    "name": "splatworks-plansplat-selfhost-v1.1.1.zip",
+    "bytes": 9754509,
+    "unpackedBytes": 12640683,
+    "sha256": "90cc8acf307dfbc61b8a947d9dd9bdabdcc764e2308c7a829717b4a11982474e"
+  },
+  "authentication": "Browser tokens in tab memory; separate Calendar consent with calendar.app.created plus drive.file for same-account matching; reconnect after reload/expiry; no client secret."
+}
