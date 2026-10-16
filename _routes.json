@@ -3,6 +3,8 @@
   "include": [
     "/blog/drawsplat.rss",
     "/blog/publication-schedule.json",
+    "/server/blog/*",
+    "/functions/*",
     "/blog/plansplat-student-planner",
     "/blog/plansplat-student-planner/",
     "/blog/plansplat-student-planner.html"

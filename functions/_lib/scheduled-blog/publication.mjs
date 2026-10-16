@@ -2,6 +2,10 @@
 const noCache={'Cache-Control':'no-store, no-transform','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 const policy="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'";
 const respond=(body,type,status=200,extra={})=>new Response(body,{status,headers:{...noCache,'Content-Type':type,...extra}});
+export function privateSourceResponse(request){
+ const path=new URL(request.url).pathname;
+ return path.startsWith('/server/blog/')||path.startsWith('/functions/')?respond('Not found','text/plain; charset=utf-8',404,{'X-Robots-Tag':'noindex'}):null;
+}
 export async function scheduledBlog(context,posts,now=Date.now()){
  const url=new URL(context.request.url),path=url.pathname,live=posts.filter(p=>Number.isFinite(Date.parse(p.publishAt))&&Date.parse(p.publishAt)<=now);
  if(!['GET','HEAD'].includes(context.request.method))return respond('Method not allowed','text/plain; charset=utf-8',405,{'Allow':'GET, HEAD'});

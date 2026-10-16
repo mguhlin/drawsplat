@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {scheduledBlog} from '../functions/_lib/scheduled-blog/publication.mjs';
+import {scheduledBlog,privateSourceResponse} from '../functions/_lib/scheduled-blog/publication.mjs';
 import {posts} from '../functions/_lib/scheduled-blog/generated-posts.mjs';
 const due=Date.parse('2026-10-16T18:00:00-05:00');
 const ctx=(path,method='GET',xml='<rss version="2.0"><channel><title>SplatWorks Blog</title><item><title>Existing article</title><link>https://example.org/old</link></item></channel></rss>')=>({request:new Request('https://splatworks.org'+path,{method}),next:async()=>new Response(method==='HEAD'?null:xml,{headers:{'Content-Type':'application/rss+xml'}})});
@@ -24,7 +24,7 @@ test('the public schedule exposes the timestamp without future titles or content
  const after=await scheduledBlog(ctx('/blog/publication-schedule.json'),posts,due);assert.deepEqual(await after.json(),{version:1,nextPublishAt:null,published:[posts[0].path]});
 });
 test('the deployed function routes are limited to scheduled-blog endpoints',()=>{
- const routes=JSON.parse(readFileSync(new URL('../_routes.json',import.meta.url)));assert.equal(routes.version,1);assert.ok(routes.include.includes('/blog/drawsplat.rss'));assert.ok(routes.include.includes(posts[0].path));assert.ok(routes.include.every(p=>p.startsWith('/blog/')));assert.ok(!routes.include.includes('/*'));assert.ok(!routes.include.includes('/blog/*'));
+ const routes=JSON.parse(readFileSync(new URL('../_routes.json',import.meta.url)));assert.equal(routes.version,1);assert.ok(routes.include.includes('/blog/drawsplat.rss'));assert.ok(routes.include.includes(posts[0].path));assert.ok(routes.include.every(p=>p.startsWith('/blog/')||['/server/blog/*','/functions/*'].includes(p)));assert.ok(!routes.include.includes('/*'));assert.ok(!routes.include.includes('/blog/*'));
 });
 test('unknown routes fall through and writes are rejected',async()=>{
  const other=await scheduledBlog(ctx('/blog/another-post/'),posts,due);assert.ok((await other.text()).includes('Existing article'));
@@ -33,4 +33,9 @@ test('unknown routes fall through and writes are rejected',async()=>{
 
 test('conditional and partial asset requests cannot keep the pre-publication feed cached',async()=>{
  let observed;const context={request:new Request('https://splatworks.org/blog/drawsplat.rss',{headers:{'If-None-Match':'old-feed','If-Modified-Since':'Thu, 15 Oct 2026 12:00:00 GMT','Range':'bytes=0-99'}}),next:async request=>{observed=request;return request.headers.has('If-None-Match')?new Response(null,{status:304}):new Response('<rss><channel><title>Blog</title></channel></rss>');}};const response=await scheduledBlog(context,posts,due);assert.equal(observed.method,'GET');for(const name of ['If-None-Match','If-Modified-Since','Range'])assert.equal(observed.headers.has(name),false);assert.equal(response.status,200);assert.ok((await response.text()).includes(posts[0].title));
+});
+
+test('a middleware guard blocks private source URLs before static or cached assets can serve them',async()=>{
+ for(const path of ['/server/blog/generated-posts.mjs','/server/blog/posts.json','/server/blog/plansplat-student-planner.md','/functions/_lib/scheduled-blog/generated-posts.mjs']){const response=privateSourceResponse(new Request('https://splatworks.org'+path));assert.equal(response.status,404);assert.equal(await response.text(),'Not found');assert.match(response.headers.get('Cache-Control'),/no-store/);}
+ assert.equal(privateSourceResponse(new Request('https://splatworks.org/plansplat/')),null);assert.equal(privateSourceResponse(new Request('https://splatworks.org/blog/drawsplat.rss')),null);
 });

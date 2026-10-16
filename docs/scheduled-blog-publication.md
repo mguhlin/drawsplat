@@ -20,8 +20,7 @@ published paths. It never includes future titles or article text.
 
 Source articles and metadata live in `functions/_lib/scheduled-blog/`, inside the Pages Functions source directory, which Pages excludes from static assets. `scripts/build-scheduled-blog.py` creates the server-side HTML bundle and
 an explicit `_routes.json`. Functions run only for the feed, schedule endpoint,
-and exact scheduled article paths. App, image and ordinary static blog routes
-remain static. This requires Cloudflare Pages Functions; a static-only host
+and exact scheduled article paths. A middleware guard also returns a non-cacheable 404 for the former `/server/blog/` source paths and all `/functions/` source requests, before the asset cache can respond. App, image and ordinary static blog routes remain static. This requires Cloudflare Pages Functions; a static-only host
 continues to show the existing static RSS and does not run the publication gate.
 
 ## Editing an article

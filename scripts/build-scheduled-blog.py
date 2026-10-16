@@ -10,7 +10,7 @@ from site_navigation import nav_html
 ROOT=Path(__file__).resolve().parents[1]
 renderer=MarkdownIt('commonmark',{'html':True}).enable('table')
 dimensions=json.loads((ROOT/'functions/_lib/scheduled-blog/media.json').read_text())
-posts=[];routes=['/blog/drawsplat.rss','/blog/publication-schedule.json']
+posts=[];routes=['/blog/drawsplat.rss','/blog/publication-schedule.json','/server/blog/*','/functions/*']
 for meta in json.loads((ROOT/'functions/_lib/scheduled-blog/posts.json').read_text()):
     slug=meta['slug'];stamp=datetime.fromisoformat(meta['publishAt'])
     if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',slug) or stamp.tzinfo is None:raise ValueError('Use a safe slug and explicit publication offset')
