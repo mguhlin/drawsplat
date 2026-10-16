@@ -1,0 +1,140 @@
+{
+  "applicationSource": "a7c9b1992c182f36022defa91420ea9d90fedf61",
+  "applicationVersion": "0.6.0",
+  "chromiumWorkflows": 77,
+  "focusedFirefoxWorkflows": 3,
+  "epubCheck": {
+    "version": "5.4.0",
+    "books": [
+      "reflowable",
+      "illustrated",
+      "fixed-layout"
+    ],
+    "errors": 0,
+    "warnings": 0
+  },
+  "pubFallback": "RTL and decorative text decode as pictures without an embedded native project.",
+  "packages": [
+    {
+      "file": "audiosplat-selfhost-v3.1.43.zip",
+      "bytes": 57304551,
+      "unpackedBytes": 81522337,
+      "entries": 407,
+      "sha256": "a5af722e1d609881907f2bc17ed26bcee6fc8cd1a8c54067933ec8cd084bc8b1"
+    },
+    {
+      "file": "clipsplat-selfhost-v3.1.43.zip",
+      "bytes": 95039476,
+      "unpackedBytes": 121855919,
+      "entries": 215,
+      "sha256": "064ed24af6aa59cd28490343465606f9ab444cef5fe4c986ba8e27a239794ec9"
+    },
+    {
+      "file": "drawsplat-district-suite-v3.1.43.zip",
+      "bytes": 445566445,
+      "unpackedBytes": 606779328,
+      "entries": 2634,
+      "sha256": "fe462191b6fdf12053d7457e30b8b7ec22c39c3de78c7467f6c2be87def1faa1"
+    },
+    {
+      "file": "drawsplat-games-selfhost-v3.1.43.zip",
+      "bytes": 242747365,
+      "unpackedBytes": 263532718,
+      "entries": 793,
+      "sha256": "21eaa3847b7d0bd95a6f64a89c3347b2eb26986675a57cc743bd13f3f5f8575e"
+    },
+    {
+      "file": "drawsplat-selfhost-v3.1.43.zip",
+      "bytes": 404890908,
+      "unpackedBytes": 563648628,
+      "entries": 2218,
+      "sha256": "7c7db00e64df8e31e62168627b2236710f3df1a89b2feaefb3b6393ea93fa516"
+    },
+    {
+      "file": "drawsplat-tools-selfhost-v3.1.43.zip",
+      "bytes": 307192224,
+      "unpackedBytes": 459024999,
+      "entries": 1335,
+      "sha256": "14d61b1cefc1ec6c771507422a7933bacf44f2713178c7cc6d818325cd100e2e"
+    },
+    {
+      "file": "drawsplat-widgets-selfhost-v3.1.43.zip",
+      "bytes": 184732484,
+      "unpackedBytes": 205413493,
+      "entries": 751,
+      "sha256": "0c29c4d8fd0239c3ad9b41ff3de219c69843b46475144f71e412c66a8abc6141"
+    },
+    {
+      "file": "mediasplat-selfhost-v3.1.43.zip",
+      "bytes": 79194974,
+      "unpackedBytes": 148505043,
+      "entries": 441,
+      "sha256": "8365cf6acd65d0fcb0dfc42a2ed8de5015945fc540666ab31f92a50055fd795b"
+    },
+    {
+      "file": "pdfsplat-selfhost-v3.1.43.zip",
+      "bytes": 54850957,
+      "unpackedBytes": 61754428,
+      "entries": 459,
+      "sha256": "0fb466772f52ed5d4ab5160c934617c834441223a9ad6cce5be20aeedcf53c9b"
+    },
+    {
+      "file": "splatworks-gridsplat-selfhost-v3.1.43.zip",
+      "bytes": 58442110,
+      "unpackedBytes": 65790187,
+      "entries": 462,
+      "sha256": "87d168023933b8632c2b3f58a1dacb41c5ee7fc96bfa59278cb75bda79662f0f"
+    },
+    {
+      "file": "splatworks-layoutsplat-selfhost-v3.1.43.zip",
+      "bytes": 189946578,
+      "unpackedBytes": 247270688,
+      "entries": 688,
+      "sha256": "5cb1d6f475f8ba5e4cfb912323e7255799ab8656ca918a6b9be7422b04f2e928"
+    },
+    {
+      "file": "splatworks-listsplat-selfhost-v3.1.43.zip",
+      "bytes": 51301941,
+      "unpackedBytes": 56486818,
+      "entries": 354,
+      "sha256": "a184819701d8da1acf3f52593a3fb8992f25fa5de0524eef333b9e9f9d093ae8"
+    },
+    {
+      "file": "splatworks-showsplat-selfhost-v3.1.43.zip",
+      "bytes": 53298810,
+      "unpackedBytes": 61783162,
+      "entries": 343,
+      "sha256": "4d19670c0d4705cb9ab7bff211fa30bb574ac8724edf25beee8ac61a5efa83ad"
+    },
+    {
+      "file": "splatworks-suite-selfhost-v3.1.43.zip",
+      "bytes": 246405106,
+      "unpackedBytes": 313839248,
+      "entries": 1139,
+      "sha256": "ef12a458ae6829db7888df330fb9437e10a9e39b8d91faf766c1f599b6c2c5e1"
+    },
+    {
+      "file": "splatworks-writesplat-selfhost-v3.1.43.zip",
+      "bytes": 53661919,
+      "unpackedBytes": 63282783,
+      "entries": 410,
+      "sha256": "59dbe0fbf520f9621ac1fd6db51e9b0a229ea26c626eca8c587864900804126e"
+    },
+    {
+      "file": "videosplat-selfhost-v3.1.43.zip",
+      "bytes": 68500436,
+      "unpackedBytes": 119077054,
+      "entries": 523,
+      "sha256": "cfd8e1c3b0f4ec92e67fb7f159ee6d57c18e6346e7286f68a384b242465e76f2"
+    },
+    {
+      "file": "CipherSplat-offline.zip",
+      "bytes": 3273302,
+      "unpackedBytes": 3759619,
+      "entries": 77,
+      "sha256": "c2c250096a3ab57dff4d7ceb236429dcdc92b97f339e9faac7147f0cd1493a6c"
+    }
+  ],
+  "extractedStandaloneWorkflows": 8,
+  "offlineNetworkPolicy": "External network requests blocked during all eight standalone ebook/PUB-label workflows."
+}
