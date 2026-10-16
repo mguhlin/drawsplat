@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "include": [
+    "/blog/drawsplat.rss",
+    "/blog/publication-schedule.json",
+    "/blog/plansplat-student-planner",
+    "/blog/plansplat-student-planner/",
+    "/blog/plansplat-student-planner.html"
+  ],
+  "exclude": []
+}

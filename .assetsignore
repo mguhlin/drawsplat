@@ -28,3 +28,7 @@ Thumbs.db
 # Native Android app source is not part of the web deploy
 android/
 android/**
+
+# Pages Functions are bundled server-side, never static source downloads.
+functions/
+functions/**

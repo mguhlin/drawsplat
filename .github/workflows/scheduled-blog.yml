@@ -1,0 +1,24 @@
+name: Scheduled SplatWorks blog publication
+on:
+  push:
+    branches: [main]
+    paths: ['server/blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+  pull_request:
+    paths: ['server/blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install 'markdown-it-py>=3,<5'
+      - run: python scripts/build-scheduled-blog.py --check
+      - run: node --test tests/scheduled-blog.test.mjs
+      - run: npx --yes wrangler@4 pages functions build functions --outfile /tmp/scheduled-blog-worker.js
