@@ -13,13 +13,15 @@ Additional approved scope: broad local image/video decoding and conversion, prin
 - [x] EPUB 3 reflowable and fixed-layout export.
 - [x] Book metadata, heading-based contents, reading preview and visual editing.
 - [x] Reader text size, Paper/Sepia/Night themes and searchable outline.
+- [ ] External reader/editor round trips: compare exported books in independent
+  readers and Sigil/PageEdit, checking text, pictures, contents, metadata and links.
 - [ ] Full source XHTML/CSS editing, footnote/endnote preservation, annotations,
   media overlays and accessibility certification remain future work.
 
 
 ## Remaining work
 
-Current checkpoint: **v0.5.0, October 16, 2026**. Work proceeds in the priority
+Current checkpoint: **v0.6.0, October 16, 2026**. Work proceeds in the priority
 order below, starting with Publisher typography and text flow. These items remain
 open; the original milestone descriptions later in this plan describe the full
 approved scope rather than a list of unfinished features.
@@ -31,8 +33,9 @@ approved scope rather than a list of unfinished features.
   masters and shared-source text-ID linking now ship; source ordering and full
   composition parity still need reference comparisons.
 - [ ] **Native imports and external application checks.** Expand Publisher fixtures
-  and independently open/round-trip supported IDML and Scribus SLA exports in their
-  target applications. Research modern Pages IWA, QuarkXPress 5+ and native INDD
+  and open exported `.pub` files in Microsoft Publisher. Independently open/round-trip
+  supported IDML and Scribus SLA exports in their target applications.
+  Research modern Pages IWA, QuarkXPress 5+ and native INDD
   decoding; these formats are not currently implemented. Record supported versions,
   editable features and conversion losses before claiming compatibility.
 - [ ] **Richer SplatWorks exchange.** Preserve more complex content, embedded font
@@ -53,8 +56,8 @@ approved scope rather than a list of unfinished features.
 
 The core editor, distinct templates, shared whiteboard backgrounds, browser-native
 PUB/legacy DOC/legacy Quark imports, formatted DOCX/ODT insertion, ordinary folios,
-HTML reading order and current download/district packages have shipped. Rebuilding
-the v0.4.6 packages is **complete**, not an outstanding roadmap item.
+HTML reading order and current download/district packages have shipped. Packaging
+LayoutSplat v0.6.0 in release v3.1.43 is **complete**, not an outstanding roadmap item.
 
 v0.5.0 adds in-app Publisher 2000 `.pub` export: native editable
 Unicode text/basic shapes, bitmap fallback objects and a fingerprinted native

@@ -68,7 +68,7 @@ formatting. Embedded fonts and advanced spacing remain reported conversion limit
 Ordinary page/total folios, reading-order controls, native GridSplat/ListSplat merge,
 Word/DOCX/ODT text insertion and browser-native legacy QuarkXPress 3.1–4.1 imports
 are implemented. WriteSplat exchange now preserves supported paragraph metrics,
-blank paragraphs and list labels. The 20-section [illustrated feature guide](../docs/layoutsplat-features.md)
+blank paragraphs and list labels. The 21-section [illustrated feature guide](../docs/layoutsplat-features.md)
 and [current progress](layoutsplat/PROGRESS.md) distinguish shipped behavior from limits.
 
 ### Remaining work — October 16, 2026
@@ -78,13 +78,14 @@ records acceptance criteria in priority order:
 
 - [ ] Closer Publisher typography, hyphenation, contour wrapping and imported linked-story flow.
 - [ ] Broader native-import coverage and external InDesign/Scribus round-trip validation; research modern Pages IWA, QuarkXPress 5+ and native INDD.
+- [ ] Open exported `.pub` files in Microsoft Publisher and EPUBs in external readers and editors; record content, navigation and formatting results.
 - [ ] Richer SplatWorks exchange, including font files, custom tabs and semantic list numbering.
 - [x] Dynamic page/total fields in master-page artwork (v0.5.0).
 - [ ] Larger and more varied document workloads beyond the controlled performance proofs.
 - [ ] Independent PDF/X validation, printer-profile workflows and commercial-printer acceptance.
 
 The latest rebuilt downloads and district suite have been published; packaging is
-complete for v0.4.6. Shipped functionality above is not part of this open checklist.
+complete for LayoutSplat v0.6.0 in release v3.1.43. Shipped functionality above is not part of this open checklist.
 
 ## October 16, 2026 — v0.5.0
 
@@ -92,7 +93,7 @@ Reusable Publisher source masters and shared-text-ID linking are implemented.
 Dynamic master-page folios resolve per assigned page through page changes, native
 reopening, print/HTML/SVG and editable exports. The broader Publisher composition
 work remains open. Real Google Drive upload/download/reopen was user-confirmed;
-the downloaded project passed archive/native validation. Experimental Publisher
+the downloaded project passed archive/native validation. Native Publisher
 2000 `.pub` export now runs in the app with native text/basic shapes, bitmap
 fallbacks and fingerprinted native recovery. Microsoft Publisher itself still
 needs external validation. See the authoritative
