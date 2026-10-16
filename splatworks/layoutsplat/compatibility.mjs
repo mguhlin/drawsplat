@@ -1,3 +1,4 @@
+import { pageContext } from './publication-fields.mjs';
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
 const NS = 'http://www.w3.org/2000/svg';
 export const xml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
@@ -51,8 +52,9 @@ export function importSvg(text) {
   if (!page.objects.length) throw Error('No supported SVG objects.'); return { doc: validatePublication(d), warnings: [...new Set(warnings)] };
 }
 export async function exportSvg(doc, page, layout, { includeProject = true } = {}) {
+  const nativeDoc = doc; ({doc, layout} = pageContext(doc, page, layout));
   const root = document.createElementNS(NS, 'svg'); root.setAttribute('xmlns', NS); root.setAttribute('width', `${doc.width}pt`); root.setAttribute('height', `${doc.height}pt`); root.setAttribute('viewBox', `0 0 ${doc.width} ${doc.height}`);
-  if (includeProject) { const metadata = document.createElementNS(NS, 'metadata'); metadata.id = 'layoutsplat-document'; metadata.textContent = JSON.stringify(doc); root.append(metadata); }
+  if (includeProject) { const metadata = document.createElementNS(NS, 'metadata'); metadata.id = 'layoutsplat-document'; metadata.textContent = JSON.stringify(nativeDoc); root.append(metadata); }
   const { portableFontCss } = await import('./fonts.mjs'), fontStyle = document.createElementNS(NS, 'style'); fontStyle.textContent = await portableFontCss(doc); root.append(fontStyle);
   const defs = document.createElementNS(NS, 'defs'); root.append(defs);
   const { objectElement } = await import('./render.mjs'); const objects = [...((doc.masters || []).find(m => m.id === page.masterId)?.objects || []).filter(o => !(page.masterOverrides || []).includes(o.id)), ...page.objects];

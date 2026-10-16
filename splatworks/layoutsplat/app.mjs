@@ -17,7 +17,7 @@ import { setupStoryEditor } from './story-editor.mjs';
 import { setupMovableDialogs } from './dialogs.mjs';
 import { loadProjectFonts } from './local-fonts.mjs';
 import { importQuark } from './quark-import.mjs';
-import {refreshPageNumbers} from './publication-fields.mjs';
+import {refreshPageNumbers,pageContext} from './publication-fields.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
@@ -81,7 +81,7 @@ function renderPage() {
   Object.assign(surface.style, { width: `${doc.width}pt`, height: `${doc.height}pt`, transform: `scale(${zoom})` });
   Object.assign(wrap.style, { width: `${doc.width * PT_TO_PX * zoom}px`, height: `${doc.height * PT_TO_PX * zoom}px` });
   const master = (doc.masters || []).find(m => m.id === page().masterId);
-  for (const object of master?.objects || []) if (!(page().masterOverrides || []).includes(object.id)) { const el = objectElement(doc, object, layout); el.classList.add('master-object'); surface.append(el); }
+  for (const object of master?.objects || []) if (!(page().masterOverrides || []).includes(object.id)) { const context = pageContext(doc, page(), layout), el = objectElement(context.doc, object, context.layout); el.classList.add('master-object'); surface.append(el); }
   page().objects.forEach(object => {
     const el = objectElement(doc, object, layout); el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(object)); el.setAttribute('aria-pressed', String(selected === object.id));
     if (selected === object.id || publishing?.selectedIds().has(object.id)) {
@@ -491,6 +491,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.4.8', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.5.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

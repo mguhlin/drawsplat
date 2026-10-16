@@ -1,5 +1,6 @@
 import { frameInsets } from './engine.mjs';
 import { appendRich } from './rich.mjs';
+import { masterPageStories } from './publication-fields.mjs';
 export const PT_TO_PX = 96 / 72;
 const layoutCaches = new WeakMap();
 let fontEpoch = 0;
@@ -43,9 +44,9 @@ export function fitText(text, frame, style, measurer, story = null, offset = 0) 
   }
   return lo;
 }
-export function layoutStories(doc, measurer) {
+export function layoutStories(doc, measurer, cacheKey = measurer, resolveFields = true) {
   const fragments = new Map(), overflows = [], styles = new Map(), stats = { reflowed: 0, reused: 0 };
-  let cache = layoutCaches.get(measurer); if (!cache) layoutCaches.set(measurer, cache = new Map());
+  let cache = layoutCaches.get(cacheKey); if (!cache) layoutCaches.set(cacheKey, cache = new Map());
   const objects = new Map([...doc.pages, ...(doc.masters || [])].flatMap(page => page.objects.map(object => [object.id, { object, page }])));
   const wraps = new Map([...doc.pages, ...(doc.masters || [])].map(page => [page, page.objects.filter(o => o.type === 'image' && o.wrap === 'square')]));
   for (const id of cache.keys()) if (!Object.hasOwn(doc.stories, id)) cache.delete(id);
@@ -92,7 +93,16 @@ export function layoutStories(doc, measurer) {
     if (overflow) overflows.push(overflow);
     cache.set(storyId, { signature, collected, style, overflow });
   }
-  return { fragments, overflows, styles, stats };
+  const result = { fragments, overflows, styles, stats, pageViews: new Map() };
+  if (resolveFields) for (const page of doc.pages) {
+    const stories = masterPageStories(doc, page); if (!Object.keys(stories).length) continue;
+    const master = doc.masters.find(m => m.id === page.masterId);
+    const fieldDoc = { ...doc, masters: [], stories, pages: [{ ...page, objects: master.objects.filter(o => stories[o.storyId] && !page.masterOverrides?.includes(o.id)) }] };
+    const fields = layoutStories(fieldDoc, measurer, page, false);
+    result.pageViews.set(page.id, { doc: { ...doc, stories: { ...doc.stories, ...stories } }, layout: { ...result, fragments: new Map([...fragments, ...fields.fragments]), styles: new Map([...styles, ...fields.styles]) } });
+    overflows.push(...fields.overflows.map(issue => ({ ...issue, pageId: page.id })));
+  }
+  return result;
 }
 export function designFindings(doc, layout) {
   const issues = layout.overflows.map(o => ({ id: o.frameId, key: 'overflow', count: o.remaining, severity: 'error' }));

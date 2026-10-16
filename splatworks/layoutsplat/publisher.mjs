@@ -2,6 +2,7 @@ import { newPublication, uid, frame, shape, textStyle, validatePublication } fro
 import { color, length } from './compatibility.mjs';
 import { importMedia, readData } from './media.mjs';
 import { matchImportedFont } from './font-matching.mjs';
+import { wmfDib } from './wmf-bitmap.mjs';
 const value = (p, key, fallback = '') => p?.[key]?.value ?? p?.[key] ?? fallback;
 const measure = (p, key, fallback = 0) => { const item = p?.[key]; if (!item) return fallback; if (typeof item === 'object' && Number.isFinite(item.number)) { if (item.unit === 0) return item.number * 72; if (item.unit === 2) return item.number; if (item.unit === 3) return item.number / 20; if (item.unit === 4) return item.number; } return length(value(p, key), fallback); };
 const numeric = (p, key, fallback = 0) => { const n = Number.parseFloat(value(p, key)); return Number.isFinite(n) ? n : fallback; };
@@ -25,7 +26,7 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
   if (!Array.isArray(events) || events.length > 100000) throw Error('Invalid Publisher drawing data.');
   const d = newPublication(true); if(Object.keys(customFonts).length)d.customFonts=structuredClone(customFonts); d.pages = []; d.title = filename.replace(/\.pub$/i, '').slice(0, 200); const warnings = ['Native Publisher decoded inside this browser. Text and supported objects remain editable; verify fonts, text flow, effects, and page appearance before printing.'], fonts = new Set();
   let page, style = {}, text, paragraph = {}, span = {}, table, cell, groups = [], paragraphCount = 0, masterMode = false, paragraphStart = 0;
-  const pictures = new Map(), substitutedFonts = new Map();
+  const pictures = new Map(), substitutedFonts = new Map(), masterIds = new Map(), pendingMasters = new Map(), linkedSources = new Map();
   function pictureCrop(p) {
     const top=numeric(p,'layoutsplat:crop-top'),bottom=numeric(p,'layoutsplat:crop-bottom'),left=numeric(p,'layoutsplat:crop-left'),right=numeric(p,'layoutsplat:crop-right');
     if(![top,bottom,left,right].some(Boolean))return undefined;
@@ -36,13 +37,19 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
     if (typeof binary !== 'string' || binary.length > 64000000 || !/^[A-Za-z0-9+/=\s]*$/.test(binary)) throw Error('Invalid embedded Publisher picture.');
     const encoded = binary.replace(/\s/g, ''), key = `${mime}:${encoded}`;
     if (pictures.has(key)) return pictures.get(key);
-    const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0)), ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/bmp': 'bmp', 'image/tiff': 'tiff', 'image/x-emf': 'emf', 'image/x-wmf': 'wmf' }[mime] || 'bin';
+    const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0)), ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/bmp': 'bmp', 'image/tiff': 'tiff', 'image/x-emf': 'emf', 'image/x-wmf': 'wmf', 'image/wmf': 'wmf', 'image/emf': 'emf' }[mime] || 'bin';
     let asset;
     if (['image/jpeg', 'image/png', 'image/webp'].includes(mime)) {
       const image = new Image(), src = `data:${mime};base64,${encoded}`; image.src = src; await image.decode();
       if (!image.naturalWidth || image.naturalWidth > 20000 || image.naturalHeight > 20000 || image.naturalWidth * image.naturalHeight > 40000000) throw Error('Publisher picture exceeds the image size limit.');
       asset = { name: `Publisher picture.${ext}`, alt: '', width: image.naturalWidth, height: image.naturalHeight, src };
-    } else { asset = await importMedia(new File([bytes], `Publisher picture.${ext}`, { type: mime })); warnings.push(...(asset.notes || [])); delete asset.notes; }
+    } else {
+      const bitmap = ['image/x-wmf','image/wmf'].includes(mime) ? wmfDib(bytes) : null;
+      if(bitmap){
+        const image=new Image(),url=URL.createObjectURL(new Blob([bitmap],{type:'image/bmp'}));
+        try{image.src=url;await image.decode();const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;canvas.getContext('2d').drawImage(image,0,0);asset={name:'Publisher bitmap',alt:'',width:canvas.width,height:canvas.height,src:canvas.toDataURL('image/png')};canvas.width=canvas.height=1;}finally{URL.revokeObjectURL(url);}
+      } else {asset = await importMedia(new File([bytes], `Publisher picture.${ext}`, { type: mime })); warnings.push(...(asset.notes || [])); delete asset.notes;}
+    }
     const id = uid(); d.assets[id] = asset; pictures.set(key, id); return id;
   }
   function closeParagraph() {
@@ -65,15 +72,20 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
   }
   for (const event of events) {
     const p = event.data || {};
-    if (event.op === 'startMasterPage') { masterMode = true; warnings.push('Publisher master-page objects are not applied. Review recurring headers, footers, and backgrounds.'); continue; }
-    if (event.op === 'endMasterPage') { masterMode = false; continue; }
-    if (masterMode) continue;
+    if (event.op === 'startMasterPage') {
+      if ((d.masters || []).length >= 20) throw Error('Publisher publications support up to 20 masters.');
+      const source = String(value(p,'layoutsplat:master-id',value(p,'draw:name',uid())));
+      if(masterIds.has(source))throw Error('Duplicate Publisher master identifier.');
+      page = {id:uid(),name:value(p,'draw:name',`Publisher master ${(d.masters||[]).length+1}`),objects:[]};
+      masterIds.set(source,page.id); (d.masters ||= []).push(page); masterMode=true; groups=[]; continue;
+    }
+    if (event.op === 'endMasterPage') { masterMode = false; page=null; continue; }
     switch (event.op) {
       case 'startPage': {
         if (d.pages.length >= 500) throw Error('Publisher publications support up to 500 pages.'); const width = measure(p, 'svg:width', 612), height = measure(p, 'svg:height', 792);
         if (!d.pages.length) { d.width = width; d.height = height; d.margin = Math.min(36, Math.min(width, height) / 8); }
         else if (Math.abs(width - d.width) > .1 || Math.abs(height - d.height) > .1) warnings.push('Mixed Publisher page sizes use the first page size. Review page edges.');
-        page = { id: uid(), objects: [] }; d.pages.push(page); groups = []; break;
+        page = { id: uid(), objects: [] }; d.pages.push(page); const master = value(p,'layoutsplat:master-id',value(p,'draw:master-page-name')); if(master!=='')pendingMasters.set(page.id,String(master)); groups = []; break;
       }
       case 'setStyle': style = p; break;
       case 'openGroup': groups.push(uid()); break;
@@ -82,9 +94,18 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
         const g = geometry(p), key = uid(); text = frame(key, g.x, g.y, g.w, g.h); text.rotation = g.rotation; text.padding = clamp(measure(p, 'fo:padding-left'), 0, 36);
         text.insets = Object.fromEntries(['left', 'right', 'top', 'bottom'].map(edge => [edge, clamp(measure(p, `fo:padding-${edge}`, text.padding), 0, 36)]));
         text.columns = clamp(Math.round(numeric(p, 'fo:column-count', 1)), 1, 6); text.columnGap = clamp(measure(p, 'fo:column-gap', 12), 0, 72);
+        text.publisherTextId = value(p,'layoutsplat:text-id',null);
         d.stories[key] = { text: '', style: { ...textStyle(), lineHeight: 1.15 }, marks: [], paragraphs: [], frames: [text.id] }; add(text); paragraphCount = 0; paragraphStart = 0; break;
       }
-      case 'endTextObject': { const story = d.stories[text?.storyId]; if (story?.paragraphs.length === 1 && story.paragraphs[0].leading > text.h - 2 * text.padding && story.paragraphs[0].leading <= text.h) { text.padding = 0; text.insets = { left: 0, right: 0, top: 0, bottom: 0 }; warnings.push('A tight Publisher headline uses zero frame padding to preserve its original leading.'); } text = null; break; }
+      case 'endTextObject': { const story = d.stories[text?.storyId]; if (story?.paragraphs.length === 1 && story.paragraphs[0].leading > text.h - 2 * text.padding && story.paragraphs[0].leading <= text.h) { text.padding = 0; text.insets = { left: 0, right: 0, top: 0, bottom: 0 }; warnings.push('A tight Publisher headline uses zero frame padding to preserve its original leading.'); } if(text && text.publisherTextId!==null){
+          const sourceKey=(masterMode?page.id:'pages')+':'+text.publisherTextId, prior=linkedSources.get(sourceKey);
+          if(prior && JSON.stringify([d.stories[prior.storyId].text,d.stories[prior.storyId].marks,d.stories[prior.storyId].paragraphs,d.stories[prior.storyId].style])===JSON.stringify([story.text,story.marks,story.paragraphs,story.style])){
+            const old=text.storyId;text.storyId=prior.storyId;d.stories[prior.storyId].frames.push(text.id);delete d.stories[old];
+            warnings.push('Frames sharing a Publisher text ID are linked in source page/object order. Review their reading sequence and reflow.');
+          } else if(prior) warnings.push('A shared Publisher text ID produced different content or formatting; frames were kept separate to preserve all text.');
+          else linkedSources.set(sourceKey,text);
+          delete text.publisherTextId;
+        } text = null; break; }
       case 'openParagraph': case 'openListElement': {
         paragraph = p; if (paragraphCount++ && (text || cell?.text)) append('\n'); if (text) { const s = d.stories[text.storyId].style, align = value(p, 'fo:text-align'); if (['left', 'center', 'right', 'justify'].includes(align)) s.align = align; if (value(p, 'style:writing-mode') === 'rl-tb' || value(p, 'fo:direction') === 'rtl') s.direction = 'rtl'; }
         if (text) paragraphStart = d.stories[text.storyId].text.length;
@@ -127,17 +148,18 @@ export async function publicationFromPublisher(events, filename = 'Publisher pub
       case 'defineEmbeddedFont': warnings.push('Embedded Publisher font data is not decoded. Matching imported font files are used when available.'); break;
     }
   }
+  for(const [id,source] of pendingMasters){const page=d.pages.find(p=>p.id===id),master=masterIds.get(source);if(master)page.masterId=master;else warnings.push('A referenced Publisher master was unavailable; review page backgrounds.');}
   if (!d.pages.length) throw Error('The Publisher decoder produced no pages.'); d.importedFrom = 'Microsoft Publisher'; d.sourceFonts = [...fonts].filter(Boolean); if(substitutedFonts.size)warnings.push('Unavailable Publisher fonts were substituted: '+[...substitutedFonts].map(([source,target])=>source+' → '+target).join(', ')+'. Import original font files before opening the PUB for closer metrics.'); warnings.push('Matching imported font families and style variants are retained. Older files may require a legacy text encoding. Linked frames and advanced Publisher effects should be reviewed.');
   return { doc: validatePublication(d), warnings: [...new Set(warnings)] };
 }
 export async function importPublisher(file, { signal, onProgress = () => {}, encoding = 'auto', customFonts = {} } = {}) {
   if (!file.size || file.size > 32000000) throw Error('Choose a Publisher document smaller than 32 MB.');
-  const bytes = await file.arrayBuffer(); signal?.throwIfAborted(); onProgress('Loading the local Publisher decoder…');
+  const bytes = await file.arrayBuffer(); signal?.throwIfAborted();
   const worker = new Worker(new URL('./publisher/worker.mjs', import.meta.url), { type: 'module' });
   const data = await new Promise((resolve, reject) => {
     const cleanup = () => { clearTimeout(timer); signal?.removeEventListener('abort', abort); worker.terminate(); }, abort = () => { cleanup(); reject(Error('Publisher import cancelled.')); }, timer = setTimeout(() => { cleanup(); reject(Error('Publisher decoding timed out. Try a smaller publication.')); }, 45000);
     signal?.addEventListener('abort', abort, { once: true }); worker.onmessage = event => { cleanup(); event.data.error ? reject(Error(event.data.error)) : resolve(event.data); }; worker.onerror = event => { cleanup(); reject(Error(event.message || 'Publisher decoding failed.')); }; worker.postMessage({ bytes, encoding }, [bytes]);
   });
-  signal?.throwIfAborted(); onProgress('Building editable Publisher pages…'); const result = await publicationFromPublisher(data.events, file.name, {customFonts});
+  signal?.throwIfAborted(); if(data.native)return {doc:validatePublication(data.native),warnings:['Restored the complete embedded LayoutSplat publication. Its native Publisher streams are unchanged.']}; onProgress('Building editable Publisher pages…'); const result = await publicationFromPublisher(data.events, file.name, {customFonts});
   result.doc.originalPublisher = { name: file.name.slice(0, 200), src: await readData(new Blob([file], { type: 'application/octet-stream' })) }; return result;
 }

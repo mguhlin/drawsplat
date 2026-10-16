@@ -550,10 +550,10 @@ copy_file pages/showsplat.html "$SPLATWORKS_SUITE_ROOT/pages/showsplat.html"
 copy_file pages/writesplat.html "$SPLATWORKS_SUITE_ROOT/pages/writesplat.html"
 copy_file pages/listsplat.html "$SPLATWORKS_SUITE_ROOT/pages/listsplat.html"
 copy_file pages/download.html "$SPLATWORKS_SUITE_ROOT/pages/download.html"
-for guide in layoutsplat layoutsplat-labels layoutsplat-import-accuracy; do
+for guide in layoutsplat layoutsplat-features layoutsplat-labels layoutsplat-import-accuracy google-drive; do
   copy_file "wiki/$guide.html" "$SPLATWORKS_SUITE_ROOT/wiki/$guide.html"
 done
-for guide in layoutsplat.md layoutsplat-labels.md layoutsplat-import-accuracy.md; do
+for guide in layoutsplat.md layoutsplat-features.md layoutsplat-labels.md layoutsplat-import-accuracy.md google-drive.md; do
   copy_file "docs/$guide" "$SPLATWORKS_SUITE_ROOT/docs/$guide"
 done
 copy_file splatworks/ROADMAP.md "$SPLATWORKS_SUITE_ROOT/splatworks/ROADMAP.md"

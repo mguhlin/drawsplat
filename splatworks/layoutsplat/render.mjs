@@ -1,3 +1,4 @@
+import { pageContext } from './publication-fields.mjs';
 import { applyTextStyle } from './layout.mjs';
 import { appendRich } from './rich.mjs';
 const pt = n => `${n}pt`;
@@ -53,6 +54,7 @@ export function objectElement(doc, object, layout) {
   return el;
 }
 export function publicationPage(doc, page, layout) {
+  ({doc, layout} = pageContext(doc, page, layout));
   const el = document.createElement('section'); el.className = 'publication-page'; el.style.width = pt(doc.width); el.style.height = pt(doc.height);
   const master = (doc.masters || []).find(m => m.id === page.masterId);
   for (const object of master?.objects || []) if (!(page.masterOverrides || []).includes(object.id)) el.append(objectElement(doc, object, layout));

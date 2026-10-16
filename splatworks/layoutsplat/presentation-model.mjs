@@ -1,3 +1,4 @@
+import { pageContext } from './publication-fields.mjs';
 // Neutral, point-based objects shared by the native PPTX and ODP writers.
 import { fontName } from './local-fonts.mjs';
 export const xml = value => String(value ?? '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
@@ -35,6 +36,7 @@ function columnGeometry(o, column, bleed) {
   return { x: o.x + o.w / 2 + dx * Math.cos(angle) - dy * Math.sin(angle) - column.w / 2 + bleed, y: o.y + o.h / 2 + dx * Math.sin(angle) + dy * Math.cos(angle) - column.h / 2 + bleed, w: column.w, h: column.h };
 }
 export function pageObjects(doc, page, layout, bleed, warn) {
+  ({doc, layout} = pageContext(doc, page, layout));
   const master = doc.masters?.find(m => m.id === page.masterId);
   const objects = [...(master?.objects || []).filter(o => !page.masterOverrides?.includes(o.id)), ...page.objects];
   if (master) warn('Master artwork is copied as editable slide objects, rather than linked office master artwork.');

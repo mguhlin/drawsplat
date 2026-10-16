@@ -1,3 +1,4 @@
+import { pageContext } from './publication-fields.mjs';
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
 import { fontFamily, color } from './compatibility.mjs';
 import { importMedia } from './media.mjs';
@@ -111,7 +112,7 @@ export function exportSuite(kind, doc, layout) {
     const scale = Math.min(1600 / doc.width, 900 / doc.height), dx = (1600 - doc.width * scale) / 2, dy = (900 - doc.height * scale) / 2;
     const slides = doc.pages.map((p, index) => { const master = (doc.masters || []).find(m => m.id === p.masterId), objects = [...(master?.objects || []).filter(o => !(p.masterOverrides || []).includes(o.id)), ...p.objects]; const elements = objects.map((o,z) => {
       const el = { id: uid(), x: dx + o.x * scale, y: dy + o.y * scale, w: o.w * scale, h: o.h * scale, rotate: o.rotation, z };
-      if (o.type === 'text') { const s = doc.stories[o.storyId]; return { ...el, type: 'text', text: layout.fragments.get(o.id)?.text || '', fontFamily: s.style.font, fontSize: s.style.size * scale, bold: s.style.weight === 'bold', italic: !!s.style.italic, underline: !!s.style.underline, color: s.style.color, align: s.style.align, fill: 'transparent' }; }
+      if (o.type === 'text') { const context = pageContext(doc,p,layout), s = context.doc.stories[o.storyId]; return { ...el, type: 'text', text: context.layout.fragments.get(o.id)?.text || '', fontFamily: s.style.font, fontSize: s.style.size * scale, bold: s.style.weight === 'bold', italic: !!s.style.italic, underline: !!s.style.underline, color: s.style.color, align: s.style.align, fill: 'transparent' }; }
       if (o.type === 'image') { const a = doc.assets[o.assetId]; return { ...el, type: a.media?.kind === 'video' ? 'video' : 'image', src: a.media?.kind === 'video' ? a.media.src : a.src, alt: a.alt || a.name, fit: o.fit }; }
       if (o.type === 'table') return { ...el, type: 'table', rows: o.cells, fontSize: o.fontSize * scale, fill: '#ffffff', color: '#25304b' };
       return { ...el, type: 'shape', text: '', fill: o.noFill ? 'transparent' : o.fill, color: o.stroke, fontSize: 12 };

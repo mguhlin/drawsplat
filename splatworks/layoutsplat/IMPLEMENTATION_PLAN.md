@@ -8,7 +8,7 @@ Additional approved scope: broad local image/video decoding and conversion, prin
 
 ## Remaining work
 
-Current checkpoint: **v0.4.6, October 14, 2026**. Work proceeds in the priority
+Current checkpoint: **v0.5.0, October 16, 2026**. Work proceeds in the priority
 order below, starting with Publisher typography and text flow. These items remain
 open; the original milestone descriptions later in this plan describe the full
 approved scope rather than a list of unfinished features.
@@ -16,7 +16,9 @@ approved scope rather than a list of unfinished features.
 - [ ] **Publisher typography and text flow.** Improve paragraph composition,
   hyphenation, contour wrapping and imported linked-story flow. Compare editable
   imports and printed output with reference publications/PDFs using matching fonts;
-  record remaining line-break, overflow and positioning differences.
+  record remaining line-break, overflow and positioning differences. Reusable source
+  masters and shared-source text-ID linking now ship; source ordering and full
+  composition parity still need reference comparisons.
 - [ ] **Native imports and external application checks.** Expand Publisher fixtures
   and independently open/round-trip supported IDML and Scribus SLA exports in their
   target applications. Research modern Pages IWA, QuarkXPress 5+ and native INDD
@@ -26,9 +28,9 @@ approved scope rather than a list of unfinished features.
   files, custom tab positions and semantic list numbering between applications.
   Verify formatting and content after a round trip, and report unsupported features.
   Native GridSplat/ListSplat mail-merge sources are already implemented.
-- [ ] **Dynamic fields on master pages.** Resolve page/total fields separately for
-  every page using a master, including after insertion, duplication and deletion.
-  Ordinary-page folios already update; master artwork still needs dynamic fields.
+- [x] **Dynamic fields on master pages.** Page/total values resolve separately
+  on every assigned page, including insertion, duplication, deletion, undo and native
+  reopening. Master overrides and visual/editable exports retain the resolved values.
 - [ ] **Broader large-document performance.** Exercise image-heavy publications,
   complex masters and multiple linked stories on modest devices. Measure memory,
   editing/reflow, preview and print behavior beyond the existing controlled 500-page
@@ -42,6 +44,14 @@ The core editor, distinct templates, shared whiteboard backgrounds, browser-nati
 PUB/legacy DOC/legacy Quark imports, formatted DOCX/ODT insertion, ordinary folios,
 HTML reading order and current download/district packages have shipped. Rebuilding
 the v0.4.6 packages is **complete**, not an outstanding roadmap item.
+
+v0.5.0 adds in-app experimental Publisher 2000 `.pub` export: native editable
+Unicode text/basic shapes, bitmap fallback objects and a fingerprinted native
+LayoutSplat copy. Native decoding and LibreOffice opening are verified; opening in
+Microsoft Publisher and broader file interoperability remain external acceptance
+checks. A real user-run Google Drive upload/download/reopen passed October 16; the
+downloaded one-page project passed archive and native-model validation. This is a
+specific observed workflow, not a guarantee for all school account policies.
 
 Record acceptance evidence and deployed improvements in [PROGRESS.md](PROGRESS.md)
 as each checkbox is completed. No completion date or fidelity guarantee is assigned

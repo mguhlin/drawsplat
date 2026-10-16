@@ -1,10 +1,10 @@
 # LayoutSplat: illustrated feature guide
 
-**Version reviewed: 0.4.6 · Updated October 14, 2026**
+**Version reviewed: 0.5.0 · Updated October 16, 2026**
 
 [Open LayoutSplat](https://splatworks.org/layoutsplat/) · [Technical reference](https://splatworks.org/wiki/layoutsplat.html) · [Import accuracy](https://splatworks.org/wiki/layoutsplat-import-accuracy.html)
 
-LayoutSplat™ is the SplatWorks™ ecosystem’s page-layout application. It combines editable page objects, rich text stories, original publication templates, local file conversion, personalized output, and print preparation. The screenshots below come from the deployed application, using its bundled demonstration publications in a clean browser context.
+LayoutSplat™ is the SplatWorks™ ecosystem’s page-layout application. It combines editable page objects, rich text stories, original publication templates, local file conversion, personalized output, and print preparation. The workspace screenshots show v0.4.6; the Publisher export screenshot shows v0.5.0. They use bundled or synthetic publications in clean browser contexts.
 
 ![LayoutSplat newsletter workspace with page thumbnails, physical rulers, guides and property panels.](../assets/layoutsplat-guide/v0.4.6/01-workspace.png)
 
@@ -129,7 +129,7 @@ Videos can keep a poster image for print and play in the fixed-layout HTML editi
 
 Create a master from a selection or the whole page. Master objects appear behind ordinary page objects. Editing a master updates assigned pages. Apply masters to the current page, all pages, or left/right pages; hide inherited objects through local overrides and reset overrides when needed.
 
-**Insert page numbers** supports `{page}` and `{total}`. Existing ordinary-page folios update when pages are added, duplicated, or deleted. Inserting again changes the format and covers new blank pages without duplicating existing folios. Editing or linking a folio makes it ordinary text. Folios placed in master artwork are currently static.
+**Insert page numbers** supports `{page}` and `{total}`. Existing ordinary-page folios update when pages are added, duplicated, or deleted. Inserting again changes the format and covers new blank pages without duplicating existing folios. Editing or linking a folio makes it ordinary text. Folios moved into master artwork retain their format and resolve separately on each assigned page. Inserted, duplicated and deleted pages update the totals; local master overrides remain respected in previews and exports.
 
 ![Master page controls for applying reusable layouts, editing masters, local overrides and page numbers.](../assets/layoutsplat-guide/v0.4.6/12-master-pages.png)
 
@@ -169,7 +169,7 @@ GridSplat formulas and number formatting use its calculation engine. ListSplat c
 
 | Source format | Current behavior and boundary |
 | --- | --- |
-| Publisher PUB | Local WebAssembly decoder; supported editable text, shapes, embedded pictures, bitmap fills, crops, gradients, and drawing properties. Source bytes are retained. No native PUB export. Compare fonts, flow, links, and unsupported effects before printing. |
+| Publisher PUB | Local WebAssembly decoder; supported editable text, shapes, embedded pictures, bitmap fills, crops, gradients, and drawing properties. Source bytes are retained. Experimental native PUB export is available separately. Compare fonts, flow, links, and unsupported effects before printing. |
 | Apple Pages | Legacy ZIP/XML documents: supported text, geometry, paths, styles, and embedded pictures. Modern IWA needs an alternate export. |
 | QuarkXPress QXP/QXD/QXT | Native versions 3.1–4.1: supported text, frame geometry, and vectors. Newer versions require PDF/SVG interchange; linked stories, external pictures, text paths, and advanced effects need review. |
 | Adobe InDesign | Supported IDML interchange is editable within its subset. Native INDD/INDT decoding is unavailable; use IDML, SVG, or PDF. |
@@ -208,6 +208,12 @@ A reading edition is useful for flexible digital sharing. Its existence does not
 
 **Print / Save as PDF** uses browser-shaped selectable text and vectors. The downloadable **PDF proof** is flattened artwork. PNG/JPEG exports support **150, 300, and 600 ppi**. As of v0.4.8, **PowerPoint PPTX** and **OpenDocument ODP** default to editable text boxes, pictures, native shapes and table cells. Rich text, supported paragraph settings, geometry, rotation and stacking are retained. Master artwork is copied to slides; columns and linked stories become independent visible text fragments. Font metrics and some effects may differ. Individual unsupported effects become picture objects and are identified in the conversion report. The optional **Page images** mode preserves the previous full-slide PNG output at the chosen resolution, including bleed. **Animated GIF** cycles selected pages in order, loops forever, and offers seconds per page and maximum pixel dimension. A single page makes a still GIF. GIF is limited to 24 million total frame pixels and ignores print settings. Embedded videos and animations use still previews in these three formats. SVG, IDML, Scribus SLA, native JSON, and suite-native content are also available.
 
+**Publisher PUB** is an experimental in-app Publisher 2000 binary export. Unicode text and basic rectangles/ellipses/lines are native editable objects. Other content, including tables, pictures, RTL text and decorative effects, becomes individual bitmap pictures on white backgrounds. Masters and linked text are flattened into page objects/fragments. Font files, live fields and precise source composition are not retained. All pages are included. Read the conversion report and inspect overlapping artwork. The embedded native LayoutSplat copy is restored only while the other Publisher streams remain unchanged; external edits trigger native decoding. LibreOffice reopening is verified; Microsoft Publisher itself is not yet tested. [Detailed limits](layoutsplat.md#publisher-pub-export).
+
+![Publisher PUB export dialog in LayoutSplat v0.5.0.](../assets/layoutsplat-guide/v0.5.0/publisher-export-dialog.png)
+
+*Choose the resolution for bitmap fallbacks. Native text and shapes remain editable; the report identifies conversion limits.*
+
 Visual exports support page ranges. Native and interchange project exports contain the publication. Interchange packages describe their conversion limits; validate them in the external application before production use.
 
 ## 19. Print preparation and Pack and Go
@@ -221,6 +227,8 @@ Print preparation includes bleed, crop marks, trim boxes, optional ICC output in
 The optional desktop Ghostscript helper offers PDF/X-3 conversion plus independent structural checks for embedded font programs, Type3 glyph/mapping presence, transparency, uncharacterized RGB, active content, page boxes, and source/output/profile hashes. Reports record checker/converter versions. This helper is distinct from the browser’s bundled artwork decoder. Exhaustive PDF/X certification and external printer acceptance remain separate validation tasks.
 
 ## 20. Saving, recovery, offline use, and current limits
+
+**File → Save to Google Drive** saves an editable native project copy. Download the `.layoutsplat` file from Drive and open it in LayoutSplat; Drive may display its internal `publication.json` and `README.txt` because the project is a ZIP archive. Keep the whole file for reopening. A real user-run upload/download/reopen succeeded on October 16, and the downloaded one-page publication passed archive and native-model validation. [Drive instructions](google-drive.md).
 
 Browser drafts and recovery are convenient but depend on browser storage. Save a portable project. Drafts belong to the browser/device/domain; DrawSplat.org and SplatWorks.org do not share storage automatically.
 

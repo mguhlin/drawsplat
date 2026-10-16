@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.4.8** is the SplatWorks publication editor.
+LayoutSplat **v0.5.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -11,7 +11,7 @@ and its existing tools; SplatWorks is the ecosystem brand.
 [Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
 It covers the workspace, all 18 template types, text, graphics, masters, labels,
 mail merge, imports, suite exchange, digital output and current print limits.
-The guide documents v0.4.6 rather than promising complete Publisher compatibility.
+The guide covers v0.5.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
 
 ## Templates
 
@@ -120,7 +120,7 @@ Native JSON is the lossless format; other applications use different document mo
 
 Publisher conversion does **not require LibreOffice**, a server, or uploads.
 File → Import → Publisher import settings handles legacy encodings. Input is bounded
-to 32 MB, with a 45-second timeout and worker cancellation. No native PUB writer.
+to 32 MB, with a 45-second timeout and worker cancellation. In-app native PUB export is described below.
 Preserved crops, paragraph leading/alignment, bitmap fills, and text scaling improve
 accuracy. Compare source fonts, composition, and unsupported effects before printing.
 [Accuracy findings and remaining work](layoutsplat-import-accuracy.md).
@@ -234,13 +234,47 @@ suite, and the complete district installation. [Downloads](../pages/download.htm
 Milestones 1–2 and the core tools in 3–4 are implemented, including native
 GridSplat/ListSplat mail-merge sources. The [remaining-work checklist](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work)
 prioritizes Publisher typography and linked text flow, native-import coverage and
-external application checks, richer suite exchange, dynamic master-page fields,
+external application checks, richer suite exchange,
 broader large-document workloads and independent commercial-print/PDF-X validation.
 Milestone 5 has structural preflight, print preparation and published packages;
 commercial-printer acceptance and certification remain open.
 [Progress](../splatworks/layoutsplat/PROGRESS.md) ·
 [Approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) ·
 [Library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).
+
+## Publisher PUB export
+
+Choose **File → Export → Publisher PUB — experimental native export**. The app
+writes a Publisher 2000 compound binary file locally; no desktop helper, account
+or conversion upload is required. The filename ends in `.pub`.
+
+Supported Unicode text, character/paragraph formatting, font names, positioned
+rectangles, ellipses and lines become native editable objects. Masters are copied
+onto pages and linked stories/columns become independent visible text fragments.
+Tables, pictures, RTL text and unsupported decorative effects become WMF bitmap
+pictures on white backgrounds at the selected resolution. These picture objects
+can move/resize, but their internal text or effects are flattened. White backgrounds
+can cover artwork underneath; inspect the result. Native font files, live fields,
+links, original grouping, precise composition and fractional line widths are not
+reproduced. All publication pages are exported; bleed, crop marks and ICC settings
+belong to PDF preparation.
+
+The conversion report appears after download and is stored in the compound file.
+The file also includes the complete native LayoutSplat project. Reopening restores
+that project only when a SHA-256 fingerprint of the other compound streams still
+matches. Changes made in another application invalidate that copy and trigger
+ordinary Publisher decoding, preserving the external edits in the supported subset.
+This is staleness detection, not a digital signature. Save a native project for
+complete editing across tools.
+
+Export is bounded to 32 MB, two million visible text characters, 100,000 rich runs,
+eight megapixels per bitmap and 24 MB aggregate picture pixels. Reduce resolution
+for picture-heavy publications. Failed exports leave the publication available.
+Browser tests decode the native streams without the embedded copy and check
+external-edit detection. LibreOffice 25.2.3.2 opens the exported file with selectable
+Unicode text, native shapes, bitmap artwork and exact Letter page dimensions.
+**Microsoft Publisher itself has not been tested**; acceptance in a particular
+Publisher version remains an external check.
 
 ## Large documents and current verification
 
@@ -278,7 +312,9 @@ Existing folios update when pages are added, duplicated or deleted. Insert again
 to change the format or cover new blank pages; it updates existing folios instead
 of duplicating them. Editing a folio's story, importing text into it, or linking
 it with an ordinary story turns it into ordinary text. Moving a folio into a
-master also makes it ordinary text; dynamic master fields remain limited.
+master preserves its dynamic format. Each assigned page resolves its own page/total
+values without modifying the master template. Hidden master objects stay hidden.
+Print, fixed HTML, SVG and editable presentation exports use the resolved values.
 
 ### HTML reading order
 

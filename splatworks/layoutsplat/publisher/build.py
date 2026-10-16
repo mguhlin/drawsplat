@@ -49,6 +49,41 @@ parserText = parser.read_text()
 if 'setShapePictureCrop' not in parserText:
     parserText = parserText.replace('          unsigned *pxId = getIfExists', '          std::vector<double> crop;\n          for (unsigned short field=0x0100; field<=0x0103; ++field)\n          {\n            const unsigned *fraction = getIfExists_const(foptValues.m_scalarValues, field);\n            crop.push_back(fraction ? static_cast<int>(*fraction) / 65536.0 : 0.0);\n          }\n          m_collector->setShapePictureCrop(*shapeSeqNum, crop);\n          unsigned *pxId = getIfExists')
     parser.write_text(parserText)
+# Retain reusable masters and source text identity instead of painting master copies.
+collectorText = collector.read_text()
+if 'layoutsplat:master-id' not in collectorText:
+    start = collectorText.index('void MSPUBCollector::writePage(unsigned pageSeqNum) const')
+    end = collectorText.index('void MSPUBCollector::writePageShapes', start)
+    collectorText = collectorText[:start] + r'''void MSPUBCollector::writePage(unsigned pageSeqNum) const
+{
+  librevenge::RVNGPropertyList props;
+  if (m_widthSet) props.insert("svg:width", m_width);
+  if (m_heightSet) props.insert("svg:height", m_height);
+  boost::optional<unsigned> master = getMasterPageSeqNum(pageSeqNum);
+  if (master) props.insert("layoutsplat:master-id", static_cast<int>(*master));
+  m_painter->startPage(props);
+  writePageBackground(pageSeqNum);
+  writePageShapes(pageSeqNum);
+  m_painter->endPage();
+}
+
+''' + collectorText[end:]
+    collectorText = collectorText.replace('  if (m_pageSeqNumsOrdered.empty())', r'''  for (unsigned master : m_masterPages)
+  {
+    if (!hasPage(master)) continue;
+    librevenge::RVNGPropertyList props;
+    props.insert("layoutsplat:master-id", static_cast<int>(master));
+    props.insert("svg:width", m_width);
+    props.insert("svg:height", m_height);
+    m_painter->startMasterPage(props);
+    writePageBackground(master);
+    writePageShapes(master);
+    m_painter->endMasterPage();
+  }
+  if (m_pageSeqNumsOrdered.empty())''', 1)
+    collectorText = collectorText.replace('      m_painter->startTextObject(props);', r'''      if (info.m_textId) props.insert("layoutsplat:text-id", static_cast<int>(*info.m_textId));
+      m_painter->startTextObject(props);''')
+    collector.write_text(collectorText)
 print('Building libmspub + librevenge + ICU + zlib for the browser…', flush=True)
 subprocess.run(command, check=True, cwd=ROOT, env=env)
 print('Publisher WebAssembly built:', output, flush=True)

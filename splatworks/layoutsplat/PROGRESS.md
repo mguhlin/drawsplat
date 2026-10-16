@@ -1,5 +1,51 @@
 # LayoutSplat development progress
 
+## October 16, 2026 — v0.5.0 Publisher interchange and dynamic masters
+
+Publisher decoding retains reusable source master definitions and page associations
+instead of flattening the master artwork into each page. Source text IDs now join
+matching text/formatting into one linked story, with inferred source page/object
+ordering reported for review. Differing content/formatting stays separate. A bounded
+bitmap-only WMF reader improves reopening of supported legacy bitmap objects.
+The supplied upstream Publisher fixture and synthetic master/story metadata pass;
+the private typography/reference-font benchmark has not been rerun and full
+hyphenation/contour/composition parity remains open.
+
+Master page/total fields resolve separately per assigned page, including page
+insertion, duplication, deletion, undo, native save/reopen and local overrides.
+Rendering, fixed HTML, SVG and editable presentation/ShowSplat exports use those values;
+the master template retains its dynamic format.
+
+File → Export adds experimental native Publisher 2000 `.pub` output, written in the
+browser. Supported Unicode text/rich runs/paragraph metrics and basic shapes are
+native editable objects. Pictures, tables, RTL text and decorative effects become
+WMF bitmaps on white backgrounds. Masters and linked frames become page objects
+and visible fragments. The report identifies these losses; overlapping artwork
+and target typography need inspection. The file includes a full native project
+whose SHA-256 fingerprint must match all other streams before restoring it.
+External Publisher-stream edits invalidate that copy and use ordinary decoding.
+Native output without the payload is checked for Unicode, formatting, color,
+artwork and page count; a modified text stream reopens with the external change.
+LibreOffice 25.2.3.2 opened and rendered the two-page browser export with Letter geometry,
+selectable styled Unicode, native vectors and table artwork. Microsoft Publisher
+itself has not been tested; do not claim full proprietary-format compatibility.
+
+Google Drive: the user saved a real native project to Drive, downloaded it and
+confirmed it reopened without observed problems. The supplied one-page download
+passed ZIP integrity and native-model validation: five stories, two embedded PNGs,
+nine objects and 202 text characters. The screenshot shows Drive's expected ZIP
+preview of `publication.json` and `README.txt`. No source file or account details
+are distributed. This closes the previously unperformed real account round trip
+for that observed workflow; school policy and other-account coverage remain
+deployment-specific.
+
+Verification: 69 Chromium workflows passed, followed by eight focused final export
+and master checks; all three new workflows also passed Firefox. Model tests, two-page
+and 100-page PDF checks, editable PPTX/ODP and GIF/package checks, 10 printer-preflight
+tests and native-runtime/source hashes passed. The README, illustrated guide,
+technical/accuracy guides, Drive instructions, remaining-work checklist and wiki
+search are refreshed. The new screenshot depicts the actual v0.5.0 export dialog.
+
 ## October 15, 2026 — v0.4.8 editable office presentations
 
 PPTX and ODP now default to native editable text, pictures, shapes and tables.

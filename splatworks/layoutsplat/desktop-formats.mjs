@@ -1,3 +1,4 @@
+import { masterPageStories } from './publication-fields.mjs';
 import { newPublication, validatePublication, uid, clone, frame, shape, textStyle } from './engine.mjs';
 import { xml, parseXml, color, fontFamily } from './compatibility.mjs';
 import { importMedia } from './media.mjs';
@@ -13,8 +14,8 @@ function runs(story, start = 0, end = story.text.length) {
 function flattened(doc) {
   const d = clone(doc); d.masters = [];
   d.pages.forEach((page, i) => {
-    const master = (doc.masters || []).find(m => m.id === page.masterId), map = new Map();
-    const objects = (master?.objects || []).filter(o => !(page.masterOverrides || []).includes(o.id)).map(original => { const o = clone(original); o.id = `master-${i}-${o.id}`; if (o.type === 'text') { if (!map.has(o.storyId)) { const id = `master-${i}-${o.storyId}`; map.set(o.storyId, id); d.stories[id] = { ...clone(doc.stories[o.storyId]), frames: [] }; } o.storyId = map.get(o.storyId); d.stories[o.storyId].frames.push(o.id); } return o; });
+    const master = (doc.masters || []).find(m => m.id === page.masterId), map = new Map(), fields = masterPageStories(doc, doc.pages[i]);
+    const objects = (master?.objects || []).filter(o => !(page.masterOverrides || []).includes(o.id)).map(original => { const o = clone(original); o.id = `master-${i}-${o.id}`; if (o.type === 'text') { if (!map.has(o.storyId)) { const id = `master-${i}-${o.storyId}`; map.set(o.storyId, id); d.stories[id] = { ...clone(fields[o.storyId] || doc.stories[o.storyId]), frames: [] }; } o.storyId = map.get(o.storyId); d.stories[o.storyId].frames.push(o.id); } return o; });
     page.objects.unshift(...objects); delete page.masterId; delete page.masterOverrides;
   }); return d;
 }

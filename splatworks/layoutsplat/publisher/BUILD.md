@@ -1,14 +1,16 @@
 # Browser Publisher decoder
 
-LayoutSplat v0.3 reads Microsoft Publisher files inside a dedicated browser worker.
+LayoutSplat v0.5.0 reads Microsoft Publisher files inside a dedicated browser worker.
 There is no LibreOffice installation, server process, or external conversion upload.
 The decoder produces bounded drawing events; `publisher.mjs` converts those events
 to the validated publication model. The original PUB bytes remain in the project.
 
 This is experimental interchange. Check substituted fonts, linked-frame flow,
 graphics, fields, effects, and older text encodings against the original. The File
-menu's Publisher import settings allow explicit legacy encodings. No `.pub` writer
-is provided.
+menu's Publisher import settings allow explicit legacy encodings. The separate
+`../publisher-binary.mjs` and `../publisher-export.mjs` modules write experimental
+Publisher 2000 binary publications locally; see `../../../docs/layoutsplat.md` for
+editable features, picture fallbacks, native-payload recovery and validation limits.
 
 ## Sources and licenses
 
@@ -21,12 +23,16 @@ is provided.
   Their notices are included in this directory. `SHA256.json` pins the distributed
   source archives, worker, Unicode data, and generated decoder artifacts.
 
-The build script applies three source changes to the supplied libmspub archive:
+The build script applies these source changes to the supplied libmspub archive:
 
 - `layoutsplat_pub_encoding()` overrides legacy encoding selection when requested.
 - OfficeArt picture crop properties (0x0100–0x0103, signed 16.16 fractions) are
   collected and emitted as `layoutsplat:crop-*` attributes for bitmap-filled shapes.
 - Empty complex gradient stop arrays fall back to the recorded endpoint colors.
+- Master pages are emitted once, with source master IDs on assigned pages, instead
+  of painting static copies into each normal page. Blank pages are retained.
+- Text objects expose source text IDs. The application links repeated IDs only
+  when text and supported formatting agree, and reports the inferred frame order.
 
 Both `scripts/build-layoutsplat-publisher.py` and the distributed `build.py` contain
 these patches. The upstream source archives remain unchanged. Crop fields follow

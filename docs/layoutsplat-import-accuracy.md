@@ -1,4 +1,4 @@
-# LayoutSplat import accuracy — v0.4
+# LayoutSplat import accuracy — v0.5.0
 
 Private user-provided samples were opened and compared locally. Source publications,
 reference PDFs, and screenshots are not distributed with the repository.
@@ -54,3 +54,19 @@ retention and native-project save/reopen checks. A 5.x detection fixture fails
 without changing the project. Two pinned-toolchain builds produced identical
 WebAssembly and JavaScript hashes. This verifies the tested subset, not all legacy
 QuarkXPress documents.
+
+## v0.5.0 masters, source story IDs and bitmap metafiles
+
+The browser decoder now emits reusable master definitions and page associations
+instead of painting repeated static master objects into normal pages. Frames
+sharing a source text ID join one story only when their decoded text and supported
+formatting agree. Their frame order follows source page/object order and is
+reported for review; source-program composition and more complicated link metadata
+remain incomplete. Different content/formatting stays separate to avoid data loss.
+A bounded reader decodes the bitmap-only WMF subset used by the PUB exporter;
+other metafiles retain the existing conversion/failure reporting.
+
+The historical private-source overflow reported above has not been revalidated
+with matching reference fonts during this milestone. It remains an open accuracy
+benchmark. Experimental native PUB export is documented separately in the
+[technical reference](layoutsplat.md#publisher-pub-export).

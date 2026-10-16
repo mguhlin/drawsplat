@@ -1,6 +1,8 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
+exportPub|Publisher PUB — experimental native export|Publisher PUB — exportación nativa experimental|Publisher PUB — xuất bản gốc thử nghiệm|Publisher PUB — تصدير أصلي تجريبي|Publisher PUB — 实验性原生导出|Publisher PUB — प्रायोगिक मूल निर्यात
+pubExportHint|Creates a Publisher 2000 publication with editable text and basic shapes. Other objects become pictures on white backgrounds. All pages are included. Fonts may differ; review the conversion report.|Crea una publicación binaria Publisher 2000 con texto y formas básicas editables. Otros objetos se convierten en imágenes sobre fondo blanco. Incluye todas las páginas. Revise el informe de conversión.|Tạo tệp Publisher 2000 với văn bản và hình cơ bản có thể sửa. Đối tượng khác thành ảnh nền trắng. Bao gồm mọi trang. Xem báo cáo chuyển đổi.|ينشئ ملف Publisher 2000 بنص وأشكال أساسية قابلة للتحرير. تتحول العناصر الأخرى إلى صور بخلفية بيضاء. يشمل كل الصفحات. راجع تقرير التحويل.|创建 Publisher 2000 二进制出版物，文字与基本形状可编辑。其他对象转换为白色背景图片。包含所有页面。请查看转换报告。|संपादन योग्य पाठ और मूल आकृतियों सहित Publisher 2000 फ़ाइल बनाता है। अन्य वस्तुएँ सफेद पृष्ठभूमि वाली तस्वीरें बनती हैं। सभी पृष्ठ शामिल हैं। रूपांतरण रिपोर्ट देखें।
 starterNewsletter|Open starter newsletter|Abrir boletín inicial|Mở bản tin mẫu|فتح النشرة النموذجية|打开入门简报|शुरुआती समाचार पत्र खोलें
 saveDrive|Save to Google Drive|Guardar en Google Drive|Lưu vào Google Drive|حفظ في Google Drive|保存到 Google Drive|Google Drive में सहेजें
 presentationMode|Slide content|Contenido de diapositiva|Nội dung slide|محتوى الشريحة|幻灯片内容|स्लाइड सामग्री

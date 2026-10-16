@@ -4,7 +4,7 @@ The SplatWorks ecosystem provides browser applications for writing, presentation
 
 ## LayoutSplat
 
-The LayoutSplat plan was approved October 13, 2026. Current v0.4.6 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
+The LayoutSplat plan was approved October 13, 2026. Current v0.5.0 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
 
 | Milestone | Scope | Progress |
 | --- | --- | --- |
@@ -63,7 +63,7 @@ The v0.4.6 milestone preserves supported WriteSplat paragraph metrics, blank
 paragraphs and list labels across native suite exchange, in addition to inline
 formatting. Embedded fonts and advanced spacing remain reported conversion limits.
 
-## v0.4.6 current priorities
+## v0.5.0 current priorities
 
 Ordinary page/total folios, reading-order controls, native GridSplat/ListSplat merge,
 Word/DOCX/ODT text insertion and browser-native legacy QuarkXPress 3.1–4.1 imports
@@ -71,7 +71,7 @@ are implemented. WriteSplat exchange now preserves supported paragraph metrics,
 blank paragraphs and list labels. The 20-section [illustrated feature guide](../docs/layoutsplat-features.md)
 and [current progress](layoutsplat/PROGRESS.md) distinguish shipped behavior from limits.
 
-### Remaining work — October 14, 2026
+### Remaining work — October 16, 2026
 
 The [detailed remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work)
 records acceptance criteria in priority order:
@@ -79,9 +79,21 @@ records acceptance criteria in priority order:
 - [ ] Closer Publisher typography, hyphenation, contour wrapping and imported linked-story flow.
 - [ ] Broader native-import coverage and external InDesign/Scribus round-trip validation; research modern Pages IWA, QuarkXPress 5+ and native INDD.
 - [ ] Richer SplatWorks exchange, including font files, custom tabs and semantic list numbering.
-- [ ] Dynamic page/total fields in master-page artwork.
+- [x] Dynamic page/total fields in master-page artwork (v0.5.0).
 - [ ] Larger and more varied document workloads beyond the controlled performance proofs.
 - [ ] Independent PDF/X validation, printer-profile workflows and commercial-printer acceptance.
 
 The latest rebuilt downloads and district suite have been published; packaging is
 complete for v0.4.6. Shipped functionality above is not part of this open checklist.
+
+## October 16, 2026 — v0.5.0
+
+Reusable Publisher source masters and shared-text-ID linking are implemented.
+Dynamic master-page folios resolve per assigned page through page changes, native
+reopening, print/HTML/SVG and editable exports. The broader Publisher composition
+work remains open. Real Google Drive upload/download/reopen was user-confirmed;
+the downloaded project passed archive/native validation. Experimental Publisher
+2000 `.pub` export now runs in the app with native text/basic shapes, bitmap
+fallbacks and fingerprinted native recovery. Microsoft Publisher itself still
+needs external validation. See the authoritative
+[remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work).

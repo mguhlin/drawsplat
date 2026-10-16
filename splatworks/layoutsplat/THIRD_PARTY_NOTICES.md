@@ -66,3 +66,14 @@ accompany `quark/`. The GPL-3.0-only drawing adapter, pinned build script and
 runtime hashes are included. ICU, Boost, zlib and Emscripten notices are shared
 with the adjacent `publisher/` directory. Supported native input is QuarkXPress
 3.1–4.1; no desktop application is required. Newer files remain unsupported.
+
+## Publisher export (v0.5.0)
+
+The browser Publisher 2000 writer and bitmap-only WMF reader are LayoutSplat
+GPL-3.0-only application source. The writer reuses the unmodified SheetJS CFB
+1.2.2 / CRC-32 1.2.1 Apache-2.0 runtime and notices under
+`splatworks/shared/word-legacy/`. The native record implementation follows the
+reverse-engineered libmspub readers (MPL-2.0 source supplied in `publisher/source/`);
+it does not bundle or require Microsoft Publisher. Container/image structures use
+[MS-CFB](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-cfb/) and
+[MS-WMF](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/).

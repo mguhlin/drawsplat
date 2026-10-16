@@ -31,6 +31,8 @@ Keep a file copy in your Google Drive from the SplatWorks office apps and creati
 
 **Reopen a saved copy:** download the file from Drive, then open or import it in the corresponding app. MermaidSplat has **Open .mmd**. A rendered video or output ZIP contains exported results; keep the native project and source media when you need further editing.
 
+For LayoutSplat, Drive may preview `publication.json` and `README.txt` inside the saved file. This is expected: `.layoutsplat` is a ZIP-based project. Download the whole `.layoutsplat` file and use **File → Open** in LayoutSplat. A real user-run upload, download and reopen succeeded on October 16, 2026; the downloaded one-page project passed archive and native-model validation with five stories, two embedded pictures and nine objects. This verifies that observed account/workflow; school account policies may differ.
+
 The DrawSplat whiteboard’s Google Drive/Sheets saving, rooms and turn-ins use its separate [Apps Script setup](../guides/google-setup.html). You do not need to deploy Apps Script for the direct saves listed above.
 
 ## Privacy and school accounts
