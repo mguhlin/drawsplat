@@ -11,11 +11,13 @@ import { setupLabelSettings } from './label-settings.mjs';
 import { setupBackgroundLibrary } from './background-library.mjs';
 import { setupFontTools } from './local-fonts.mjs';
 import {setupReadingOrder} from './reading-order.mjs';
+import {setupEbook} from './ebook-ui.mjs';
 export function setupPublishing(api) {
   const $ = id => document.getElementById(id), { t, mutate, render, status } = api;
   let editingMasterId = null, selection = new Set(), painter = null, richEditor = null, drawing = false, trace = null;
   const getDoc = api.getDoc, members = () => api.currentPage().objects.filter(o => selection.has(o.id));
   const merge = setupMerge(api), exports = setupExports(api);
+  const ebook=setupEbook({...api,openExports:format=>exports.open(format)});
   const context = setupContextMenu({ ...api, members, selectedIds: () => new Set(selection) });
   const library = setupTemplateLibrary(api);
   const backgrounds = setupBackgroundLibrary(api);
@@ -147,11 +149,12 @@ export function setupPublishing(api) {
     if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
     if (name === 'whiteboardBackgrounds') { await backgrounds.open(); return true; }
     if (name === 'importSuite') { suite.open(); return true; }
-    if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu'}[name]); return true; }
+    if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates','ebookTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu',ebookTemplates:'ebook'}[name]); return true; }
     if(name==='labelSettings'){labels.open();return true;}
     if (name === 'publisherSettings') { $('publisherSettingsDialog').showModal(); return true; }
     if (name === 'merge') { merge.open(); return true; }
     if (name === 'exports' || name === 'shareExports') { exports.open(); return true; }
+    if(name==='ebookTools'){ebook.open();return true;}
     if(name.startsWith('export-')){exports.open(name.slice(7));return true;}
     if (name === 'previewMedia' && o?.type === 'image' && d.assets[o.assetId]?.media) { const a = d.assets[o.assetId]; let dialog = $('mediaPreviewDialog'); if (!dialog) { dialog = document.createElement('dialog'); dialog.id = 'mediaPreviewDialog'; document.body.append(dialog); dialog.addEventListener('close', () => { dialog.querySelector('video')?.pause(); dialog.replaceChildren(); }); } const player = document.createElement(a.media.kind === 'video' ? 'video' : 'img'); player.src = a.media.src; player.style.maxWidth = '100%'; player.style.maxHeight = '65vh'; if (a.media.kind === 'video') { player.controls = true; player.poster = a.src; } else player.alt = a.alt || a.name; const close = document.createElement('button'); close.textContent = t('close'); close.onclick = () => dialog.close(); dialog.replaceChildren(player, close); dialog.showModal(); return true; }
     if (name.startsWith('text-') && ['bold', 'italic', 'underline'].includes(name.slice(5))) { if (o?.type === 'text' && !o.locked) mutate(() => { const key = name.slice(5), s = d.stories[o.storyId].style; if (key === 'bold') s.weight = s.weight === 'bold' ? 'normal' : 'bold'; else s[key] = !s[key]; for (const mark of d.stories[o.storyId].marks || []) delete mark[key]; }); return true; }

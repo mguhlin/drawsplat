@@ -1,4 +1,4 @@
-# LayoutSplat import accuracy — v0.5.0
+# LayoutSplat import accuracy — v0.6.0
 
 Private user-provided samples were opened and compared locally. Source publications,
 reference PDFs, and screenshots are not distributed with the repository.
@@ -68,5 +68,5 @@ other metafiles retain the existing conversion/failure reporting.
 
 The historical private-source overflow reported above has not been revalidated
 with matching reference fonts during this milestone. It remains an open accuracy
-benchmark. Experimental native PUB export is documented separately in the
+benchmark. Native PUB export is documented separately in the
 [technical reference](layoutsplat.md#publisher-pub-export).

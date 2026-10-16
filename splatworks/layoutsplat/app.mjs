@@ -217,7 +217,8 @@ async function parseProject(file, options = {}) {
   if (file.size > 192000000) throw new Error('size');
   let text;
   let result, warnings = [];
-  if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value, customFonts: doc.customFonts||{} }));
+  if (/\.epub$/i.test(file.name)) { const {importEpub}=await import('./epub-import.mjs'); ({doc:result,warnings}=await importEpub(file,options)); }
+  else if (/\.pub$/i.test(file.name)) ({ doc: result, warnings } = await importPublisher(file, { ...options, encoding: $('pubEncoding').value, customFonts: doc.customFonts||{} }));
   else if (/\.pages$/i.test(file.name)) ({ doc: result, warnings } = await importPages(file, options));
   else if (/\.(ai|pdf|eps|ps)$/i.test(file.name)) ({ doc: result, warnings } = await importArtwork(file, options));
   else if (/\.(indd|indt)$/i.test(file.name)) throw Error('Native InDesign INDD/INDT decoding is not available in LayoutSplat. Export IDML and package its linked images for editable import, or export PDF for page appearance. This document has not replaced your current publication.');
@@ -234,9 +235,9 @@ async function parseProject(file, options = {}) {
   await rasterSample(result); return { doc: result, warnings };
 }
 async function openProject(file, transferred = false) {
-  const controller = new AbortController(), publisher = /\.(pub|pages|ai|pdf|eps|ps|qxp|qxd|qxt)$/i.test(file.name);
+  const controller = new AbortController(), publisher = /\.(epub|pub|pages|ai|pdf|eps|ps|qxp|qxd|qxt)$/i.test(file.name);
   try {
-    if (!transferred && !/\.(layoutsplat|pub|pages|ai|eps|ps|indd|indt|qxp|qxd|qxt|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
+    if (!transferred && !/\.(layoutsplat|epub|pub|pages|ai|eps|ps|indd|indt|qxp|qxd|qxt|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
     if (publisher) { $('mediaProgress').textContent = /\.pub$/i.test(file.name) ? t('publisherDecoding') : 'Importing layout locally…'; $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
     const imported = await parseProject(file, { signal: controller.signal, onProgress: text => $('mediaProgress').textContent = text }), next = imported.doc;
     if (publisher) $('mediaImportDialog').close();
@@ -279,7 +280,7 @@ function openSetup() {
 }
 async function action(name) {
   const o = selectedObject();
-  if(name.startsWith('importFile-')){const kind=name.slice(11),formats={ai:'.ai',indesign:'.idml,.zip,.indd,.indt',pages:'.pages',eps:'.eps,.ps',pub:'.pub',pdf:'.pdf',quark:'.qxp,.qxd,.qxt',scribus:'.sla,.zip',svg:'.svg'};if(kind==='media')$('pictureInput').click();else{$('projectInput').accept=formats[kind]||'.layoutsplat,.json';$('projectInput').click();}return;}
+  if(name.startsWith('importFile-')){const kind=name.slice(11),formats={epub:'.epub',ai:'.ai',indesign:'.idml,.zip,.indd,.indt',pages:'.pages',eps:'.eps,.ps',pub:'.pub',pdf:'.pdf',quark:'.qxp,.qxd,.qxt',scribus:'.sla,.zip',svg:'.svg'};if(kind==='media')$('pictureInput').click();else{$('projectInput').accept=formats[kind]||'.layoutsplat,.json';$('projectInput').click();}return;}
   if (await publishing?.action(name)) { document.querySelectorAll('.more-tools[open]').forEach(menu => menu.open = false); return; }
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
@@ -292,7 +293,7 @@ async function action(name) {
       await saveToGoogleDrive({ appName: 'LayoutSplat', fileName: (doc.title.replace(/[^\p{L}\p{N} _-]/gu, '').trim() || 'publication') + '.layoutsplat', buildFile: () => projectBlob(snapshot) });
       break;
     }
-    case 'open': $('projectInput').accept='.layoutsplat,.json,.zip,.html,.htm';$('projectInput').click(); break;
+    case 'open': $('projectInput').accept='.layoutsplat,.json,.zip,.html,.htm,.epub';$('projectInput').click(); break;
     case 'clearBrowser': {
       if (!confirm(t('clearBrowserConfirm'))) break;
       try { const storage = workspaceStorage(); storage.setItem(START_BLANK, '1'); storage.removeItem(STORE); storage.removeItem(BACKUP); clearTimeout(saveTimer); unsaved = false; lastSaved = null; undoStack = []; redoStack = []; location.reload(); }
@@ -462,12 +463,12 @@ async function boot() {
     catch (error) { console.warn('Starter newsletter unavailable; using the built-in example.', error); }
   }
   installPublishingUI();
-  $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.html,.htm,.pub,.pages,.ai,.eps,.ps,.indd,.indt,.qxp,.qxd,.qxt';
+  $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.epub,.html,.htm,.pub,.pages,.ai,.eps,.ps,.indd,.indt,.qxp,.qxd,.qxt';
   document.body.insertAdjacentHTML('beforeend', '<input id="videoInput" type="file" accept="video/*,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp" hidden><dialog id="mediaImportDialog"><p id="mediaProgress" role="status"></p><button type="button" id="mediaCancel" data-i18n="cancel">Cancel</button></dialog><dialog id="importReportDialog"><form method="dialog"><h2 data-i18n="conversionReport">Import / conversion report</h2><p id="importReportText" style="white-space:pre-wrap"></p><button data-i18n="close">Close</button></form></dialog>');
   $('videoInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
   $('mediaImportDialog').addEventListener('cancel', event => { event.preventDefault(); $('mediaCancel').click(); });
   setupMovableDialogs(); storyEditor = setupStoryEditor();
-  publishing = setupPublishing({ getDoc: () => doc, currentPage: page, getSelected: () => selected, setSelected: id => selected = id, getSelectedObject: selectedObject, getLayout: () => layout, getIssues: () => issues, mutate, render, status, t, addObject, download, select, importPicture, mediaAccept: MEDIA_ACCEPT, showReport: showImportReport, replaceDoc: async next => { await rasterSample(next); checkpoint(); doc = validatePublication(next); activePage = 0; selected = null; publishing.reset(); render(); remember(); } });
+  publishing = setupPublishing({ getDoc: () => doc, currentPage: page, editStory, goToObject: id => { const found=findObject(doc,id); if(found?.pageIndex>=0){activePage=found.pageIndex;linking=null;publishing.reset();select(id);} }, getSelected: () => selected, setSelected: id => selected = id, getSelectedObject: selectedObject, getLayout: () => layout, getIssues: () => issues, mutate, render, status, t, addObject, download, select, importPicture, mediaAccept: MEDIA_ACCEPT, showReport: showImportReport, replaceDoc: async next => { await rasterSample(next); checkpoint(); doc = validatePublication(next); activePage = 0; selected = null; publishing.reset(); render(); remember(); } });
   function transparency(event, commit) {
     const target = event.target, id = target.dataset.layerTransparency;
     if (!id && target.id !== 'propTransparency') return;
@@ -491,6 +492,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.5.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.6.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

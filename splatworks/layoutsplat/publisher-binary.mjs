@@ -85,10 +85,10 @@ export function publisherContainer(width,height,pages){
   const page=add(new Bytes(32).u16(0,0x14).bytes,documentId);
   for(const o of objects){
    const type=o.bitmap?2:o.type==='text'?8:o.kind==='ellipse'?7:o.kind==='line'?4:5,b=new Bytes(0x80).u16(0,type).u16(4,Math.round(((360-o.rotation)%360+360)%360*10));
-   const pad=o.type==='text'?2.88:0;
+   const pad=type===8?2.88:0;
    b.u32(6,emu(o.x-pad-width/2)).u32(10,emu(o.y-pad-height/2)).u32(14,emu(o.x+o.w+pad-width/2)).u32(18,emu(o.y+o.h+pad-height/2));
-   if(o.type==='text'){b.u16(0x58,stories.length);stories.push(o.paragraphs);}
-   if(o.type==='shape'){
+   if(type===8){b.u16(0x58,stories.length);stories.push(o.paragraphs);}
+   if(o.type==='shape'&&!o.bitmap){
     if(!o.noFill&&o.kind!=='line')b.u32(0x22,nativeColor(o.fill)).put(0x2a,[2]);
     for(const at of [0x2c,0x35,0x3b,0x41])b.put(at,[Math.min(80,Math.round(o.strokeWidth||0))]).u32(at+1,nativeColor(o.stroke||'#000000'));
    }

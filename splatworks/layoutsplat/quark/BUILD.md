@@ -4,7 +4,7 @@ The bundled libqxp 0.0.3 decoder reads QuarkXPress 3.1–4.1 documents/templates
 in a browser worker. Later QuarkXPress files remain unsupported. Source text,
 supported vectors and frame geometry become editable; source bytes are retained
 as `originalQuark`. Linked-story metadata, text paths, hyphenation, external
-pictures and advanced effects require review. This is experimental interchange.
+pictures and advanced effects require review. This is interchange.
 
 [Upstream source](https://dev-www.libreoffice.org/src/libqxp/), matching 0.0.3
 archive and MPL-2.0 notice accompany this directory. The source archive includes

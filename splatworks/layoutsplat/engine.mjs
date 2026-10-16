@@ -133,6 +133,7 @@ export function validatePublication(input) {
   if (d.bleed !== undefined && !number(d.bleed, 0, 36)) fail();
   if (d.safeArea !== undefined && !number(d.safeArea, 0, Math.min(d.width, d.height) / 2 - 1)) fail();
   if (d.facingPages !== undefined && typeof d.facingPages !== 'boolean') fail();
+  if(d.ebookMetadata!==undefined){const meta=d.ebookMetadata;if(!meta||typeof meta!=='object'||Array.isArray(meta))fail();for(const key of ['author','language','publisher','description','rights'])if(meta[key]!==undefined&&(typeof meta[key]!=='string'||meta[key].length>(key==='description'?4000:500)))fail();if(meta.language&&!/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(meta.language))fail();}
   if(d.labelLayout?.stock){const l=d.labelLayout;if(typeof l.stock!=='string'||l.stock.length>40||!Number.isInteger(l.perSheet)||!number(l.perSheet,1,200)||!Number.isInteger(l.startAt)||!number(l.startAt,0,l.perSheet-1)||!number(l.offsetX,-36,36)||!number(l.offsetY,-36,36))fail();}
   if (d.rulerOrigin !== undefined && (!number(d.rulerOrigin.x, -2000, 2000) || !number(d.rulerOrigin.y, -2000, 2000))) fail();
   for (const key of ['locked', 'showHorizontal', 'showVertical']) if (d.guides[key] !== undefined && typeof d.guides[key] !== 'boolean') fail();
@@ -145,6 +146,7 @@ export function validatePublication(input) {
       if (o.type === 'text') { if (!number(o.padding, 0, 36) || !Object.hasOwn(d.stories, o.storyId)) fail(); textFrames.add(o.id); }
       if(o.readingOrder!==undefined&&(!Number.isInteger(o.readingOrder)||!number(o.readingOrder,0,200)))fail();
       if(o.readingExcluded!==undefined&&typeof o.readingExcluded!=='boolean')fail();
+      if(o.readingHeading!==undefined&&(o.type!=='text'||!Number.isInteger(o.readingHeading)||!number(o.readingHeading,1,6)))fail();
       if (o.insets !== undefined && (o.type !== 'text' || !o.insets || ['left','right','top','bottom'].some(edge => !number(o.insets[edge], 0, 36)))) fail();
       if (o.type === 'shape' && (!['rect', 'ellipse', 'line', 'triangle', 'hexagon', 'arrow', 'star', 'heart', 'callout', 'border', 'path'].includes(o.kind) || !/^#[0-9a-f]{6}$/i.test(o.fill) || !/^#[0-9a-f]{6}$/i.test(o.stroke) || !number(o.strokeWidth, 0, 20) || !number(o.opacity, 0, 1))) fail();
       if(o.strokeDash!==undefined&&(typeof o.strokeDash!=='string'||o.strokeDash.length>100||!/^\d+(?:\.\d+)?(?:[ ,]+\d+(?:\.\d+)?)*$/.test(o.strokeDash)))fail();

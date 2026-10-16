@@ -5,10 +5,10 @@ There is no LibreOffice installation, server process, or external conversion upl
 The decoder produces bounded drawing events; `publisher.mjs` converts those events
 to the validated publication model. The original PUB bytes remain in the project.
 
-This is experimental interchange. Check substituted fonts, linked-frame flow,
+This is interchange. Check substituted fonts, linked-frame flow,
 graphics, fields, effects, and older text encodings against the original. The File
 menu's Publisher import settings allow explicit legacy encodings. The separate
-`../publisher-binary.mjs` and `../publisher-export.mjs` modules write experimental
+`../publisher-binary.mjs` and `../publisher-export.mjs` modules write
 Publisher 2000 binary publications locally; see `../../../docs/layoutsplat.md` for
 editable features, picture fallbacks, native-payload recovery and validation limits.
 

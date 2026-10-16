@@ -1,6 +1,6 @@
 # v3.1.42 — LayoutSplat v0.5.0
 
-October 16, 2026. LayoutSplat adds experimental in-app Publisher 2000 `.pub`
+October 16, 2026. LayoutSplat adds in-app Publisher 2000 `.pub`
 export, reusable Publisher source masters, matching shared-source text-ID linking
 and dynamic master-page folios. PUB has native editable Unicode text/basic shapes,
 bitmap fallbacks and fingerprinted native-project recovery; unsupported content

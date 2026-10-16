@@ -4,7 +4,7 @@ import {publisherContainer,finishPublisher,wmfBitmap} from './publisher-binary.m
 import {pageCanvas} from './exports.mjs';
 // Write on-device; native text/shapes plus per-object WMF bitmap fallbacks.
 export async function exportPublisher(doc,layout,options={}){
- const warnings=new Set(['Experimental Publisher 2000 binary export. Supported text and basic rectangles/ellipses/lines are native editable objects; verify the file in your Publisher version before production use. Microsoft Publisher itself has not been tested here.','Masters are copied onto pages; linked stories and columns become independent visible text fragments. Fonts are named, not embedded. Text metrics, paragraph composition and line widths may differ. The embedded LayoutSplat copy preserves the full publication when the native Publisher streams are unchanged.']);
+ const warnings=new Set(['Publisher 2000 binary export. Supported text and basic rectangles/ellipses/lines are native editable objects; verify the file in your Publisher version before production use. Microsoft Publisher itself has not been tested here.','Masters are copied onto pages; linked stories and columns become independent visible text fragments. Fonts are named, not embedded. Text metrics, paragraph composition and line widths may differ. The embedded LayoutSplat copy preserves the full publication when the native Publisher streams are unchanged.']);
  const warn=s=>warnings.add(s),pages=[],ppi=options.ppi||150;
  let pixelBytes=0;
  for(const [i,page]of doc.pages.entries()){

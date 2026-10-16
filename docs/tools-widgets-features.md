@@ -164,8 +164,9 @@ Category: **Create** · 19 components
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
 - Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
 - 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
-- Experimental native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
+- Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
+- EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
 
 ### MediaSplat
 
@@ -601,8 +602,9 @@ Category: **Writing** · 21 components
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
 - Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
 - 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
-- Experimental native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
+- Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
+- EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
 
 ### ListSplat
 

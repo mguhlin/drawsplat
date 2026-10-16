@@ -4,17 +4,17 @@ The SplatWorks ecosystem provides browser applications for writing, presentation
 
 ## LayoutSplat
 
-The LayoutSplat plan was approved October 13, 2026. Current v0.5.0 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
+The LayoutSplat plan was approved October 13, 2026. Current v0.6.0 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
 
 | Milestone | Scope | Progress |
 | --- | --- | --- |
 | 1 | Two-page layout and export proof; linked stories; English/Arabic; precise geometry; local saves | Available in v0.1 and retained in v0.2 |
-| 2 | Templates; editing tools; guides; recovery; core checker; PDF and image exports | Available in v0.4.6; 123 distinct compositions; 29 Avery geometries and name badges |
+| 2 | Templates; editing tools; guides; recovery; core checker; PDF and image exports | Available in v0.4.6; 126 distinct compositions; 29 Avery geometries and name badges |
 | 3 | Masters; facing-page preview; typography; wrapping; fold guidance; expanded templates | Core tools available in v0.2; advanced wrap/typography fidelity remains |
 | 4 | Excel/CSV personalization; labels; catalogs; HTML editions; sharing; Pack and Go | Available in v0.4; native GridSplat/ListSplat merge uses their formula engines |
 | 5 | Printer profiles; advanced preflight; independently validated PDF/X; district release packaging | ICC intent, bleed/crop boxes and optional Ghostscript PDF/X-3 conversion; expanded structural preflight, 500-page cached-layout regression and 100-page print proof in v0.4.4; external certification and broader target-app validation remain; refreshed v3.1.37 and district-suite-v1.2.7 downloads contain v0.4.6 |
 
-v0.2 also adds experimental browser-native Publisher import, editable layout
+v0.2 also adds browser-native Publisher import, editable layout
 interchange, broad local media import, contextual object imports, and native
 SplatWorks JSON content import/export. Keep the original file and review conversion
 reports. The [feature guide](../docs/layoutsplat.md) documents format boundaries.
@@ -63,7 +63,7 @@ The v0.4.6 milestone preserves supported WriteSplat paragraph metrics, blank
 paragraphs and list labels across native suite exchange, in addition to inline
 formatting. Embedded fonts and advanced spacing remain reported conversion limits.
 
-## v0.5.0 current priorities
+## v0.6.0 current priorities
 
 Ordinary page/total folios, reading-order controls, native GridSplat/ListSplat merge,
 Word/DOCX/ODT text insertion and browser-native legacy QuarkXPress 3.1–4.1 imports
@@ -97,3 +97,12 @@ the downloaded project passed archive/native validation. Experimental Publisher
 fallbacks and fingerprinted native recovery. Microsoft Publisher itself still
 needs external validation. See the authoritative
 [remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work).
+
+
+## October 16, 2026 — v0.6.0 ebooks
+
+EPUB 2/3 import, reflowable/fixed-layout EPUB 3 export, three original ebook
+starters, heading navigation, metadata and reading preview are available. The
+preview includes chapter search, text size and reading themes. Full source
+XHTML/CSS editing, preserved footnotes/annotations/media overlays, broad external
+reader verification and ebook accessibility certification remain on the roadmap.

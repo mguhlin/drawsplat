@@ -1,5 +1,22 @@
 # LayoutSplat development progress
 
+## October 16, 2026 — v0.6.0 ebooks
+
+EPUB 2/3 import reads local spine content into native, paginated stories and
+pictures. Reflowable EPUB 3 exports rich reading content, heading navigation and
+book metadata; fixed-layout EPUB exports selected page pictures. Three original
+ebook starters add covers, title pages and chapters in six publication languages.
+Ebook tools includes metadata, searchable contents, visual editing handoff and
+a sandboxed reading preview with text-size and Paper/Sepia/Night controls.
+Reading order now includes H1–H6 roles. See docs/layoutsplat-ebooks.md for limits.
+All 77 Chromium workflows, three focused Firefox checks and three upstream
+EPUBCheck 5.4.0 proofs passed; EPUBCheck reported no errors or warnings.
+
+The visible Publisher label is now native export in all six languages. Reports
+retain concrete conversion limits. A discovered Publisher fallback bug is fixed:
+text rendered as a bitmap no longer enters the native Quill paragraph writer.
+
+
 ## October 16, 2026 — v0.5.0 Publisher interchange and dynamic masters
 
 Publication follow-up: source `3c3962f` is committed and pushed. GitHub's
@@ -27,7 +44,7 @@ insertion, duplication, deletion, undo, native save/reopen and local overrides.
 Rendering, fixed HTML, SVG and editable presentation/ShowSplat exports use those values;
 the master template retains its dynamic format.
 
-File → Export adds experimental native Publisher 2000 `.pub` output, written in the
+File → Export adds native Publisher 2000 `.pub` output, written in the
 browser. Supported Unicode text/rich runs/paragraph metrics and basic shapes are
 native editable objects. Pictures, tables, RTL text and decorative effects become
 WMF bitmaps on white backgrounds. Masters and linked frames become page objects
@@ -387,7 +404,7 @@ and keyboard menus offer contextual text import and picture/video replacement.
 Native Publisher `.pub` decoding now runs in a bundled browser WebAssembly worker.
 No LibreOffice, desktop bridge, or conversion upload is required. Supported objects
 are editable; original PUB bytes are preserved. Legacy encoding settings address
-older text. This remains experimental interchange, with explicit conversion reports.
+older text. This remains interchange, with explicit conversion reports.
 JSON/SVG/IDML/SLA/HTML and PDF picture imports, native SplatWorks content import/export,
 TIFF/HEIC/Photoshop image decoding, local video conversion, and motion posters are added.
 

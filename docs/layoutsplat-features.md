@@ -4,7 +4,7 @@
 
 [Open LayoutSplat](https://splatworks.org/layoutsplat/) · [Technical reference](https://splatworks.org/wiki/layoutsplat.html) · [Import accuracy](https://splatworks.org/wiki/layoutsplat-import-accuracy.html)
 
-LayoutSplat™ is the SplatWorks™ ecosystem’s page-layout application. It combines editable page objects, rich text stories, original publication templates, local file conversion, personalized output, and print preparation. The workspace screenshots show v0.4.6; the Publisher export screenshot shows v0.5.0. They use bundled or synthetic publications in clean browser contexts.
+LayoutSplat™ is the SplatWorks™ ecosystem’s page-layout application. It combines editable page objects, rich text stories, original publication templates, local file conversion, personalized output, and print preparation. The workspace screenshots show v0.4.6; the Publisher export screenshot shows v0.6.0. They use bundled or synthetic publications in clean browser contexts.
 
 ![LayoutSplat newsletter workspace with page thumbnails, physical rulers, guides and property panels.](../assets/layoutsplat-guide/v0.4.6/01-workspace.png)
 
@@ -24,7 +24,7 @@ The organized **File** menu contains project commands, Templates, alphabetized I
 
 ## 2. Original editable publication templates
 
-**File → Templates → Browse all designs** opens **123 distinct compositions across 18 publication types**. Filter by type, industry, orientation, language, palette, or search. Industry and palette are customizations; they are not counted as extra designs.
+**File → Templates → Browse all designs** opens **126 distinct compositions across 19 publication types**. Filter by type, industry, orientation, language, palette, or search. Industry and palette are customizations; they are not counted as extra designs.
 
 | Publication type | Examples and supported starting points |
 | --- | --- |
@@ -169,7 +169,7 @@ GridSplat formulas and number formatting use its calculation engine. ListSplat c
 
 | Source format | Current behavior and boundary |
 | --- | --- |
-| Publisher PUB | Local WebAssembly decoder; supported editable text, shapes, embedded pictures, bitmap fills, crops, gradients, and drawing properties. Source bytes are retained. Experimental native PUB export is available separately. Compare fonts, flow, links, and unsupported effects before printing. |
+| Publisher PUB | Local WebAssembly decoder; supported editable text, shapes, embedded pictures, bitmap fills, crops, gradients, and drawing properties. Source bytes are retained. Native PUB export is available separately. Compare fonts, flow, links, and unsupported effects before printing. |
 | Apple Pages | Legacy ZIP/XML documents: supported text, geometry, paths, styles, and embedded pictures. Modern IWA needs an alternate export. |
 | QuarkXPress QXP/QXD/QXT | Native versions 3.1–4.1: supported text, frame geometry, and vectors. Newer versions require PDF/SVG interchange; linked stories, external pictures, text paths, and advanced effects need review. |
 | Adobe InDesign | Supported IDML interchange is editable within its subset. Native INDD/INDT decoding is unavailable; use IDML, SVG, or PDF. |
@@ -208,9 +208,9 @@ A reading edition is useful for flexible digital sharing. Its existence does not
 
 **Print / Save as PDF** uses browser-shaped selectable text and vectors. The downloadable **PDF proof** is flattened artwork. PNG/JPEG exports support **150, 300, and 600 ppi**. As of v0.4.8, **PowerPoint PPTX** and **OpenDocument ODP** default to editable text boxes, pictures, native shapes and table cells. Rich text, supported paragraph settings, geometry, rotation and stacking are retained. Master artwork is copied to slides; columns and linked stories become independent visible text fragments. Font metrics and some effects may differ. Individual unsupported effects become picture objects and are identified in the conversion report. The optional **Page images** mode preserves the previous full-slide PNG output at the chosen resolution, including bleed. **Animated GIF** cycles selected pages in order, loops forever, and offers seconds per page and maximum pixel dimension. A single page makes a still GIF. GIF is limited to 24 million total frame pixels and ignores print settings. Embedded videos and animations use still previews in these three formats. SVG, IDML, Scribus SLA, native JSON, and suite-native content are also available.
 
-**Publisher PUB** is an experimental in-app Publisher 2000 binary export. Unicode text and basic rectangles/ellipses/lines are native editable objects. Other content, including tables, pictures, RTL text and decorative effects, becomes individual bitmap pictures on white backgrounds. Masters and linked text are flattened into page objects/fragments. Font files, live fields and precise source composition are not retained. All pages are included. Read the conversion report and inspect overlapping artwork. The embedded native LayoutSplat copy is restored only while the other Publisher streams remain unchanged; external edits trigger native decoding. LibreOffice reopening is verified; Microsoft Publisher itself is not yet tested. [Detailed limits](layoutsplat.md#publisher-pub-export).
+**Publisher PUB** is an in-app Publisher 2000 binary export. Unicode text and basic rectangles/ellipses/lines are native editable objects. Other content, including tables, pictures, RTL text and decorative effects, becomes individual bitmap pictures on white backgrounds. Masters and linked text are flattened into page objects/fragments. Font files, live fields and precise source composition are not retained. All pages are included. Read the conversion report and inspect overlapping artwork. The embedded native LayoutSplat copy is restored only while the other Publisher streams remain unchanged; external edits trigger native decoding. LibreOffice reopening is verified; Microsoft Publisher itself is not yet tested. [Detailed limits](layoutsplat.md#publisher-pub-export).
 
-![Publisher PUB export dialog in LayoutSplat v0.5.0.](../assets/layoutsplat-guide/v0.5.0/publisher-export-dialog.png)
+![Publisher PUB export dialog in LayoutSplat v0.6.0.](../assets/layoutsplat-guide/v0.5.0/publisher-export-dialog.png)
 
 *Choose the resolution for bitmap fallbacks. Native text and shapes remain editable; the report identifies conversion limits.*
 
@@ -241,3 +241,15 @@ The v0.4.6 validation run passed **52 browser workflows and 10 model checks**, w
 Remaining work includes closer source-program typography/flow fidelity, modern native formats, advanced wrapping/effects, broader large-document workloads, external application validation, and commercial print certification. The shipped features above should not be read as a claim that every Publisher feature or file variant is supported.
 
 [Implementation reference](https://splatworks.org/wiki/layoutsplat.html) · [Roadmap and progress](https://github.com/mguhlin/drawsplat/blob/main/splatworks/layoutsplat/PROGRESS.md) · [Source and component notices](https://github.com/mguhlin/drawsplat/tree/main/splatworks/layoutsplat)
+
+
+## 21. Ebooks and EPUB
+
+Three original novel, guide and illustrated-story starters join the template library.
+Open **File → Ebook tools** for metadata, a searchable outline, visual text editing,
+and a reading preview with adjustable type and Paper/Sepia/Night themes.
+Reading order adds H1–H6 heading levels for nested EPUB contents navigation.
+Import supported EPUB 2/3 text and packaged pictures; export EPUB 3 as selectable
+reflowable content or fixed-layout page pictures. [Ebook guide and limits](layoutsplat-ebooks.md).
+
+![Ebook tools](../assets/layoutsplat-guide/v0.6.0/ebook-tools.png)

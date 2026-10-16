@@ -198,7 +198,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "64233f7abd60249c273951cfc85ba103bd9e0598d9132604d0ce2fb221cff45f"
+      "entrySha256": "22b49a17a6650e65f6fda6af6b6864e9caeb9ccb145e1ae09cc7204926f7e9bd"
     },
     {
       "id": "listsplat",
@@ -1637,7 +1637,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "48cf2d489bef971b845188f23900e2b4648ef7524884bd4fbd3512606b32a667"
+      "entrySha256": "2d498d82b0afa9a1b6bb33e02307ce3f52226e061d88aa4c497560cb439a3182"
     },
     {
       "id": "templates",
@@ -1667,7 +1667,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "6fe61d23e8c51c560c2cd5e16ff9c874f52b12180c4441426f53b5f536997996"
+      "entrySha256": "ed93396291a61e357df0db0b157b7b9664d4767fea52f0e3924c5b98fb55ed44"
     },
     {
       "id": "guides",
@@ -1704,6 +1704,7 @@
         "openai.com",
         "privacy.anthropic.com",
         "script.google.com",
+        "sigil-ebook.com",
         "splatworks.org",
         "support.google.com",
         "translate.google.com",
@@ -1715,6 +1716,7 @@
         "www.dropbox.com",
         "www.gnu.org",
         "www.microsoft.com",
+        "www.w3.org",
         "your-api.example"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -1723,7 +1725,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "e1dd39fa59876e312dad0855e2b67393b5ab92c91d0c0d2ed0fd47335f821e60"
+      "entrySha256": "63cf951f767f784ef524ccbdd2294db4f2ff9e49cfc6ec46c3fd9687479ee7a2"
     },
     {
       "id": "support",
@@ -1760,6 +1762,7 @@
         "openai.com",
         "privacy.anthropic.com",
         "script.google.com",
+        "sigil-ebook.com",
         "splatworks.org",
         "support.google.com",
         "translate.google.com",
@@ -1771,6 +1774,7 @@
         "www.dropbox.com",
         "www.gnu.org",
         "www.microsoft.com",
+        "www.w3.org",
         "your-api.example"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
@@ -1779,7 +1783,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-15",
-      "entrySha256": "a4ab2d870045db0b11b734afa29ea09e2e2e43d5e80c8a68ee15f16dfe737845"
+      "entrySha256": "1e2641ec0ad2cba0c5b3898bc3a7ae1be0ec6398e707a6c6c71d287ed966a2dc"
     }
   ]
 }

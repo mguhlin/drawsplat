@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.5.0** is the SplatWorks publication editor.
+LayoutSplat **v0.6.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -11,12 +11,12 @@ and its existing tools; SplatWorks is the ecosystem brand.
 [Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
 It covers the workspace, all 18 template types, text, graphics, masters, labels,
 mail merge, imports, suite exchange, digital output and current print limits.
-The guide covers v0.5.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
+The guide covers v0.6.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
 
 ## Templates
 
 Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,
-business cards, or menus. There is one template library, with **123 distinct editable compositions**
+business cards, or menus. There is one template library, with **126 distinct editable compositions**
 and six publication-language editions. Filter by industry, publication type,
 orientation, palette, or search. Descriptive card titles identify the design;
 industry remains a filter. Download a filtered collection as JSON files in a ZIP.
@@ -242,9 +242,17 @@ commercial-printer acceptance and certification remain open.
 [Approved plan](../splatworks/layoutsplat/IMPLEMENTATION_PLAN.md) ·
 [Library notices](../splatworks/layoutsplat/THIRD_PARTY_NOTICES.md).
 
+## Ebooks and EPUB
+
+File → Templates → Ebooks adds novel, nonfiction guide and illustrated-book starters.
+File → Ebook tools adds metadata, heading navigation and a searchable reading preview
+with Paper/Sepia/Night themes and text size controls. File → Import opens EPUB 2/3
+books as native text and pictures. File → Export → EPUB ebook creates reflowable
+reading content or fixed-layout page pictures. [Complete ebook guide](layoutsplat-ebooks.md).
+
 ## Publisher PUB export
 
-Choose **File → Export → Publisher PUB — experimental native export**. The app
+Choose **File → Export → Publisher PUB — native export**. The app
 writes a Publisher 2000 compound binary file locally; no desktop helper, account
 or conversion upload is required. The filename ends in `.pub`.
 

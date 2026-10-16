@@ -4,7 +4,18 @@ Approved October 13, 2026. LayoutSplat is SplatWorks' browser publication-design
 
 The user subsequently authorized continuing through all milestones and requested maximum compatibility with other layout applications. JSON save/open must be explicit. Add editable SVG, InDesign IDML, Scribus SLA packages, HTML/PDF exchange, and documented conversion paths for proprietary formats. Preserve a lossless native payload in supported exchange files where possible, and report converted or unsupported features. Bold, italic, and underline belong in both the rich-text editor and ordinary formatting controls.
 
-Additional approved scope: broad local image/video decoding and conversion, printable video posters, object-specific context menus (right-click, Mac Control/Command-click, keyboard), text import into an existing frame, media replacement without changing frame geometry, and a large original template library inspired by the publication types/industry breadth of StockLayouts. The user explicitly requested native `.pub` import and subsequently required browser-contained decoding without LibreOffice. This supersedes the earlier desktop-bridge proposal. v0.2 bundles libmspub as WebAssembly with experimental editable conversion and source retention. Import/export native content from WriteSplat, ShowSplat, GridSplat, and ListSplat as well as routing files to their original applications. Clearly distinguish editable native imports from PDF backgrounds and preserve/report conversion limitations. Update README/wiki/release documentation, commit, push, deploy the next substantial update, and verify production.
+Additional approved scope: broad local image/video decoding and conversion, printable video posters, object-specific context menus (right-click, Mac Control/Command-click, keyboard), text import into an existing frame, media replacement without changing frame geometry, and a large original template library inspired by the publication types/industry breadth of StockLayouts. The user explicitly requested native `.pub` import and subsequently required browser-contained decoding without LibreOffice. This supersedes the earlier desktop-bridge proposal. v0.2 bundles libmspub as WebAssembly with editable conversion and source retention. Import/export native content from WriteSplat, ShowSplat, GridSplat, and ListSplat as well as routing files to their original applications. Clearly distinguish editable native imports from PDF backgrounds and preserve/report conversion limitations. Update README/wiki/release documentation, commit, push, deploy the next substantial update, and verify production.
+
+## v0.6.0 ebook scope
+
+- [x] Original ebook templates in six publication languages.
+- [x] EPUB 2/3 local import with spine order, editable text and packaged pictures.
+- [x] EPUB 3 reflowable and fixed-layout export.
+- [x] Book metadata, heading-based contents, reading preview and visual editing.
+- [x] Reader text size, Paper/Sepia/Night themes and searchable outline.
+- [ ] Full source XHTML/CSS editing, footnote/endnote preservation, annotations,
+  media overlays and accessibility certification remain future work.
+
 
 ## Remaining work
 
@@ -45,7 +56,7 @@ PUB/legacy DOC/legacy Quark imports, formatted DOCX/ODT insertion, ordinary foli
 HTML reading order and current download/district packages have shipped. Rebuilding
 the v0.4.6 packages is **complete**, not an outstanding roadmap item.
 
-v0.5.0 adds in-app experimental Publisher 2000 `.pub` export: native editable
+v0.5.0 adds in-app Publisher 2000 `.pub` export: native editable
 Unicode text/basic shapes, bitmap fallback objects and a fingerprinted native
 LayoutSplat copy. Native decoding and LibreOffice opening are verified; opening in
 Microsoft Publisher and broader file interoperability remain external acceptance
@@ -102,7 +113,7 @@ Store all geometry in points. Ruler units, screen pixels, and zoom are conversio
 
 Reuse suitable ProseMirror components from WriteSplat for rich editing; custom frame flow/pagination remains LayoutSplat's responsibility. [ProseMirror's structured document/transaction model](https://prosemirror.net/docs/guide/) does not itself provide a desktop publication engine. The first proof can use plain-text story editing and browser-shaped lines, preserving a migration path to rich stories. Evaluate font metrics, multilingual shaping, line breaking, and print consistency before advanced typography.
 
-Basic editing, ordinary exports, and merge work run locally. Bundle runtime assets for district use. Integrate the Apps launcher, component registry, file handoff, documentation, and installer inventory. Publisher `.pub` import is experimental browser interchange: supported objects become editable, while advanced fidelity requires comparison with the source. Retain original bytes and include source/build/license notices for the bundled decoder.
+Basic editing, ordinary exports, and merge work run locally. Bundle runtime assets for district use. Integrate the Apps launcher, component registry, file handoff, documentation, and installer inventory. Publisher `.pub` import is browser interchange: supported objects become editable, while advanced fidelity requires comparison with the source. Retain original bytes and include source/build/license notices for the bundled decoder.
 
 ## Milestones and acceptance
 

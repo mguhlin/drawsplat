@@ -1,7 +1,39 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
-exportPub|Publisher PUB — experimental native export|Publisher PUB — exportación nativa experimental|Publisher PUB — xuất bản gốc thử nghiệm|Publisher PUB — تصدير أصلي تجريبي|Publisher PUB — 实验性原生导出|Publisher PUB — प्रायोगिक मूल निर्यात
+exportEpub|EPUB ebook|Libro EPUB|Sách EPUB|كتاب EPUB|EPUB 电子书|EPUB ईबुक
+importEpub|EPUB — ebook text and pictures|EPUB — texto e imágenes|EPUB — văn bản và ảnh|EPUB — نص وصور|EPUB — 文字和图片|EPUB — पाठ और चित्र
+ebookTools|Ebook tools|Herramientas de libros|Công cụ sách|أدوات الكتب|电子书工具|ईबुक उपकरण
+ebook|Ebook|Libro electrónico|Sách điện tử|كتاب إلكتروني|电子书|ईबुक
+ebookLayout|Ebook layout|Diseño del libro|Bố cục sách|تخطيط الكتاب|电子书布局|ईबुक लेआउट
+reflowableEpub|Reflowable — text and pictures|Adaptable — texto e imágenes|Linh hoạt — văn bản và ảnh|مرن — نص وصور|可重排 — 文字和图片|अनुकूल — पाठ और चित्र
+fixedEpub|Fixed layout — page pictures|Fijo — imágenes de páginas|Cố định — ảnh trang|ثابت — صور الصفحات|固定布局 — 页面图片|स्थिर — पृष्ठ चित्र
+reflowableEpubHint|Complete stories follow Reading order and adapt to the reader. Shapes and master furniture are omitted; media use poster pictures. Set book details in Ebook tools.|Las historias siguen el orden de lectura y se adaptan al lector. Se omiten formas y elementos maestros; los medios usan imágenes fijas. Edita los datos en Herramientas de libros.|Bài đầy đủ theo thứ tự đọc và thích ứng màn hình. Bỏ hình trang trí và mẫu trang; dùng ảnh tĩnh cho nội dung động. Đặt thông tin trong Công cụ sách.|تتبع القصص الكاملة ترتيب القراءة وتتكيف مع القارئ. تُحذف الزخارف والعناصر الرئيسية؛ تستخدم الوسائط صورًا ثابتة. حرر بيانات الكتاب في أدوات الكتب.|完整故事按阅读顺序排列并适应阅读器。省略装饰形状和母版元素；媒体使用静态图片。在电子书工具中设置图书信息。|पूरी कहानियाँ पढ़ने के क्रम में ढलती हैं। सजावटी आकार और मास्टर वस्तुएँ हटती हैं; मीडिया स्थिर चित्र बनता है। ईबुक उपकरण में विवरण दें।
+fixedEpubHint|Each selected page becomes a picture at the chosen resolution. Page appearance is retained; text is not selectable. Keep the LayoutSplat project for editing.|Cada página es una imagen con la resolución elegida. El texto no es seleccionable. Conserva el proyecto LayoutSplat para editar.|Mỗi trang thành ảnh ở độ phân giải đã chọn. Không chọn được chữ. Giữ dự án LayoutSplat để sửa.|كل صفحة صورة بالدقة المختارة. النص غير قابل للتحديد. احتفظ بمشروع LayoutSplat للتحرير.|每个所选页面按指定分辨率保存为图片，保留外观；文字不可选取。请保留 LayoutSplat 项目以便编辑。|हर पृष्ठ चुने रिज़ॉल्यूशन का चित्र है। पाठ चयन योग्य नहीं है। संपादन के लिए LayoutSplat प्रोजेक्ट रखें।
+bookMetadata|Book metadata|Datos del libro|Thông tin sách|بيانات الكتاب|图书信息|पुस्तक विवरण
+bookTitle|Book title|Título|Tên sách|عنوان الكتاب|书名|पुस्तक शीर्षक
+bookAuthor|Author|Autor|Tác giả|المؤلف|作者|लेखक
+bookLanguage|Language code|Código de idioma|Mã ngôn ngữ|رمز اللغة|语言代码|भाषा कोड
+bookPublisher|Publisher|Editorial|Nhà xuất bản|الناشر|出版者|प्रकाशक
+bookDescription|Description|Descripción|Mô tả|الوصف|描述|विवरण
+bookRights|Rights|Derechos|Bản quyền|الحقوق|版权|अधिकार
+saveBookMetadata|Save book details|Guardar datos|Lưu thông tin|حفظ بيانات الكتاب|保存图书信息|विवरण सहेजें
+bookContents|Contents|Contenido|Mục lục|المحتويات|目录|विषय सूची
+searchBook|Find in book|Buscar en el libro|Tìm trong sách|بحث في الكتاب|在书中查找|पुस्तक में खोजें
+editBookText|Edit selected text|Editar texto seleccionado|Sửa văn bản đã chọn|تحرير النص المحدد|编辑所选文字|चुना पाठ संपादित करें
+previousChapter|Previous|Anterior|Trước|السابق|上一章|पिछला
+nextChapter|Next|Siguiente|Tiếp|التالي|下一章|अगला
+readingSize|Text size|Tamaño de texto|Cỡ chữ|حجم النص|文字大小|पाठ आकार
+readingTheme|Reading theme|Tema de lectura|Giao diện đọc|مظهر القراءة|阅读主题|पठन थीम
+paperTheme|Paper|Papel|Giấy|ورق|纸张|कागज़
+sepiaTheme|Sepia|Sepia|Nâu nhạt|بني فاتح|棕褐色|सेपिया
+nightTheme|Night|Noche|Đêm|ليل|夜间|रात्रि
+ebookHeading|Ebook heading|Encabezado del libro|Tiêu đề sách|عنوان في الكتاب|电子书标题级别|ईबुक शीर्षक
+bodyText|Body text|Texto normal|Văn bản thường|نص عادي|正文|मुख्य पाठ
+ebookChecksReady|Book details and reading content are ready for export. Review the reading preview and image descriptions.|Datos y contenido listos para exportar. Revisa la vista previa y las descripciones de imágenes.|Thông tin và nội dung sẵn sàng xuất. Xem trước và kiểm tra mô tả ảnh.|بيانات الكتاب والمحتوى جاهزة للتصدير. راجع المعاينة وأوصاف الصور.|图书信息和阅读内容已可导出。请检查阅读预览和图片描述。|पुस्तक निर्यात के लिए तैयार है। पूर्वावलोकन और चित्र विवरण जाँचें।
+invalidBookMetadata|Enter a title and a valid language code such as en or es.|Escribe un título y un código de idioma como en o es.|Nhập tên sách và mã ngôn ngữ như en hoặc vi.|أدخل عنوانًا ورمز لغة مثل ar أو en.|请输入书名及有效语言代码，例如 zh 或 en。|शीर्षक और मान्य भाषा कोड जैसे hi या en दें।
+ebookPreviewHint|Preview of the reflowable reading edition. Set heading levels and reading order in the right panel; use page layout for fixed-layout EPUB.|Vista previa adaptable. Define encabezados y orden en el panel derecho; usa el diseño de páginas para EPUB fijo.|Xem trước bản linh hoạt. Đặt cấp tiêu đề và thứ tự đọc ở bảng phải; dùng bố cục trang cho EPUB cố định.|معاينة النسخة المرنة. حدد مستويات العناوين وترتيب القراءة في اللوحة اليمنى؛ استخدم تخطيط الصفحات للنسخة الثابتة.|可重排阅读版预览。在右侧面板设置标题级别和阅读顺序；固定布局 EPUB 使用页面设计。|अनुकूल पठन संस्करण का पूर्वावलोकन। दाएँ पैनल में शीर्षक स्तर और पढ़ने का क्रम दें; स्थिर EPUB के लिए पृष्ठ लेआउट उपयोग करें।
+exportPub|Publisher PUB — native export|Publisher PUB — exportación nativa|Publisher PUB — xuất bản gốc|Publisher PUB — تصدير أصلي|Publisher PUB — 原生导出|Publisher PUB — मूल निर्यात
 pubExportHint|Creates a Publisher 2000 publication with editable text and basic shapes. Other objects become pictures on white backgrounds. All pages are included. Fonts may differ; review the conversion report.|Crea una publicación binaria Publisher 2000 con texto y formas básicas editables. Otros objetos se convierten en imágenes sobre fondo blanco. Incluye todas las páginas. Revise el informe de conversión.|Tạo tệp Publisher 2000 với văn bản và hình cơ bản có thể sửa. Đối tượng khác thành ảnh nền trắng. Bao gồm mọi trang. Xem báo cáo chuyển đổi.|ينشئ ملف Publisher 2000 بنص وأشكال أساسية قابلة للتحرير. تتحول العناصر الأخرى إلى صور بخلفية بيضاء. يشمل كل الصفحات. راجع تقرير التحويل.|创建 Publisher 2000 二进制出版物，文字与基本形状可编辑。其他对象转换为白色背景图片。包含所有页面。请查看转换报告。|संपादन योग्य पाठ और मूल आकृतियों सहित Publisher 2000 फ़ाइल बनाता है। अन्य वस्तुएँ सफेद पृष्ठभूमि वाली तस्वीरें बनती हैं। सभी पृष्ठ शामिल हैं। रूपांतरण रिपोर्ट देखें।
 starterNewsletter|Open starter newsletter|Abrir boletín inicial|Mở bản tin mẫu|فتح النشرة النموذجية|打开入门简报|शुरुआती समाचार पत्र खोलें
 saveDrive|Save to Google Drive|Guardar en Google Drive|Lưu vào Google Drive|حفظ في Google Drive|保存到 Google Drive|Google Drive में सहेजें

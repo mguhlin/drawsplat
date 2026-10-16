@@ -61,6 +61,7 @@ export async function exportPublication(kind, doc, layout, options = {}) {
   const pages = options.pages || doc.pages.map((_, i) => i), onProgress = options.onProgress || (() => {});
   if (!pages.length || pages.some(page => !Number.isInteger(page) || page < 0 || page >= doc.pages.length)) throw Error('Choose at least one valid publication page.');
   if (kind === 'pub') { const {exportPublisher}=await import('./publisher-export.mjs'); return exportPublisher(doc,layout,{...options,pages}); }
+  if (kind === 'epub') { const {exportEpub}=await import('./epub-export.mjs'); return exportEpub(doc,layout,{...options,pages}); }
   if (kind === 'gif') return exportAnimation(doc, { ...options, pages }, (page, ppi) => pageCanvas(doc, doc.pages[page], layout, ppi, 0));
   if (kind === 'pptx' || kind === 'odp') return exportPresentation(kind, doc, { ...options, pages }, async page => {
     const canvas = await pageCanvas(doc, doc.pages[page], layout, options.ppi || 300, options.bleed || 0);
