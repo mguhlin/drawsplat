@@ -123,5 +123,5 @@ window.addEventListener('widget-i18n:changed',()=>{
  if($('courseDialog').open)$('courseDialogTitle').textContent=tr(editingCourse?'Edit course':'Add course');
  if($('trashDialog').open)renderTrash();if($('conflictsDialog').open)renderConflicts();
 });
-render();updateTimer();window.PlanSplat=Object.freeze({version:'1.2.0',getPlanner:()=>structuredClone(doc),getSyncState:()=>({account:account?{id:account.id,name:account.name}:null,fileId:sync.fileId,status:$('syncState').textContent})});
+render();updateTimer();window.PlanSplat=Object.freeze({version:'1.2.1',getPlanner:()=>structuredClone(doc),getSyncState:()=>({account:account?{id:account.id,name:account.name}:null,fileId:sync.fileId,status:$('syncState').textContent})});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

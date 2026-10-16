@@ -1,24 +1,9 @@
-# Cloudflare Pages redirects
-# Vanity short URLs for CipherSplat. The canonical app lives at
-# /solutions/CipherSplat/ so it keeps the strict per-route security
-# headers defined in _headers. These 301s let people type a short path
-# and land on the real one.
+# Cloudflare Pages redirects: exact routes precede wildcard routes.
 /CipherSplat        /solutions/CipherSplat/          301
 /CipherSplat/       /solutions/CipherSplat/          301
-/CipherSplat/*      /solutions/CipherSplat/:splat    301
-
-# VideoSplat vanity URL. Keep a matching /videosplat/index.html fallback for
-# static hosts such as GitHub Pages that do not process this file.
-
-# GIFsplat renamed from Animated GIF Maker; preserve old bookmarks and assets.
 /solutions/animated-gif                 /solutions/gifsplat/         301
 /solutions/animated-gif/                /solutions/gifsplat/         301
 /solutions/animated-gif/index.html      /solutions/gifsplat/         301
-/solutions/animated-gif/*               /solutions/gifsplat/:splat   301
-
-# SplatWorks ecosystem short links, on both production domains.
-
-# Consolidated policy. Static hosts serve generated compatibility copies.
 /legal/combined-policy.html  /legal/terms-privacy  301
 /legal/combined-policy  /legal/terms-privacy  301
 /legal/widgets-security.html  /legal/terms-privacy  301
@@ -36,92 +21,94 @@
 /wiki/compliance.html  /legal/terms-privacy  301
 /wiki/compliance  /legal/terms-privacy  301
 
-# Student planner short links.
-
 # splatworks-short-urls:start
 # App names open tools; guides keep their explicit /wiki/ and /pages/ addresses.
 /audiosplat  /solutions/audiosplat/  301
 /audiosplat/  /solutions/audiosplat/  301
-/audiosplat/*  /solutions/audiosplat/:splat  301
 /ciphersplat  /solutions/CipherSplat/  301
 /ciphersplat/  /solutions/CipherSplat/  301
-/ciphersplat/*  /solutions/CipherSplat/:splat  301
 /clipsplat  /solutions/clipsplat/  301
 /clipsplat/  /solutions/clipsplat/  301
-/clipsplat/*  /solutions/clipsplat/:splat  301
 /conceptsplat  /solutions/concept-map/  301
 /conceptsplat/  /solutions/concept-map/  301
-/conceptsplat/*  /solutions/concept-map/:splat  301
 /diagramsplat  /solutions/mermaid/  301
 /diagramsplat/  /solutions/mermaid/  301
-/diagramsplat/*  /solutions/mermaid/:splat  301
 /drawsplat  /app/whiteboard.html  301
 /drawsplat/  /app/whiteboard.html  301
 /drawsplat/index.html  /app/whiteboard.html  301
 /gifsplat  /solutions/gifsplat/  301
 /gifsplat/  /solutions/gifsplat/  301
-/gifsplat/*  /solutions/gifsplat/:splat  301
 /gilasplat  /games/gilasplat/  301
 /gilasplat/  /games/gilasplat/  301
-/gilasplat/*  /games/gilasplat/:splat  301
 /graphsplat  /solutions/graphsplat/  301
 /graphsplat/  /solutions/graphsplat/  301
-/graphsplat/*  /solutions/graphsplat/:splat  301
 /gridsplat  /splatworks/gridsplat/  301
 /gridsplat/  /splatworks/gridsplat/  301
-/gridsplat/*  /splatworks/gridsplat/:splat  301
 /imagesplat  /solutions/imagesplat/  301
 /imagesplat/  /solutions/imagesplat/  301
-/imagesplat/*  /solutions/imagesplat/:splat  301
 /layoutsplat  /splatworks/layoutsplat/  301
 /layoutsplat/  /splatworks/layoutsplat/  301
-/layoutsplat/*  /splatworks/layoutsplat/:splat  301
 /listsplat  /splatworks/listsplat/  301
 /listsplat/  /splatworks/listsplat/  301
-/listsplat/*  /splatworks/listsplat/:splat  301
 /markdownsplat  /solutions/markdown-studio/  301
 /markdownsplat/  /solutions/markdown-studio/  301
-/markdownsplat/*  /solutions/markdown-studio/:splat  301
 /mediasplat  /solutions/mediasplat/  301
 /mediasplat/  /solutions/mediasplat/  301
-/mediasplat/*  /solutions/mediasplat/:splat  301
 /memesplat  /solutions/memesplat/  301
 /memesplat/  /solutions/memesplat/  301
-/memesplat/*  /solutions/memesplat/:splat  301
 /pdfsplat  /solutions/pdfsplat/  301
 /pdfsplat/  /solutions/pdfsplat/  301
-/pdfsplat/*  /solutions/pdfsplat/:splat  301
 /plansplat  /splatworks/plansplat/  301
 /plansplat/  /splatworks/plansplat/  301
-/plansplat/*  /splatworks/plansplat/:splat  301
 /qrsplat  /solutions/qrsplat/  301
 /qrsplat/  /solutions/qrsplat/  301
-/qrsplat/*  /solutions/qrsplat/:splat  301
 /quizsplat  /solutions/quiz-flashcard-studio/  301
 /quizsplat/  /solutions/quiz-flashcard-studio/  301
-/quizsplat/*  /solutions/quiz-flashcard-studio/:splat  301
 /rubricsplat  /solutions/rubric-builder/  301
 /rubricsplat/  /solutions/rubric-builder/  301
-/rubricsplat/*  /solutions/rubric-builder/:splat  301
 /showsplat  /splatworks/showsplat/  301
 /showsplat/  /splatworks/showsplat/  301
-/showsplat/*  /splatworks/showsplat/:splat  301
 /sketchsplat  /solutions/sketchspace-VR/  301
 /sketchsplat/  /solutions/sketchspace-VR/  301
-/sketchsplat/*  /solutions/sketchspace-VR/:splat  301
 /splatball  /games/splatball/  301
 /splatball/  /games/splatball/  301
-/splatball/*  /games/splatball/:splat  301
 /splatbot  /solutions/splatbot-studio/  301
 /splatbot/  /solutions/splatbot-studio/  301
-/splatbot/*  /solutions/splatbot-studio/:splat  301
 /step-splat  /solutions/step-splat/  301
 /step-splat/  /solutions/step-splat/  301
-/step-splat/*  /solutions/step-splat/:splat  301
 /videosplat  /solutions/videosplat/  301
 /videosplat/  /solutions/videosplat/  301
-/videosplat/*  /solutions/videosplat/:splat  301
 /writesplat  /splatworks/writesplat/  301
 /writesplat/  /splatworks/writesplat/  301
+/audiosplat/*  /solutions/audiosplat/:splat  301
+/ciphersplat/*  /solutions/CipherSplat/:splat  301
+/clipsplat/*  /solutions/clipsplat/:splat  301
+/conceptsplat/*  /solutions/concept-map/:splat  301
+/diagramsplat/*  /solutions/mermaid/:splat  301
+/gifsplat/*  /solutions/gifsplat/:splat  301
+/gilasplat/*  /games/gilasplat/:splat  301
+/graphsplat/*  /solutions/graphsplat/:splat  301
+/gridsplat/*  /splatworks/gridsplat/:splat  301
+/imagesplat/*  /solutions/imagesplat/:splat  301
+/layoutsplat/*  /splatworks/layoutsplat/:splat  301
+/listsplat/*  /splatworks/listsplat/:splat  301
+/markdownsplat/*  /solutions/markdown-studio/:splat  301
+/mediasplat/*  /solutions/mediasplat/:splat  301
+/memesplat/*  /solutions/memesplat/:splat  301
+/pdfsplat/*  /solutions/pdfsplat/:splat  301
+/plansplat/*  /splatworks/plansplat/:splat  301
+/qrsplat/*  /solutions/qrsplat/:splat  301
+/quizsplat/*  /solutions/quiz-flashcard-studio/:splat  301
+/rubricsplat/*  /solutions/rubric-builder/:splat  301
+/showsplat/*  /splatworks/showsplat/:splat  301
+/sketchsplat/*  /solutions/sketchspace-VR/:splat  301
+/splatball/*  /games/splatball/:splat  301
+/splatbot/*  /solutions/splatbot-studio/:splat  301
+/step-splat/*  /solutions/step-splat/:splat  301
+/videosplat/*  /solutions/videosplat/:splat  301
 /writesplat/*  /splatworks/writesplat/:splat  301
 # splatworks-short-urls:end
+
+# Existing wildcard compatibility routes.
+/CipherSplat/*      /solutions/CipherSplat/:splat    301
+/solutions/animated-gif/*               /solutions/gifsplat/:splat   301

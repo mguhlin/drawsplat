@@ -246,7 +246,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "dd3f447cd6540e715a22dc7f3b574bac88204470b6b679485bb497890232ee3b"
+      "entrySha256": "4dfaa73a034c4210e108148e5e91fc33a71c05c5d9ce2e93a3a1fde72efceded"
     },
     {
       "id": "listsplat",

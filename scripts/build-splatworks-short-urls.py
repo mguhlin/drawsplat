@@ -21,15 +21,20 @@ redirects=ROOT/'_redirects';text=redirects.read_text();start='# splatworks-short
 text=re.sub(re.escape(start)+r'.*?'+re.escape(end)+r'\n?', '', text, flags=re.S)
 old={s['path']+suffix for s in shortcuts for suffix in ['', '/', '/*']}
 text='\n'.join(line for line in text.splitlines() if not line.split() or line.split()[0] not in old)+'\n'
-rules=[]
+rules=[];dynamic_rules=[]
 for s in shortcuts:
     path,target=s['path'],s['target']
     rules.extend(f'{path+suffix}  {target}  301' for suffix in ['', '/'])
-    rules.append(f'{path}/*  {target}:splat  301' if target.endswith('/') else f'{path}/index.html  {target}  301')
+    (dynamic_rules if target.endswith('/') else rules).append(f'{path}/*  {target}:splat  301' if target.endswith('/') else f'{path}/index.html  {target}  301')
     folder=ROOT/path.lstrip('/');folder.mkdir(exist_ok=True)
     name=html.escape(s['name']);href=html.escape('..'+target,quote=True)
     (folder/'index.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open '+name+'</title><link rel="canonical" href="https://splatworks.org'+html.escape(target,quote=True)+'"></head><body><p><a id="splatworksAppTarget" href="'+href+'">Open '+name+'</a></p><script src="../assets/js/splatworks-short-url.js"></script></body></html>\n')
-redirects.write_text(text.rstrip()+'\n\n'+start+'\n# App names open tools; guides keep their explicit /wiki/ and /pages/ addresses.\n'+'\n'.join(rules)+'\n'+end+'\n')
+legacy=[line for line in text.splitlines() if line.startswith('/')]
+is_dynamic=lambda line:'*' in line.split()[0] or ':' in line.split()[0]
+legacy_static=[line for line in legacy if not is_dynamic(line)];legacy_dynamic=[line for line in legacy if is_dynamic(line)]
+# Pages counts every rule following the first dynamic rule against its dynamic limit.
+# Keep all exact routes first, including compatibility/policy routes.
+redirects.write_text('# Cloudflare Pages redirects: exact routes precede wildcard routes.\n'+'\n'.join(legacy_static)+'\n\n'+start+'\n# App names open tools; guides keep their explicit /wiki/ and /pages/ addresses.\n'+'\n'.join(rules+dynamic_rules)+'\n'+end+'\n\n# Existing wildcard compatibility routes.\n'+'\n'.join(legacy_dynamic)+'\n')
 doc=ROOT/'docs/splatworks-domain.md';text=doc.read_text();a=text.index('## Short app links');b=text.index('## Google Drive authorization',a)
 section='''## Short app links
 

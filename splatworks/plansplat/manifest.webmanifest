@@ -1,1 +1,1 @@
-{"id":"/plansplat/","name":"PlanSplat student planner","short_name":"PlanSplat","start_url":"./","scope":"./","display":"standalone","background_color":"#f5f2fb","theme_color":"#6d28d9","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{"id":"/plansplat/","name":"PlanSplat student planner","short_name":"PlanSplat","start_url":"./","scope":"./","display":"standalone","background_color":"#f5f2fb","theme_color":"#6d28d9","icons":[{"src":"icon.svg?v=1.2.1","sizes":"any","type":"image/svg+xml","purpose":"any"}]}

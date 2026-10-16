@@ -3,7 +3,7 @@
 from pathlib import Path
 import shutil,subprocess,sys,tempfile,zipfile,json,hashlib,re
 root=Path(__file__).resolve().parents[1]
-version=sys.argv[1] if len(sys.argv)>1 else 'v1.2.0'
+version=sys.argv[1] if len(sys.argv)>1 else 'v1.2.1'
 name='splatworks-plansplat-selfhost-'+version
 with tempfile.TemporaryDirectory(prefix='plansplat-package-') as temporary:
  folder=Path(temporary)/name

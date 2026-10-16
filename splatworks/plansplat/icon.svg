@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="5" y="8" width="54" height="51" rx="12" fill="#6d28d9"/><path d="M17 5v12M47 5v12" stroke="#223c57" stroke-width="6" stroke-linecap="round"/><path d="M7 25h50" stroke="#fff" stroke-opacity=".35" stroke-width="2"/><path d="m19 39 8 8 18-19" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="49" cy="48" r="9" fill="#ff9f2f"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Plan on a purple paint splat">
+ <defs>
+  <linearGradient id="paint" x1=".18" y1="0" x2=".82" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#bd36ff"/><stop offset=".45" stop-color="#9224f5"/><stop offset="1" stop-color="#6311d1"/></linearGradient>
+  <linearGradient id="shine" x2=".3" y2="1"><stop stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#e3b4ff" stop-opacity="0"/></linearGradient>
+  <path id="splat" d="M61 7C48 4 47 22 51 34 55 45 51 49 45 47 37 44 38 33 31 29 22 23 18 33 24 39L34 48C43 58 35 62 27 57 19 50 12 46 7 53 1 63 14 68 25 66 36 64 39 72 31 77L17 82C8 86 12 96 21 94L38 86C47 82 51 88 46 98 39 110 42 120 51 120 63 120 61 100 69 99 78 98 78 119 88 121 100 123 101 110 93 99 86 88 91 83 101 91 112 99 123 96 120 85 118 77 102 81 101 73 100 68 114 66 120 59 130 47 117 39 107 47 93 59 85 60 83 53 81 47 92 43 88 36 82 28 78 42 72 42 61 43 64 32 69 21 72 13 67 8 61 7Z"/>
+ </defs>
+ <use href="#splat" fill="#4c079e" transform="translate(0 3)"/>
+ <use href="#splat" fill="url(#paint)" stroke="#7c12dd" stroke-width="1"/>
+ <path d="M57 12C48 14 53 32 56 37 54 26 59 19 64 15 67 12 61 11 57 12ZM24 31C21 34 29 42 33 43L29 34C27 31 25 30 24 31ZM9 54C5 60 15 63 22 61 16 59 14 53 9 54ZM105 51C97 58 90 62 85 61 96 67 111 54 115 50 116 46 110 47 105 51Z" fill="url(#shine)"/>
+ <path d="M98 27C96 16 111 16 111 24 111 29 100 34 98 27ZM24 109C20 104 29 98 33 100 36 102 27 115 24 109ZM108 109C103 106 102 101 105 101 111 102 117 110 113 112Z" fill="url(#paint)" stroke="#7c12dd"/>
+ <path d="M101 22Q103 19 107 21M26 104L29 102" fill="none" stroke="#e9c6ff" stroke-width="2.5" stroke-linecap="round"/>
+ <text x="63" y="81" text-anchor="middle" font-family="Arial Rounded MT Bold,Trebuchet MS,Arial,sans-serif" font-size="40" font-weight="900" letter-spacing="-2" fill="#fff" stroke="#4c138f" stroke-width="6" paint-order="stroke fill" transform="rotate(-6 64 67)">Plan</text>
+</svg>

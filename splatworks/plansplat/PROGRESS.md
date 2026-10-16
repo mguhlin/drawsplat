@@ -1,5 +1,11 @@
 # PlanSplat progress
 
+## Version 1.2.1 October 16 2026
+
+Replaced the calendar/check icon with an original purple paint splat bearing the word Plan, matching DrawSplat's visual style. Header, browser icon and installed-app icon share the SVG. Versioned icon URLs and a new offline cache refresh existing installations.
+
+Production checks found that exact redirects placed after wildcard rules could be omitted by Pages when the dynamic rule limit was reached. The shortcut generator now emits all exact routes before any wildcard routes. The routing check enforces that order, and both forms of every branded shortcut are checked live.
+
 ## Version 1.2.0 October 16 2026
 
 Added the shared six-language switcher (English, Spanish, Vietnamese, Arabic, Chinese and Hindi under the shared Hindi/Urdu option), Arabic RTL layout, suite-matching purple and Ocean/Forest/High contrast themes. Language and theme preferences persist on the device. Translations touch app-authored UI only; student text and open task/course drafts remain unchanged. The offline shell includes every translation resource.
