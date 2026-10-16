@@ -18,8 +18,7 @@ this post if the hourly import later adds one.
 `/blog/publication-schedule.json` reports only the next timestamp and already
 published paths. It never includes future titles or article text.
 
-Source articles and metadata live in `server/blog/`, excluded from static asset
-uploads. `scripts/build-scheduled-blog.py` creates the server-side HTML bundle and
+Source articles and metadata live in `functions/_lib/scheduled-blog/`, inside the Pages Functions source directory, which Pages excludes from static assets. `scripts/build-scheduled-blog.py` creates the server-side HTML bundle and
 an explicit `_routes.json`. Functions run only for the feed, schedule endpoint,
 and exact scheduled article paths. App, image and ordinary static blog routes
 remain static. This requires Cloudflare Pages Functions; a static-only host
@@ -27,7 +26,7 @@ continues to show the existing static RSS and does not run the publication gate.
 
 ## Editing an article
 
-1. Edit the Markdown in `server/blog/` and its record in `posts.json`. Use an
+1. Edit the Markdown in `functions/_lib/scheduled-blog/` and its record in `posts.json`. Use an
    explicit timezone offset for `publishAt`; daylight Central time is `-05:00`.
 2. Add screenshots as local assets and confirm their paths. The PlanSplat tour
    contains 21 screenshots of fictional coursework in v1.2.1.
@@ -35,8 +34,7 @@ continues to show the existing static RSS and does not run the publication gate.
    `node --test tests/scheduled-blog.test.mjs`. The tests cover the exact boundary,
    aliases, the RSS, duplicate handling, and the lack of early content exposure.
 4. Commit generated outputs with the source. Deploy with the `functions/` folder
-   available to Wrangler, along with `server/blog/` for bundling. Never upload
-   those source folders as static files; retain `.pagesignore`/`.assetsignore`.
+   available to Wrangler, along with `functions/_lib/scheduled-blog/` for bundling. Never copy those source files into static asset output. Pages does not apply the Workers `.assetsignore` file to its static uploads. Keep bundled sources under `functions/`, and verify their URLs return 404 after deployment.
 5. Verify the live schedule endpoint, the generic 404 before publication, the
    absence of the title in RSS, and screenshot availability. The builder's output
    can be rendered locally with a test clock at/after publication for preview.

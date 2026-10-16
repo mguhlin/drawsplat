@@ -2,9 +2,9 @@ name: Scheduled SplatWorks blog publication
 on:
   push:
     branches: [main]
-    paths: ['server/blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
   pull_request:
-    paths: ['server/blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
 permissions:
   contents: read
 jobs:
