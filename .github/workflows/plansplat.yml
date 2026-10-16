@@ -1,0 +1,26 @@
+name: PlanSplat student planner
+on:
+  push:
+    branches: [main]
+    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
+  pull_request:
+    paths: ['splatworks/plansplat/**', 'splatworks/shared/google-drive-auth.js', 'tests/plansplat*', 'playwright.plansplat.config.js', '.github/workflows/plansplat.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: node --test tests/plansplat-model.test.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config=playwright.plansplat.config.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: plansplat-proof
+          path: test-results/plansplat/

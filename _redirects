@@ -56,3 +56,8 @@
 /legal/protect-review  /legal/terms-privacy  301
 /wiki/compliance.html  /legal/terms-privacy  301
 /wiki/compliance  /legal/terms-privacy  301
+
+# Student planner short links.
+/plansplat  /splatworks/plansplat/  301
+/plansplat/  /splatworks/plansplat/  301
+/plansplat/*  /splatworks/plansplat/:splat  301

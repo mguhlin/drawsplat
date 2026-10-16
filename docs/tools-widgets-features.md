@@ -163,7 +163,7 @@ Category: **Create** · 19 components
 - Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
 - Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
-- 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
+- 126 distinct compositions in 19 publication types across 18 industries, with six publication-language editions.
 - Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
@@ -307,7 +307,7 @@ Category: **Data** · 3 components
 
 ## Think & Organize
 
-Category: **Organize** · 11 components
+Category: **Organize** · 12 components
 
 ### Brain Sort
 
@@ -407,6 +407,15 @@ Category: **Organize** · 11 components
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 - Optionally save the current edited PDF to Google Drive after authorization
+
+### PlanSplat
+
+**Workspace** · [Open PlanSplat](../splatworks/plansplat/)
+
+- Student assignments, exams and projects with courses, priorities, due dates, work dates, notes, resource links and checklists.
+- Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.
+- Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.
+- Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
 
 ### Step-Splat
 
@@ -601,7 +610,7 @@ Category: **Writing** · 21 components
 - Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
 - Six interface language choices shared with DrawSplat, separate from publication text direction.
 - Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.
-- 270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.
+- 126 distinct compositions in 19 publication types across 18 industries, with six publication-language editions.
 - Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
@@ -960,7 +969,7 @@ Category: **Assessment** · 18 components
 
 ## Engage the Classroom
 
-Category: **Classroom** · 22 components
+Category: **Classroom** · 23 components
 
 ### Big Link
 
@@ -1102,6 +1111,15 @@ Category: **Classroom** · 22 components
 - Download PNG or copy the image
 - Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues
 - Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content
+
+### PlanSplat
+
+**Workspace** · [Open PlanSplat](../splatworks/plansplat/)
+
+- Student assignments, exams and projects with courses, priorities, due dates, work dates, notes, resource links and checklists.
+- Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.
+- Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.
+- Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas.
 
 ### QRSplat Studio
 

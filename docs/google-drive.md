@@ -1,6 +1,6 @@
 # Save to Google Drive
 
-Keep a file copy in your Google Drive from the SplatWorks office apps and creative tools. Drive saving is optional: local downloads and existing browser drafts remain available. These saves create files in Drive; they do not convert your work into Google Docs, Sheets or Slides, or automatically sync later edits.
+Keep a file copy in your Google Drive from the SplatWorks office apps and creative tools. Drive saving is optional: local downloads and existing browser drafts remain available. These saves create files in Drive; they do not convert your work into Google Docs, Sheets or Slides, or automatically sync later edits. **PlanSplat has a separate connected planner workflow:** after sign-in it loads your planner and automatically updates its Drive files while authorization is active. See the [PlanSplat guide](plansplat.md).
 
 ## Save your work
 
@@ -18,6 +18,7 @@ Keep a file copy in your Google Drive from the SplatWorks office apps and creati
 
 | App | Where to save | What Drive receives |
 | --- | --- | --- |
+| PlanSplat | **Continue with Google** | Planner autoload/autosave, account-separated device drafts, and per-browser recovery files; reconnect when authorization expires. |
 | WriteSplat, ShowSplat, ListSplat, LayoutSplat | **File → Save to Google Drive** | A native editable project copy. |
 | GridSplat | **File → Save → Save Google Drive** | A native editable spreadsheet project. **File → Open → Open Google Drive** reopens its last Drive save from this browser. |
 | PDFSplat | **Save PDF to Google Drive** in the toolbar | A PDF with the current edits and page arrangement. |

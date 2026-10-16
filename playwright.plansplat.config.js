@@ -1,0 +1,2 @@
+const {defineConfig}=require('@playwright/test');
+module.exports=defineConfig({testDir:'./tests',testMatch:'plansplat*.spec.js',outputDir:'test-results/plansplat',timeout:45000,workers:2,use:{baseURL:process.env.PLANSPLAT_URL||'http://127.0.0.1:4183',launchOptions:process.env.PLANSPLAT_CHROME?{executablePath:process.env.PLANSPLAT_CHROME}:{}},webServer:process.env.PLANSPLAT_URL?undefined:{command:'python3 -m http.server 4183 --bind 127.0.0.1',url:'http://127.0.0.1:4183/',reuseExistingServer:true}});

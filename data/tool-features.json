@@ -467,9 +467,15 @@
     "Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.",
     "Six interface language choices shared with DrawSplat, separate from publication text direction.",
     "Local autosave/recovery, portable .layoutsplat/JSON projects, fixed-layout and reading HTML, print-to-PDF, PNG/JPEG, and Pack and Go.",
-    "270 original editable templates in 15 publication types across 18 industries, with six publication-language editions.",
+    "126 distinct compositions in 19 publication types across 18 industries, with six publication-language editions.",
     "Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.",
     "Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.",
     "EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes."
+  ],
+  "plansplat": [
+    "Student assignments, exams and projects with courses, priorities, due dates, work dates, notes, resource links and checklists.",
+    "Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.",
+    "Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.",
+    "Local offline drafts, native JSON backup/merge, CSV task import/export, calendar export and printable agendas."
   ]
 }

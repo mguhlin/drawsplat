@@ -31,6 +31,7 @@ def menu_rows(group, rows):
  return [row for row in rows if row[0]=='legal/terms-privacy.html'] if group=='Privacy and district review' else rows
 # Keep the search index complete while presenting a short audience-based sidebar.
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
+GROUPS['SplatWorks'].insert(1, ('wiki/plansplat.html','PlanSplat · Student planner','Assignments, exams, courses, study blocks, routines, focus sessions and Google Drive autoload/autosave.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/writesplat.html','WriteSplat · Document editing and import','Word/LibreOffice formatting, source numbering and spacing, local saving and current compatibility.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','126 distinct compositions, Avery labels, native Publisher/Pages import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
 GROUPS['SplatWorks'].insert(2, ('wiki/layoutsplat-ebooks.html','LayoutSplat · Ebooks and EPUB','EPUB import/export, ebook starters, metadata, heading navigation, visual editing and reading preview.'))
@@ -53,7 +54,7 @@ runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
 EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
 GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
 GROUPS['Start here'].insert(2, ('wiki/google-drive.html','Save to Google Drive','App-by-app actions and file formats, authorization, reopening files, troubleshooting and district OAuth setup.'))
-RENDER=['google-drive','layoutsplat-features','writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat-ebooks','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['plansplat','google-drive','layoutsplat-features','writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat-ebooks','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())

@@ -107,3 +107,7 @@ starters, heading navigation, metadata and reading preview are available. The
 preview includes chapter search, text size and reading themes. Full source
 XHTML/CSS editing, preserved footnotes/annotations/media overlays, broad external
 reader verification and ebook accessibility certification remain on the roadmap.
+
+## PlanSplat student planner
+
+PlanSplat adds assignments, exams, courses, weekly class/study schedules, routines, focus sessions and portable backups. Connected Google Drive discovery, autoload, autosave and per-browser recovery use account-separated local drafts. The user selected reconnect when Google authorization expires. See the [development plan](plansplat/IMPLEMENTATION_PLAN.md) and [planner guide](../docs/plansplat.md) for acceptance evidence and limits.

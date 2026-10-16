@@ -1,5 +1,5 @@
 const {test,expect}=require('@playwright/test');
-for(const app of ['layoutsplat','writesplat','showsplat','gridsplat','listsplat'])test(`${app} short URL preserves query and fragment on static hosts`,async({page})=>{
+for(const app of ['plansplat','layoutsplat','writesplat','showsplat','gridsplat','listsplat'])test(`${app} short URL preserves query and fragment on static hosts`,async({page})=>{
  await page.goto('/'+app+'/?source=short-link#guide');await page.waitForURL('**/splatworks/'+app+'/?source=short-link#guide');
  await expect(page.locator('meta[name="splatworks-app"]')).toHaveAttribute('content',app);
 });

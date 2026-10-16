@@ -1,0 +1,22 @@
+{
+  "app": "PlanSplat",
+  "version": "1.0.0",
+  "date": "2026-10-16",
+  "validation": {
+    "modelWorkflows": 5,
+    "plannerChromiumWorkflows": 13,
+    "sharedWikiNavigationChecks": 46,
+    "phoneWidths": [
+      390
+    ],
+    "standaloneExternalNetworkBlocked": true,
+    "actualGoogleAccount": "pending user trial"
+  },
+  "package": {
+    "name": "splatworks-plansplat-selfhost-v1.0.0.zip",
+    "bytes": 9741164,
+    "unpackedBytes": 12602211,
+    "sha256": "9bd09dbc3bbbee0e7ee66d541519f47473b231efb4921dc5d4c46f1b40ab09f6"
+  },
+  "authentication": "Browser token; reconnect after Google authorization expires; no stored browser tokens or client secrets."
+}
