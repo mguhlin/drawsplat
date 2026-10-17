@@ -546,6 +546,8 @@ EOF
 for app_dir in gridsplat showsplat writesplat listsplat layoutsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
+# The hub shows PlanSplat's icon even when the planner is installed separately.
+copy_file splatworks/plansplat/icon.svg "$SPLATWORKS_SUITE_ROOT/splatworks/plansplat/icon.svg"
 copy_tree splatworks/shared "$SPLATWORKS_SUITE_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree solutions/mediasplat/ffmpeg "$SPLATWORKS_SUITE_ROOT/solutions/mediasplat/ffmpeg" "${MODULE_EXCLUDES[@]}"
 copy_tree assets "$SPLATWORKS_SUITE_ROOT/assets" "${MODULE_EXCLUDES[@]}"
@@ -1045,7 +1047,7 @@ import hashlib
 from pathlib import Path
 import sys
 version=sys.argv[1]
-packages=sorted(Path('dist').glob(f'*-{version}.zip')) + [Path('solutions/CipherSplat/downloads/CipherSplat-offline.zip')]
+packages=sorted(p for p in Path('dist').glob(f'*-{version}.zip') if not p.name.startswith('drawsplat-district-suite-')) + [Path('solutions/CipherSplat/downloads/CipherSplat-offline.zip')]
 if len(packages)!=16:
     raise SystemExit(f'Expected 16 ZIP downloads, found {len(packages)}')
 lines=[]

@@ -10,6 +10,8 @@ Independent Scribus tests exposed and fixed missing text paths, scratch/page-cen
 
 The mixed 120-page benchmark passed under simulated CPU slowdown; unchanged layout reused all 12 stories and a one-story edit reflowed one. Two-page/100-page PDF conservation, ten preflight tests, and coated/uncoated profile conversions passed. See [verification](../../docs/layoutsplat-verification.md) for measurements, reproducible checks and external limits. The real user Google Drive round trip is complete. Actual Publisher/InDesign opening, private-reference typography and physical commercial-printer acceptance remain unverified; unsupported native proprietary formats and advanced ebook scope are explicitly recorded.
 
+Calibre 9.16 reader/PDF checks and a sanitized EPUB return passed. The v3.1.44 packages passed CRC, safe-path and committed-runtime checks; the standalone LayoutSplat package passed 18 workflows with external requests blocked. Thirty startup checks covered the 15 app/collection packages in Chromium and Firefox. The suite builder now includes the hub’s PlanSplat icon and keeps separately built district archives out of its regular-download count. Measured download sizes, release checksums and the machine-readable verification record accompany the release.
+
 ## October 16, 2026 — v0.6.0 ebooks
 
 EPUB 2/3 import reads local spine content into native, paginated stories and

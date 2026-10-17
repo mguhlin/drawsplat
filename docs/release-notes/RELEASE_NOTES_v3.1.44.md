@@ -8,4 +8,6 @@ Independent Scribus tests exposed and fixed SLA frame paths, SLA/IDML page place
 
 Validation: 90 Chromium workflows, ten focused Firefox workflows, 15 LayoutSplat model checks, 51 WriteSplat unit checks, four direct EPUBCheck proofs, independent office round trips, two-/100-page print conservation and ten printer-preflight checks. Coated/uncoated profile conversions pass independent structural inspection. See the [verification guide](https://splatworks.org/wiki/layoutsplat-verification.html).
 
+Offline verification: 17 archives passed CRC/path/source checks; 18 LayoutSplat workflows and 30 package startup checks passed with external requests blocked. The suite hub includes its PlanSplat icon. Download sizes and portable checksums reflect the rebuilt files.
+
 Microsoft Publisher and Adobe InDesign acceptance, physical commercial printing and the unavailable private typography reference remain external checks. Modern Pages IWA, native INDD and QuarkXPress 5+ are unsupported; documented interchange routes remain available. No certification is claimed.

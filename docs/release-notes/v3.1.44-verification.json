@@ -180,5 +180,154 @@
     "App annotation database",
     "Synchronized media-overlay editing",
     "Certified accessibility"
-  ]
+  ],
+  "applicationSource": "0e321e34a371f2ff056e87dc802e86efaafd2fdc",
+  "packages": [
+    {
+      "file": "audiosplat-selfhost-v3.1.44.zip",
+      "bytes": 57321034,
+      "unpackedBytes": 81573608,
+      "entries": 407,
+      "layoutRuntimes": 0,
+      "sha256": "4f77009fe5c0912ebd87f05ac5ff642a88ce72252dd90e748373cf9910125079"
+    },
+    {
+      "file": "clipsplat-selfhost-v3.1.44.zip",
+      "bytes": 95057214,
+      "unpackedBytes": 121911612,
+      "entries": 216,
+      "layoutRuntimes": 0,
+      "sha256": "3515ae554eb49e7f8d72856f92b77a708689cec9f231d509637c16a0aa45150b"
+    },
+    {
+      "file": "drawsplat-district-suite-v3.1.44.zip",
+      "bytes": 448130248,
+      "unpackedBytes": 610438484,
+      "entries": 2780,
+      "layoutRuntimes": 1,
+      "sha256": "ff39cdbacef981e8e2409557ecd95070f904bf02d08b5427495e3f97e6069c80"
+    },
+    {
+      "file": "drawsplat-games-selfhost-v3.1.44.zip",
+      "bytes": 244101439,
+      "unpackedBytes": 264936274,
+      "entries": 821,
+      "layoutRuntimes": 0,
+      "sha256": "222fb7bdc86734e7e3249650d40eeece3711bfc675481c653b2e210aad1c72d4"
+    },
+    {
+      "file": "drawsplat-selfhost-v3.1.44.zip",
+      "bytes": 407020276,
+      "unpackedBytes": 565974964,
+      "entries": 2331,
+      "layoutRuntimes": 0,
+      "sha256": "bb96652c6cbf5b78db1706854b7281c06f24e8272fb99fe3511aa06843944204"
+    },
+    {
+      "file": "drawsplat-tools-selfhost-v3.1.44.zip",
+      "bytes": 308546298,
+      "unpackedBytes": 460428555,
+      "entries": 1363,
+      "layoutRuntimes": 0,
+      "sha256": "d351e370323e67d6d9fc7c7965f36464229e4ab843553e9b2a525be406b7bab3"
+    },
+    {
+      "file": "drawsplat-widgets-selfhost-v3.1.44.zip",
+      "bytes": 186086695,
+      "unpackedBytes": 206817203,
+      "entries": 779,
+      "layoutRuntimes": 0,
+      "sha256": "a2bb88b5bd28ec47e3067c2dc270e902f63809e0aede49d9966b3101706672f0"
+    },
+    {
+      "file": "mediasplat-selfhost-v3.1.44.zip",
+      "bytes": 79211456,
+      "unpackedBytes": 148556314,
+      "entries": 441,
+      "layoutRuntimes": 0,
+      "sha256": "e0ac0f84bf51a387379235f6ca00e4b6972a2766e46723da3f765724b6d4f547"
+    },
+    {
+      "file": "pdfsplat-selfhost-v3.1.44.zip",
+      "bytes": 54867440,
+      "unpackedBytes": 61805699,
+      "entries": 459,
+      "layoutRuntimes": 0,
+      "sha256": "4d6b2b3ce3d53f3e4be7381cd7d471554214d01ba5cb91805df6c17788a52b42"
+    },
+    {
+      "file": "splatworks-gridsplat-selfhost-v3.1.44.zip",
+      "bytes": 58458592,
+      "unpackedBytes": 65841458,
+      "entries": 462,
+      "layoutRuntimes": 0,
+      "sha256": "73a7e04b8446af2425b429ecc42cf07f781ad285de8d4983bf65869de6607ff8"
+    },
+    {
+      "file": "splatworks-layoutsplat-selfhost-v3.1.44.zip",
+      "bytes": 190175481,
+      "unpackedBytes": 247736866,
+      "entries": 701,
+      "layoutRuntimes": 1,
+      "sha256": "19677deb5bcf4ebe8ca8ba64bcb63d4024cd7418913410c6deb63ce4ab20c65b"
+    },
+    {
+      "file": "splatworks-listsplat-selfhost-v3.1.44.zip",
+      "bytes": 51318423,
+      "unpackedBytes": 56538089,
+      "entries": 354,
+      "layoutRuntimes": 0,
+      "sha256": "d960613844dd61a11d0abf62bbdaf1472ba2de5ccb7e904415a8c204cf96ba69"
+    },
+    {
+      "file": "splatworks-showsplat-selfhost-v3.1.44.zip",
+      "bytes": 53315292,
+      "unpackedBytes": 61834433,
+      "entries": 343,
+      "layoutRuntimes": 0,
+      "sha256": "8667ea168ba6f32ca4071d5a850b977cba79c80599362d2da384c394934f5f0a"
+    },
+    {
+      "file": "splatworks-suite-selfhost-v3.1.44.zip",
+      "bytes": 248123131,
+      "unpackedBytes": 316361562,
+      "entries": 1184,
+      "layoutRuntimes": 1,
+      "sha256": "773a24e2b5ce1c88283200e1f0b1435edf182a8f509eac64898add4cf2d5f6a8"
+    },
+    {
+      "file": "splatworks-writesplat-selfhost-v3.1.44.zip",
+      "bytes": 53912463,
+      "unpackedBytes": 64122142,
+      "entries": 413,
+      "layoutRuntimes": 0,
+      "sha256": "294f36f967167c8065cd37ea58ff29bcbf1aa3f96fc5590dde8f4b73a8840a30"
+    },
+    {
+      "file": "videosplat-selfhost-v3.1.44.zip",
+      "bytes": 68516918,
+      "unpackedBytes": 119128325,
+      "entries": 523,
+      "layoutRuntimes": 0,
+      "sha256": "1961eaf1254fbb9019a8a3dcd6589a4ff965c5bdd994ae732dc0e7ff01247b29"
+    },
+    {
+      "file": "CipherSplat-offline.zip",
+      "bytes": 3273302,
+      "unpackedBytes": 3759619,
+      "entries": 77,
+      "layoutRuntimes": 0,
+      "sha256": "ee6e454d1ed772e69b45eebd0382ef8b5b4e343bd9d53a8a698afa63abaad77b"
+    }
+  ],
+  "supportWorkflows": 145,
+  "offline": {
+    "blockedExternalRequests": true,
+    "layoutWorkflows": 18,
+    "packageStartupChecks": 30,
+    "browsers": [
+      "Chromium",
+      "Firefox"
+    ]
+  }
 }
