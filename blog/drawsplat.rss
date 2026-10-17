@@ -6,6 +6,21 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
+      <title>PlanSplat Puts Schoolwork and Study Time in One Place</title>
+      <link>https://mguhlin.org/blog/plansplat-student-planner/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/plansplat-student-planner/</guid>
+      <description>&lt;img src="https://mguhlin.org/media/2026/10/plansplat/01-today.webp" alt=""&gt;Meet PlanSplat, a free student planner with courses, task checklists, weekly study blocks, a focus timer, Google Drive saving, Calendar updates and reloadable backups.</description>
+      <pubDate>Fri, 16 Oct 2026 23:00:00 GMT</pubDate>
+      <media:thumbnail url="https://mguhlin.org/media/2026/10/plansplat/01-today.webp" />
+      <category>PlanSplat</category>
+      <category>SplatWorks</category>
+      <category>DrawSplat</category>
+      <category>Student Organization</category>
+      <category>Open Source</category>
+      <author>Miguel Guhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
       <title>DrawSplat.org for Educators: More Than an Interactive Whiteboard</title>
       <link>https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-educators-more-than-an-interactive-whiteboard/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-educators-more-than-an-interactive-whiteboard/</guid>
