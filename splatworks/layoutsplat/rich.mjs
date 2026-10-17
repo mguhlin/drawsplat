@@ -1,3 +1,4 @@
+import {hyphenatedSlice} from './hyphenation.mjs';
 // Rich stories remain text plus validated inline ranges, never imported HTML.
 export function appendRich(element, story, start, end, { first = false, style = story.style } = {}) {
   if (story.paragraphs?.length) {
@@ -7,7 +8,7 @@ export function appendRich(element, story, start, end, { first = false, style = 
       // Paragraph separators are represented by blocks, not an extra empty line.
       if (from > offset && story.text.slice(offset, from).replace(/\n/g, '')) appendRich(element, { ...story, paragraphs: undefined }, offset, from, { first: first && offset === start, style });
       const block = document.createElement('div'), scale = style.size / story.style.size;
-      block.style.boxSizing = 'content-box';
+      block.style.boxSizing = 'content-box';block.dataset.tabStops=JSON.stringify((p.tabs||[]).map(n=>n*scale));
       block.style.lineHeight = p.lineMultiple ? String(p.lineMultiple) : `${p.leading * scale}pt`; block.style.textAlign = p.align;
       Object.assign(block.style, { paddingTop: `${from === p.from ? (p.spaceBefore || 0) * scale : 0}pt`, paddingBottom: `${to === p.to ? (p.spaceAfter || 0) * scale : 0}pt`, paddingLeft: `${(p.indentLeft || 0) * scale}pt`, paddingRight: `${(p.indentRight || 0) * scale}pt`, textIndent: `${from === p.from ? (p.firstLineIndent || 0) * scale : 0}pt` });
       // Each paragraph needs its own font strut. Keeping a large headline's font
@@ -29,7 +30,7 @@ export function appendRich(element, story, start, end, { first = false, style = 
   for (let i = 0; i < edges.length - 1; i++) {
     const from = edges[i], to = edges[i + 1]; if (to <= from) continue;
     const active = ranges.filter(m => m.from <= from && m.to >= to), attrs = Object.assign({}, ...active);
-    const span = document.createElement(attrs.link ? 'a' : 'span'); span.textContent = story.text.slice(from, to);
+    const span = document.createElement(attrs.link ? 'a' : 'span'); const value=hyphenatedSlice(story.text,from,to,style);value.split('\t').forEach((part,index)=>{if(index){const tab=document.createElement('span');tab.dataset.layoutTab='true';tab.textContent='\t';Object.assign(tab.style,{display:'inline-block',width:'1pt',whiteSpace:'pre'});span.append(tab);}span.append(document.createTextNode(part));});
     if (attrs.bold !== undefined) span.style.fontWeight = attrs.bold ? 'bold' : 'normal';
     if (attrs.italic !== undefined) span.style.fontStyle = attrs.italic ? 'italic' : 'normal'; if (attrs.underline !== undefined) span.style.textDecoration = attrs.underline ? 'underline' : 'none';
     if (attrs.color) span.style.color = attrs.color; if (attrs.font) span.style.fontFamily = `"${attrs.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`; if (attrs.size) span.style.fontSize = `${attrs.size * style.size / story.style.size}pt`;
@@ -39,7 +40,7 @@ export function appendRich(element, story, start, end, { first = false, style = 
     element.append(span);
   }
 }
-const paragraphKeys = ['leading','align','lineMultiple','spaceBefore','spaceAfter','indentLeft','indentRight','firstLineIndent'];
+const paragraphKeys = ['leading','align','lineMultiple','spaceBefore','spaceAfter','indentLeft','indentRight','firstLineIndent','tabs','list'];
 export function textToRichDocument(story) {
   let offset = 0;
   const paragraphs = story.paragraphs?.length ? story.paragraphs : story.text.split('\n').map(line => { const p = { from: offset, to: offset + line.length, align: story.style.align }; offset += line.length + 1; return p; });

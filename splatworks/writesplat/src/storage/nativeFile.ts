@@ -1,6 +1,8 @@
+import {assertProjectFonts,type ProjectFonts} from './projectFonts';
 export interface WriteSplatFile {
   app: 'WriteSplatTM';
   version: 1;
+  customFonts?: ProjectFonts;
   createdAt: string;
   updatedAt: string;
   metadata: {
@@ -30,6 +32,7 @@ export function createNativeFile(
   title: string,
   content: unknown,
   options: {
+    customFonts?: ProjectFonts;
     answerKey?: string[];
     author?: string;
     citations?: string[];
@@ -41,6 +44,7 @@ export function createNativeFile(
   const now = new Date().toISOString();
 
   return {
+    ...(options.customFonts&&Object.keys(options.customFonts).length?{customFonts:structuredClone(options.customFonts)}:{}),
     app: 'WriteSplatTM',
     version: 1,
     createdAt: options.createdAt ?? now,
@@ -84,6 +88,8 @@ export function assertWriteSplatFile(value: unknown): asserts value is WriteSpla
   if (typeof candidate.metadata.targetGrade !== 'string') {
     candidate.metadata.targetGrade = '6';
   }
+
+  if(candidate.customFonts!==undefined)assertProjectFonts(candidate.customFonts);
 
   if (!candidate.document) {
     throw new Error('This WriteSplatTM file does not contain a readable document.');

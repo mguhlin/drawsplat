@@ -1,5 +1,15 @@
 # LayoutSplat development progress
 
+## October 16, 2026 — v0.7.0 source ebooks and composition
+
+Added XHTML/CSS and visual source editing, safe preview and link checks; retained local fonts, semantic notes, nonlinear chapters and imported EPUB 3 navigation; source EPUB export. Invalid edits are atomic, valid mode/resource/close changes save, and resource edits can be discarded. Source/page editions remain independent. Local CSS imports expand within limits, obfuscated fonts are excluded individually, and export filenames avoid collisions.
+
+Text composition adds local English hyphenation, alpha-contour wrapping with rotation/crop/master coverage, and editable linked-frame ordering. WriteSplat exchange retains font files, explicit tabs, hard breaks and nested list semantics. Custom tabs use actual shaped text positions. The receiving WriteSplat app validates, loads and saves portable font collections.
+
+Independent Scribus tests exposed and fixed missing text paths, scratch/page-center placement and missing IDML PostScript identifiers. Both formats retained two pages, linked editable text, pictures and basic shapes after an external text edit and return import. Sigil and PageEdit saved actual chapter edits that returned with title/author, fonts, pictures, notes/backlinks and navigation intact; EPUBCheck reported no errors/warnings.
+
+The mixed 120-page benchmark passed under simulated CPU slowdown; unchanged layout reused all 12 stories and a one-story edit reflowed one. Two-page/100-page PDF conservation, ten preflight tests, and coated/uncoated profile conversions passed. See [verification](../../docs/layoutsplat-verification.md) for measurements, reproducible checks and external limits. The real user Google Drive round trip is complete. Actual Publisher/InDesign opening, private-reference typography and physical commercial-printer acceptance remain unverified; unsupported native proprietary formats and advanced ebook scope are explicitly recorded.
+
 ## October 16, 2026 — v0.6.0 ebooks
 
 EPUB 2/3 import reads local spine content into native, paginated stories and

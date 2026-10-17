@@ -1,3 +1,5 @@
+import {resolveTabs} from './tabs.mjs';
+import {wrapBounds,wrapExtent} from './text-wrap.mjs';
 import { frameInsets } from './engine.mjs';
 import { appendRich } from './rich.mjs';
 import { masterPageStories } from './publication-fields.mjs';
@@ -10,7 +12,7 @@ export function applyTextStyle(element, style) {
   Object.assign(element.style, { fontFamily: style.font, fontSize: `${style.size}pt`, fontWeight: style.weight, fontStyle: style.italic ? 'italic' : 'normal', textDecoration: style.underline ? 'underline' : 'none', textShadow: 'none', webkitTextStroke: '0', color: style.color, textAlign: style.align, direction: style.direction, lineHeight: String(style.lineHeight), whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', letterSpacing: `${style.tracking || 0}pt`, display: 'flow-root' });
   if (style.wordArt === 'shadow') element.style.textShadow = '1.5pt 1.5pt 0 #c7b5e7';
   if (style.wordArt === 'outline') { element.style.webkitTextStroke = `.5pt ${style.color}`; element.style.color = 'white'; }
-  element.dir = style.direction;
+  element.dir = style.direction;element.lang=style.language||'en';element.style.hyphens=style.hyphens||'manual';
   element.style.fontFamily = `"${style.font}","LayoutSplat Arabic","LayoutSplat Indic","LayoutSplat CJK",sans-serif`;
   element.style.fontKerning=style.kerning||'auto';element.style.fontVariantLigatures=style.ligatures===false?'none':'common-ligatures contextual';element.style.wordSpacing=`${style.wordSpacing||0}pt`;
 }
@@ -24,7 +26,7 @@ export function fitText(text, frame, style, measurer, story = null, offset = 0) 
   const width = frame.w - frame.padding * 2, height = frame.h - frame.padding * 2;
   if (width <= 0 || !story?.paragraphs?.length && height < style.size * style.lineHeight) return 0;
   applyTextStyle(measurer, style); measurer.style.width = `${width}pt`;
-  const fits = count => { measurer.replaceChildren(); if (story) appendRich(measurer, story, offset, offset + count, { first: offset === 0, style }); else measurer.textContent = text.slice(0, count); return measurer.getBoundingClientRect().height <= height * PT_TO_PX + 0.1; };
+  const fits = count => { measurer.replaceChildren(); if (story) appendRich(measurer, story, offset, offset + count, { first: offset === 0, style }); else measurer.textContent = text.slice(0, count); resolveTabs(measurer);return measurer.getBoundingClientRect().height <= height * PT_TO_PX + 0.1; };
   if (fits(text.length)) return text.length;
   let lo = 0, hi = text.length;
   while (lo < hi) { const mid = Math.ceil((lo + hi) / 2); if (fits(mid)) lo = mid; else hi = mid - 1; }
@@ -48,19 +50,19 @@ export function layoutStories(doc, measurer, cacheKey = measurer, resolveFields 
   const fragments = new Map(), overflows = [], styles = new Map(), stats = { reflowed: 0, reused: 0 };
   let cache = layoutCaches.get(cacheKey); if (!cache) layoutCaches.set(cacheKey, cache = new Map());
   const objects = new Map([...doc.pages, ...(doc.masters || [])].flatMap(page => page.objects.map(object => [object.id, { object, page }])));
-  const wraps = new Map([...doc.pages, ...(doc.masters || [])].map(page => [page, page.objects.filter(o => o.type === 'image' && o.wrap === 'square')]));
+  const wraps = new Map([...doc.pages, ...(doc.masters || [])].map(page => [page, [...(doc.masters?.find(m=>m.id===page.masterId)?.objects||[]).filter(o=>!page.masterOverrides?.includes(o.id)),...page.objects].filter(o => o.type === 'image' && ['square','contour'].includes(o.wrap))]));
   for (const id of cache.keys()) if (!Object.hasOwn(doc.stories, id)) cache.delete(id);
   for (const [storyId, story] of Object.entries(doc.stories)) {
     // Content signatures also detect undo/redo, imported replacements, frame moves,
     // image wrap edits, and font loads. One entry per story bounds retained memory.
-    const signature = JSON.stringify([fontEpoch, doc.margin, doc.guides.baseline, story, story.frames.map(id => { const f = objects.get(id); return f ? [f.object, wraps.get(f.page)] : null; })]);
+    const signature = JSON.stringify([fontEpoch, doc.language, doc.margin, doc.guides.baseline, story, story.frames.map(id => { const f = objects.get(id); return f ? [f.object, wraps.get(f.page)] : null; })]);
     const previous = cache.get(storyId);
     if (previous?.signature === signature) {
       previous.collected.forEach(([id, fragment]) => fragments.set(id, fragment)); styles.set(storyId, previous.style);
       if (previous.overflow) overflows.push(previous.overflow); stats.reused++; continue;
     }
     stats.reflowed++;
-    let offset = 0, style = { ...story.style }, collected;
+    let offset = 0, style = { language:doc.language==='uh'?'hi':doc.language||'en',...story.style }, collected;
     for (;;) {
       collected = []; offset = 0;
       for (const id of story.frames) {
@@ -78,7 +80,7 @@ export function layoutStories(doc, measurer, cacheKey = measurer, resolveFields 
         }
         for (let col = 0; col < count; col++) {
           const virtual = { ...f, w: width, h: f.h - padding.top - padding.bottom - inset, padding: 0 };
-          const obstacles = wraps.get(found.page).filter(o => o.x < f.x + f.w && o.x + o.w > f.x && o.y < f.y + f.h && o.y + o.h > f.y);
+          const obstacles = wraps.get(found.page).filter(o => {const b=wrapBounds(o);return b.left<f.x+f.w&&b.right>f.x&&b.top<f.y+f.h&&b.bottom>f.y;});
           if (obstacles.length) { const wrapped = wrapAround(story, offset, { ...f, insets: { ...padding, top: padding.top + inset } }, col, width, gap, frameStyle, obstacles, measurer); columns.push(...wrapped.columns.map(column => ({ ...column, style: frameStyle }))); offset = wrapped.offset; continue; }
           const n = fitText(story.text.slice(offset), { ...virtual, w: virtual.w / (frameStyle.textScale || 1) }, frameStyle, measurer, story, offset);
           columns.push({ text: story.text.slice(offset, offset + n), start: offset, end: offset + n, x: padding.left + col * (width + gap), y: padding.top + inset, w: width, h: virtual.h, style: frameStyle }); offset += n;
@@ -117,7 +119,7 @@ export function designFindings(doc, layout) {
     }
     if (o.type === 'table' && o.cells.length * (o.fontSize * 1.4 + 12) > o.h) issues.push({ id: o.id, key: 'tableOverflow', severity: 'error' });
     if (o.type === 'text' && /\{\{[^{}]+\}\}/.test(doc.stories[o.storyId].text)) issues.push({ id: o.id, key: 'mergeUnresolved', severity: 'warning' });
-    if (o.type === 'text' && doc.stories[o.storyId].style.dropCap && p.objects.some(i => i.type === 'image' && i.wrap === 'square')) issues.push({ id: o.id, key: 'dropCapWrap', severity: 'warning' });
+    if (o.type === 'text' && doc.stories[o.storyId].style.dropCap && p.objects.some(i => i.type === 'image' && ['square','contour'].includes(i.wrap))) issues.push({ id: o.id, key: 'dropCapWrap', severity: 'warning' });
   }));
   return issues;
 }
@@ -128,8 +130,8 @@ function wrapAround(story, offset, frame, col, width, gap, style, obstacles, mea
   for (let y = padding.top; y + leading <= padding.top + maxHeight && offset < story.text.length; y += leading) {
     let intervals = [[x, x + width]];
     for (const image of obstacles) {
-      if (frame.y + y + leading <= image.y - 6 || frame.y + y >= image.y + image.h + 6) continue;
-      const left = image.x - frame.x - 6, right = image.x + image.w - frame.x + 6;
+      const extent=wrapExtent(image,frame.y+y,frame.y+y+leading);if(!extent)continue;
+      const left = extent[0] - frame.x, right = extent[1] - frame.x;
       intervals = intervals.flatMap(([a, b]) => right <= a || left >= b ? [[a, b]] : [[a, Math.min(b, left)], [Math.max(a, right), b]].filter(([a, b]) => b - a >= style.size));
     }
     if (style.direction === 'rtl') intervals.reverse();

@@ -1,5 +1,6 @@
 import {readingHtml,pageCanvas,canvasBlob} from './exports.mjs';
 import {readingObjects} from './publication-fields.mjs';
+import {exportSourceBook} from './ebook-source.mjs';
 export const EBOOK_CSS='html{color-scheme:light dark}body{font-family:serif;line-height:1.6;margin:5%;overflow-wrap:break-word}article{margin:1em 0}p{white-space:pre-wrap;margin:.7em 0}h1,h2,h3,h4,h5,h6{line-height:1.2;break-after:avoid}img{max-width:100%;height:auto}table{border-collapse:collapse;max-width:100%}td,th{border:1px solid #888;padding:.4em}.page-image{display:block;width:100%;height:100%;object-fit:contain}.fixed{margin:0;padding:0}';
 export const xml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const NS='http://www.w3.org/1999/xhtml';
@@ -33,6 +34,7 @@ export function ebookChecks(doc){
  return messages;
 }
 export async function exportEpub(doc,layout,{pages=doc.pages.map((_,i)=>i),epubMode='reflowable',onProgress=()=>{},ppi=150}={}){
+ if(epubMode==='source'){if(!doc.ebookSource)throw Error('Open an EPUB or create a source book in Ebook tools first.');return exportSourceBook(doc);}
  const fixed=epubMode==='fixed',meta=doc.ebookMetadata||{},language=meta.language||(doc.language==='uh'?'hi':doc.language)||'en';
  if(!/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(language))throw Error('Enter a valid book language code, such as en, es, or zh-Hans.');
  const zip=new JSZip(),items=[],sections=[],warnings=new Set(ebookChecks(doc));let bytes=0;

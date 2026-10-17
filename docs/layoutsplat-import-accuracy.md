@@ -1,4 +1,4 @@
-# LayoutSplat import accuracy — v0.6.0
+# LayoutSplat import accuracy — v0.7.0
 
 Private user-provided samples were opened and compared locally. Source publications,
 reference PDFs, and screenshots are not distributed with the repository.
@@ -70,3 +70,29 @@ The historical private-source overflow reported above has not been revalidated
 with matching reference fonts during this milestone. It remains an open accuracy
 benchmark. Native PUB export is documented separately in the
 [technical reference](layoutsplat.md#publisher-pub-export).
+
+## v0.7.0 checks and remaining fidelity limits
+
+Automatic local English hyphenation, alpha-contour picture wrapping and editable
+linked-frame ordering improve composition control. These do not reproduce
+Publisher's proprietary paragraph composer. The historical private reference
+font/overflow comparison above remains unverified; those source files are not
+present in this workspace. No new pixel-fidelity claim is made for that sample.
+
+Two additional pinned LibreOffice malformed-file regressions exercise bounded
+worker handling; they are robustness coverage, not proof of more Publisher versions.
+Native `.pub` export still has independent libmspub/LibreOffice checks. Actual
+Microsoft Publisher acceptance cannot be completed without the application.
+
+Independent Scribus 1.6.3 opening/edit/save/PDF checks now cover both SLA and IDML
+interchange. They exposed and fixed page scratch/center offsets, missing frame
+paths and missing PostScript font identifiers. The linked story, two pages,
+pictures and basic shapes remain editable. Adobe InDesign has not been tested.
+
+Modern Pages IWA, QuarkXPress 5+ and native INDD remain unsupported. Current
+conversion routes are EPUB/Word/PDF from Pages, IDML packages from current
+QuarkXPress, and IDML from InDesign. See primary instructions from
+[Apple](https://support.apple.com/en-ph/guide/pages/tance1161f26/mac),
+[Quark](https://www.quark.com/documentation/quarkxpress/2025/english/A%20Guide%20to%20QuarkXPress%202025/_3_108159734956748E7_2.html), and
+[Adobe](https://helpx.adobe.com/indesign/desktop/save-export-and-publish/save-and-export/save-documents.html).
+Interchange research is documented; it does not justify claiming native decoding.

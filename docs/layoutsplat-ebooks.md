@@ -1,6 +1,6 @@
 # LayoutSplat · Ebooks and EPUB
 
-LayoutSplat v0.6.0 creates EPUB 3 ebooks and imports supported EPUB 2/3 books
+LayoutSplat v0.7.0 creates EPUB 3 ebooks and imports supported EPUB 2/3 books
 locally. Open **File → Templates → Ebooks** for three original, editable starters:
 **The Quiet Journey** (novel), **A Field Guide to New Ideas** (nonfiction), and
 **Small Wonders** (illustrated story). Each has a cover, title page and two
@@ -39,6 +39,7 @@ all pages, then choose the ebook layout and Download.
 | Layout | Content | Best suited to |
 | --- | --- | --- |
 | Reflowable | Selectable rich text, packaged pictures and tables in reading order; heading navigation | Novels, guides and text-led books |
+| Source book | Saved XHTML/CSS, local fonts and images, chapter links, footnotes and imported navigation | Editing an imported EPUB without rebuilding its source structure |
 | Fixed layout | Each selected page becomes a PNG picture at the chosen resolution, with EPUB page dimensions | Illustrated books and exact page compositions |
 
 Reflowable EPUB includes each linked story once and includes its complete text,
@@ -53,9 +54,9 @@ descriptions in Ebook tools before publishing.
 Fixed-layout EPUB retains page appearance as pictures. Its text is not selectable
 or individually editable. An unchanged exported EPUB reimports as picture pages;
 use the native `.layoutsplat` project for editable text and objects. Bleed, crop
-marks and ICC profiles do not apply to either EPUB layout.
+marks and ICC profiles do not apply to EPUB output.
 
-Both layouts contain EPUB package metadata, a manifest, spine, XHTML contents
+The page-derived layouts contain EPUB package metadata, a manifest, spine, XHTML contents
 navigation and an NCX fallback. Reflowable navigation includes nested heading
 links. No native project or original Publisher source is embedded in an EPUB.
 The package follows the [W3C EPUB 3.3 specification](https://www.w3.org/TR/epub-33/).
@@ -72,13 +73,21 @@ HTTP(S)/email links remain editable. Packaged images become native image objects
 Text before and after an inline picture keeps its reading order. Table cell text
 becomes paragraphs. Book metadata is retained.
 
-Source text is repaginated into book pages, so original XHTML/CSS geometry,
-complex selectors, fonts, internal links, annotations, footnotes, active media and
-advanced EPUB features are not preserved as an EPUB source-editing project.
-Single-picture fixed-layout pages retain their appearance. Other fixed-layout
-text repaginates. Scripts and remote resources are skipped without fetching them.
-Encrypted/DRM content is rejected; obfuscated font files are skipped. Missing
-required chapters or invalid markup leave the current publication intact.
+Import creates two editions. The **page edition** repaginates supported text and pictures into editable frames. The **source edition**, available for supported reflowable XHTML books, separately retains sanitized XHTML, supported CSS, local pictures, unencrypted fonts, IDs, links, footnote/endnote markup, nonlinear chapters and imported EPUB 3 navigation. Page edits and source edits are independent; choose the corresponding edition at export. Original complex CSS can render differently between readers.
+
+Single-picture fixed-layout pages retain their appearance. Other fixed-layout text repaginates; fixed-layout imports do not create a source edition. Scripts, forms, SVG/MathML source content, remote resources, audio/video and media overlays are omitted. DRM content is rejected; only the specific encrypted/obfuscated font resources are excluded. Missing required chapters or invalid markup leave the current publication intact. Local CSS imports are expanded with depth/size limits; remote imports are discarded. Source capture can be unavailable for books outside the supported subset; the conversion report explains this.
+
+## Edit the source edition
+
+Open **File → Ebook tools → Book source editor**. For an existing page publication, LayoutSplat first creates a source edition from its reading export. Choose a chapter or stylesheet, edit **XHTML / CSS**, then choose **Save resource**. Chapter markup must be well-formed XHTML with unique IDs; invalid changes leave the saved resource intact and keep the editor open. **Visual chapter** lets you edit the chapter body in an isolated preview. Switching resources/modes or closing saves valid pending edits. **Discard resource edits** restores the saved resource. Native save, recovery and undo retain source resources.
+
+**Check links** checks packaged paths and fragment IDs, including links to nonlinear footnotes and backlinks. Preview clicks can move between chapters. External links are retained in the exported book but disabled in the preview; the preview cannot execute scripts or load network resources. Source CSS uses a supported property/rule allowlist, not every browser CSS feature. Source import retains the original EPUB 3 navigation document when present; otherwise source export generates chapter navigation. EPUB 2 NCX-only contents are rebuilt from source chapters.
+
+Choose **Source book — XHTML and CSS** in EPUB export to include saved source edits. It exports the complete source book; page-range, ppi, bleed and ICC controls do not apply. Unsaved page-canvas changes are not copied into this edition.
+
+![XHTML source editing alongside the chapter preview](../assets/layoutsplat-guide/v0.7.0/ebook-source-editor.png)
+
+The source edition preserves supported semantic note markup; it does not provide an annotation database or synchronized narration editor. EPUBCheck and link checks do not certify accessibility or bookstore acceptance.
 
 Import limits: 96 MB compressed file, 5,000 archive entries, 8 MB per XML/XHTML
 component, 2 MB per stylesheet, two million total text characters, 100,000
@@ -96,5 +105,4 @@ patterns from [Sigil](https://sigil-ebook.com/about/) and
 [Foliate.js](https://github.com/johnfactotum/foliate-js) and
 [InkWeave](https://github.com/mengmopqje/inkweave). This implementation uses
 LayoutSplat's existing editor and local ZIP/markup tooling; it does not bundle
-those applications or copy their implementation. Open the exported EPUB in
-Sigil/PageEdit for detailed XHTML/CSS editing and advanced ebook workflows.
+those applications or copy their implementation. LayoutSplat now includes its own XHTML/CSS and visual chapter editing. Sigil/PageEdit remain useful for advanced ebook workflows; independent acceptance evidence is recorded in [release verification](layoutsplat-verification.md).

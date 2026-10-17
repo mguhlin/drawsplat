@@ -7,9 +7,9 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--results',default='test-results')
 parser.add_argument('--jar',type=Path)
 args=parser.parse_args()
-books=[p for p in Path(args.results).rglob('*.epub') if p.name in ('reflowable.epub','fixed.epub','illustrated.epub')]
-if {p.name for p in books}!={'reflowable.epub','fixed.epub','illustrated.epub'}:
- raise SystemExit('Missing reflowable, fixed-layout or illustrated EPUB browser proof.')
+books=[p for p in Path(args.results).rglob('*.epub') if p.name in ('reflowable.epub','fixed.epub','illustrated.epub','source.epub')]
+if {p.name for p in books}!={'reflowable.epub','fixed.epub','illustrated.epub','source.epub'}:
+ raise SystemExit('Missing reflowable, fixed-layout, illustrated or source EPUB browser proof.')
 
 def check(jar):
  for book in sorted(books):

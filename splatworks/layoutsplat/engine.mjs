@@ -1,4 +1,5 @@
 // LayoutSplat publication model. Geometry is always in typographic points.
+import {validateBookSource} from './ebook-source-model.mjs';
 export const VERSION = 1;
 export const UNITS = { in: 72, cm: 72 / 2.54, pc: 12, pt: 1, px: 72 / 96 };
 export const PAPER = { letter: [612, 792], a4: [595.276, 841.89], a5: [419.528, 595.276], legal: [612, 1008] };
@@ -133,6 +134,7 @@ export function validatePublication(input) {
   if (d.bleed !== undefined && !number(d.bleed, 0, 36)) fail();
   if (d.safeArea !== undefined && !number(d.safeArea, 0, Math.min(d.width, d.height) / 2 - 1)) fail();
   if (d.facingPages !== undefined && typeof d.facingPages !== 'boolean') fail();
+  if(d.ebookSource!==undefined)validateBookSource(d.ebookSource);
   if(d.ebookMetadata!==undefined){const meta=d.ebookMetadata;if(!meta||typeof meta!=='object'||Array.isArray(meta))fail();for(const key of ['author','language','publisher','description','rights'])if(meta[key]!==undefined&&(typeof meta[key]!=='string'||meta[key].length>(key==='description'?4000:500)))fail();if(meta.language&&!/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(meta.language))fail();}
   if(d.labelLayout?.stock){const l=d.labelLayout;if(typeof l.stock!=='string'||l.stock.length>40||!Number.isInteger(l.perSheet)||!number(l.perSheet,1,200)||!Number.isInteger(l.startAt)||!number(l.startAt,0,l.perSheet-1)||!number(l.offsetX,-36,36)||!number(l.offsetY,-36,36))fail();}
   if (d.rulerOrigin !== undefined && (!number(d.rulerOrigin.x, -2000, 2000) || !number(d.rulerOrigin.y, -2000, 2000))) fail();
@@ -156,7 +158,8 @@ export function validatePublication(input) {
       if (o.crop !== undefined && (o.type !== 'image' || !number(o.crop.x, -40, 40) || !number(o.crop.y, -40, 40) || !number(o.crop.w, .001, 40) || !number(o.crop.h, .001, 40))) fail();
       if (o.gradient !== undefined && (o.type !== 'shape' || !number(o.gradient.angle, -360, 360) || !['linear', 'radial'].includes(o.gradient.type) || !Array.isArray(o.gradient.stops) || o.gradient.stops.length < 2 || o.gradient.stops.length > 100 || o.gradient.stops.some(s => !number(s.offset, 0, 1) || !number(s.opacity, 0, 1) || !/^#[0-9a-f]{6}$/i.test(s.color)))) fail();
       if (o.type === 'table' && (!Array.isArray(o.cells) || !o.cells.length || o.cells.length > 200 || !Array.isArray(o.cells[0]) || !o.cells[0].length || o.cells[0].length > 20 || o.cells.some(row => !Array.isArray(row) || row.length !== o.cells[0].length || row.some(cell => typeof cell !== 'string' || cell.length > 5000)) || !number(o.fontSize, 6, 36) || typeof o.header !== 'boolean')) fail();
-      if (o.wrap !== undefined && !['none', 'square'].includes(o.wrap)) fail();
+      if (o.wrap !== undefined && !['none', 'square', 'contour'].includes(o.wrap)) fail();
+      if(o.wrapContour!==undefined&&(o.type!=='image'||!Array.isArray(o.wrapContour)||o.wrapContour.length<3||o.wrapContour.length>64||o.wrapContour.some(p=>!Array.isArray(p)||p.length!==2||p.some(v=>!number(v,0,1)))))fail();
       if (o.opacity !== undefined && !number(o.opacity, 0, 1)) fail();
       if (o.columns !== undefined && (!Number.isInteger(o.columns) || !number(o.columns, 1, 6))) fail();
       if (o.columnGap !== undefined && !number(o.columnGap, 0, 72)) fail();
@@ -196,6 +199,8 @@ export function validatePublication(input) {
     if(s.kerning!==undefined&&!['auto','normal','none'].includes(s.kerning))fail();
     if(s.wordSpacing!==undefined&&!number(s.wordSpacing,-5,30))fail();
     if(s.ligatures!==undefined&&typeof s.ligatures!=='boolean')fail();
+    if(s.hyphens!==undefined&&!['none','manual','auto'].includes(s.hyphens))fail();
+    if(s.language!==undefined&&(typeof s.language!=='string'||!/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(s.language)))fail();
     if (story.paragraphs !== undefined) {
       if (!Array.isArray(story.paragraphs) || story.paragraphs.length > 10000) fail();
       let last = 0;
@@ -204,6 +209,8 @@ export function validatePublication(input) {
         for (const key of ['spaceBefore','spaceAfter','indentLeft','indentRight']) if (p[key] !== undefined && !number(p[key], 0, 360)) fail();
         if (p.firstLineIndent !== undefined && !number(p.firstLineIndent, -360, 360)) fail();
         if (p.lineMultiple !== undefined && !number(p.lineMultiple, .5, 6)) fail();
+        if(p.tabs!==undefined&&(!Array.isArray(p.tabs)||p.tabs.length>32||p.tabs.some((v,i)=>!number(v,0.1,2000)||i&&v<=p.tabs[i-1])))fail();
+        if(p.list!==undefined&&(!p.list||!['ordered','bullet'].includes(p.list.kind)||!Number.isInteger(p.list.depth)||!number(p.list.depth,1,20)||!Number.isInteger(p.list.number)||!number(p.list.number,0,100000)||!['1','a','A','i','I'].includes(p.list.style)||typeof p.list.prefix!=='string'||p.list.prefix.length>100))fail();
         last = p.to;
       }
     }

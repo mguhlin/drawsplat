@@ -4,6 +4,7 @@ import {officeHtmlToStory} from './office-story.mjs';
 import {createMeasurer,layoutStories,applyTextStyle} from './layout.mjs';
 import {appendRich} from './rich.mjs';
 import {importMedia} from './media.mjs';
+import {captureBookSource} from './ebook-source.mjs';
 const elements=(node,name)=>[...node.getElementsByTagNameNS('*',name)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function parse(source){
@@ -32,7 +33,7 @@ export async function importEpub(file,{signal,onProgress=()=>{}}={}){
  const container=parse(await read('META-INF/container.xml')),root=elements(container,'rootfile').find(e=>e.getAttribute('media-type')==='application/oebps-package+xml')||elements(container,'rootfile')[0],opfPath=epubPath('',root?.getAttribute('full-path'));
  if(!opfPath)throw Error('EPUB has no local package document.');const opf=parse(await read(opfPath));
  const manifest=new Map(elements(opf,'item').map(el=>[el.getAttribute('id'),{path:epubPath(opfPath,el.getAttribute('href')),type:el.getAttribute('media-type'),properties:el.getAttribute('properties')||''}]));
- const spine=elements(opf,'itemref').filter(e=>e.getAttribute('linear')!=='no').map(e=>manifest.get(e.getAttribute('idref')));if(!spine.length||spine.length>500||spine.some(e=>!e?.path))throw Error('EPUB needs a valid local spine of 1–500 chapters.');
+ const allSpine=elements(opf,'itemref').map(e=>({...manifest.get(e.getAttribute('idref')),linear:e.getAttribute('linear')!=='no'})),spine=allSpine.filter(e=>e.linear);if(!spine.length||spine.length>500||spine.some(e=>!e?.path))throw Error('EPUB needs a valid local spine of 1–500 chapters.');
  if(zip.file('META-INF/encryption.xml')){const encrypted=parse(await read('META-INF/encryption.xml'));if(elements(encrypted,'CipherReference').some(e=>!manifest.size||! /\.(otf|ttf|woff2?)(?:$|\?)/i.test(e.getAttribute('URI')||'')))throw Error('Encrypted or DRM-protected EPUB content cannot be imported.');warnings.add('Protected/obfuscated fonts were skipped.');}
  const d=newPublication(true);d.pages=[];d.width=432;d.height=648;d.margin=36;d.guides.columns=1;d.publicationType='ebook';d.title=(elements(opf,'title')[0]?.textContent.trim()||file.name.replace(/\.epub$/i,'')).slice(0,200);const lang=elements(opf,'language')[0]?.textContent.trim()||'en';d.language=lang;d.ebookMetadata={language:/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(lang)?lang:'en',...Object.fromEntries(['creator','publisher','description','rights'].map(k=>[k==='creator'?'author':k,(elements(opf,k)[0]?.textContent||'').slice(0,k==='description'?4000:500)]))};
  const fixed=elements(opf,'meta').some(e=>e.getAttribute('property')==='rendition:layout'&&e.textContent.trim()==='pre-paginated');if(fixed)warnings.add('Fixed-layout source text is repaginated. Single-picture pages retain their page appearance.');
@@ -42,8 +43,8 @@ export async function importEpub(file,{signal,onProgress=()=>{}}={}){
  async function text(html,heading=0,rtl=false){
   const value=officeHtmlToStory(html);if(!value.text.trim())return;totalText+=value.text.length;if(totalText>2000000)throw Error('EPUB text exceeds two million characters.');ensure(heading?72:48);
   const key=uid(),story={...value,style:{...textStyle(),...value.style,direction:rtl?'rtl':'ltr'},frames:[]};delete story.fonts;delete story.substitutedFonts;d.stories[key]=story;
-  let last,previous=-1;
-  while(true){signal?.throwIfAborted();last=frame(key,d.margin,y,d.width-2*d.margin,d.height-d.margin-y);last.padding=0;if(heading)last.readingHeading=heading;p.objects.push(last);story.frames.push(last.id);const layout=layoutStories(d,measurer),overflow=layout.overflows.find(o=>o.storyId===key),fragment=layout.fragments.get(last.id);
+  const firstPage=d.pages.length-1;let last,previous=-1;
+  while(true){signal?.throwIfAborted();last=frame(key,d.margin,y,d.width-2*d.margin,d.height-d.margin-y);last.padding=0;if(heading)last.readingHeading=heading;p.objects.push(last);story.frames.push(last.id);const currentStoryDoc={...d,masters:[],stories:{[key]:story},pages:d.pages.slice(firstPage).map(page=>({...page,objects:page.objects.filter(o=>o.storyId===key)}))},layout=layoutStories(currentStoryDoc,measurer),overflow=layout.overflows.find(o=>o.storyId===key),fragment=layout.fragments.get(last.id);
    if(!overflow){applyTextStyle(measurer,story.style);measurer.style.width=last.w+'pt';measurer.replaceChildren();appendRich(measurer,story,fragment.start,fragment.end,{first:fragment.start===0,style:story.style});last.h=Math.min(last.h,Math.max(6,measurer.getBoundingClientRect().height*.75+2));y=last.y+last.h+12;break;}
    if(fragment.end===previous)throw Error('An EPUB text block cannot fit the publication page.');previous=fragment.end;page();
   }
@@ -81,6 +82,8 @@ export async function importEpub(file,{signal,onProgress=()=>{}}={}){
    walk(body);const onlyPicture=blocks.length===1&&Object.hasOwn(blocks[0],'image');for(const block of blocks){signal?.throwIfAborted();if(Object.hasOwn(block,'image'))await image(block.image,block.alt,fixed&&onlyPicture);else await text(block.html,block.heading||0,(body.getAttribute('dir')||source.documentElement.getAttribute('dir'))==='rtl'||/^(ar|he|fa|ur)(-|$)/i.test(lang));}
    await new Promise(resolve=>setTimeout(resolve,0));
   }
-  if(!Object.keys(d.stories).length&&!Object.keys(d.assets).length)throw Error('No supported ebook text or pictures were found.');return {doc:validatePublication(d),warnings:[...warnings]};
+  if(!Object.keys(d.stories).length&&!Object.keys(d.assets).length)throw Error('No supported ebook text or pictures were found.');
+  if(!fixed)try{d.ebookSource=await captureBookSource(zip,allSpine,manifest,read);if(!d.ebookSource)delete d.ebookSource;else warnings.add('The source edition retains chapter XHTML, CSS, local links and footnotes. Edit it in Ebook tools and choose Source book at export. Page edits use the separate page editions.');}catch(error){warnings.add('Source editing was not available for this book: '+error.message);}
+  return {doc:validatePublication(d),warnings:[...warnings]};
  }finally{measurer.remove();}
 }

@@ -253,3 +253,16 @@ Import supported EPUB 2/3 text and packaged pictures; export EPUB 3 as selectabl
 reflowable content or fixed-layout page pictures. [Ebook guide and limits](layoutsplat-ebooks.md).
 
 ![Ebook tools](../assets/layoutsplat-guide/v0.6.0/ebook-tools.png)
+
+## 22. Source ebook editing and composition (v0.7.0)
+
+- XHTML/CSS and visual chapter editing, source preview, local link/fragment checks, retained footnotes and EPUB 3 navigation, and source-book export.
+- Automatic English hyphenation with local patterns, manual/off controls and unchanged underlying story text.
+- Alpha-contour picture wrapping with rotation, crop/mask sampling and reusable master pictures; six-point spacing and a manual refresh control.
+- Linked-frame flow ordering controls, separate from artwork stacking and accessible reading order.
+- WriteSplat round trips with embedded fonts, tab positions, hard breaks and nested list semantics.
+- Corrected native SLA/IDML page geometry, font identifiers and text paths, independently checked in Scribus.
+
+![Source-book code and chapter preview](../assets/layoutsplat-guide/v0.7.0/ebook-source-editor.png)
+
+See [ebook instructions](layoutsplat-ebooks.md) and [verification evidence](layoutsplat-verification.md) for supported behavior and remaining external checks.

@@ -1,0 +1,184 @@
+{
+  "applicationVersion": "0.7.0",
+  "date": "2026-10-16",
+  "chromiumWorkflows": 90,
+  "focusedFirefoxWorkflows": 10,
+  "modelChecks": 15,
+  "writeSplatUnitChecks": 51,
+  "printerPreflightChecks": 10,
+  "epubCheck": {
+    "version": "5.4.0",
+    "directExports": 4,
+    "directErrors": 0,
+    "directWarnings": 0,
+    "sigilAndPageEditErrors": 0,
+    "sigilAndPageEditWarnings": 0,
+    "calibreConversion": "EPUB 3 output introduces two validator errors; LayoutSplat sanitized return export has zero errors/warnings."
+  },
+  "externalApplications": {
+    "sigil": {
+      "title": "Linked source book",
+      "author": "Ada Writer",
+      "text": "Chapter one\nSIGILEDIT source sentence. 1\nA picture caption.",
+      "chapters": 3,
+      "links": [],
+      "images": 1,
+      "fonts": 1,
+      "note": true,
+      "navigation": true
+    },
+    "pageedit": {
+      "title": "Linked source book",
+      "author": "Ada Writer",
+      "text": "Chapter one\nPAGEEDIT Edited source sentence. 1\nA picture caption.",
+      "chapters": 3,
+      "links": [],
+      "images": 1,
+      "fonts": 1,
+      "note": true,
+      "navigation": true
+    },
+    "calibre": {
+      "title": "Linked source book",
+      "author": "Ada Writer",
+      "text": "Chapter one\nEdited source sentence. 1\nA picture caption.",
+      "chapters": 3,
+      "links": [],
+      "images": 1,
+      "fonts": 1,
+      "note": true,
+      "navigation": true
+    },
+    "sla": {
+      "pages": 2,
+      "text": "SCRIBUSEDIT INTERCHANGEONE First page selectable text.\nINTERCHANGETWO Second page selectable text.",
+      "stories": 1,
+      "frames": 2,
+      "images": 2,
+      "geometry": [
+        [
+          54,
+          72,
+          500,
+          18
+        ],
+        [
+          54,
+          72,
+          500,
+          18
+        ]
+      ]
+    },
+    "idml": {
+      "pages": 2,
+      "text": "SCRIBUSEDIT INTERCHANGEONE First page selectable text.\nINTERCHANGETWO Second page selectable text.\n",
+      "stories": 1,
+      "frames": 2,
+      "images": 2,
+      "geometry": [
+        [
+          54,
+          72,
+          500,
+          18
+        ],
+        [
+          54,
+          72,
+          500,
+          18
+        ]
+      ]
+    }
+  },
+  "performance": {
+    "pages": 120,
+    "pictures": 480,
+    "uniqueImages": 12,
+    "stories": 12,
+    "initialMs": 1749.3000000715256,
+    "cachedMs": 3.5,
+    "editMs": 130.5,
+    "roundtripMs": 57.39999997615814,
+    "bytes": 1313339,
+    "heap": 12366719,
+    "first": {
+      "reflowed": 12,
+      "reused": 0
+    },
+    "second": {
+      "reflowed": 0,
+      "reused": 12
+    },
+    "third": {
+      "reflowed": 1,
+      "reused": 11
+    },
+    "conservation": true
+  },
+  "press": [
+    {
+      "status": "passed structural checks",
+      "scope": "Independent structural preflight; not exhaustive ISO PDF/X certification. Obtain printer approval.",
+      "pages": 2,
+      "errors": [],
+      "icc_sha256": "b62f5c72561c15ae2e0072b92ce9df42662f76915d75fac8ca2f6be033ac74fe",
+      "source_sha256": "069506d639c998e732c59705251cac392bc6f47bbc515537f7d28d34672f51e8",
+      "output_sha256": "d0b9fdab554c6a3ebd99ec61f278d3d0b1eb520b4a9c57503d2b9121fd6ccf78",
+      "fonts_inspected": 2,
+      "ghostscript_version": "10.05.1",
+      "pypdf_version": "5.4.0"
+    },
+    {
+      "status": "passed structural checks",
+      "scope": "Independent structural preflight; not exhaustive ISO PDF/X certification. Obtain printer approval.",
+      "pages": 2,
+      "errors": [],
+      "icc_sha256": "5e5f209a5899e2acc139fd6b983f9b3cf3f052d6422ff4dbbb9aa44aebd18c19",
+      "source_sha256": "069506d639c998e732c59705251cac392bc6f47bbc515537f7d28d34672f51e8",
+      "output_sha256": "636b2bd916d26a1408470ad0b11ecd126937cd0638326b2dd7cd3db80aed855b",
+      "fonts_inspected": 2,
+      "ghostscript_version": "10.05.1",
+      "pypdf_version": "5.4.0"
+    },
+    {
+      "status": "passed structural checks",
+      "scope": "Independent structural preflight; not exhaustive ISO PDF/X certification. Obtain printer approval.",
+      "pages": 1,
+      "errors": [],
+      "icc_sha256": "b62f5c72561c15ae2e0072b92ce9df42662f76915d75fac8ca2f6be033ac74fe",
+      "source_sha256": "95fed8586b08dfcd48672e658439e48fda95164cb4219f8c0126527bdd53d7c9",
+      "output_sha256": "1c429168919b5da6f965616ae628d378941c7801598078f9c8914905d751b682",
+      "fonts_inspected": 0,
+      "ghostscript_version": "10.05.1",
+      "pypdf_version": "5.4.0"
+    },
+    {
+      "status": "passed structural checks",
+      "scope": "Independent structural preflight; not exhaustive ISO PDF/X certification. Obtain printer approval.",
+      "pages": 1,
+      "errors": [],
+      "icc_sha256": "5e5f209a5899e2acc139fd6b983f9b3cf3f052d6422ff4dbbb9aa44aebd18c19",
+      "source_sha256": "95fed8586b08dfcd48672e658439e48fda95164cb4219f8c0126527bdd53d7c9",
+      "output_sha256": "fadb6e3046edec4b8fe9288b1a6a22d36b39010873315a5fc73d4acc3a2986fe",
+      "fonts_inspected": 0,
+      "ghostscript_version": "10.05.1",
+      "pypdf_version": "5.4.0"
+    }
+  ],
+  "unverified": [
+    "Microsoft Publisher acceptance",
+    "Adobe InDesign acceptance",
+    "Physical commercial-printer approval",
+    "Private source/reference typography parity"
+  ],
+  "unsupported": [
+    "Modern Pages IWA native decoding",
+    "QuarkXPress 5+ native decoding",
+    "Native INDD decoding",
+    "App annotation database",
+    "Synchronized media-overlay editing",
+    "Certified accessibility"
+  ]
+}

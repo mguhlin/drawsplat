@@ -6,70 +6,32 @@ The user subsequently authorized continuing through all milestones and requested
 
 Additional approved scope: broad local image/video decoding and conversion, printable video posters, object-specific context menus (right-click, Mac Control/Command-click, keyboard), text import into an existing frame, media replacement without changing frame geometry, and a large original template library inspired by the publication types/industry breadth of StockLayouts. The user explicitly requested native `.pub` import and subsequently required browser-contained decoding without LibreOffice. This supersedes the earlier desktop-bridge proposal. v0.2 bundles libmspub as WebAssembly with editable conversion and source retention. Import/export native content from WriteSplat, ShowSplat, GridSplat, and ListSplat as well as routing files to their original applications. Clearly distinguish editable native imports from PDF backgrounds and preserve/report conversion limitations. Update README/wiki/release documentation, commit, push, deploy the next substantial update, and verify production.
 
-## v0.6.0 ebook scope
+## Current checkpoint — v0.7.0, October 16, 2026
 
-- [x] Original ebook templates in six publication languages.
-- [x] EPUB 2/3 local import with spine order, editable text and packaged pictures.
-- [x] EPUB 3 reflowable and fixed-layout export.
-- [x] Book metadata, heading-based contents, reading preview and visual editing.
-- [x] Reader text size, Paper/Sepia/Night themes and searchable outline.
-- [ ] External reader/editor round trips: compare exported books in independent
-  readers and Sigil/PageEdit, checking text, pictures, contents, metadata and links.
-- [ ] Full source XHTML/CSS editing, footnote/endnote preservation, annotations,
-  media overlays and accessibility certification remain future work.
+Implementation and independent acceptance evidence are in [verification](../../docs/layoutsplat-verification.md) and [progress](PROGRESS.md). Completed items describe tested behavior, not proprietary-format or print certification.
 
+- [x] Original ebook templates, EPUB 2/3 import and reflowable/fixed-layout EPUB 3 export.
+- [x] Metadata, searchable outline, heading navigation, reading themes/size and visual editing.
+- [x] XHTML/CSS and visual source chapters, retained supported fonts, links, footnotes/endnotes, nonlinear chapters and EPUB 3 navigation; source-book export.
+- [x] Independent Sigil/PageEdit edit/save/reopen and EPUBCheck proofs.
+- [x] Local English automatic hyphenation, manual/off controls and alpha-contour picture wrapping, including rotated/cropped/master pictures.
+- [x] Explicit linked-story frame sequencing controls, with undo/native persistence. Original Publisher text IDs and reusable masters remain supported.
+- [x] Richer WriteSplat round trips: font files, custom tabs, hard breaks and semantic nested list numbering.
+- [x] Independent Scribus opening/editing/rendering of SLA and IDML; corrected frame paths, page geometry and desktop font identifiers.
+- [x] Additional pinned Publisher malformed-input robustness fixtures.
+- [x] Dynamic master fields, broader 120-page image-heavy/multi-story/master workload with CPU slowdown, and existing 500-page cache/100-page print checks.
+- [x] Coated/uncoated profile conversion and independent font/color/transparency/page-box structural checks.
+- [x] Native `.pub` export and the user-confirmed Google Drive upload/download/reopen workflow.
 
-## Remaining work
+## Remaining external acceptance and unsupported scope
 
-Current checkpoint: **v0.6.0, October 16, 2026**. Work proceeds in the priority
-order below, starting with Publisher typography and text flow. These items remain
-open; the original milestone descriptions later in this plan describe the full
-approved scope rather than a list of unfinished features.
+- [ ] Actual Microsoft Publisher and Adobe InDesign acceptance require those applications; neither is available here. Scribus and LibreOffice results cannot close these checks.
+- [ ] Real commercial-printer approval/physical proof and exhaustive independent ISO PDF/X certification require the target printer and validation workflow.
+- [ ] Private-reference Publisher paragraph/line-break parity needs the original documents and matching fonts. Those files are unavailable in this workspace; automatic source chain inference remains limited. Manual sequencing can correct the frame order.
+- [ ] Native modern Pages IWA, QuarkXPress 5+ and INDD decoding remains unsupported after feasibility review; verified interchange routes are documented.
+- [ ] Annotation databases, synchronized media-overlay editing and accessibility certification remain additional ebook scope. Existing supported note XHTML is retained.
 
-- [ ] **Publisher typography and text flow.** Improve paragraph composition,
-  hyphenation, contour wrapping and imported linked-story flow. Compare editable
-  imports and printed output with reference publications/PDFs using matching fonts;
-  record remaining line-break, overflow and positioning differences. Reusable source
-  masters and shared-source text-ID linking now ship; source ordering and full
-  composition parity still need reference comparisons.
-- [ ] **Native imports and external application checks.** Expand Publisher fixtures
-  and open exported `.pub` files in Microsoft Publisher. Independently open/round-trip
-  supported IDML and Scribus SLA exports in their target applications.
-  Research modern Pages IWA, QuarkXPress 5+ and native INDD
-  decoding; these formats are not currently implemented. Record supported versions,
-  editable features and conversion losses before claiming compatibility.
-- [ ] **Richer SplatWorks exchange.** Preserve more complex content, embedded font
-  files, custom tab positions and semantic list numbering between applications.
-  Verify formatting and content after a round trip, and report unsupported features.
-  Native GridSplat/ListSplat mail-merge sources are already implemented.
-- [x] **Dynamic fields on master pages.** Page/total values resolve separately
-  on every assigned page, including insertion, duplication, deletion, undo and native
-  reopening. Master overrides and visual/editable exports retain the resolved values.
-- [ ] **Broader large-document performance.** Exercise image-heavy publications,
-  complex masters and multiple linked stories on modest devices. Measure memory,
-  editing/reflow, preview and print behavior beyond the existing controlled 500-page
-  cache regression and 100-page linked-story PDF proof; fix demonstrated bottlenecks.
-- [ ] **Independent commercial-print validation.** Validate PDF/X output, printer
-  profile handling, fonts, transparency, color and page boxes with independent tools
-  and actual commercial-printer proofs. Existing structural preflight and Pack and
-  Go are preparation tools; they do not establish printer acceptance or certification.
-
-The core editor, distinct templates, shared whiteboard backgrounds, browser-native
-PUB/legacy DOC/legacy Quark imports, formatted DOCX/ODT insertion, ordinary folios,
-HTML reading order and current download/district packages have shipped. Packaging
-LayoutSplat v0.6.0 in release v3.1.43 is **complete**, not an outstanding roadmap item.
-
-v0.5.0 adds in-app Publisher 2000 `.pub` export: native editable
-Unicode text/basic shapes, bitmap fallback objects and a fingerprinted native
-LayoutSplat copy. Native decoding and LibreOffice opening are verified; opening in
-Microsoft Publisher and broader file interoperability remain external acceptance
-checks. A real user-run Google Drive upload/download/reopen passed October 16; the
-downloaded one-page project passed archive and native-model validation. This is a
-specific observed workflow, not a guarantee for all school account policies.
-
-Record acceptance evidence and deployed improvements in [PROGRESS.md](PROGRESS.md)
-as each checkbox is completed. No completion date or fidelity guarantee is assigned
-to proprietary-format research before feasibility is established.
+Source/page editions are independent and clearly identified at export. Scripts and network resources are excluded. Existing printer preparation tools and tests do not establish production-printer acceptance. Record future evidence in [PROGRESS.md](PROGRESS.md).
 
 ## Interface and language
 

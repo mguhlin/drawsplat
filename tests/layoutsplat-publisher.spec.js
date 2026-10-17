@@ -25,3 +25,7 @@ test('native Publisher opening preserves its original bytes and decodes explicit
 
 // Exercise an extracted standalone package with all external requests blocked.
 test.beforeEach(async({context})=>{if(process.env.LAYOUTSPLAT_OFFLINE_CHECK)await context.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());});
+test('additional upstream Publisher regression documents finish in an isolated bounded worker',async({page})=>{
+ test.setTimeout(120000);await page.goto('/splatworks/layoutsplat/');await page.waitForFunction(()=>!!window.LayoutSplat);const sources=JSON.parse(await fs.readFile(path.join(__dirname,'fixtures/layoutsplat/publisher/SOURCES.json'),'utf8'));
+ for(const source of sources.files){const bytes=await fs.readFile(path.join(__dirname,'fixtures/layoutsplat/publisher',source.name));expect(require('node:crypto').createHash('sha256').update(bytes).digest('hex')).toBe(source.sha256);const result=await page.evaluate(async data=>{const bytes=new Uint8Array(data);return new Promise((resolve,reject)=>{const worker=new Worker('/splatworks/layoutsplat/publisher/worker.mjs',{type:'module'}),timer=setTimeout(()=>{worker.terminate();reject(Error('Decoder exceeded 45-second bound'));},45000);worker.onmessage=e=>{clearTimeout(timer);worker.terminate();resolve(e.data);};worker.onerror=e=>{clearTimeout(timer);worker.terminate();reject(Error(e.message));};worker.postMessage(bytes.buffer,[bytes.buffer]);});},[...bytes]);expect(result.error).toBe(source.expectedError);expect(result.events).toBeUndefined();}
+});

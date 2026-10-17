@@ -18,7 +18,7 @@ export function writeSplatText(data,customFonts={}) {
  if(data.document.format!=='prosemirror-json')throw Error('Unsupported WriteSplat document format.');
  let text='',marks=[],paragraphs=[],nodes=0,firstStyle;const substituted=new Set();const family=(value,weight=400,italic=false)=>{const source=String(value||'Arial').slice(0,120),id=matchImportedFont(source,customFonts,weight,italic);if(!Object.hasOwn(customFonts,id)&&!source.split(',').map(normalizedFamily).includes(normalizedFamily(id)))substituted.add(source+' → '+id);return id;};
  const pt=(value,fallback=0)=>clamp(parseFloat(value)*(/px$/.test(String(value))?.75:1),0,360,fallback);
- function visit(node,depth=0,base={font:'Arial',size:12,color:'#25304b'},prefix='',listDepth=0){
+ function visit(node,depth=0,base={font:'Arial',size:12,color:'#25304b'},prefix='',listDepth=0,list=null){
   if(!node||++nodes>100000||depth>100)throw Error('The writing document is too complex.');
   if(node.type==='text'){const from=text.length;text+=safeText(node.text);const mark={from,to:text.length,...base};for(const item of node.marks||[]){if(item.type==='strong')mark.bold=true;if(item.type==='em')mark.italic=true;if(item.type==='underline')mark.underline=true;if(item.type==='fontFamily')mark.fontSource=String(item.attrs?.family||'Arial').slice(0,120);if(item.type==='fontSize')mark.size=clamp(parseFloat(item.attrs?.size)*(/px$/.test(item.attrs?.size)?.75:1),6,120,base.size);if(item.type==='textColor')mark.color=color(item.attrs?.color,'#25304b');if(item.type==='link'&&/^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(item.attrs?.href||''))mark.link=item.attrs.href;}mark.font=family(mark.fontSource||base.fontSource||base.font,mark.bold?700:400,!!mark.italic);delete mark.fontSource;if(text.length>from)marks.push(mark);}
   else if(node.type==='tab')text+='\t';else if(node.type==='hard_break')text+='\n';
@@ -27,10 +27,10 @@ export function writeSplatText(data,customFonts={}) {
    if(prefix){text+=prefix;marks.push({from,to:text.length,font:style.font,size:style.size,color:style.color});}for(const child of node.content||[])visit(child,depth+1,style);
    const multiple=typeof a.lineMultiple==='number'?clamp(a.lineMultiple,.5,6,1.45):undefined,inset=listDepth*18;
    paragraphs.push({from,to:text.length,leading:typeof a.leading==='number'?clamp(a.leading,6,360,style.size*1.45):style.size*(multiple||1.45),...(multiple?{lineMultiple:multiple}:{}),align:['left','center','right','justify'].includes(a.align)?a.align:'left',spaceBefore:pt(a.spaceBefore),spaceAfter:pt(a.spaceAfter),indentLeft:Math.min(360,pt(a.indentLeft)+inset),indentRight:pt(a.indentRight),firstLineIndent:Math.max(-360,clamp(a.firstLineIndent,-360,360,0)-inset)});
-   if(a.tabs?.length)notes.push('Custom tab-stop positions are not applied to LayoutSplat text flow; tab characters are retained.');
+   if(a.tabs?.length)paragraphs.at(-1).tabs=[...new Set(a.tabs.filter(n=>Number.isFinite(n)&&n>0&&n<=2000))].sort((a,b)=>a-b).slice(0,32);if(list)paragraphs.at(-1).list={...list,depth:Math.min(20,listDepth),prefix};
   }else if(['ordered_list','bullet_list'].includes(node.type)){
-   let number=Number.isInteger(node.attrs?.order)?clamp(node.attrs.order,0,100000,1):1;for(const item of node.content||[]){if(++nodes>100000)throw Error('The writing document is too complex.');const override=item.attrs?.numberOverride;if(Number.isInteger(override))number=clamp(override,0,100000,number);let label=node.type==='bullet_list'?'•  ':listNumber(number++,node.attrs?.numberStyle)+'.  ';for(const child of item.content||[]){visit(child,depth+1,base,label,listDepth+1);label='';}}
-  }else{if(node.type==='image')text+=`[${safeText(node.attrs?.alt||'Picture')}]`;for(const child of node.content||[])visit(child,depth+1,base,prefix,listDepth);}
+   let number=Number.isInteger(node.attrs?.order)?clamp(node.attrs.order,0,100000,1):1;for(const item of node.content||[]){if(++nodes>100000)throw Error('The writing document is too complex.');const override=item.attrs?.numberOverride;if(Number.isInteger(override))number=clamp(override,0,100000,number);const current=number++,style=['a','A','i','I'].includes(node.attrs?.numberStyle)?node.attrs.numberStyle:'1';let label=node.type==='bullet_list'?'•  ':listNumber(current,style)+'.  ';for(const child of item.content||[]){visit(child,depth+1,base,label,listDepth+1,{kind:node.type==='bullet_list'?'bullet':'ordered',number:current,style});label='';}}
+  }else{if(node.type==='image')text+=`[${safeText(node.attrs?.alt||'Picture')}]`;for(const child of node.content||[])visit(child,depth+1,base,prefix,listDepth,list);}
   if(text.length>100000||marks.length>10000||paragraphs.length>10000)throw Error('A story supports 100,000 characters and 10,000 formatting ranges/paragraphs.');
  }
  visit(data.document.content);if(!paragraphs.length)paragraphs.push({from:0,to:text.length,leading:17.4,align:'left'});const base=firstStyle||{font:'Arial',size:12,color:'#25304b'};
@@ -46,6 +46,7 @@ export function suiteTables(data) {
 export async function importSuite(data,{customFonts={}}={}) {
   const d = newPublication(true), warnings = []; d.title = safeText(data?.metadata?.title || data?.title || 'Imported publication').slice(0, 200);
   if (/WriteSplat/i.test(data?.app || '')) {
+    if(data.customFonts){const checked=newPublication(true);checked.customFonts=data.customFonts;validatePublication(checked);customFonts={...customFonts,...data.customFonts};}
     const imported = writeSplatText(data,customFonts), key = uid();if(Object.keys(customFonts).length)d.customFonts=structuredClone(customFonts); warnings.push(...imported.notes);
     d.stories[key] = { text: imported.text, marks: imported.marks, paragraphs: imported.paragraphs, style: {...textStyle(),...imported.style}, frames: [] };
     const count = Math.max(1, Math.ceil(imported.text.length / 1700)); d.pages = [];
@@ -95,18 +96,26 @@ export async function importSuite(data,{customFonts={}}={}) {
 export function exportSuite(kind, doc, layout) {
   const date = new Date().toISOString(), warnings = [], tables = doc.pages.flatMap(p => p.objects.filter(o => o.type === 'table')), seen = new Set(); let data;
   if (kind === 'writesplat') {
-    const content=[];
+    const content=[];let listStack=[];
     for(const s of Object.values(doc.stories))for(const paragraph of textToRichDocument(s).content){
-      const source=paragraph.attrs||{},attrs={align:source.align||s.style.align,leading:source.leading??null,lineMultiple:source.lineMultiple??(source.leading?null:s.style.lineHeight),spaceBefore:source.spaceBefore??0,spaceAfter:source.spaceAfter??0,indentLeft:source.indentLeft??0,indentRight:source.indentRight??0,firstLineIndent:source.firstLineIndent??0,fontFamily:fontName(doc,s.style.font),fontSize:s.style.size};
-      const children=[];for(const run of paragraph.content||[]){let style={font:s.style.font,size:s.style.size,color:s.style.color};const marks=[];for(const m of run.marks||[]){if(m.type==='style')style={...style,...Object.fromEntries(Object.entries(m.attrs).filter(([,value])=>value!==null))};else if(['strong','em','underline'].includes(m.type))marks.push(m);else if(m.type==='link')marks.push({type:'link',attrs:{href:m.attrs.href,title:null}});}
+      const source=paragraph.attrs||{},list=source.list,attrs={align:source.align||s.style.align,leading:source.leading??null,lineMultiple:source.lineMultiple??(source.leading?null:s.style.lineHeight),spaceBefore:source.spaceBefore??0,spaceAfter:source.spaceAfter??0,indentLeft:source.indentLeft??0,indentRight:source.indentRight??0,firstLineIndent:source.firstLineIndent??0,fontFamily:fontName(doc,s.style.font),fontSize:s.style.size,tabs:source.tabs||[]};
+      const children=[];for(const run of paragraph.content||[]){if(run.type==='hard_break'){children.push({type:'hard_break'});continue;}let style={font:s.style.font,size:s.style.size,color:s.style.color};const marks=[];for(const m of run.marks||[]){if(m.type==='style')style={...style,...Object.fromEntries(Object.entries(m.attrs).filter(([,value])=>value!==null))};else if(['strong','em','underline'].includes(m.type))marks.push(m);else if(m.type==='link')marks.push({type:'link',attrs:{href:m.attrs.href,title:null}});}
         marks.push({type:'fontFamily',attrs:{family:fontName(doc,style.font)}},{type:'fontSize',attrs:{size:style.size+'pt'}},{type:'textColor',attrs:{color:style.color}});for(const part of run.text.split(/(\t)/)){if(part==='\t')children.push({type:'tab',marks});else if(part)children.push({type:'text',text:part,marks});}
       }
-      content.push({type:'paragraph',attrs,...(children.length?{content:children}:{})});
+      if(list){attrs.indentLeft=Math.max(0,attrs.indentLeft-list.depth*18);attrs.firstLineIndent+=list.depth*18;}
+      const node={type:'paragraph',attrs,...(children.length?{content:children}:{})};
+      if(list&&!list.prefix&&listStack[list.depth-1]?.node.content.length){listStack[list.depth-1].node.content.at(-1).content.push(node);}
+      else if(list&&list.prefix&&children.filter(n=>n.type==='text').map(n=>n.text).join('').startsWith(list.prefix)){
+       let remove=list.prefix.length;while(remove&&children.length){const n=children[0];if(n.type!=='text')break;if(n.text.length<=remove){remove-=n.text.length;children.shift();}else{n.text=n.text.slice(remove);remove=0;}}
+       const level=Math.min(list.depth,listStack.length+1);listStack=listStack.slice(0,level);let entry=listStack[level-1];
+       if(!entry||entry.kind!==list.kind||entry.style!==list.style){const target=level>1?listStack[level-2].node.content.at(-1).content:content;const group={type:list.kind==='ordered'?'ordered_list':'bullet_list',attrs:{order:list.number,numberStyle:list.style},content:[]};target.push(group);entry={node:group,kind:list.kind,style:list.style};listStack[level-1]=entry;}
+       entry.node.content.push({type:'list_item',attrs:{numberOverride:list.kind==='ordered'?list.number:null},content:[node]});
+      }else{listStack=[];content.push(node);if(list)warnings.push('An edited list label became an ordinary paragraph; its text is retained.');}
     }
     if(!content.length)content.push({type:'paragraph'});
-    data={app:'WriteSplatTM',version:1,createdAt:date,updatedAt:date,metadata:{title:doc.title,author:'',targetGrade:'6'},document:{format:'prosemirror-json',content:{type:'doc',content}},teacher:{studentView:false,citations:[],answerKey:[]}};
+    data={app:'WriteSplatTM',version:1,createdAt:date,updatedAt:date,metadata:{title:doc.title,author:'',targetGrade:'6'},document:{format:'prosemirror-json',content:{type:'doc',content}},teacher:{studentView:false,citations:[],answerKey:[]},...(Object.keys(doc.customFonts||{}).length?{customFonts:structuredClone(doc.customFonts)}:{})};
     warnings.push('WriteSplat receives complete stories with supported character and paragraph formatting. Page positions, masters, pictures, shapes and tables are not part of this text export.');
-    if(Object.keys(doc.customFonts||{}).length)warnings.push('Embedded font files are not transferred to WriteSplat. Original family names are retained; that app uses fonts available on its device.');
+    if(Object.keys(doc.customFonts||{}).length)warnings.push('Imported font files accompany this WriteSplat project. Only redistribute fonts whose licenses permit it.');
     if(Object.values(doc.stories).some(s=>s.style.tracking||s.style.wordSpacing||s.style.textScale&&s.style.textScale!==1||s.marks?.some(m=>m.tracking)))warnings.push('Tracking, word spacing and horizontal text scaling are not transferred to WriteSplat.');
   } else if (kind === 'showsplat') {
     const scale = Math.min(1600 / doc.width, 900 / doc.height), dx = (1600 - doc.width * scale) / 2, dy = (900 - doc.height * scale) / 2;

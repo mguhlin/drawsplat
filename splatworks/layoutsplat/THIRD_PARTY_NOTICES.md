@@ -77,3 +77,12 @@ reverse-engineered libmspub readers (MPL-2.0 source supplied in `publisher/sourc
 it does not bundle or require Microsoft Publisher. Container/image structures use
 [MS-CFB](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-cfb/) and
 [MS-WMF](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/).
+
+## Local English hyphenation (v0.7.0)
+
+American English Liang patterns, version 2010-02-23, from LibreOffice's
+`hyph_en_US.dic` (BSD-style permission) accompany the complete original dictionary
+and license in `hyphenation/`. `patterns-en-us.mjs` embeds that unchanged dictionary
+as a JavaScript string; rebuild with `JSON.stringify` on the UTF-8 dictionary.
+The bounded trie and cache implementation is LayoutSplat GPL-3.0-only source.
+Other languages use browser hyphenation when a local dictionary is available.

@@ -1,3 +1,4 @@
+import {measureDetachedTabs} from './tabs.mjs';
 import { pageContext } from './publication-fields.mjs';
 import { applyTextStyle } from './layout.mjs';
 import { appendRich } from './rich.mjs';
@@ -51,7 +52,7 @@ export function objectElement(doc, object, layout) {
       for (let y = 22; y < object.h - 6; y += 16) for (const x of [6, object.w - 6]) { const dot = document.createElementNS(svg.namespaceURI, 'circle'); dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', '3'); dot.setAttribute('fill', object.fill); svg.append(dot); }
     }
   }
-  return el;
+  measureDetachedTabs(el);return el;
 }
 export function publicationPage(doc, page, layout) {
   ({doc, layout} = pageContext(doc, page, layout));

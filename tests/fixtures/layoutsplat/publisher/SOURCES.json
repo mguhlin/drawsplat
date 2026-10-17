@@ -1,0 +1,19 @@
+{
+  "license": "LibreOffice source terms (MPL-2.0); upstream regression documents, including historical malformed-file cases. Used only in isolated decoder tests.",
+  "files": [
+    {
+      "name": "EDB-22310-1.pub",
+      "bytes": 577536,
+      "sha256": "22ed7d33eca78b7d9730944004e97178821a742a45c0032a5feca66d16a6217c",
+      "source": "https://raw.githubusercontent.com/LibreOffice/core/baddf594428a2e6cb011d3e1c710f380ec02d594/writerperfect/qa/unit/data/draw/libmspub/pass/EDB-22310-1.pub",
+      "expectedError": "This is not a supported native Publisher file."
+    },
+    {
+      "name": "EDB-29664-1.pub",
+      "bytes": 89600,
+      "sha256": "ff968a8b3492127cda5fc2e65ed21166e198ec0cb5690777968c0d06a698732b",
+      "source": "https://raw.githubusercontent.com/LibreOffice/core/baddf594428a2e6cb011d3e1c710f380ec02d594/writerperfect/qa/unit/data/draw/libmspub/pass/EDB-29664-1.pub",
+      "expectedError": "This is not a supported native Publisher file."
+    }
+  ]
+}

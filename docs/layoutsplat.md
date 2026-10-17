@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.6.0** is the SplatWorks publication editor.
+LayoutSplat **v0.7.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -11,7 +11,7 @@ and its existing tools; SplatWorks is the ecosystem brand.
 [Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
 It covers the workspace, all 18 template types, text, graphics, masters, labels,
 mail merge, imports, suite exchange, digital output and current print limits.
-The guide covers v0.6.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
+The guide covers v0.7.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
 
 ## Templates
 
@@ -351,3 +351,33 @@ inline formatting, paragraph metrics and tab characters. Font family names survi
 embedded font files, custom tab positions, tracking, word spacing and horizontal
 scaling are not transferred to that editor. Conversion reports identify relevant
 limits. Paragraph/page composition still follows the receiving application.
+
+## v0.7 composition and source books
+
+Text properties include **Hyphenation**: manual soft hyphens, automatic or off.
+Automatic English uses bundled American-English patterns locally. Other languages
+use browser dictionaries when available. Stored text and mark offsets remain
+unchanged. Line breaks can differ from Publisher's composition engine.
+
+Picture properties offer **Around opaque picture edges**. LayoutSplat samples
+the local picture (including fit/crop/mask) into a conservative 16-band contour,
+with a six-point text gap. Rotation is applied during wrapping. **Refresh picture
+contour** updates the saved contour after changing picture content, cropping or
+fit. Moving/resizing/rotating a frame transforms its saved normalized contour.
+Transparent holes are not filled with text; text wraps around each band's outer
+edges. **Flow frame earlier/later** changes a linked story's frame sequence
+without moving artwork. Undo and native saves retain both choices.
+
+WriteSplat text exchange retains embedded font files, explicit tab positions, hard
+breaks and nested semantic list numbering. Fonts must permit redistribution.
+Page geometry, images/tables and document-specific tools still have conversion
+limits; inspect each report. Custom tabs resolve against shaped text in the browser.
+
+Desktop SLA/IDML exports include actual desktop font names and portable font
+files. Scribus checks found and corrected page-center/scratch offsets, missing
+text-frame paths and missing PostScript font identifiers. These checks establish
+the tested Scribus workflow; InDesign and Microsoft Publisher acceptance remain
+separate. See [verification evidence and limits](layoutsplat-verification.md).
+
+The [ebook guide](layoutsplat-ebooks.md) explains independent page/source editions,
+XHTML/CSS editing, footnotes, navigation, font retention and export choices.

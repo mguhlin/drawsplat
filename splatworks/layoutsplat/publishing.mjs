@@ -1,3 +1,4 @@
+import {pictureContour} from './text-wrap.mjs';
 import { uid, clone, frame, shape, textStyle, findObject, removeObject, validatePublication, linkFrames, unlinkFrame } from './engine.mjs';
 import { TEMPLATE_TYPES, THEMES, makeTemplate } from './templates.mjs';
 import { textToRichDocument, richDocumentToText } from './rich.mjs';
@@ -83,7 +84,7 @@ export function setupPublishing(api) {
     document.querySelectorAll('#fileMenu [data-action="importText"],#fileMenu [data-action="importWord"],#fileMenu [data-action="importOdt"]').forEach(b=>b.disabled=o?.type!=='text'||o.locked);
     if (o?.type === 'text') {
       const s = d.stories[o.storyId].style;
-      const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none',propKerning:s.kerning||'auto',propWordSpacing:s.wordSpacing||0,propTextScale:(s.textScale||1)*100 };
+      const controls = { propColumns: o.columns || 1, propColumnGap: o.columnGap ?? 12, propDropCap: s.dropCap || 0, propAutoFit: s.autoFit || 'none', propMinSize: s.minSize || 8, propTracking: s.tracking || 0, propWordArt: s.wordArt || 'none',propKerning:s.kerning||'auto',propWordSpacing:s.wordSpacing||0,propTextScale:(s.textScale||1)*100,propHyphens:s.hyphens||'manual' };
       for (const [id, value] of Object.entries(controls)) if ($(id) && $(id) !== document.activeElement) $(id).value = value;
       $('propBaselineAlign').checked = !!o.baselineAlign;
       $('propLigatures').checked=s.ligatures!==false;fontTools.render();
@@ -109,7 +110,7 @@ export function setupPublishing(api) {
   $('richColor').onchange = () => richEditor?.style({ color: $('richColor').value });
   $('richSize').onchange = () => richEditor?.style({ size: Number($('richSize').value) });
   $('richLink').onclick = () => { const href = prompt(t('linkPrompt'), 'https://'); if (href) try { richEditor.link(href); } catch { status('linkError'); } };
-  const propertyMap = { propDropCap: ['dropCap', true], propAutoFit: ['autoFit', false], propMinSize: ['minSize', true], propTracking: ['tracking', true], propWordArt: ['wordArt', false],propKerning:['kerning',false],propWordSpacing:['wordSpacing',true],propTextScale:['textScale',true] };
+  const propertyMap = { propDropCap: ['dropCap', true], propAutoFit: ['autoFit', false], propMinSize: ['minSize', true], propTracking: ['tracking', true], propWordArt: ['wordArt', false],propKerning:['kerning',false],propWordSpacing:['wordSpacing',true],propTextScale:['textScale',true],propHyphens:['hyphens',false] };
   $('propLigatures').onchange=e=>{e.stopImmediatePropagation();const o=api.getSelectedObject();if(o?.type==='text'&&!o.locked)mutate(()=>getDoc().stories[o.storyId].style.ligatures=e.target.checked);};
   $('propBaselineAlign').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'text' && !o.locked) mutate(() => o.baselineAlign = event.target.checked); });
   for (const [id, [key, numeric]] of Object.entries(propertyMap)) $(id).addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type !== 'text' || o.locked) return;
@@ -119,7 +120,9 @@ export function setupPublishing(api) {
   });
   for (const [id, key] of [['propColumns', 'columns'], ['propColumnGap', 'columnGap']]) $(id).addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type !== 'text' || o.locked) return; const next = clone(getDoc()); findObject(next, o.id).object[key] = Number(event.target.value); try { validatePublication(next); mutate(() => o[key] = Number(event.target.value)); } catch { status('invalidMeasure'); render(); } });
   $('propImageOpacity').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'image' && !o.locked) mutate(() => o.opacity = Number(event.target.value)); });
-  $('propWrap').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'image' && !o.locked) mutate(() => o.wrap = event.target.value); });
+  async function updateWrap(value){const o=api.getSelectedObject();if(o?.type!=='image'||o.locked)return;const asset=getDoc().assets[o.assetId],snapshot=JSON.stringify(o);try{const contour=value==='contour'?await pictureContour(asset,o):null;if(!api.currentPage().objects.includes(o)||JSON.stringify(o)!==snapshot)return;mutate(()=>{o.wrap=value;if(contour)o.wrapContour=contour;});}catch(error){api.showReport([error.message]);render();}}
+  $('propWrap').addEventListener('change',event=>{event.stopImmediatePropagation();updateWrap(event.target.value);});
+  $('refreshContour').onclick=()=>updateWrap('contour');
   $('pictureAlt').addEventListener('change', event => { event.stopImmediatePropagation(); const o = api.getSelectedObject(); if (o?.type === 'image' && !o.locked) mutate(() => getDoc().assets[o.assetId].alt = event.target.value.slice(0, 2000)); });
   $('applyTable').onclick = () => {
     const rows = $('tableCells').value.split('\n').filter(Boolean).map(line => line.split('\t')), cols = Math.max(...rows.map(row => row.length), 0);
@@ -139,6 +142,7 @@ export function setupPublishing(api) {
   async function action(name) {
     const d = getDoc(), p = api.currentPage(), o = api.getSelectedObject(), list = members();
     if (await context.action(name)) return true;
+    if(['storyFlowEarlier','storyFlowLater'].includes(name)){if(o?.type==='text'&&!o.locked){const frames=d.stories[o.storyId].frames,index=frames.indexOf(o.id),target=index+(name==='storyFlowEarlier'?-1:1);if(target>=0&&target<frames.length)mutate(()=>{[frames[index],frames[target]]=[frames[target],frames[index]];});}return true;}
     if(name==='importFont'){fontTools.open();return true;}
     if (name === 'contextLink') {
       const boxes = list.filter(o => o.type === 'text').sort((a,b) => a.y - b.y || a.x - b.x);

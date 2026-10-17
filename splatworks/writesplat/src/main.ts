@@ -1,3 +1,4 @@
+import {activateProjectFonts,type ProjectFonts} from './storage/projectFonts';
 import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../../shared/file-bridge.js';
 import { countDocumentStats } from './app/stats';
@@ -1434,12 +1435,15 @@ function bootstrap(): void {
   let availableVoices: SpeechSynthesisVoice[] = [];
   let citations: string[] = [];
   let answerKey: string[] = [];
+  let projectFonts: ProjectFonts = {};
+  function useProjectFonts(fonts:ProjectFonts={}):void{projectFonts=structuredClone(fonts);void activateProjectFonts(projectFonts).then(()=>ruler?.update()).catch(()=>{getRequiredElement('saveState').textContent='A project font could not load.';});}
 
   const saved = workspaceStorage().getItem(AUTOSAVE_KEY);
   if (saved) {
     try {
       const parsed: unknown = JSON.parse(saved);
       assertWriteSplatFile(parsed);
+      projectFonts=parsed.customFonts||{};
       titleInput.value = parsed.metadata.title;
       authorInput.value = parsed.metadata.author;
       targetGradeSelect.value = parsed.metadata.targetGrade;
@@ -1471,6 +1475,8 @@ function bootstrap(): void {
       writer.setHtml(starterBody);
     }
   }
+
+  useProjectFonts(projectFonts);
 
   function updateStats(): void {
     const html = writer.getHtml();
@@ -1535,6 +1541,7 @@ function bootstrap(): void {
   function createCurrentNativeFile(existing?: WriteSplatFile): WriteSplatFile {
     return createNativeFile(titleInput.value, writer.getJson(), {
       createdAt: existing?.createdAt,
+      customFonts:projectFonts,
       answerKey,
       author: authorInput.value,
       citations,
@@ -1715,6 +1722,7 @@ function bootstrap(): void {
       writer.run(action);
       refresh();
     } else if (action === 'new-document') {
+      useProjectFonts();
       titleInput.value = 'Untitled Document';
       authorInput.value = '';
       targetGradeSelect.value = '6';
@@ -2125,6 +2133,7 @@ function bootstrap(): void {
   }
 
   function loadNativeFile(file: WriteSplatFile): void {
+    useProjectFonts(file.customFonts);
     titleInput.value = file.metadata.title;
     authorInput.value = file.metadata.author;
     targetGradeSelect.value = file.metadata.targetGrade || '6';

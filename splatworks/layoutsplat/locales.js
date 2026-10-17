@@ -466,6 +466,26 @@ importFont|Import a font file|Importar archivo de fuente|Nhập tệp phông ch�
 importWordText|Microsoft Word — DOC / DOCX text|Microsoft Word — texto DOC / DOCX|Microsoft Word — văn bản DOC / DOCX|Microsoft Word — نص DOC / DOCX|Microsoft Word — DOC／DOCX 文本|Microsoft Word — DOC / DOCX पाठ
 importOdtText|LibreOffice Writer — ODT text|LibreOffice Writer — texto ODT|LibreOffice Writer — văn bản ODT|LibreOffice Writer — نص ODT|LibreOffice Writer — ODT 文本|LibreOffice Writer — ODT पाठ
 importFontMenu|Fonts — TTF / OTF / WOFF / WOFF2|Fuentes — TTF / OTF / WOFF / WOFF2|Phông chữ — TTF / OTF / WOFF / WOFF2|خطوط — TTF / OTF / WOFF / WOFF2|字体 — TTF／OTF／WOFF／WOFF2|फ़ॉन्ट — TTF / OTF / WOFF / WOFF2
+bookSourceEditor|Book source editor|Editor de código del libro|Trình sửa mã sách|محرر مصدر الكتاب|书籍源码编辑器|पुस्तक स्रोत संपादक
+sourceEditionHint|Source chapters and page layouts are separate editions. Export Source book to include saved XHTML, CSS, links and footnotes.|Los capítulos fuente y las páginas son ediciones separadas. Exporta Libro fuente para incluir XHTML, CSS, enlaces y notas guardados.|Chương nguồn và bố cục trang là các bản riêng. Xuất Sách nguồn để giữ XHTML, CSS, liên kết và chú thích đã lưu.|الفصول المصدرية وتخطيطات الصفحات إصداران منفصلان. صدّر الكتاب المصدري لتضمين XHTML وCSS والروابط والحواشي المحفوظة.|源码章节和页面布局是独立版本。导出源码书籍可包含已保存的 XHTML、CSS、链接和脚注。|स्रोत अध्याय और पृष्ठ लेआउट अलग संस्करण हैं। सहेजे XHTML, CSS, लिंक और फ़ुटनोट के लिए स्रोत पुस्तक निर्यात करें।
+bookResource|Chapter or stylesheet|Capítulo u hoja de estilos|Chương hoặc biểu định kiểu|الفصل أو ورقة الأنماط|章节或样式表|अध्याय या स्टाइलशीट
+bookEditMode|Edit mode|Modo de edición|Chế độ sửa|وضع التحرير|编辑模式|संपादन मोड
+sourceCode|XHTML / CSS|XHTML / CSS|XHTML / CSS|XHTML / CSS|XHTML / CSS|XHTML / CSS
+visualChapter|Visual chapter|Capítulo visual|Sửa chương trực quan|الفصل المرئي|可视化章节|दृश्य अध्याय
+saveBookSource|Save resource|Guardar recurso|Lưu tài nguyên|حفظ المورد|保存资源|संसाधन सहेजें
+checkBookLinks|Check links|Revisar enlaces|Kiểm tra liên kết|فحص الروابط|检查链接|लिंक जाँचें
+sourceEpub|Source book — XHTML and CSS|Libro fuente — XHTML y CSS|Sách nguồn — XHTML và CSS|الكتاب المصدري — XHTML وCSS|源码书籍 — XHTML 和 CSS|स्रोत पुस्तक — XHTML और CSS
+sourceEpubHint|Exports all saved source chapters, styles, pictures, fonts and local links. Canvas edits belong to the other ebook editions.|Exporta capítulos, estilos, imágenes, fuentes y enlaces fuente guardados. Los cambios de página pertenecen a las otras ediciones.|Xuất mọi chương nguồn, kiểu, ảnh, phông và liên kết đã lưu. Sửa trang thuộc các bản sách khác.|يصدّر الفصول والأنماط والصور والخطوط والروابط المصدرية المحفوظة. تعديلات الصفحة تخص الإصدارات الأخرى.|导出全部已保存的源码章节、样式、图片、字体和本地链接。画布编辑属于其他书籍版本。|सभी सहेजे स्रोत अध्याय, शैलियाँ, चित्र, फ़ॉन्ट और स्थानीय लिंक निर्यात करता है। कैनवास संपादन अन्य संस्करणों में हैं।
+invalidSourceVisual|The visual chapter could not be saved as XHTML. Use code mode to correct it.|No se pudo guardar el capítulo visual como XHTML. Corrígelo en modo código.|Không thể lưu chương trực quan thành XHTML. Sửa trong chế độ mã.|تعذر حفظ الفصل المرئي بصيغة XHTML. صححه في وضع الشفرة.|无法将可视化章节保存为 XHTML。请在代码模式中修正。|दृश्य अध्याय XHTML में नहीं सहेजा जा सका। कोड मोड में सुधारें।
+bookSourceSaved|Source resource saved.|Recurso fuente guardado.|Đã lưu tài nguyên nguồn.|تم حفظ المورد المصدري.|源码资源已保存。|स्रोत संसाधन सहेजा गया।
+bookLinksReady|All local links and fragment targets were found.|Se encontraron los enlaces locales y sus destinos.|Đã tìm thấy mọi liên kết cục bộ và đích.|تم العثور على جميع الروابط المحلية وأهدافها.|已找到所有本地链接和片段目标。|सभी स्थानीय लिंक और उनके लक्ष्य मिले।
+hyphenation|Hyphenation|Separación silábica|Ngắt từ|الواصلة|断字|शब्द विभाजन
+manualHyphens|Manual soft hyphens|Guiones opcionales manuales|Dấu ngắt từ thủ công|واصلات اختيارية يدوية|手动软连字符|मैनुअल सॉफ़्ट हाइफ़न
+contourWrap|Around opaque picture edges|Alrededor del contorno opaco|Quanh viền ảnh không trong suốt|حول الحواف المعتمة للصورة|沿图片不透明边缘环绕|चित्र के अपारदर्शी किनारों के चारों ओर
+refreshContour|Refresh picture contour|Actualizar contorno|Cập nhật viền ảnh|تحديث محيط الصورة|刷新图片轮廓|चित्र की रूपरेखा ताज़ा करें
+storyFlowEarlier|Flow frame earlier|Fluir cuadro antes|Chuyển khung lên trước|تدفق الإطار قبل السابق|文本框提前流转|फ़्रेम को प्रवाह में पहले रखें
+storyFlowLater|Flow frame later|Fluir cuadro después|Chuyển khung về sau|تدفق الإطار بعد التالي|文本框延后流转|फ़्रेम को प्रवाह में बाद रखें
+discardSourceEdits|Discard resource edits|Descartar cambios del recurso|Bỏ các sửa đổi tài nguyên|تجاهل تعديلات المورد|放弃资源编辑|संसाधन के बदलाव त्यागें
 `;
   const langs = ['en', 'es', 'vi', 'ar', 'zh', 'uh'], dict = Object.fromEntries(langs.map(l => [l, {}]));
   rows.trim().split('\n').forEach(row => { const [key, ...values] = row.split('|'); langs.forEach((lang, i) => { dict[lang][key] = values[i]; }); });

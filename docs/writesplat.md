@@ -74,3 +74,12 @@ spacing, indents, alignment, font defaults and supported character marks. Blank
 paragraphs and tab characters survive. List labels from LayoutSplat are text,
 rather than native renumbering lists. Embedded fonts and advanced spacing are
 reported separately by LayoutSplat; use native project backups for full fidelity.
+
+## Portable fonts from LayoutSplat
+
+LayoutSplat v0.7.0 text exports can include a validated collection of embedded
+TTF/OTF/WOFF/WOFF2 font files. WriteSplat loads those local fonts and retains them
+in native saves and autosave; a new document clears the previous font collection.
+Only redistribute fonts whose licenses permit it. The shared native text exchange
+also retains custom tab stops, hard breaks and supported nested list numbering.
+Page artwork and advanced publication effects remain outside this text exchange.

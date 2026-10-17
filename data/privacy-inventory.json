@@ -177,7 +177,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "c80ba95412e08cef6458b55db9ed8a24cbf07e8bf65543057890d8bd32ce7ad4"
+      "entrySha256": "456fe1c54343cb2af8baf7ac1a2615e446f144117ecfbb3901ffed4a29aa3808"
     },
     {
       "id": "layoutsplat",
@@ -216,7 +216,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "22b49a17a6650e65f6fda6af6b6864e9caeb9ccb145e1ae09cc7204926f7e9bd"
+      "entrySha256": "183fb44a6c5321de9c7157136ef12d0b2128fadcfc9739a80e4996ff18003bea"
     },
     {
       "id": "plansplat",
@@ -1685,7 +1685,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "5c7b28c101429956aa1a7a14e6abe75d17e36537aaf56fc71fa272bebcf55a89"
+      "entrySha256": "baefabfae6835ac872e156127a8f85533a134be19262bfe7fd905e343d78d0b8"
     },
     {
       "id": "templates",
@@ -1715,7 +1715,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "404aa9cfcce0ede62fb85fd73e9b631f5c87b6083deddc1a7efea201927f9b6a"
+      "entrySha256": "d9743ea9f831afa52ea7eb294f24b48e0036ff2968d0b665396bdc2ca56723fa"
     },
     {
       "id": "guides",
@@ -1742,6 +1742,7 @@
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
+        "helpx.adobe.com",
         "localhost",
         "localhost:8000",
         "localhost:8080",
@@ -1754,6 +1755,7 @@
         "script.google.com",
         "sigil-ebook.com",
         "splatworks.org",
+        "support.apple.com",
         "support.google.com",
         "translate.google.com",
         "workspace.google.com",
@@ -1765,6 +1767,7 @@
         "www.gnu.org",
         "www.googleapis.com",
         "www.microsoft.com",
+        "www.quark.com",
         "www.w3.org",
         "your-api.example"
       ],
@@ -1774,7 +1777,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "c17b5a091e5850f5413619ad7c8a278df4c135e0c61973c7df3c596272955879"
+      "entrySha256": "679509256d1a04c838d8168f53a9ae7b437d54e59d0d991b2b9366c470bf4cae"
     },
     {
       "id": "support",
@@ -1801,6 +1804,7 @@
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
+        "helpx.adobe.com",
         "localhost",
         "localhost:8000",
         "localhost:8080",
@@ -1813,6 +1817,7 @@
         "script.google.com",
         "sigil-ebook.com",
         "splatworks.org",
+        "support.apple.com",
         "support.google.com",
         "translate.google.com",
         "workspace.google.com",
@@ -1824,6 +1829,7 @@
         "www.gnu.org",
         "www.googleapis.com",
         "www.microsoft.com",
+        "www.quark.com",
         "www.w3.org",
         "your-api.example"
       ],
@@ -1833,7 +1839,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "40250a1c0e0085ea9ca6ff10e86872da7763c6ae8a2ed709a765ad0b05cebb92"
+      "entrySha256": "3f5e89a75e27b02db8cc9647380362a67b3a39cb5d35c46fb859986c96f6dd3c"
     }
   ]
 }
