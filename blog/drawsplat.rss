@@ -6,7 +6,7 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
-      <title>DrawSplat.org for Technology Administrators: Your Infrastructure, Your Rules</title>
+      <title>SplatWorks for Technology Administrators: Your Infrastructure, Your Rules</title>
       <link>https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-technology-administrators-your-infrastructure-your-rules/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-technology-administrators-your-infrastructure-your-rules/</guid>
       <description>&lt;img src="https://mguhlin.org/media/2026/10/drawsplat-technology-administrator-guide.webp" alt=""&gt;Schools can choose how to deploy the software, where student work is stored, and which components to make available.</description>
@@ -32,10 +32,10 @@
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat.org for Educators: More Than an Interactive Whiteboard</title>
+      <title>SplatWorks for Educators: More Than an Interactive Whiteboard</title>
       <link>https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-educators-more-than-an-interactive-whiteboard/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-drawsplat-org-for-educators-more-than-an-interactive-whiteboard/</guid>
-      <description>&lt;img src="https://mguhlin.org/media/2026/10/drawsplat-educator-toolkit-banner.webp" alt=""&gt;DrawSplat includes classroom templates, graph makers, concept maps, multimedia tools, games, and collaborative activities. The challenge? Helping educators discover what&amp;#x27;s available and put it to work.</description>
+      <description>&lt;img src="https://mguhlin.org/media/2026/10/drawsplat-educator-toolkit-banner.webp" alt=""&gt;SplatWorks includes the DrawSplat whiteboard, ConceptSplat, multimedia tools, office apps, PlanSplat, classroom widgets, and games. The challenge? Helping educators discover what&amp;#x27;s available and put it to work.</description>
       <pubDate>Fri, 16 Oct 2026 09:45:00 GMT</pubDate>
       <media:thumbnail url="https://mguhlin.org/media/2026/10/drawsplat-educator-toolkit-banner.webp" />
       <category>DrawSplat</category>
@@ -83,7 +83,7 @@
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>Install DrawSplat.org with an AI Agent: Free Software, Your Computer, Your Choice</title>
+      <title>Install SplatWorks with an AI Agent: Free Software, Your Computer, Your Choice</title>
       <link>https://mguhlin.org/blog/2026-10-11-install-drawsplat-org-with-an-ai-agent-free-software-your-computer-your-choice/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-install-drawsplat-org-with-an-ai-agent-free-software-your-computer-your-choice/</guid>
       <description>&lt;img src="https://mguhlin.org/media/2026/10/drawsplat-ai-installation-banner.webp" alt=""&gt;What if you could ask an AI assistant to help install an entire collection of classroom tools on your computer or district server? Not just explain what to do, but actually guide the installation?</description>
@@ -103,7 +103,7 @@
       <media:thumbnail url="https://splatworks.org/assets/layoutsplat-guide/v0.4.6/01-workspace.png" />
     </item>
     <item>
-      <title>DrawSplat.org: Making Data Privacy Agreements Easier for Schools</title>
+      <title>SplatWorks: Making Data Privacy Agreements Easier for Schools</title>
       <link>https://mguhlin.org/blog/2026-10-11-drawsplat-org-making-data-privacy-agreements-easier-for-schools/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-11-drawsplat-org-making-data-privacy-agreements-easier-for-schools/</guid>
       <description>&lt;img src="https://mguhlin.org/media/2026/10/drawsplat-privacy-tools-for-schools.webp" alt=""&gt;One question that comes up when introducing a new classroom tool is, &amp;quot;What about student data privacy?&amp;quot; It&amp;#x27;s a question every educator and school technology director should ask. After all, even a free tool needs to meet</description>
@@ -346,10 +346,10 @@
       <category>squirrel-run</category>
     </item>
     <item>
-      <title>DrawSplat Tools: Turn Paper Drawings into Virtual Rooms with SketchSpace VR EduSky education panoform</title>
+      <title>SplatWorks Tools: Turn Paper Drawings into Virtual Rooms with SketchSplat VR</title>
       <link>https://mguhlin.org/blog/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</guid>
-      <description>A student leans over a printed grid with colored pencils scattered everywhere. She is trying to decide where the water cycle should go. Evaporation on the left wall? Clouds on the</description>
+      <description>Turn student drawings into immersive classroom rooms with SketchSplat VR, formerly SketchSpace VR.</description>
       <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -378,10 +378,10 @@
       <category>sketchspace-vr</category>
     </item>
     <item>
-      <title>DrawSplat Feature: SplatImage Studio education ImageEditor free EduSky</title>
+      <title>SplatWorks Feature: ImageSplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-splatimage-studio-education-imageeditor-free/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-splatimage-studio-education-imageeditor-free/</guid>
-      <description>Looking for an easy to use image editor that allows for cropping images, masking images to common shapes, and has layers? Sure, there are tons of them out there that do that. The</description>
+      <description>Crop, annotate, and edit layered images in ImageSplat, the SplatWorks image editor formerly called SplatImage Studio.</description>
       <pubDate>Thu, 04 Jun 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -413,20 +413,20 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <category>edtech</category>
     </item>
     <item>
-      <title>DrawSplat Feature: Rubric Builder EduSky education free</title>
+      <title>SplatWorks Feature: RubricSplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-rubric-builder-edusky-education-free/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-rubric-builder-edusky-education-free/</guid>
-      <description>Making rubrics with Gen AI is easy. That said, I thought it might be worthwhile to mention that all of DrawSplat's tools do NOT use Gen AI to work. It is a little ironic but let's</description>
+      <description>Create editable classroom rubrics and print performance criteria with RubricSplat, formerly Rubric Builder.</description>
       <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature: Big Link EduSky FREE education</title>
+      <title>SplatWorks Feature: Big Link</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-big-link-edusky-free-education/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-big-link-edusky-free-education/</guid>
-      <description>Ever wanted a huge, gigantic link sprawled across a website when you're facilitating a class or workshop? I have. The problem is that these types of websites have disappeared. Ther</description>
+      <description>Display a large, readable web address for a classroom or workshop with Big Link in the SplatWorks ecosystem.</description>
       <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -443,10 +443,10 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature - Quiz and Flashcard Studio free EduSky education</title>
+      <title>SplatWorks Feature: QuizSplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</guid>
-      <description>"What kind of tool do you need as a college student?" I asked my niece attending college. She replied: "I've been trying to use Quizizz to study content for my class. It's not work</description>
+      <description>Build quizzes and printable flashcards with QuizSplat, formerly Quiz and Flashcard Studio.</description>
       <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -463,20 +463,20 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature: Chart Studio EduSky education free</title>
+      <title>SplatWorks Feature: Chart Studio</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-chart-studio-edusky-education-free/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-chart-studio-edusky-education-free/</guid>
-      <description>Looking for a little bit more robust chart maker? Give DrawSplat Tools: Chart Studio a try:</description>
+      <description>Turn classroom data into charts with Chart Studio, a free browser-based SplatWorks tool.</description>
       <pubDate>Sun, 31 May 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature: DiceBreaker Creator multilingual education EduSky</title>
+      <title>SplatWorks Feature: Dicebreaker Creator</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</guid>
-      <description>One of my most popular</description>
+      <description>Build dice-based classroom prompts and icebreakers with the multilingual Dicebreaker Creator.</description>
       <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <category>Vibe Coding</category>
@@ -484,10 +484,10 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature: Animated GIF Maker EduSky free GIF webm mp4</title>
+      <title>SplatWorks Feature: GIFsplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-animated-gif-maker-edusky-free-gif/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-animated-gif-maker-edusky-free-gif/</guid>
-      <description>Wish you had a FREE, multilingual, amazing Animated GIF Maker tool? I know I wish I had a great Animated GIF creator tool. Ther</description>
+      <description>Create animated GIFs from image frames with GIFsplat, a SplatWorks tool with GIF, MP4, and WebM exports.</description>
       <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -501,10 +501,10 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <guid>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</guid>
     </item>
     <item>
-      <title>DrawSplat Feature: Mermaid Diagram Studio (Updated) EduSky education mermaid</title>
+      <title>SplatWorks Feature: DiagramSplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-mermaid-diagram-studio/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-mermaid-diagram-studio/</guid>
-      <description>I remember when I first encountered Mermaid diagrams. The challenge? Generating the Mermaid syntax so that it would work in a Mermaid rendering engine. For whatever the reason, any</description>
+      <description>Write, preview, and export Mermaid diagrams with DiagramSplat, formerly Mermaid Diagram Studio.</description>
       <pubDate>Fri, 29 May 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
@@ -522,10 +522,10 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>DrawSplat Feature: Concept Map Studio</title>
+      <title>SplatWorks Feature: ConceptSplat</title>
       <link>https://mguhlin.org/blog/drawsplat-feature-concept-map-studio/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-concept-map-studio/</guid>
-      <description>There's a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat's conc</description>
+      <description>Create, edit, embed, and export concept maps and graphic organizers with ConceptSplat, formerly Concept Map Studio.</description>
       <pubDate>Thu, 28 May 2026 00:00:00 GMT</pubDate>
       <category>DrawSplat</category>
       <author>mguhlin</author>
