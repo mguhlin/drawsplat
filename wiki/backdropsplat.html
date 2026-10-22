@@ -23,8 +23,8 @@ saving. Background and export-format changes reuse the existing cutout. Every
 processing attempt starts from the original, so adjustments are not cumulative.
 Cancel stops the worker; existing completed results remain available.</p>
 <h2 id="put-your-subject-on-a-new-background">Put your subject on a new background</h2>
-<p>In standalone BackdropSplat, use <strong>Choose a new background</strong> below the image
-preview. Choose from six locally shipped original illustrations:</p>
+<p>In BackdropSplat, use <strong>Choose a new background</strong> below the image
+preview. In ImageSplat, the same chooser appears inside <strong>Effects → Background removal…</strong>, below its previews. Choose from six locally shipped original illustrations:</p>
 <ul>
 <li><strong>Studio Paper</strong>: warm paper and soft studio lighting.</li>
 <li><strong>Soft Lavender</strong>: a quiet lavender and sky-blue wash.</li>
@@ -59,8 +59,7 @@ cancelled. Background files have the same 40 MB / 16 MP / 8,192-pixel bounds.</p
 studio in the corresponding mode. Process, inspect before/after previews, and
 apply all selected layers together. One Undo restores them all; Cancel and
 exports leave layers unchanged. Layer positions and dimensions are preserved.
-PNG/JPEG and ZIP downloads are also available. The same worker, pinned models,
-white/color algorithm, and optional-connections preference serve both apps.</p>
+PNG/JPEG and ZIP downloads are also available. Upload a backdrop, choose the same six built-in scenes, or load a direct HTTPS image URL. Fill/Fit and the chosen backdrop are included in previews, exports, and layer Apply. One Undo restores the whole selection; closing the studio cancels pending background loads. The same worker, models, image loader, compositor, and optional-connections preference serve both apps.</p>
 <h2 id="local-processing-and-first-use-downloads">Local processing and first-use downloads</h2>
 <p>White/color removal is ordinary pixel processing with no model or external
 connection. Photo removal runs locally with pinned open models. ORMBG Fast is
@@ -89,8 +88,7 @@ HEIC/HEIF requires browser decoding support; otherwise convert to JPG/PNG first.
 <li>AI cutouts are estimates. Hair, glass, shadows, similar foreground/background
 colors, and busy groups may need further editing in ImageSplat.</li>
 <li>Static hosting requires HTTP(S); direct file URLs do not reliably run workers.</li>
-<li>Existing downloadable suite releases are not changed by a new web tool. Future
-packages that include <code>solutions/</code> include this tool and its local runtime.</li>
+<li>Static release v3.1.45 includes BackdropSplat and the updated ImageSplat in the full DrawSplat and Tools packages. District suite v3.1.45 includes the complete ecosystem. Photo model files still download on first use; the browser engine and all six built-in backgrounds are shipped locally.</li>
 </ul>
 <h2 id="verification-commands">Verification commands</h2>
 <pre><code class="language-sh">node --test tests/backdropsplat-pixels.test.mjs
@@ -125,6 +123,13 @@ photo adjustment, clipboard, action icon, and Green Screen Studio checks passed.
 images, direct online URLs, no-credential/no-referrer requests, composited pixel
 inspection in preview/PNG/JPEG/ZIP, centered Fill/Fit placement, unchanged
 foreground cutouts, failed-load recovery, privacy changes, cancellation, bounds,
-clearing, and mobile layout. These controls currently belong to standalone
-BackdropSplat; ImageSplat retains its selected-layer cutout studio.</p>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#use-it">Use it</a></li><li><a href="#put-your-subject-on-a-new-background">Put your subject on a new background</a></li><li><a href="#use-the-same-engine-inside-imagesplat">Use the same engine inside ImageSplat</a></li><li><a href="#local-processing-and-first-use-downloads">Local processing and first-use downloads</a></li><li><a href="#limits">Limits</a></li><li><a href="#verification-commands">Verification commands</a></li><li><a href="#verified-october-22-2026">Verified October 22, 2026</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 15 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+clearing, and mobile layout. Both BackdropSplat and ImageSplat now provide these replacement-background controls. ImageSplat adds selected-layer Apply, complete-selection Undo/Redo, and cancellation when its studio closes.</p>
+<h2 id="language-picker">Language picker</h2>
+<p>BackdropSplat’s header now includes the same six-language picker as the other
+suite tools: English, Spanish, Vietnamese, Arabic, Chinese, and Hindi/Urdu.
+Arabic uses right-to-left layout; image pixels and the comparison slider retain
+their original orientation. The language preference is shared with the suite,
+survives reloads, and supports <code>?lang=es</code> links. Switching languages preserves
+loaded images, cutouts, background choices, and download readiness. Interface
+translations are provided; native-speaker review is pending.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#use-it">Use it</a></li><li><a href="#put-your-subject-on-a-new-background">Put your subject on a new background</a></li><li><a href="#use-the-same-engine-inside-imagesplat">Use the same engine inside ImageSplat</a></li><li><a href="#local-processing-and-first-use-downloads">Local processing and first-use downloads</a></li><li><a href="#limits">Limits</a></li><li><a href="#verification-commands">Verification commands</a></li><li><a href="#verified-october-22-2026">Verified October 22, 2026</a></li><li><a href="#language-picker">Language picker</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 15 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

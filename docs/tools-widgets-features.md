@@ -58,6 +58,7 @@ Category: **Create** · 20 components
 - Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
 - Replacement backgrounds: upload an image, choose six original local scenes, or load a direct HTTPS image URL; centered Fill/Fit placement, instant preview, and matching PNG/JPEG/batch ZIP output without rerunning removal.
 - Cancellable worker processing; original files stay unchanged and photos are not uploaded.
+- Six-language header picker with a shared saved preference, Arabic RTL layout, and language switching that preserves images and cutouts.
 
 ### ClipSplat
 
@@ -158,6 +159,7 @@ Category: **Create** · 20 components
 - Crop, mask, adjust photos, and apply effects
 - BackdropSplat background removal: local photo subject cutouts (Fast / Best), white background removal, or sampled colors; preview before applying selected layers, then restore all with one Undo
 - White/color controls: match border-connected regions or every matching pixel, with tolerance and soft edges; export transparent or solid PNG/JPEG and batch ZIP files at full resolution
+- Replace cutout backgrounds with uploads, six shared local scenes, or direct HTTPS image URLs; Fill/Fit, before/after preview, composited PNG/JPEG/ZIP, and atomic selected-layer Apply with one Undo.
 - Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
 - Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images
@@ -472,6 +474,7 @@ Category: **Media** · 8 components
 - Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
 - Replacement backgrounds: upload an image, choose six original local scenes, or load a direct HTTPS image URL; centered Fill/Fit placement, instant preview, and matching PNG/JPEG/batch ZIP output without rerunning removal.
 - Cancellable worker processing; original files stay unchanged and photos are not uploaded.
+- Six-language header picker with a shared saved preference, Arabic RTL layout, and language switching that preserves images and cutouts.
 
 ### ClipSplat
 
@@ -505,6 +508,7 @@ Category: **Media** · 8 components
 - Crop, mask, adjust photos, and apply effects
 - BackdropSplat background removal: local photo subject cutouts (Fast / Best), white background removal, or sampled colors; preview before applying selected layers, then restore all with one Undo
 - White/color controls: match border-connected regions or every matching pixel, with tolerance and soft edges; export transparent or solid PNG/JPEG and batch ZIP files at full resolution
+- Replace cutout backgrounds with uploads, six shared local scenes, or direct HTTPS image URLs; Fill/Fit, before/after preview, composited PNG/JPEG/ZIP, and atomic selected-layer Apply with one Undo.
 - Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
 - Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images

@@ -117,3 +117,90 @@ test('real photo cutout works through ImageSplat with the shared model and no up
   await page.locator('#bs-apply').click();await expect(page.locator('#backgroundStudio')).toHaveCount(0);await open(page);
   expect((await page.locator('#bs-original').evaluate(c=>c.getContext('2d').getImageData(0,0,1,1).data[3]))).toBeLessThan(255);
 });
+
+async function replacementFile(page) {
+  const data = await page.evaluate(() => {
+    const c = document.createElement('canvas');c.width=140;c.height=70;const x=c.getContext('2d');
+    x.fillStyle='#ff0000';x.fillRect(0,0,70,70);x.fillStyle='#0000ff';x.fillRect(70,0,70,70);return c.toDataURL().split(',')[1];
+  });
+  return {name:'new-background.png',mimeType:'image/png',buffer:Buffer.from(data,'base64')};
+}
+async function uploadReplacement(page, file) {
+  await page.locator('#bs-bg-file').setInputFiles(file);await expect(page.locator('#bs-bg-status')).toContainText('selected');await expect(page.locator('#bs-apply')).toBeEnabled();
+}
+async function selectBoth(page) {
+  const stage=page.locator('#stage'),box=await stage.boundingBox(),native=await stage.evaluate(c=>({w:c.width,h:c.height}));
+  await stage.click({position:{x:50*box.width/native.w,y:65*box.height/native.h}});
+  await stage.click({position:{x:125*box.width/native.w,y:105*box.height/native.h},modifiers:['Shift']});
+}
+
+test('uploaded backgrounds preview behind cutouts, export PNG/JPEG, and apply with Undo/Redo',async({page})=>{
+  await upload(page);await open(page,'removeBg');await cutout(page);
+  let workers=0;page.on('worker',()=>workers++);
+  await uploadReplacement(page,await replacementFile(page));await expect(page.locator('#bs-background')).toHaveValue('image');
+  expect(await pixel(page,'bs-result',1,1)).toEqual([255,0,0,255]);expect(await pixel(page,'bs-result',69,1)).toEqual([0,0,255,255]);expect(await pixel(page,'bs-result',20,20)).toEqual([0,0,0,255]);
+  const png=await save(page);expect(await inspect(page,png,1,1)).toEqual({width:70,height:70,pixel:[255,0,0,255]});
+  await page.locator('#bs-format').selectOption('jpeg');const jpg=await inspect(page,await save(page),1,1);expect(jpg.pixel[0]).toBeGreaterThan(245);expect(jpg.pixel[3]).toBe(255);
+  await page.locator('#bs-bg-fit').selectOption('contain');expect((await pixel(page,'bs-result'))).toEqual([255,255,255,255]);expect(await pixel(page,'bs-result',1,35)).toEqual([255,0,0,255]);
+  await page.locator('#bs-bg-fit').selectOption('cover');await page.locator('#bs-background').selectOption('transparent');expect((await inspect(page,await save(page))).pixel[0]).toBeGreaterThan(245);
+  await page.locator('#bs-format').selectOption('png');expect((await inspect(page,await save(page))).pixel[3]).toBe(0);
+  await page.locator('#bs-background').selectOption('image');expect(workers).toBe(0);
+  await page.locator('#bs-apply').click();await expect(page.locator('#backgroundStudio')).toHaveCount(0);await open(page);expect(await pixel(page)).toEqual([255,0,0,255]);await page.keyboard.press('Escape');
+  await page.locator('.toolbar [data-action="undo"]').click();await selectImage(page);await open(page);expect(await pixel(page)).toEqual([255,255,255,255]);await page.keyboard.press('Escape');
+  await page.locator('.toolbar [data-action="redo"]').click();await selectImage(page);await open(page);expect(await pixel(page)).toEqual([255,0,0,255]);
+});
+
+test('all six shared backgrounds work without external connections and Cancel leaves layers unchanged',async({page})=>{
+  await upload(page);await open(page,'removeBg');await page.evaluate(()=>window.SplatPrivacy.setConnections(false));
+  const external=[];page.on('request',r=>{if(/^https?:/.test(r.url())&&!r.url().startsWith('http://127.0.0.1:8792'))external.push(r.url());});
+  await page.getByRole('button',{name:'Studio Paper',exact:true}).click();await expect(page.locator('#bs-bg-status')).toContainText('Process your selected layers');await cutout(page);
+  await expect(page.locator('.bs-bg-choice')).toHaveCount(6);
+  for(const name of ['Studio Paper','Soft Lavender','Classroom Board','Splat Confetti','Mountain Morning','Coastal Calm']) {
+    const button=page.getByRole('button',{name,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true');await expect(page.locator('#bs-download')).toBeEnabled();expect((await inspect(page,await save(page))).pixel[3]).toBe(255);
+  }
+  await page.setViewportSize({width:1440,height:1000});await page.locator('#backgroundStudio').evaluate(d=>d.scrollTop=0);await page.screenshot({path:'.tmp/backdropsplat/imagesplat-replacement-desktop.png',fullPage:true});
+  await page.setViewportSize({width:390,height:844});await page.locator('#bs-replacement').scrollIntoViewIfNeeded();await expect.poll(()=>page.locator('#backgroundStudio').evaluate(d=>d.scrollWidth<=d.clientWidth)).toBe(true);await page.screenshot({path:'.tmp/backdropsplat/imagesplat-replacement-mobile.png'});
+  await page.locator('#bs-bg-remove').click();await expect(page.locator('#bs-background')).toHaveValue('transparent');expect((await inspect(page,await save(page))).pixel[3]).toBe(0);
+  await page.keyboard.press('Escape');await page.setViewportSize({width:1280,height:900});await open(page);expect(await pixel(page)).toEqual([255,255,255,255]);expect(external).toEqual([]);
+});
+
+test('a shared replacement is included in every ZIP image and batch Apply restores in one Undo',async({page})=>{
+  await upload(page,2);await selectBoth(page);await open(page,'removeBg');await cutout(page);await uploadReplacement(page,await replacementFile(page));
+  const bytes=await save(page,'bs-zip');const entries=await page.evaluate(async bytes=>{
+    const z=await window.JSZip.loadAsync(new Uint8Array(bytes)),out=[];for(const[name,file]of Object.entries(z.files))out.push({name,bytes:[...await file.async('uint8array')]});return out;
+  },[...bytes]);expect(entries.map(e=>e.name)).toEqual(['logo-cutout.png','logo-cutout-2.png']);
+  for(const e of entries)expect((await inspect(page,e.bytes,69,1)).pixel).toEqual([0,0,255,255]);
+  await page.locator('#bs-apply').click();await expect(page.locator('#backgroundStudio')).toHaveCount(0);
+  for(let i=0;i<2;i++){await page.locator('#layerList .layer .name').nth(i).click();await open(page);expect(await pixel(page)).toEqual([255,0,0,255]);await page.keyboard.press('Escape');}
+  await page.locator('.toolbar [data-action="undo"]').click();
+  for(let i=0;i<2;i++){await page.locator('#layerList .layer .name').nth(i).click();await open(page);expect(await pixel(page)).toEqual([255,255,255,255]);await page.keyboard.press('Escape');}
+});
+
+test('online backgrounds use credential-free image GETs; failures and oversized files preserve the chosen backdrop',async({page})=>{
+  await upload(page);await open(page,'removeBg');await cutout(page);const file=await replacementFile(page);let request;
+  await page.route('https://backgrounds.example/image.png',async route=>{request=route.request();await route.fulfill({contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:file.buffer});});
+  await page.locator('#bs-bg-url').fill('https://backgrounds.example/image.png');await page.locator('#bs-bg-load').click();await expect(page.locator('#bs-bg-status')).toContainText('Online image · backgrounds.example selected');
+  expect(request.method()).toBe('GET');expect(request.postData()).toBeNull();expect(request.headers().referer).toBeUndefined();expect(request.headers().cookie).toBeUndefined();expect((await inspect(page,await save(page))).pixel).toEqual([255,0,0,255]);
+  await page.locator('#bs-bg-url').fill('http://backgrounds.example/image.png');await page.locator('#bs-bg-load').click();await expect(page.locator('#bs-bg-status')).toContainText('HTTPS');
+  await page.route('https://backgrounds.example/blocked.png',r=>r.abort('accessdenied'));await page.locator('#bs-bg-url').fill('https://backgrounds.example/blocked.png');await page.locator('#bs-bg-load').click();await expect(page.locator('#bs-bg-status')).toContainText('upload it here instead');
+  await page.locator('#bs-bg-file').setInputFiles({name:'broken.png',mimeType:'image/png',buffer:Buffer.from('broken')});await expect(page.locator('#bs-bg-status')).toContainText('cannot open');
+  await page.route('https://backgrounds.example/huge.png',r=>r.fulfill({headers:{'access-control-allow-origin':'*','content-length':'42000000'},contentType:'image/png',body:'x'}));await page.locator('#bs-bg-url').fill('https://backgrounds.example/huge.png');await page.locator('#bs-bg-load').click();await expect(page.locator('#bs-bg-status')).toContainText('over 40 MB');
+  expect((await inspect(page,await save(page))).pixel).toEqual([255,0,0,255]);
+});
+
+test('online loading respects privacy, Cancel, and closing the studio without late changes',async({page})=>{
+  await upload(page);await open(page,'removeBg');await cutout(page);await uploadReplacement(page,await replacementFile(page));
+  await page.evaluate(()=>window.SplatPrivacy.setConnections(false));const external=[];page.on('request',r=>{if(r.url().startsWith('https://backgrounds.example'))external.push(r.url());});
+  await page.locator('#bs-bg-url').fill('https://backgrounds.example/held.png');await page.locator('#bs-bg-load').click();await expect(page.locator('#bs-bg-status')).toContainText('Optional connections are off');expect(external).toEqual([]);
+  await page.evaluate(()=>window.SplatPrivacy.setConnections(true));let release;const gate=new Promise(resolve=>{release=resolve;});await page.route('https://backgrounds.example/held.png',async r=>{await gate;await r.abort().catch(()=>{});});
+  for(const action of ['cancel','privacy','close']) {
+    const pending=page.waitForRequest(r=>r.url().startsWith('https://backgrounds.example'));await page.locator('#bs-bg-load').click();await pending;await expect(page.locator('#bs-apply')).toBeDisabled();
+    if(action==='cancel')await page.locator('#bs-bg-stop').click();
+    else if(action==='privacy')await page.evaluate(()=>window.SplatPrivacy.setConnections(false));
+    else await page.keyboard.press('Escape');
+    if(action==='close'){await expect(page.locator('#backgroundStudio')).toHaveCount(0);break;}
+    await expect(page.locator('#bs-bg-status')).toContainText(action==='cancel'?'cancelled':'optional connections are off');await expect(page.locator('#bs-apply')).toBeEnabled();expect((await inspect(page,await save(page))).pixel).toEqual([255,0,0,255]);await page.evaluate(()=>window.SplatPrivacy.setConnections(true));
+  }
+  release();await open(page,'removeBg');expect(await pixel(page)).toEqual([255,255,255,255]);await expect(page.locator('#bs-background')).toHaveValue('transparent');
+  await page.locator('#bs-cancel').click();await page.locator('.toolbar [data-action="undo"]').click();await expect(page.locator('#layerList .layer')).toHaveCount(0);
+});

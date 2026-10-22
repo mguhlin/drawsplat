@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { MAX_FILE_BYTES } from './pixels.mjs';
+import { MAX_FILE_BYTES, validateDimensions } from './pixels.mjs';
 export function onlineImageURL(value) {
   let url;
   try { url = new URL(value); } catch { throw new Error('Enter a complete HTTPS image URL.'); }
@@ -29,4 +29,23 @@ export async function fetchBackground(value, { signal } = {}) {
     }
   } finally { reader.releaseLock(); }
   return new Blob(chunks, { type: response.headers.get('content-type')?.split(';')[0] || 'application/octet-stream' });
+}
+
+export async function decodeImage(file) {
+  if (file.size > MAX_FILE_BYTES) throw new Error('This background is over 40 MB. Use a smaller copy.');
+  let image;
+  try { image = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch {
+    const url = URL.createObjectURL(file);
+    try { image = await new Promise((resolve, reject) => { const im = new Image(); im.onload = () => resolve(im); im.onerror = reject; im.src = url; }); }
+    catch { throw new Error('This browser cannot open this file. For HEIC/HEIF, save a JPG or PNG copy first; otherwise choose a readable image.'); }
+    finally { URL.revokeObjectURL(url); }
+  }
+  const width = image.width, height = image.height;
+  try {
+    validateDimensions(width, height);
+    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+    canvas.getContext('2d', { willReadFrequently: true }).drawImage(image, 0, 0);
+    return canvas;
+  } finally { image.close?.(); }
 }

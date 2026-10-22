@@ -15,7 +15,7 @@ never increased. White mode fixes the target to white.
 
 Process the selected layers, inspect their before/after previews and zoom, then
 download full-resolution PNG/JPEG or a ZIP. Changing cutout settings invalidates
-previous results. Choose transparent, white, or custom background output. JPEG
+previous results. Choose transparent, white, custom-color, or replacement-image output. JPEG
 downloads use a solid background; selecting JPEG does not flatten layer Apply.
 
 Apply updates all selected image layers together. One Undo restores them all.
@@ -34,3 +34,15 @@ covers white/color pixel output, stale previews, selected-layer batch Apply,
 Undo/Redo, Cancel, ZIP names, PNG/JPEG, model cancellation, privacy, and mobile.
 `tests/imagesplat-remove-color.spec.js` retains compatibility checks for the
 legacy color module; new editing actions use BackdropSplat’s shared engine.
+
+## Replace the background
+
+Below the studio previews, upload a background, choose one of the six shared
+BackdropSplat scenes, or load a direct HTTPS image URL. Fill/Fit controls center
+the background at each source image’s dimensions. The preview, PNG/JPEG/ZIP, and
+Apply all use the same composition. Switching backgrounds reuses the cutout.
+One Undo restores every applied layer; Cancel and closing leave layers unchanged.
+Online requests require optional connections, omit cookies/referrers, and stop
+on cancellation, studio close, or privacy revocation. Hosts must allow browser
+cross-origin access; download/upload a local copy if they do not. Uploads and
+bundled scenes remain local. See the main guide for limits and model downloads.

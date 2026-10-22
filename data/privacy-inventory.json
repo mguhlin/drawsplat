@@ -33,7 +33,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "ca30c48b8d123f0dd91fe5c779311a8a92b78c81ae08edae9c86c4cc4b934b2b"
+      "entrySha256": "42499ba3f54c048b0e2212e062dacbedc249e86d51886f572df7a92f12bdf9c4"
     },
     {
       "id": "clipsplat",
@@ -1073,14 +1073,16 @@
         ],
         "namedConstants": []
       },
-      "literalRemoteHosts": [],
+      "literalRemoteHosts": [
+        "example.org"
+      ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
       "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "ee41cb249ee21cfb83fe191d5abfd7ecb0f8f8e21b833e836124438a5f8259f5"
+      "entrySha256": "9ffdb0061ea62d25ee1dd9e5fb385197f187b48acf289c7c2052ebcda5e70834"
     },
     {
       "id": "step-splat",

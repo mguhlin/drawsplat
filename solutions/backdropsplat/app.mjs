@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { MAX_FILES, MAX_FILE_BYTES, validateDimensions, exportName, uniqueName } from './pixels.mjs';
 import { BACKGROUNDS, drawBackground } from './backgrounds.mjs';
-import { fetchBackground, onlineImageURL } from './background-source.mjs';
+import { fetchBackground, onlineImageURL, decodeImage as decode } from './background-source.mjs';
 
 const $ = id => document.getElementById(id);
+const tr = message => window.BackdropI18n?.translate(message) || message;
+let currentStatus = ['Choose an image to begin.', ''], currentBackgroundStatus = ['No image background selected. Transparent and solid colors are also available.', ''];
 const items = [];
 let selectedId, nextId = 0, worker, activeTask, taskId = 0, batchId = 0;
 let busy = false, importing = false, saving = false, previewGeneration = 0;
@@ -24,7 +26,7 @@ function signature(value = options()) {
 }
 const validResult = item => Boolean(item?.result && item.signature === signature() && item.state !== 'working');
 const readyItems = () => items.filter(item => validResult(item));
-function status(message, type = '') { $('status').textContent = message; $('status').className = 'status ' + type; }
+function status(message, type = '') { currentStatus = [message, type]; $('status').textContent = tr(message); $('status').className = 'status ' + type; }
 
 function controls() {
   const locked = busy || importing || saving || Boolean(backgroundTask);
@@ -32,7 +34,7 @@ function controls() {
   $('processAll').disabled = locked || !items.some(item => item.width);
   $('download').disabled = locked || !validResult(selected());
   $('downloadAll').disabled = locked || !readyItems().length;
-  $('downloadAll').textContent = readyItems().length ? `Download ${readyItems().length} completed image${readyItems().length === 1 ? '' : 's'} as ZIP` : 'Download completed images as ZIP';
+  $('downloadAll').textContent = tr(readyItems().length ? `Download ${readyItems().length} completed images as ZIP` : 'Download completed images as ZIP');
   $('clear').disabled = locked || (!items.length && !replacement);
   for (const id of ['choose', 'paste', 'sample', 'files', 'mode', 'model', 'scope', 'tolerance', 'softness', 'keyColor', 'background', 'backgroundColor', 'format', 'uploadBackground', 'backgroundFile', 'backgroundURL', 'loadBackgroundURL', 'backgroundFit']) $(id).disabled = locked;
   $('cancel').hidden = !busy;
@@ -57,7 +59,7 @@ function updateMode() {
 
 function renderQueue() {
   $('queue').replaceChildren();
-  $('queueCount').textContent = `${items.length} image${items.length === 1 ? '' : 's'}`;
+  $('queueCount').textContent = tr(`${items.length} images`);
   $('queueEmpty').hidden = Boolean(items.length);
   for (const item of items) {
     const row = document.createElement('li'); row.classList.toggle('selected', item.id === selectedId);
@@ -68,10 +70,10 @@ function renderQueue() {
     const copy = document.createElement('span'); copy.className = 'file-copy';
     const name = document.createElement('span'); name.className = 'file-name'; name.textContent = item.name;
     const info = document.createElement('span'); info.className = 'file-state ' + item.state;
-    info.textContent = item.state === 'error' ? item.error : item.state === 'working' ? 'Processing…' : item.result ? validResult(item) ? `Ready · ${item.width} × ${item.height}${item.usedModel ? ' · ' + (item.usedModel === 'fast' ? 'Fast' : 'Best quality') : ''}${item.note ? ' · ' + item.note : ''}` : 'Settings changed · process again' : `Ready to process · ${item.width} × ${item.height}`;
+    info.textContent = item.state === 'error' ? tr(item.error) : item.state === 'working' ? tr('Processing…') : item.result ? validResult(item) ? `${tr('Ready')} · ${item.width} × ${item.height}${item.usedModel ? ' · ' + tr(item.usedModel === 'fast' ? 'Fast' : 'Best quality') : ''}${item.note ? ' · ' + item.note : ''}` : tr('Settings changed · process again') : tr(`Ready to process · ${item.width} × ${item.height}`);
     copy.append(name, info); select.append(copy);
     select.onclick = () => { selectedId = item.id; $('zoom').value = '1'; showPreview(); renderQueue(); controls(); };
-    const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove-image'; remove.textContent = 'Remove'; remove.setAttribute('aria-label', `Remove ${item.name}`);
+    const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove-image'; remove.textContent = tr('Remove'); remove.setAttribute('aria-label', `Remove ${item.name}`);
     remove.onclick = () => { if (!busy && !importing && !saving && !backgroundTask) removeItem(item); };
     row.append(select, remove); $('queue').append(row);
   }
@@ -87,23 +89,6 @@ function removeItem(item) {
   if (!items.length) status('Choose an image to begin.');
 }
 
-async function decode(file) {
-  let image;
-  try { image = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
-  catch {
-    const url = URL.createObjectURL(file);
-    try { image = await new Promise((resolve, reject) => { const im = new Image(); im.onload = () => resolve(im); im.onerror = reject; im.src = url; }); }
-    catch { throw new Error('This browser cannot open this file. For HEIC/HEIF, save a JPG or PNG copy first; otherwise choose a readable image.'); }
-    finally { URL.revokeObjectURL(url); }
-  }
-  const width = image.width, height = image.height;
-  try {
-    validateDimensions(width, height);
-    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
-    canvas.getContext('2d', { willReadFrequently: true }).drawImage(image, 0, 0);
-    return canvas;
-  } finally { image.close?.(); }
-}
 const canvasBlob = (canvas, type = 'image/png') => new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('The browser could not encode this image. Try a smaller image.')), type, .94));
 
 async function addFiles(files) {
@@ -159,6 +144,7 @@ async function showPreview() {
   $('comparison').classList.toggle('no-result', !hasResult);
   for (const id of ['reveal', 'showOriginal', 'showResult']) $(id).disabled = !hasResult;
   $('previewNote').textContent = hasResult ? `${validResult(item) ? 'Drag the comparison slider or use its arrow keys. Zero shows the result; 100 shows the original.' : 'Settings changed. This is the previous cutout; process again to update it.'}${item.note ? ' ' + item.note : ''}` : 'The original is shown until processing finishes.';
+  $('previewNote').textContent = tr($('previewNote').textContent);
   fitPreview(); reveal();
   if (hasResult) {
     try {
@@ -296,16 +282,17 @@ function outputChanged() {
   const color = $('background').value === 'color';
   $('backgroundColor').hidden = $('backgroundColorLabel').hidden = !color;
   $('formatHint').textContent = $('format').value === 'jpeg' && $('background').value === 'transparent' ? 'JPEG cannot keep transparency, so it uses white. Choose PNG to keep a transparent cutout.' : 'Full image dimensions are preserved. The checkerboard is only a transparency preview.';
+  $('formatHint').textContent = tr($('formatHint').textContent);
   renderBackground(); controls(); void showPreview();
 }
 
 function backgroundStatus(message, type = '') {
-  $('backgroundStatus').textContent = message; $('backgroundStatus').className = 'status ' + type;
+  currentBackgroundStatus = [message, type]; $('backgroundStatus').textContent = tr(message); $('backgroundStatus').className = 'status ' + type;
 }
 function renderBackground() {
   const imageOutput = $('background').value === 'image';
   $('imageBackgroundOption').disabled = !replacement;
-  $('imageBackgroundOption').textContent = replacement ? 'Image background' : 'Image background · choose below';
+  $('imageBackgroundOption').textContent = tr(replacement ? 'Image background' : 'Image background · choose below');
   $('backgroundFitControls').hidden = !replacement;
   $('backgroundThumbnail').hidden = !replacement;
   for (const button of document.querySelectorAll('.background-choice')) button.setAttribute('aria-pressed', String(imageOutput && replacement?.id === button.dataset.background));
@@ -369,9 +356,9 @@ async function loadReplacement(source) {
 }
 for (const scene of BACKGROUNDS) {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'background-choice'; button.dataset.background = scene.id;
-  button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-label', scene.name); button.title = scene.description;
+  button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-label', tr(scene.name)); button.title = scene.description;
   const img = new Image(); img.src = scene.url; img.alt = ''; img.width = 160; img.height = 100;
-  const label = document.createElement('span'); label.textContent = scene.name; button.append(img, label);
+  const label = document.createElement('span'); label.textContent = tr(scene.name); button.append(img, label);
   button.onclick = () => loadReplacement({ kind: 'builtin', ...scene }); $('backgroundGallery').append(button);
 }
 $('uploadBackground').onclick = () => $('backgroundFile').click();
@@ -476,4 +463,8 @@ setInterval(() => {
   if (busy && options().mode === 'photo' && !networkAllowed()) cancel('Photo processing stopped because optional connections are off. White and color removal remain available.');
   if (backgroundTask?.kind === 'url' && !networkAllowed()) cancelBackground('Online background download stopped because optional connections are off. Uploads and built-in backgrounds still work.');
 }, 250);
+window.addEventListener('widget-i18n:changed', () => {
+  for (const scene of BACKGROUNDS) { const button = document.querySelector(`[data-background="${scene.id}"]`); button.setAttribute('aria-label', tr(scene.name)); button.querySelector('span').textContent = tr(scene.name); }
+  outputChanged(); renderQueue(); controls(); status(...currentStatus); backgroundStatus(...currentBackgroundStatus);
+});
 updateMode(); outputChanged(); renderQueue(); controls();

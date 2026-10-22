@@ -9,13 +9,15 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script src="../../vendor/jszip.min.js" defer></script>
+  <script src="../../assets/js/widget-i18n.js" defer></script>
+  <script src="locales.js" defer></script>
   <script type="module" src="app.mjs"></script>
 </head>
 <body>
   <a class="skip" href="#workspace">Skip to image workspace</a>
   <header class="app-header">
     <a class="brand" href="../../"><img src="icon.svg" alt="" width="46" height="46"><span><small>SplatWorks</small><h1>BackdropSplat</h1></span></a>
-    <nav aria-label="App links"><a href="#help">How it works</a><a href="../../studio/">All tools</a></nav>
+    <div class="header-actions"><div class="language-picker"><label for="i18nSwitcher">Language</label><select id="i18nSwitcher"></select></div><nav aria-label="App links"><a href="#help">How it works</a><a href="../../studio/">All tools</a></nav></div>
   </header>
   <main id="workspace" class="workspace" tabindex="-1">
     <aside class="controls" aria-label="Background and export controls">

@@ -340,6 +340,7 @@ MODULE_EXCLUDES=(
 )
 
 TOOLS_SOLUTIONS=(
+  backdropsplat
   shared
   gifsplat
   animated-gif # Legacy redirect for existing bookmarks

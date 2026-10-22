@@ -103,7 +103,7 @@ These features are live on drawsplat.org and in the current source. The v3.1.28 
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.31 — PDF presentations, full screen, and WebDeck export.** All thirteen core self-host ZIPs and the separate ClipSplat package are refreshed with current source, local launchers, and SHA-256 checksums. Applicable packages include today's editing, conversion, presentation, and labelled-icon changes, plus the existing Typing Games and whiteboard updates. [Walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.31.md) · [Stable release v3.1.31](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.31).
+**DrawSplatTM v3.1.45 — background cutouts, replacement scenes, and languages.** BackdropSplat and ImageSplat share uploads, six original backgrounds, HTTPS image URLs, Fill/Fit, and composited PNG/JPEG/ZIP output. ImageSplat keeps atomic selected-layer Apply and Undo; BackdropSplat adds the shared six-language picker. Full DrawSplat and Tools include the local runtime and scenes. Standard self-host packages are refreshed with measured sizes and SHA-256 checksums; district suite v3.1.45 includes the full ecosystem. [Walkthrough](blog/backdropsplat-new-backgrounds.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.45.md) · [Stable release v3.1.45](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.45).
 
 ## Latest whiteboard: portable saving and recording recovery
 

@@ -17,3 +17,6 @@
 @media(max-width:1150px){.background-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.background-section{grid-row:3;margin-top:0;max-width:100%}.queue-section{grid-row:4}.controls section:nth-child(2){grid-row:5}.help{grid-row:6}.local-note{grid-row:7}.background-heading{flex-wrap:wrap;gap:0}.background-heading button{margin-bottom:15px}.background-fit{grid-template-columns:minmax(0,1fr)}.background-fit .hint{grid-column:auto}}
 @media(max-width:480px){.background-section{padding:15px}.background-gallery{gap:7px}.background-choice span{font-size:12px;padding:7px 5px}.background-url-row{flex-direction:column}.background-url-row button{align-self:flex-start}.background-current{gap:9px}.background-current>div{min-width:160px}}
+
+.header-actions{display:flex;align-items:center;gap:22px}.language-picker{min-width:155px}.language-picker label{font-size:12px;margin:0 0 3px}.language-picker select{min-height:38px}.comparison,#reveal,.viewport{direction:ltr}[dir=rtl] .controls{direction:rtl}[dir=rtl] output{float:left}
+@media(max-width:760px){.app-header{flex-wrap:wrap}.header-actions{gap:14px;flex-wrap:wrap}.language-picker{min-width:140px}.app-header nav{flex-wrap:wrap}}

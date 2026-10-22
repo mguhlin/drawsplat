@@ -27,8 +27,8 @@ Cancel stops the worker; existing completed results remain available.
 
 ## Put your subject on a new background
 
-In standalone BackdropSplat, use **Choose a new background** below the image
-preview. Choose from six locally shipped original illustrations:
+In BackdropSplat, use **Choose a new background** below the image
+preview. In ImageSplat, the same chooser appears inside **Effects → Background removal…**, below its previews. Choose from six locally shipped original illustrations:
 
 - **Studio Paper**: warm paper and soft studio lighting.
 - **Soft Lavender**: a quiet lavender and sky-blue wash.
@@ -67,8 +67,7 @@ Select image layers in [ImageSplat](https://splatworks.org/imagesplat/) and choo
 studio in the corresponding mode. Process, inspect before/after previews, and
 apply all selected layers together. One Undo restores them all; Cancel and
 exports leave layers unchanged. Layer positions and dimensions are preserved.
-PNG/JPEG and ZIP downloads are also available. The same worker, pinned models,
-white/color algorithm, and optional-connections preference serve both apps.
+PNG/JPEG and ZIP downloads are also available. Upload a backdrop, choose the same six built-in scenes, or load a direct HTTPS image URL. Fill/Fit and the chosen backdrop are included in previews, exports, and layer Apply. One Undo restores the whole selection; closing the studio cancels pending background loads. The same worker, models, image loader, compositor, and optional-connections preference serve both apps.
 
 ## Local processing and first-use downloads
 
@@ -103,8 +102,7 @@ are listed in [THIRD_PARTY_NOTICES](../solutions/backdropsplat/THIRD_PARTY_NOTIC
 - AI cutouts are estimates. Hair, glass, shadows, similar foreground/background
   colors, and busy groups may need further editing in ImageSplat.
 - Static hosting requires HTTP(S); direct file URLs do not reliably run workers.
-- Existing downloadable suite releases are not changed by a new web tool. Future
-  packages that include `solutions/` include this tool and its local runtime.
+- Static release v3.1.45 includes BackdropSplat and the updated ImageSplat in the full DrawSplat and Tools packages. District suite v3.1.45 includes the complete ecosystem. Photo model files still download on first use; the browser engine and all six built-in backgrounds are shipped locally.
 
 ## Verification commands
 
@@ -147,5 +145,14 @@ Replacement-background verification includes all six bundled scenes, uploaded
 images, direct online URLs, no-credential/no-referrer requests, composited pixel
 inspection in preview/PNG/JPEG/ZIP, centered Fill/Fit placement, unchanged
 foreground cutouts, failed-load recovery, privacy changes, cancellation, bounds,
-clearing, and mobile layout. These controls currently belong to standalone
-BackdropSplat; ImageSplat retains its selected-layer cutout studio.
+clearing, and mobile layout. Both BackdropSplat and ImageSplat now provide these replacement-background controls. ImageSplat adds selected-layer Apply, complete-selection Undo/Redo, and cancellation when its studio closes.
+
+## Language picker
+
+BackdropSplat’s header now includes the same six-language picker as the other
+suite tools: English, Spanish, Vietnamese, Arabic, Chinese, and Hindi/Urdu.
+Arabic uses right-to-left layout; image pixels and the comparison slider retain
+their original orientation. The language preference is shared with the suite,
+survives reloads, and supports `?lang=es` links. Switching languages preserves
+loaded images, cutouts, background choices, and download readiness. Interface
+translations are provided; native-speaker review is pending.

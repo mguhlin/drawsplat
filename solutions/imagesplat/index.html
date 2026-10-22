@@ -397,7 +397,7 @@
   async function openBackgroundRemoval(mode='photo'){
     const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');
     try{
-      const {openBackgroundStudio}=await import('./background-studio.js?v=20261022');
+      const {openBackgroundStudio}=await import('./background-studio.js?v=20261022-backgrounds');
       if(imgs.length>20)throw new Error('Select up to 20 image layers at a time.');
       openBackgroundStudio({sources:imgs.map(o=>({name:o.name||'image',canvas:canvasFromImage(o)})),mode,
         apply:async results=>{
@@ -405,7 +405,7 @@
           // leaves a partially updated selection or consumes an Undo entry.
           const prepared=await Promise.all(results.map(async result=>{const src=result.toDataURL('image/png');return {src,img:await loadImg(src)}}));
           snapshot();imgs.forEach((o,i)=>{o.src=prepared[i].src;o.img=prepared[i].img;o.filter=''});
-          render();$('statusLine').textContent=`Background removed from ${imgs.length} image layer${imgs.length===1?'':'s'}. Undo restores the original${imgs.length===1?'':'s'}.`;
+          render();$('statusLine').textContent=`Background updated on ${imgs.length} image layer${imgs.length===1?'':'s'}. Undo restores the original${imgs.length===1?'':'s'}.`;
         },
         download:async(blob,name)=>{downloadBlob(blob,name);$('statusLine').textContent='Background removal downloaded. Original layers are unchanged until Apply.'}
       });

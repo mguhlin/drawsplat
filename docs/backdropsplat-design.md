@@ -83,3 +83,17 @@ revocation. The page allows HTTPS image downloads; model-worker fetches remain
 limited by their existing host allowlist. A blocked host gives download/upload
 guidance; no server-side image proxy or photo upload is introduced. Imports
 replace the previous background atomically after decode and validation.
+
+## ImageSplat parity and language control
+
+ImageSplat embeds the same six local scenes, HTTPS loader, bounded decoder, and
+canvas compositor. The chooser sits under its before/after preview; the existing
+purple palette, Arial type, sticky Close/Apply actions, and white checkerboard
+stay consistent with the editor. Scene thumbnails use six columns on desktop
+and three on narrower screens. A View result link returns mobile users to the
+composition. Selected-layer application stays atomic with one Undo.
+
+BackdropSplat uses the shared WidgetI18n picker and language preference, with
+English, Spanish, Vietnamese, Arabic RTL, Chinese, and Hindi/Urdu controls. Image
+and comparison orientation remain stable in RTL; language changes redraw
+controls without replacing source images or cached cutouts.

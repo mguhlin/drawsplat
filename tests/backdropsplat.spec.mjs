@@ -255,3 +255,16 @@ test('a background can be chosen first and uploaded PNG backgrounds retain their
   const png=await save(page);expect((await inspect(page,png)).pixel[3]).toBe(0);expect((await inspect(page,png,20,20)).pixel).toEqual([0,0,0,255]);expect((await inspect(page,png,65,1)).pixel).toEqual([0,255,0,255]);
   await page.locator('#format').selectOption('jpeg');const jpg=await inspect(page,await save(page));expect(jpg.pixel[3]).toBe(255);expect(jpg.pixel[0]).toBeGreaterThan(245);
 });
+
+test('the six-language picker translates controls, persists preference, and preserves images across switches',async({page})=>{
+  await expect(page.locator('#i18nSwitcher option')).toHaveCount(6);
+  await page.locator('#sample').click();await expect(page.locator('#download')).toBeEnabled();
+  await page.getByRole('button',{name:'Coastal Calm',exact:true}).click();await expect(page.locator('#backgroundStatus')).toContainText('selected');
+  for(const [code,uploadLabel,heading] of [['es','Cargar fondo','Elegir un fondo nuevo'],['vi','Tải nền lên','Chọn nền mới'],['ar','اختيار ملف خلفية','اختيار خلفية جديدة'],['zh','上传背景','选择新背景'],['uh','पृष्ठभूमि अपलोड करें','नई पृष्ठभूमि चुनें']]){
+    await page.locator('#i18nSwitcher').selectOption(code);await expect(page.locator('#uploadBackground')).toHaveText(uploadLabel);await expect(page.locator('#backgroundTitle')).toHaveText(heading);await expect(page.locator('#download')).toBeEnabled();expect((await inspect(page,await save(page))).pixel[3]).toBe(255);
+    await expect(page.locator('html')).toHaveAttribute('dir',code==='ar'?'rtl':'ltr');
+  }
+  await page.locator('#i18nSwitcher').selectOption('ar');await page.setViewportSize({width:390,height:844});await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'.tmp/backdropsplat/arabic-mobile.png',fullPage:true});
+  await page.reload();await expect(page.locator('#i18nSwitcher')).toHaveValue('ar');await expect(page.locator('#uploadBackground')).toHaveText('اختيار ملف خلفية');
+  await page.goto('/solutions/backdropsplat/?lang=es');await expect(page.locator('#i18nSwitcher')).toHaveValue('es');await expect(page.locator('#process')).toHaveText('Eliminar fondo');
+});

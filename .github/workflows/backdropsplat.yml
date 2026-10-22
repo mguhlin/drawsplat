@@ -18,7 +18,11 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: node --test tests/backdropsplat-pixels.test.mjs
-      - run: npx playwright install --with-deps chromium
+      - name: Use the runner's installed Chrome
+        run: |
+          browser_path="$(command -v google-chrome)"
+          echo "BROWSER_EXECUTABLE_PATH=$browser_path" >> "$GITHUB_ENV"
+          "$browser_path" --version
       - run: npx playwright test --config playwright.backdropsplat.config.cjs
       - uses: actions/upload-artifact@v4
         if: always()

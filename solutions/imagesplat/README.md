@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.31**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).
+ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.45**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).
 
 Select one image layer, then choose **Adjust photo…**. Brightness, contrast, saturation, and warmth controls include presets and a before/after preview. Apply updates only that image; Undo restores the original. Cancel leaves it unchanged. Photo adjustments run on local pixels and do not upload the image.
 
@@ -25,7 +25,7 @@ worker and pinned models used by [BackdropSplat](../backdropsplat/).
 - **White background**: remove white around a subject or every matching white pixel, including enclosed logo and lettering centers.
 - **Colored background**: click the original to sample, or use the color picker; adjust tolerance and soft edges. Matching regions can be limited to those connected to any image border.
 - Process up to 20 selected layers. Before/after previews, layer selection, and zoom help check each result. Changing cutout settings requires reprocessing.
-- Choose transparent, white, or custom output backgrounds. Download full-resolution PNG, solid JPEG, or a ZIP with distinct names. JPEG transparency is flattened on white; selecting JPEG never changes how transparency is applied to layers.
+- Choose transparent, white, custom-color, or replacement-image backgrounds. Download full-resolution PNG, solid JPEG, or a ZIP with distinct names. JPEG transparency is flattened on white; selecting JPEG never changes how transparency is applied to layers.
 - Apply updates all selected image layers atomically, preserving placement and dimensions. One Undo restores them all. Cancel and downloads leave layers unchanged. Stop terminates the worker and keeps completed previews available.
 
 **Remove color…** and **Remove white / edge background…** open this same studio
@@ -37,3 +37,26 @@ connections are disabled. Limits: 16 megapixels and 8,192 pixels per edge.
 Guide: [Background removal](../../docs/backdropsplat.md). Browser regression
 checks live in `tests/imagesplat-background.spec.mjs` and run with
 `playwright.backdropsplat.config.cjs`.
+
+## Replacement backgrounds in the cutout studio
+
+In **Effects → Background removal…**, use **Choose a new background** below the
+previews. Upload an image, select any of BackdropSplat’s six original scenes, or
+load a direct HTTPS image URL. Choose **Fill frame** to center/crop the backdrop
+or **Fit entire image** to include it with white margins. Use **View result** to
+return to the composition on a small screen.
+
+The same backdrop is applied behind each selected cutout at its original image
+dimensions. Changing a backdrop or Fill/Fit does not rerun removal. The preview,
+PNG/JPEG/ZIP downloads, and **Apply to layers** share BackdropSplat’s compositor.
+One Undo restores the complete selection. Downloading, Cancel, or closing the
+studio never modifies the original layers. Selecting Transparent recovers the
+cutout alone; **Remove image background** releases the chosen image.
+
+Uploads and built-in scenes work with optional connections off. Online images
+require an explicit **Load image URL** request and a host that permits browser
+cross-origin access. Requests omit credentials and referrers, and never contain
+subject-image pixels. A failed or cancelled load keeps the previous background.
+Closing the studio or disabling optional connections stops an online load.
+Online loads time out after 30 seconds; use a local upload when a host blocks
+browser access. Background limits: 40 MB, 16 megapixels, 8,192 pixels per edge.
