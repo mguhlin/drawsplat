@@ -14,7 +14,7 @@ the original image to sample its backdrop.</li>
 <li>Choose <strong>Remove background</strong> for the selected file or <strong>Process all images</strong>.</li>
 <li>Compare the original and result using the slider, arrow keys, or Original /
 Result buttons. Zoom to inspect edges.</li>
-<li>Choose transparent, white, or custom-color output and download PNG or JPEG.
+<li>Choose transparent, white, custom-color, or replacement-image output and download PNG or JPEG.
 JPEG always has a solid background; transparent + JPEG is flattened on white.
 A ZIP contains completed results with distinct filenames, including duplicates.</li>
 </ol>
@@ -22,6 +22,37 @@ A ZIP contains completed results with distinct filenames, including duplicates.<
 saving. Background and export-format changes reuse the existing cutout. Every
 processing attempt starts from the original, so adjustments are not cumulative.
 Cancel stops the worker; existing completed results remain available.</p>
+<h2 id="put-your-subject-on-a-new-background">Put your subject on a new background</h2>
+<p>In standalone BackdropSplat, use <strong>Choose a new background</strong> below the image
+preview. Choose from six locally shipped original illustrations:</p>
+<ul>
+<li><strong>Studio Paper</strong>: warm paper and soft studio lighting.</li>
+<li><strong>Soft Lavender</strong>: a quiet lavender and sky-blue wash.</li>
+<li><strong>Classroom Board</strong>: deep green with chalk details around the edges.</li>
+<li><strong>Splat Confetti</strong>: colorful splashes with room for the subject.</li>
+<li><strong>Mountain Morning</strong>: layered mountains beneath a pale sky.</li>
+<li><strong>Coastal Calm</strong>: blue water and warm sand.</li>
+</ul>
+<p>You can also choose <strong>Upload background</strong>, or enter a direct HTTPS image link
+and choose <strong>Load image URL</strong>. The cutout is composited over that image in the
+preview and all PNG/JPEG/ZIP exports. The comparison switches to Result so you
+can see the full composition. No additional background-removal run is needed.
+You can select a backdrop before adding the subject, too.</p>
+<p><strong>Fill frame</strong> centers and crops the background to cover the subject image's
+original dimensions. <strong>Fit entire image</strong> includes the entire backdrop with
+white margins. The subject retains its size and position; every image in a batch
+uses the selected backdrop. Choose Transparent to export the cutout alone again.
+<strong>Remove image background</strong> releases the replacement; <strong>Clear all</strong> releases it
+and all subjects. An unsuccessful or cancelled load keeps the previous backdrop.</p>
+<p>Online images are downloaded directly by the browser. The image host receives
+your image URL request and ordinary connection metadata, without your subject
+image, account cookies, or a referrer. Online image fetches use no-store caching. The host must permit cross-origin browser
+access (CORS); some image links or web pages do not. If a link fails, download the
+image and upload a local copy instead. No third-party proxy is used. Optional
+connections must be enabled to load an online background. Turning them off stops
+an active online download; uploads, built-in scenes, and already loaded
+backgrounds remain usable. Online requests time out after 30 seconds and can be
+cancelled. Background files have the same 40 MB / 16 MP / 8,192-pixel bounds.</p>
 <h2 id="use-the-same-engine-inside-imagesplat">Use the same engine inside ImageSplat</h2>
 <p>Select image layers in <a href="https://splatworks.org/imagesplat/">ImageSplat</a> and choose
 <strong>Effects → Background removal…</strong>. White and color menu shortcuts open the same
@@ -41,7 +72,7 @@ photos. Model requests contain no selected image pixels. The suite’s optional
 connections preference is checked before photo processing, and the worker also
 guards external downloads. Turning connections off stops an active photo job;
 white/color removal remains usable.</p>
-<p>Images and results stay in tab memory until cleared or closed. The app does not
+<p>Subjects, chosen replacement backgrounds, and results stay in tab memory until cleared or closed. The app does not
 write image projects to localStorage or IndexedDB. Browser Cache Storage may
 retain public model files. Clearing origin data through Privacy or browser
 settings removes those caches; exports already saved to disk are separate.</p>
@@ -90,4 +121,10 @@ pixel inspection, unique ZIP filenames, two-layer atomic Apply and one-step Undo
 Undo/Redo, Cancel, stale settings, disabled optional connections, pending-download
 cancellation, keyboard controls, and mobile layout. The existing ImageSplat text,
 photo adjustment, clipboard, action icon, and Green Screen Studio checks passed.</p>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#use-it">Use it</a></li><li><a href="#use-the-same-engine-inside-imagesplat">Use the same engine inside ImageSplat</a></li><li><a href="#local-processing-and-first-use-downloads">Local processing and first-use downloads</a></li><li><a href="#limits">Limits</a></li><li><a href="#verification-commands">Verification commands</a></li><li><a href="#verified-october-22-2026">Verified October 22, 2026</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 15 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+<p>Replacement-background verification includes all six bundled scenes, uploaded
+images, direct online URLs, no-credential/no-referrer requests, composited pixel
+inspection in preview/PNG/JPEG/ZIP, centered Fill/Fit placement, unchanged
+foreground cutouts, failed-load recovery, privacy changes, cancellation, bounds,
+clearing, and mobile layout. These controls currently belong to standalone
+BackdropSplat; ImageSplat retains its selected-layer cutout studio.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#use-it">Use it</a></li><li><a href="#put-your-subject-on-a-new-background">Put your subject on a new background</a></li><li><a href="#use-the-same-engine-inside-imagesplat">Use the same engine inside ImageSplat</a></li><li><a href="#local-processing-and-first-use-downloads">Local processing and first-use downloads</a></li><li><a href="#limits">Limits</a></li><li><a href="#verification-commands">Verification commands</a></li><li><a href="#verified-october-22-2026">Verified October 22, 2026</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 15 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

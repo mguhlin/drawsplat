@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { MAX_FILES, MAX_FILE_BYTES, validateDimensions, exportName, uniqueName } from './pixels.mjs';
+import { BACKGROUNDS, drawBackground } from './backgrounds.mjs';
+import { fetchBackground, onlineImageURL } from './background-source.mjs';
 
 const $ = id => document.getElementById(id);
 const items = [];
 let selectedId, nextId = 0, worker, activeTask, taskId = 0, batchId = 0;
 let busy = false, importing = false, saving = false, previewGeneration = 0;
+let replacement, backgroundTask;
 const selected = () => items.find(item => item.id === selectedId);
 const networkAllowed = () => window.SplatPrivacy?.getState().optionalConnections !== false;
 
@@ -24,15 +27,18 @@ const readyItems = () => items.filter(item => validResult(item));
 function status(message, type = '') { $('status').textContent = message; $('status').className = 'status ' + type; }
 
 function controls() {
-  const locked = busy || importing || saving;
+  const locked = busy || importing || saving || Boolean(backgroundTask);
   $('process').disabled = locked || !selected()?.width;
   $('processAll').disabled = locked || !items.some(item => item.width);
   $('download').disabled = locked || !validResult(selected());
   $('downloadAll').disabled = locked || !readyItems().length;
   $('downloadAll').textContent = readyItems().length ? `Download ${readyItems().length} completed image${readyItems().length === 1 ? '' : 's'} as ZIP` : 'Download completed images as ZIP';
-  $('clear').disabled = locked || !items.length;
-  for (const id of ['choose', 'paste', 'sample', 'files', 'mode', 'model', 'scope', 'tolerance', 'softness', 'keyColor', 'background', 'backgroundColor', 'format']) $(id).disabled = locked;
+  $('clear').disabled = locked || (!items.length && !replacement);
+  for (const id of ['choose', 'paste', 'sample', 'files', 'mode', 'model', 'scope', 'tolerance', 'softness', 'keyColor', 'background', 'backgroundColor', 'format', 'uploadBackground', 'backgroundFile', 'backgroundURL', 'loadBackgroundURL', 'backgroundFit']) $(id).disabled = locked;
   $('cancel').hidden = !busy;
+  $('cancelBackground').hidden = !backgroundTask;
+  $('removeBackgroundImage').disabled = locked || !replacement;
+  for (const button of document.querySelectorAll('.background-choice')) button.disabled = locked;
   $('dropZone').setAttribute('aria-disabled', String(locked));
   $('progress').hidden = !busy;
   for (const button of document.querySelectorAll('.remove-image')) button.disabled = locked;
@@ -66,7 +72,7 @@ function renderQueue() {
     copy.append(name, info); select.append(copy);
     select.onclick = () => { selectedId = item.id; $('zoom').value = '1'; showPreview(); renderQueue(); controls(); };
     const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove-image'; remove.textContent = 'Remove'; remove.setAttribute('aria-label', `Remove ${item.name}`);
-    remove.onclick = () => { if (!busy && !importing && !saving) removeItem(item); };
+    remove.onclick = () => { if (!busy && !importing && !saving && !backgroundTask) removeItem(item); };
     row.append(select, remove); $('queue').append(row);
   }
 }
@@ -101,7 +107,7 @@ async function decode(file) {
 const canvasBlob = (canvas, type = 'image/png') => new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('The browser could not encode this image. Try a smaller image.')), type, .94));
 
 async function addFiles(files) {
-  if (busy || importing || saving) { status('Finish or cancel the current operation before adding more images.'); return; }
+  if (busy || importing || saving || backgroundTask) { status('Finish or cancel the current operation before adding more images.'); return; }
   const incoming = [...files];
   if (!incoming.length) return;
   importing = true; controls();
@@ -201,10 +207,11 @@ async function processOne(item, settings, run) {
   if (item.resultURL) URL.revokeObjectURL(item.resultURL);
   item.result = blob; item.resultURL = URL.createObjectURL(blob); item.signature = signature(settings);
   item.usedModel = output.usedModel; item.note = output.note; item.state = 'done';
+  if (replacement && $('background').value === 'image') backgroundStatus(`${replacement.name} selected. The result now uses this background.`, 'success');
 }
 
 async function processItems(candidates) {
-  if (busy || importing || saving) return;
+  if (busy || importing || saving || backgroundTask) return;
   const work = candidates.filter(item => item?.width);
   if (!work.length) return;
   const settings = options();
@@ -247,23 +254,26 @@ function cancel(message = 'Processing cancelled. Existing completed cutouts are 
 }
 
 async function composite(item, format) {
-  const image = await createImageBitmap(item.result);
   const canvas = document.createElement('canvas'); canvas.width = item.width; canvas.height = item.height;
-  const ctx = canvas.getContext('2d');
-  const background = $('background').value;
-  if (background !== 'transparent' || format === 'jpeg') {
-    ctx.fillStyle = background === 'color' ? $('backgroundColor').value : '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-  ctx.drawImage(image, 0, 0); image.close();
-  const blob = await canvasBlob(canvas, format === 'jpeg' ? 'image/jpeg' : 'image/png');
-  canvas.width = canvas.height = 1; return blob;
+  try {
+    const ctx = canvas.getContext('2d');
+    // Paint the background synchronously before decoding the cutout. A new
+    // background selection may safely release the previous canvas afterward.
+    drawBackground(ctx, item.width, item.height, {
+      type: $('background').value, color: $('backgroundColor').value,
+      image: replacement?.canvas, fit: $('backgroundFit').value
+    }, format === 'jpeg');
+    const image = await createImageBitmap(item.result);
+    try { ctx.drawImage(image, 0, 0); } finally { image.close(); }
+    return await canvasBlob(canvas, format === 'jpeg' ? 'image/jpeg' : 'image/png');
+  } finally { canvas.width = canvas.height = 1; }
 }
 function saveBlob(blob, name) {
   const url = URL.createObjectURL(blob), link = document.createElement('a');
   link.href = url; link.download = name; link.click(); setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
 async function download(all = false) {
-  if (busy || importing || saving) return;
+  if (busy || importing || saving || backgroundTask) return;
   const work = all ? readyItems() : validResult(selected()) ? [selected()] : [];
   if (!work.length) return;
   const format = $('format').value;
@@ -286,12 +296,97 @@ function outputChanged() {
   const color = $('background').value === 'color';
   $('backgroundColor').hidden = $('backgroundColorLabel').hidden = !color;
   $('formatHint').textContent = $('format').value === 'jpeg' && $('background').value === 'transparent' ? 'JPEG cannot keep transparency, so it uses white. Choose PNG to keep a transparent cutout.' : 'Full image dimensions are preserved. The checkerboard is only a transparency preview.';
-  void showPreview();
+  renderBackground(); controls(); void showPreview();
 }
+
+function backgroundStatus(message, type = '') {
+  $('backgroundStatus').textContent = message; $('backgroundStatus').className = 'status ' + type;
+}
+function renderBackground() {
+  const imageOutput = $('background').value === 'image';
+  $('imageBackgroundOption').disabled = !replacement;
+  $('imageBackgroundOption').textContent = replacement ? 'Image background' : 'Image background · choose below';
+  $('backgroundFitControls').hidden = !replacement;
+  $('backgroundThumbnail').hidden = !replacement;
+  for (const button of document.querySelectorAll('.background-choice')) button.setAttribute('aria-pressed', String(imageOutput && replacement?.id === button.dataset.background));
+  $('backgroundDetails').textContent = replacement ? `${replacement.canvas.width} × ${replacement.canvas.height} pixels.${imageOutput ? ' Used behind every completed cutout.' : ' Choose Image background under Output background to use this image again.'}` : '';
+}
+function clearReplacement() {
+  if (replacement) { replacement.canvas.width = replacement.canvas.height = 1; URL.revokeObjectURL(replacement.thumb); replacement = null; }
+  $('backgroundThumbnail').removeAttribute('src');
+  if ($('background').value === 'image') $('background').value = 'transparent';
+  backgroundStatus('No image background selected. Transparent and solid colors are also available.');
+  renderBackground(); controls(); void showPreview();
+}
+function cancelBackground(message = 'Background loading cancelled. Your previous background is kept.') {
+  const task = backgroundTask; if (!task) return;
+  backgroundTask = null; clearTimeout(task.timeout); task.controller.abort();
+  backgroundStatus(message); controls();
+}
+async function loadReplacement(source) {
+  if (busy || importing || saving || backgroundTask) return;
+  if (source.kind === 'url') {
+    try { source.url = onlineImageURL(source.url).href; }
+    catch (error) { backgroundStatus(error.message, 'error'); return; }
+    if (!networkAllowed()) { backgroundStatus('Optional connections are off in Privacy. Upload a background or choose a built-in scene, or enable connections before loading an online image.', 'error'); return; }
+  }
+  if (source.id && replacement?.id === source.id) { $('background').value = 'image'; $('reveal').value = '0'; outputChanged(); backgroundStatus(`${replacement.name} selected.`, 'success'); return; }
+  const task = { controller: new AbortController(), kind: source.kind }; backgroundTask = task;
+  if (source.kind === 'url') task.timeout = setTimeout(() => cancelBackground('The online image timed out. Try another direct image URL or upload a file.'), 30_000);
+  backgroundStatus('Loading background…'); controls();
+  let canvas, thumb;
+  try {
+    let file;
+    if (source.kind === 'url') file = await fetchBackground(source.url, { signal: task.controller.signal });
+    else if (source.file) file = source.file;
+    else {
+      const response = await fetch(source.url, { signal: task.controller.signal });
+      if (!response.ok) throw new Error('This built-in background could not load. Reload or upload your own image.');
+      file = await response.blob();
+    }
+    if (file.size > MAX_FILE_BYTES) throw new Error('This background is over 40 MB. Use a smaller copy.');
+    if (backgroundTask !== task) return;
+    canvas = await decode(file);
+    if (backgroundTask !== task) return;
+    const small = document.createElement('canvas'); small.width = 128; small.height = 80;
+    drawBackground(small.getContext('2d'), small.width, small.height, { type: 'image', image: canvas });
+    thumb = URL.createObjectURL(await canvasBlob(small)); small.width = small.height = 1;
+    if (backgroundTask !== task) return;
+    if (source.kind === 'url' && !networkAllowed()) { cancelBackground('Online background download stopped because optional connections are off.'); return; }
+    if (replacement) { replacement.canvas.width = replacement.canvas.height = 1; URL.revokeObjectURL(replacement.thumb); }
+    replacement = { canvas, thumb, name: source.name, id: source.id }; canvas = null; thumb = null;
+    $('backgroundThumbnail').src = replacement.thumb;
+    $('background').value = 'image'; $('reveal').value = '0'; outputChanged();
+    backgroundStatus(`${replacement.name} selected.${validResult(selected()) ? ' The result now uses this background.' : ' Remove the original background to see your subject in this setting.'}`, 'success');
+  } catch (error) {
+    if (backgroundTask === task) backgroundStatus(source.kind === 'url' && /cannot open/.test(error.message) ? 'This URL did not return a readable image. Use a direct image link or upload a file.' : error.message, 'error');
+  } finally {
+    if (canvas) canvas.width = canvas.height = 1;
+    if (thumb) URL.revokeObjectURL(thumb);
+    clearTimeout(task.timeout);
+    if (backgroundTask === task) { backgroundTask = null; controls(); }
+  }
+}
+for (const scene of BACKGROUNDS) {
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'background-choice'; button.dataset.background = scene.id;
+  button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-label', scene.name); button.title = scene.description;
+  const img = new Image(); img.src = scene.url; img.alt = ''; img.width = 160; img.height = 100;
+  const label = document.createElement('span'); label.textContent = scene.name; button.append(img, label);
+  button.onclick = () => loadReplacement({ kind: 'builtin', ...scene }); $('backgroundGallery').append(button);
+}
+$('uploadBackground').onclick = () => $('backgroundFile').click();
+$('backgroundFile').onchange = async () => { const file = $('backgroundFile').files[0]; if (file) await loadReplacement({ kind: 'file', file, name: file.name || 'Uploaded background' }); $('backgroundFile').value = ''; };
+$('backgroundURLForm').onsubmit = event => {
+  event.preventDefault(); const url = $('backgroundURL').value.trim();
+  let name = 'Online image'; try { name = 'Online image · ' + new URL(url).hostname; } catch { /* Validation supplies the useful error. */ }
+  void loadReplacement({ kind: 'url', url, name });
+};
+$('cancelBackground').onclick = () => cancelBackground();
+$('removeBackgroundImage').onclick = () => { if (!busy && !importing && !saving && !backgroundTask) clearReplacement(); };
 
 $('choose').onclick = () => $('files').click();
 $('files').onchange = async () => { await addFiles($('files').files); $('files').value = ''; };
-$('dropZone').onclick = () => { if (!busy && !importing && !saving) $('files').click(); };
+$('dropZone').onclick = () => { if (!busy && !importing && !saving && !backgroundTask) $('files').click(); };
 $('dropZone').onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); $('dropZone').click(); } };
 const area = document.querySelector('.image-area');
 let dragDepth = 0;
@@ -325,14 +420,15 @@ $('cancel').onclick = () => cancel();
 $('download').onclick = () => download(false);
 $('downloadAll').onclick = () => download(true);
 $('clear').onclick = () => {
-  if (busy || importing || saving) return;
+  if (busy || importing || saving || backgroundTask) return;
   for (const item of items) release(item);
   items.length = 0; selectedId = undefined; ++previewGeneration;
+  clearReplacement(); $('backgroundURL').value = ''; $('backgroundFile').value = '';
   $('originalImage').removeAttribute('src'); $('resultImage').removeAttribute('src');
   showPreview(); renderQueue(); controls(); status('Images cleared from this tab. Saved downloads are unchanged.');
 };
 for (const id of ['mode', 'model', 'scope', 'tolerance', 'softness', 'keyColor']) $(id).addEventListener('input', updateMode);
-for (const id of ['background', 'backgroundColor', 'format']) $(id).addEventListener('input', outputChanged);
+for (const id of ['background', 'backgroundColor', 'format', 'backgroundFit']) $(id).addEventListener('input', outputChanged);
 $('zoom').onchange = fitPreview; $('reveal').oninput = reveal;
 $('showOriginal').onclick = () => { $('reveal').value = '100'; reveal(); };
 $('showResult').onclick = () => { $('reveal').value = '0'; reveal(); };
@@ -340,7 +436,7 @@ new ResizeObserver(fitPreview).observe($('viewport'));
 let dragging = false;
 $('comparison').onpointerdown = async event => {
   if ($('mode').value === 'color') {
-    if (busy || importing || saving || !selected()?.width) return;
+    if (busy || importing || saving || backgroundTask || !selected()?.width) return;
     const item = selected(), rect = $('comparison').getBoundingClientRect();
     try {
       const canvas = await decode(item.file); if (selectedId !== item.id || busy) return;
@@ -376,5 +472,8 @@ $('sample').onclick = async () => {
 
 // A worker is isolated from the shared privacy script; stop an active photo job
 // when the window's privacy preference changes. White/color needs no network.
-setInterval(() => { if (busy && options().mode === 'photo' && !networkAllowed()) cancel('Photo processing stopped because optional connections are off. White and color removal remain available.'); }, 500);
+setInterval(() => {
+  if (busy && options().mode === 'photo' && !networkAllowed()) cancel('Photo processing stopped because optional connections are off. White and color removal remain available.');
+  if (backgroundTask?.kind === 'url' && !networkAllowed()) cancelBackground('Online background download stopped because optional connections are off. Uploads and built-in backgrounds still work.');
+}, 250);
 updateMode(); outputChanged(); renderQueue(); controls();

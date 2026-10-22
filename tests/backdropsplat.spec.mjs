@@ -139,3 +139,119 @@ test('real ORMBG inference produces an alpha cutout without uploading pixels', a
   await page.screenshot({ path: '.tmp/backdropsplat/real-photo.png', fullPage: true });
   console.log('Real local photo inference:',alpha,'model requests:',outbound.length,'quality:',await page.locator('.file-state').textContent());
 });
+
+async function backgroundFile(page, width = 140, height = 70) {
+  const data = await page.evaluate(({width, height}) => {
+    const c = document.createElement('canvas'); c.width = width; c.height = height;
+    const x = c.getContext('2d'); x.fillStyle = '#ff0000'; x.fillRect(0, 0, width / 2, height);
+    x.fillStyle = '#0000ff'; x.fillRect(width / 2, 0, width / 2, height);
+    return c.toDataURL().split(',')[1];
+  }, {width, height});
+  return { name: 'replacement.png', mimeType: 'image/png', buffer: Buffer.from(data, 'base64') };
+}
+async function chooseReplacement(page, file) {
+  await page.locator('#backgroundFile').setInputFiles(file);
+  await expect(page.locator('#backgroundStatus')).toContainText('selected');
+  await expect(page.locator('#download')).toBeEnabled();
+}
+
+test('uploaded replacement is painted behind the subject in preview, PNG, JPEG, and ZIP without reprocessing', async ({page}) => {
+  await page.locator('#mode').selectOption('white'); const file = await logo(page); await upload(page, [file, file]);
+  await page.locator('#processAll').click(); await expect(page.locator('#status')).toContainText('2 images ready');
+  let workers = 0; page.on('worker', () => workers++);
+  await chooseReplacement(page, await backgroundFile(page));
+  await expect(page.locator('#background')).toHaveValue('image'); await expect(page.locator('#reveal')).toHaveValue('0');
+  let png = await save(page);
+  expect((await inspect(page, png, 1, 1)).pixel).toEqual([255, 0, 0, 255]);
+  expect((await inspect(page, png, 69, 1)).pixel).toEqual([0, 0, 255, 255]);
+  expect((await inspect(page, png, 20, 20)).pixel).toEqual([0, 0, 0, 255]);
+  const preview = await page.locator('#resultImage').evaluate(async img => {
+    await img.decode(); const c = document.createElement('canvas');c.width = img.naturalWidth;c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0);return [...c.getContext('2d').getImageData(1, 1, 1, 1).data];
+  }); expect(preview).toEqual([255, 0, 0, 255]);
+  await page.locator('#format').selectOption('jpeg');const jpg = await inspect(page, await save(page), 1, 1);
+  expect(jpg.pixel[0]).toBeGreaterThan(245);expect(jpg.pixel[2]).toBeLessThan(10);expect(jpg.pixel[3]).toBe(255);
+  await page.locator('#format').selectOption('png');const zip = await save(page, '#downloadAll');
+  const entries = await page.evaluate(async bytes => {
+    const z = await window.JSZip.loadAsync(new Uint8Array(bytes));const out = [];
+    for (const [name, file] of Object.entries(z.files)) out.push({name, bytes:[...await file.async('uint8array')]});return out;
+  }, [...zip]);
+  expect(entries.map(e=>e.name)).toEqual(['logo-cutout.png','logo-cutout-2.png']);
+  for (const entry of entries) expect((await inspect(page, entry.bytes, 69, 1)).pixel).toEqual([0,0,255,255]);
+  await page.locator('#background').selectOption('transparent');png = await save(page);expect((await inspect(page, png)).pixel[3]).toBe(0);
+  await page.locator('#background').selectOption('image');await page.locator('#backgroundFit').selectOption('contain');
+  png = await save(page);expect((await inspect(page,png)).pixel).toEqual([255,255,255,255]);expect((await inspect(page,png,1,35)).pixel).toEqual([255,0,0,255]);
+  await page.locator('#removeBackgroundImage').click();await expect(page.locator('#background')).toHaveValue('transparent');expect((await inspect(page,await save(page))).pixel[3]).toBe(0);
+  expect(workers).toBe(0);
+});
+
+test('six built-in scenes work with connections off, survive output changes, and clear with the foreground list', async ({page}) => {
+  await page.locator('#sample').click();await expect(page.locator('#download')).toBeEnabled();
+  await page.evaluate(()=>window.SplatPrivacy.setConnections(false));
+  await expect(page.locator('.background-choice')).toHaveCount(6);
+  for (const name of ['Studio Paper','Soft Lavender','Classroom Board','Splat Confetti','Mountain Morning','Coastal Calm']) {
+    const button = page.getByRole('button',{name,exact:true});await button.click();
+    await expect(button).toHaveAttribute('aria-pressed','true');await expect(page.locator('#download')).toBeEnabled();
+    const result = await inspect(page,await save(page));expect(result.width).toBe(800);expect(result.height).toBe(500);expect(result.pixel[3]).toBe(255);
+  }
+  await page.locator('#background').selectOption('transparent');await expect(page.getByRole('button',{name:'Coastal Calm',exact:true})).toHaveAttribute('aria-pressed','false');
+  await page.locator('#background').selectOption('image');await expect(page.getByRole('button',{name:'Coastal Calm',exact:true})).toHaveAttribute('aria-pressed','true');
+  await page.setViewportSize({width:390,height:844});await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.locator('#backgroundSection').scrollIntoViewIfNeeded();await page.screenshot({path:'.tmp/backdropsplat/replacement-mobile.png'});
+  await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:'.tmp/backdropsplat/replacement-desktop.png',fullPage:true});
+  await page.locator('#clear').click();await expect(page.locator('#backgroundThumbnail')).toBeHidden();await expect(page.locator('#background')).toHaveValue('transparent');await expect(page.locator('#queue li')).toHaveCount(0);
+});
+
+test('online image URL is fetched without credentials or referrer and used in the exported composite', async ({page}) => {
+  await page.locator('#sample').click();await expect(page.locator('#download')).toBeEnabled();const file = await backgroundFile(page);
+  let request;await page.route('https://backgrounds.example/scene.png',async route=>{request=route.request();await route.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:file.buffer});});
+  await page.locator('#backgroundURL').fill('https://backgrounds.example/scene.png');await page.locator('#loadBackgroundURL').click();
+  await expect(page.locator('#backgroundStatus')).toContainText('Online image · backgrounds.example selected');
+  expect(request.method()).toBe('GET');expect(request.postData()).toBeNull();expect(request.headers()['referer']).toBeUndefined();expect(request.headers()['cookie']).toBeUndefined();
+  expect((await inspect(page,await save(page),1,1)).pixel).toEqual([255,0,0,255]);
+  await page.locator('#backgroundURL').fill('http://backgrounds.example/scene.png');await page.locator('#loadBackgroundURL').click();await expect(page.locator('#backgroundStatus')).toContainText('HTTPS');
+  await page.route('https://backgrounds.example/blocked.png',r=>r.abort('accessdenied'));
+  await page.locator('#backgroundURL').fill('https://backgrounds.example/blocked.png');await page.locator('#loadBackgroundURL').click();await expect(page.locator('#backgroundStatus')).toContainText('upload it here instead');
+  expect((await inspect(page,await save(page),1,1)).pixel).toEqual([255,0,0,255]);
+});
+
+test('online loading honors privacy changes and cancel, while local uploads remain available', async ({page}) => {
+  await page.locator('#sample').click();await expect(page.locator('#download')).toBeEnabled();
+  await page.getByRole('button',{name:'Classroom Board',exact:true}).click();await expect(page.locator('#backgroundStatus')).toContainText('selected');
+  await page.evaluate(()=>window.SplatPrivacy.setConnections(false));
+  const external=[];page.on('request',r=>{if(r.url().startsWith('https://backgrounds.example'))external.push(r.url());});
+  await page.locator('#backgroundURL').fill('https://backgrounds.example/held.png');await page.locator('#loadBackgroundURL').click();await expect(page.locator('#backgroundStatus')).toContainText('Optional connections are off');expect(external).toEqual([]);
+  await chooseReplacement(page,await backgroundFile(page));
+  await page.evaluate(()=>window.SplatPrivacy.setConnections(true));let release;const gate=new Promise(resolve=>{release=resolve;});
+  await page.route('https://backgrounds.example/held.png',async route=>{await gate;await route.abort().catch(()=>{});});
+  for(const revoke of [false,true]) {
+    const pending=page.waitForRequest(r=>r.url().startsWith('https://backgrounds.example'));
+    await page.locator('#loadBackgroundURL').click();await pending;
+    await expect(page.locator('#download')).toBeDisabled();
+    if(revoke) await page.evaluate(()=>window.SplatPrivacy.setConnections(false));else await page.locator('#cancelBackground').click();
+    await expect(page.locator('#backgroundStatus')).toContainText(revoke?'optional connections are off':'cancelled');
+    await expect(page.locator('#download')).toBeEnabled();expect((await inspect(page,await save(page),1,1)).pixel).toEqual([255,0,0,255]);
+  }
+  release();
+});
+
+test('bad, oversized and non-image backgrounds preserve the prior scene with a useful error', async ({page}) => {
+  await page.locator('#sample').click();await expect(page.locator('#download')).toBeEnabled();
+  await page.getByRole('button',{name:'Soft Lavender',exact:true}).click();await expect(page.locator('#backgroundStatus')).toContainText('selected');
+  await page.locator('#backgroundFile').setInputFiles({name:'broken.png',mimeType:'image/png',buffer:Buffer.from('broken')});await expect(page.locator('#backgroundStatus')).toContainText('cannot open');
+  await page.route('https://backgrounds.example/huge.png',r=>r.fulfill({headers:{'access-control-allow-origin':'*','content-length':'42000000'},body:'x',contentType:'image/png'}));
+  await page.locator('#backgroundURL').fill('https://backgrounds.example/huge.png');await page.locator('#loadBackgroundURL').click();await expect(page.locator('#backgroundStatus')).toContainText('over 40 MB');
+  await page.route('https://backgrounds.example/page',r=>r.fulfill({headers:{'access-control-allow-origin':'*'},body:'<html>not an image</html>',contentType:'text/html'}));
+  await page.locator('#backgroundURL').fill('https://backgrounds.example/page');await page.locator('#loadBackgroundURL').click();await expect(page.locator('#backgroundStatus')).toContainText('direct image link');
+  await expect(page.getByRole('button',{name:'Soft Lavender',exact:true})).toHaveAttribute('aria-pressed','true');expect((await inspect(page,await save(page))).pixel[3]).toBe(255);
+});
+
+test('a background can be chosen first and uploaded PNG backgrounds retain their own transparency', async ({page}) => {
+  await page.getByRole('button',{name:'Studio Paper',exact:true}).click();await expect(page.locator('#backgroundStatus')).toContainText('Remove the original background');
+  await page.locator('#mode').selectOption('white');await upload(page,await logo(page));await runCutout(page);
+  expect((await inspect(page,await save(page))).pixel[3]).toBe(255);
+  const data=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=70;c.getContext('2d').fillStyle='#00ff00';c.getContext('2d').fillRect(60,0,10,70);return c.toDataURL().split(',')[1];});
+  await chooseReplacement(page,{name:'transparent-backdrop.png',mimeType:'image/png',buffer:Buffer.from(data,'base64')});
+  const png=await save(page);expect((await inspect(page,png)).pixel[3]).toBe(0);expect((await inspect(page,png,20,20)).pixel).toEqual([0,0,0,255]);expect((await inspect(page,png,65,1)).pixel).toEqual([0,255,0,255]);
+  await page.locator('#format').selectOption('jpeg');const jpg=await inspect(page,await save(page));expect(jpg.pixel[3]).toBe(255);expect(jpg.pixel[0]).toBeGreaterThan(245);
+});

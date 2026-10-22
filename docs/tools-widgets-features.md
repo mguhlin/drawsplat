@@ -56,6 +56,7 @@ Category: **Create** · 20 components
 - Local photo cutouts with pinned ORMBG and optional BEN2 models; visible Fast fallback on unsupported devices.
 - Instant white or sampled-color removal, tolerance, soft edges, and border-connected or all-matching areas.
 - Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
+- Replacement backgrounds: upload an image, choose six original local scenes, or load a direct HTTPS image URL; centered Fill/Fit placement, instant preview, and matching PNG/JPEG/batch ZIP output without rerunning removal.
 - Cancellable worker processing; original files stay unchanged and photos are not uploaded.
 
 ### ClipSplat
@@ -469,6 +470,7 @@ Category: **Media** · 8 components
 - Local photo cutouts with pinned ORMBG and optional BEN2 models; visible Fast fallback on unsupported devices.
 - Instant white or sampled-color removal, tolerance, soft edges, and border-connected or all-matching areas.
 - Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
+- Replacement backgrounds: upload an image, choose six original local scenes, or load a direct HTTPS image URL; centered Fill/Fit placement, instant preview, and matching PNG/JPEG/batch ZIP output without rerunning removal.
 - Cancellable worker processing; original files stay unchanged and photos are not uploaded.
 
 ### ClipSplat

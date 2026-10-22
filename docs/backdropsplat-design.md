@@ -57,3 +57,29 @@ Primary model and runtime references:
 - https://huggingface.co/docs/transformers.js/v3.8.1/api/pipelines
 
 The model licenses and runtime notices are retained with vendored runtime files.
+
+## Replacement-background extension
+
+Keep the same palette, type, and comparison stage. A scene chooser directly
+below the preview puts six small illustrated thumbnails, upload, and URL loading
+in one place. The selected scene receives a purple outline; the actual composite
+remains the visual focus. At narrow widths the chooser follows processing
+controls and uses three thumbnails per row. This avoids squeezing six scene
+names into the sidebar or hiding the new feature behind a separate modal.
+
+Original code-native SVG backgrounds: Studio Paper, Soft Lavender, Classroom
+Board, Splat Confetti, Mountain Morning, and Coastal Calm. No stock service,
+external asset references, generated raster dependency, or attribution lookup.
+
+The cutout blob remains unchanged. A shared canvas compositor draws a centered
+cover/contain background and then the cutout at native dimensions. The same
+path drives preview, PNG, JPEG, and every ZIP entry. Background changes do not
+invalidate the removal signature. Releasing a backdrop cannot race a pending
+composite: the background is painted synchronously before cutout decoding.
+
+URL import is an explicit credential-free, no-referrer HTTPS CORS fetch, with a
+bounded streamed body, dimension checks, cancellation, timeout, and privacy
+revocation. The page allows HTTPS image downloads; model-worker fetches remain
+limited by their existing host allowlist. A blocked host gives download/upload
+guidance; no server-side image proxy or photo upload is introduced. Imports
+replace the previous background atomically after decode and validation.

@@ -23,6 +23,7 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
+        "example.org",
         "github.com",
         "huggingface.co"
       ],
@@ -32,7 +33,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "8cb3ac52b1cfce627a7b5693e6a50ad267d275be1ddfeca429c1e6f16b2ee3c5"
+      "entrySha256": "ca30c48b8d123f0dd91fe5c779311a8a92b78c81ae08edae9c86c4cc4b934b2b"
     },
     {
       "id": "clipsplat",

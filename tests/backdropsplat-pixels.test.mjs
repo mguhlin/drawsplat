@@ -63,3 +63,27 @@ test('download names are filesystem-safe and duplicate ZIP names remain distinct
   assert.equal(uniqueName('logo-cutout.png', used), 'logo-cutout-2.png');
   assert.equal(uniqueName('logo-cutout.png', used), 'logo-cutout-3.png');
 });
+
+test('replacement background placement centers cover crops and contain margins', async () => {
+  const { backgroundRect } = await import('../solutions/backdropsplat/backgrounds.mjs');
+  assert.deepEqual(backgroundRect(200, 100, 100, 100), { x: -50, y: 0, width: 200, height: 100 });
+  assert.deepEqual(backgroundRect(200, 100, 100, 100, 'contain'), { x: 0, y: 25, width: 100, height: 50 });
+  assert.deepEqual(backgroundRect(100, 200, 100, 100), { x: 0, y: -50, width: 100, height: 200 });
+  assert.throws(() => backgroundRect(0, 100, 100, 100), /dimensions/);
+});
+test('online backgrounds require HTTPS and omit embedded credentials', async () => {
+  const { onlineImageURL } = await import('../solutions/backdropsplat/background-source.mjs');
+  assert.equal(onlineImageURL('https://example.org/picture.png#section').href, 'https://example.org/picture.png');
+  for (const url of ['http://example.org/a.png', 'file:///a.png', 'data:image/png;base64,a', 'javascript:alert(1)', 'https://name:secret@example.org/a.png', 'picture.png'])
+    assert.throws(() => onlineImageURL(url), /HTTPS/);
+});
+
+test('streamed online backgrounds stop at the byte limit even without a content-length header', async () => {
+  const { fetchBackground } = await import('../solutions/backdropsplat/background-source.mjs');
+  const rawFetch = globalThis.fetch; let cancelled = false;
+  const chunk = new Uint8Array(21_000_000);
+  globalThis.fetch = async () => ({ ok: true, type: 'cors', url: 'https://example.org/image.png', headers: new Headers(),
+    body: new ReadableStream({ pull(controller) { controller.enqueue(chunk); }, cancel() { cancelled = true; } }) });
+  try { await assert.rejects(fetchBackground('https://example.org/image.png'), /over 40 MB/); assert.equal(cancelled, true); }
+  finally { globalThis.fetch = rawFetch; }
+});

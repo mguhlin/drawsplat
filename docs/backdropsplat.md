@@ -16,7 +16,7 @@ original suggested name, “DisappearBkgrndSplat”.
 4. Choose **Remove background** for the selected file or **Process all images**.
 5. Compare the original and result using the slider, arrow keys, or Original /
    Result buttons. Zoom to inspect edges.
-6. Choose transparent, white, or custom-color output and download PNG or JPEG.
+6. Choose transparent, white, custom-color, or replacement-image output and download PNG or JPEG.
    JPEG always has a solid background; transparent + JPEG is flattened on white.
    A ZIP contains completed results with distinct filenames, including duplicates.
 
@@ -24,6 +24,41 @@ Changing cutout settings marks old results as out of date. Reprocess before
 saving. Background and export-format changes reuse the existing cutout. Every
 processing attempt starts from the original, so adjustments are not cumulative.
 Cancel stops the worker; existing completed results remain available.
+
+## Put your subject on a new background
+
+In standalone BackdropSplat, use **Choose a new background** below the image
+preview. Choose from six locally shipped original illustrations:
+
+- **Studio Paper**: warm paper and soft studio lighting.
+- **Soft Lavender**: a quiet lavender and sky-blue wash.
+- **Classroom Board**: deep green with chalk details around the edges.
+- **Splat Confetti**: colorful splashes with room for the subject.
+- **Mountain Morning**: layered mountains beneath a pale sky.
+- **Coastal Calm**: blue water and warm sand.
+
+You can also choose **Upload background**, or enter a direct HTTPS image link
+and choose **Load image URL**. The cutout is composited over that image in the
+preview and all PNG/JPEG/ZIP exports. The comparison switches to Result so you
+can see the full composition. No additional background-removal run is needed.
+You can select a backdrop before adding the subject, too.
+
+**Fill frame** centers and crops the background to cover the subject image's
+original dimensions. **Fit entire image** includes the entire backdrop with
+white margins. The subject retains its size and position; every image in a batch
+uses the selected backdrop. Choose Transparent to export the cutout alone again.
+**Remove image background** releases the replacement; **Clear all** releases it
+and all subjects. An unsuccessful or cancelled load keeps the previous backdrop.
+
+Online images are downloaded directly by the browser. The image host receives
+your image URL request and ordinary connection metadata, without your subject
+image, account cookies, or a referrer. Online image fetches use no-store caching. The host must permit cross-origin browser
+access (CORS); some image links or web pages do not. If a link fails, download the
+image and upload a local copy instead. No third-party proxy is used. Optional
+connections must be enabled to load an online background. Turning them off stops
+an active online download; uploads, built-in scenes, and already loaded
+backgrounds remain usable. Online requests time out after 30 seconds and can be
+cancelled. Background files have the same 40 MB / 16 MP / 8,192-pixel bounds.
 
 ## Use the same engine inside ImageSplat
 
@@ -49,7 +84,7 @@ connections preference is checked before photo processing, and the worker also
 guards external downloads. Turning connections off stops an active photo job;
 white/color removal remains usable.
 
-Images and results stay in tab memory until cleared or closed. The app does not
+Subjects, chosen replacement backgrounds, and results stay in tab memory until cleared or closed. The app does not
 write image projects to localStorage or IndexedDB. Browser Cache Storage may
 retain public model files. Clearing origin data through Privacy or browser
 settings removes those caches; exports already saved to disk are separate.
@@ -107,3 +142,10 @@ pixel inspection, unique ZIP filenames, two-layer atomic Apply and one-step Undo
 Undo/Redo, Cancel, stale settings, disabled optional connections, pending-download
 cancellation, keyboard controls, and mobile layout. The existing ImageSplat text,
 photo adjustment, clipboard, action icon, and Green Screen Studio checks passed.
+
+Replacement-background verification includes all six bundled scenes, uploaded
+images, direct online URLs, no-credential/no-referrer requests, composited pixel
+inspection in preview/PNG/JPEG/ZIP, centered Fill/Fit placement, unchanged
+foreground cutouts, failed-load recovery, privacy changes, cancellation, bounds,
+clearing, and mobile layout. These controls currently belong to standalone
+BackdropSplat; ImageSplat retains its selected-layer cutout studio.
