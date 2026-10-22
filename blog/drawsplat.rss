@@ -6,6 +6,21 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
+      <title>Free Image Background Removal Tool - BackdropSplat</title>
+      <link>https://mguhlin.org/blog/2026-10-22-free-image-background-removal-tool-backdropsplat/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-22-free-image-background-removal-tool-backdropsplat/</guid>
+      <description>&lt;img src="https://mguhlin.org/media/2026/10/backdrop1.webp" alt=""&gt;Looking for a free background image remover that works in your browser, and costs nothing? Check out BackdropSplat, part of the SplatWork universe of free, open source tools, designed for schools but that anyone can use.</description>
+      <pubDate>Thu, 22 Oct 2026 21:00:00 GMT</pubDate>
+      <media:thumbnail url="https://mguhlin.org/media/2026/10/backdrop1.webp" />
+      <category>SplatWorks</category>
+      <category>DrawSplat</category>
+      <category>BackdropSplat</category>
+      <category>Remove Background</category>
+      <category>Image Editing</category>
+      <author>Miguel Guhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
       <title>Keep the Subject. Change the Scene.</title>
       <link>https://splatworks.org/blog/backdropsplat-new-backgrounds.html</link>
       <guid>https://splatworks.org/blog/backdropsplat-new-backgrounds.html</guid>
