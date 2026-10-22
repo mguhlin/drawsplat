@@ -1,22 +1,36 @@
-# ImageSplat color and green-screen removal
+# ImageSplat background and color removal
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+Select one or more image layers, then choose **Effects → Background removal…**.
+ImageSplat now embeds the same BackdropSplat worker, white/color pixel processing,
+and local photo models as the standalone tool. The older external smart-cutout
+loader is no longer used.
 
+**Remove color…** opens the studio in Colored background mode. Click/tap the
+original preview to sample a color, or use the picker. Choose **Connected to
+image edges** to preserve enclosed matching regions, or **Every matching pixel**
+to clear all matching pixels, including logo and lettering centers. Border mode
+starts from every image edge; sampling selects the color, not a flood-fill seed.
+Tolerance and soft edge control matching and partial opacity. Existing alpha is
+never increased. White mode fixes the target to white.
 
-Select one image layer, then choose **Effects → Remove color…**.
+Process the selected layers, inspect their before/after previews and zoom, then
+download full-resolution PNG/JPEG or a ZIP. Changing cutout settings invalidates
+previous results. Choose transparent, white, or custom background output. JPEG
+downloads use a solid background; selecting JPEG does not flatten layer Apply.
 
-- Click/tap the original preview to sample the actual backdrop color, or use the green screen, blue screen, white, and black presets or color picker.
-- **All matching colors** removes matches throughout the image.
-- **Connected area at clicked point** removes only the matching region reachable from the sampled pixel (four neighboring directions). Separate matching regions remain intact. Select a point before applying or downloading this mode.
-- Tolerance controls color matching; edge smoothing gradually reduces opacity for colors just beyond that tolerance. Zero smoothing produces a hard threshold. Existing alpha is preserved or reduced, never increased.
-- Preview adjustments always start from unchanged source pixels. Preview images are capped at 700 pixels on the longest side, so fine edges or narrow connections may differ from the full-resolution result.
-- **Download PNG** exports the image at its original pixel dimensions with transparency, independent of the white editor canvas. **Apply to layer** replaces the selected image without changing its placement; Undo restores the original.
-- Import now retains white margins and original dimensions rather than automatically trimming them. Imported image data remains available for Undo after loading.
+Apply updates all selected image layers together. One Undo restores them all.
+Cancel and downloads leave the document unchanged. The ImageSplat stage remains
+white, so check transparency against the studio checkerboard. Photo adjustments,
+layer placement, image dimensions, and the separate Green Screen Studio remain
+available.
 
-All processing is local. This is color-based transparency, not AI subject segmentation or automatic green-spill correction. Uneven lighting may require sampling and tolerance adjustments. The existing smart background cutout and edge-background tool remain available.
+White/color removal needs no model or external connection. Photo mode downloads
+pinned open models and processes pixels on the device. See the
+[BackdropSplat guide](backdropsplat.md) for model sizes, privacy controls, formats,
+limits, and licensing.
 
-## Checks
-
-`npx playwright test tests/imagesplat.spec.js tests/imagesplat-remove-color.spec.js`
-
-Tests verify connected versus global green-screen removal, full-resolution PNG alpha, tolerance and soft edges, preview reset, cancellation, applying and undoing, and the existing clipboard and route behavior. Also run with Firefox and iPhone-emulated WebKit before publication.
+Verification: `npx playwright test --config playwright.backdropsplat.config.cjs`
+covers white/color pixel output, stale previews, selected-layer batch Apply,
+Undo/Redo, Cancel, ZIP names, PNG/JPEG, model cancellation, privacy, and mobile.
+`tests/imagesplat-remove-color.spec.js` retains compatibility checks for the
+legacy color module; new editing actions use BackdropSplat’s shared engine.

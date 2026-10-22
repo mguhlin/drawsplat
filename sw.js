@@ -1,5 +1,5 @@
 /* DrawSplatTM offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.41-creative-drive';
+const CACHE = 'drawsplat-v3.1.41-background-studio';
 const SHELL = [
   './',
   './index.html',
@@ -144,7 +144,7 @@ self.addEventListener('fetch', e => {
   if(url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname === '/setup' || url.searchParams.has('open-file') || req.headers.has('Authorization') || req.cache === 'no-store') return;
   const isDiscoveryAsset = url.pathname.startsWith('/assets/js/tool-') || url.pathname === '/data/drawsplat-tools.json';
   const isBackdropShell = url.pathname.startsWith('/solutions/backdropsplat/') && !url.pathname.includes('/vendor/');
-  const isShellScript = isBackdropShell || url.pathname.startsWith('/solutions/pdfsplat/') || url.pathname.startsWith('/splatworks/layoutsplat/') || url.pathname.startsWith('/splatworks/shared/') || url.pathname === '/assets/js/layoutsplat-cache-recovery.js' || url.pathname === '/assets/css/support-wiki.css' || url.pathname.startsWith('/assets/js/support-') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
+  const isShellScript = isBackdropShell || url.pathname.startsWith('/solutions/imagesplat/') || url.pathname.startsWith('/solutions/pdfsplat/') || url.pathname.startsWith('/splatworks/layoutsplat/') || url.pathname.startsWith('/splatworks/shared/') || url.pathname === '/assets/js/layoutsplat-cache-recovery.js' || url.pathname === '/assets/css/support-wiki.css' || url.pathname.startsWith('/assets/js/support-') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
   e.respondWith((async()=>{
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){

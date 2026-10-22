@@ -2,9 +2,9 @@ name: BackdropSplat background removal
 on:
   push:
     branches: [main]
-    paths: ['solutions/backdropsplat/**', 'tests/backdropsplat*', 'playwright.backdropsplat.config.cjs', '.github/workflows/backdropsplat.yml']
+    paths: ['solutions/backdropsplat/**', 'solutions/imagesplat/**', 'tests/imagesplat-background*', 'tests/backdropsplat*', 'playwright.backdropsplat.config.cjs', '.github/workflows/backdropsplat.yml']
   pull_request:
-    paths: ['solutions/backdropsplat/**', 'tests/backdropsplat*', 'playwright.backdropsplat.config.cjs', '.github/workflows/backdropsplat.yml']
+    paths: ['solutions/backdropsplat/**', 'solutions/imagesplat/**', 'tests/imagesplat-background*', 'tests/backdropsplat*', 'playwright.backdropsplat.config.cjs', '.github/workflows/backdropsplat.yml']
 permissions:
   contents: read
 jobs:

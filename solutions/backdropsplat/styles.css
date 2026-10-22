@@ -11,3 +11,4 @@
   .controls section{background:#fff;border:1px solid var(--line)!important;border-radius:9px;padding:18px}.local-note{border-radius:7px}.help{margin-top:10px}
 }
 .skip{top:12px}.skip:not(:focus){clip-path:inset(50%);width:1px;height:1px;overflow:hidden;padding:0;white-space:nowrap}.skip:focus{clip-path:none;width:auto;height:auto;padding:10px}
+@media(max-width:760px){.workspace{grid-template-columns:minmax(0,1fr)}.image-area,.queue-section,.help,.local-note,.controls section{min-width:0;max-width:100%}select,.view-controls input[type=range]{min-width:0;max-width:100%}}

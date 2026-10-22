@@ -283,8 +283,8 @@
   "splatimage": [
     "Edit images with layers, text, shapes, and annotations",
     "Crop, mask, adjust photos, and apply effects",
-    "Remove colors or backgrounds",
-    "Green screen: remove green, blue, or a sampled color with tolerance and edge smoothing; export transparent PNGs or apply removal to the selected image layer",
+    "BackdropSplat background removal: local photo subject cutouts (Fast / Best), white background removal, or sampled colors; preview before applying selected layers, then restore all with one Undo",
+    "White/color controls: match border-connected regions or every matching pixel, with tolerance and soft edges; export transparent or solid PNG/JPEG and batch ZIP files at full resolution",
     "Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks",
     "Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local",
     "Capture screens and paste clipboard images",

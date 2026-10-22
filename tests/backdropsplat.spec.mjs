@@ -40,6 +40,8 @@ test('white removal exports full-size PNG and preserves enclosed white only in e
 });
 test('solid PNG, transparent-to-JPEG flattening, and comparison work', async ({ page }) => {
   await page.locator('#sample').click(); await expect(page.locator('#download')).toBeEnabled();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.locator('#showResult').click(); await expect(page.locator('#reveal')).toHaveValue('0');
   await page.locator('#reveal').focus(); await page.keyboard.press('ArrowRight'); await expect(page.locator('#reveal')).toHaveValue('1');
   await page.locator('#background').selectOption('color');

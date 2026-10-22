@@ -1,6 +1,6 @@
 const { defineConfig } = require('@playwright/test');
 module.exports = defineConfig({
-  testDir: './tests', testMatch: 'backdropsplat.spec.mjs', workers: 1,
+  testDir: './tests', testMatch: ['backdropsplat.spec.mjs', 'imagesplat-background.spec.mjs'], workers: 1,
   timeout: 60_000, outputDir: '.tmp/backdropsplat/results',
   use: {
     baseURL: 'http://127.0.0.1:8792', browserName: process.env.BROWSER_NAME || 'chromium',

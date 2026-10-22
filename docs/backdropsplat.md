@@ -25,6 +25,16 @@ saving. Background and export-format changes reuse the existing cutout. Every
 processing attempt starts from the original, so adjustments are not cumulative.
 Cancel stops the worker; existing completed results remain available.
 
+## Use the same engine inside ImageSplat
+
+Select image layers in [ImageSplat](https://splatworks.org/imagesplat/) and choose
+**Effects → Background removal…**. White and color menu shortcuts open the same
+studio in the corresponding mode. Process, inspect before/after previews, and
+apply all selected layers together. One Undo restores them all; Cancel and
+exports leave layers unchanged. Layer positions and dimensions are preserved.
+PNG/JPEG and ZIP downloads are also available. The same worker, pinned models,
+white/color algorithm, and optional-connections preference serve both apps.
+
 ## Local processing and first-use downloads
 
 White/color removal is ordinary pixel processing with no model or external
@@ -91,3 +101,9 @@ available in this verification environment.
 The suite navigation, wiki, naming, shortcut, and privacy regression checks were
 also run. Guide and shortcut counts now include BackdropSplat. Existing author
 files and unrelated local test artifacts were left untouched.
+
+ImageSplat integration was verified with real ORMBG photo inference, PNG/JPEG
+pixel inspection, unique ZIP filenames, two-layer atomic Apply and one-step Undo,
+Undo/Redo, Cancel, stale settings, disabled optional connections, pending-download
+cancellation, keyboard controls, and mobile layout. The existing ImageSplat text,
+photo adjustment, clipboard, action icon, and Green Screen Studio checks passed.

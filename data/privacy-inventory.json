@@ -1072,16 +1072,14 @@
         ],
         "namedConstants": []
       },
-      "literalRemoteHosts": [
-        "esm.sh"
-      ],
+      "literalRemoteHosts": [],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
       "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "f1450ba739e8bd4c8d81c5b3dda18a63e84c1fa3dc5c67b03d7280678e3cc9f1"
+      "entrySha256": "ee41cb249ee21cfb83fe191d5abfd7ecb0f8f8e21b833e836124438a5f8259f5"
     },
     {
       "id": "step-splat",
