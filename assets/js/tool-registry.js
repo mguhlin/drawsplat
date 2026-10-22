@@ -1,4 +1,4 @@
-const REGISTRY_URL = "/data/drawsplat-tools.json?v=6";
+const REGISTRY_URL = "/data/drawsplat-tools.json?v=7";
 let registryPromise;
 
 function validate(registry) {

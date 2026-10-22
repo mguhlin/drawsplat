@@ -34,7 +34,7 @@ Use these activities to build keyboard familiarity, accuracy, and typing fluency
 
 ## Draw & Create
 
-Category: **Create** · 19 components
+Category: **Create** · 20 components
 
 ### AudioSplat
 
@@ -48,6 +48,15 @@ Category: **Create** · 19 components
 - Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
 - Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
 - Suggested classroom uses: student podcasts, oral explanations, reading-fluency recordings, interviews, and accessible transcripts
+
+### BackdropSplat
+
+**Tool** · [Open BackdropSplat](../solutions/backdropsplat/)
+
+- Local photo cutouts with pinned ORMBG and optional BEN2 models; visible Fast fallback on unsupported devices.
+- Instant white or sampled-color removal, tolerance, soft edges, and border-connected or all-matching areas.
+- Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
+- Cancellable worker processing; original files stay unchanged and photos are not uploaded.
 
 ### ClipSplat
 
@@ -438,7 +447,7 @@ Category: **Organize** · 12 components
 
 ## Audio, Video & Media
 
-Category: **Media** · 7 components
+Category: **Media** · 8 components
 
 ### AudioSplat
 
@@ -452,6 +461,15 @@ Category: **Media** · 7 components
 - Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
 - Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
 - Suggested classroom uses: student podcasts, oral explanations, reading-fluency recordings, interviews, and accessible transcripts
+
+### BackdropSplat
+
+**Tool** · [Open BackdropSplat](../solutions/backdropsplat/)
+
+- Local photo cutouts with pinned ORMBG and optional BEN2 models; visible Fast fallback on unsupported devices.
+- Instant white or sampled-color removal, tolerance, soft edges, and border-connected or all-matching areas.
+- Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.
+- Cancellable worker processing; original files stay unchanged and photos are not uploaded.
 
 ### ClipSplat
 

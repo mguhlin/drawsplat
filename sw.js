@@ -135,7 +135,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/splatworks/shared/google-drive.js','/splatworks/shared/google-drive-auth.js','/splatworks/showsplat/app.js','/assets/js/privacy-controls.js','/assets/css/privacy-controls.css','/assets/js/privacy-center.js','/assets/js/protect-review.js','/splatworks/shared/file-bridge.js','/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
+const NETWORK_FIRST_PATHS = ['/assets/js/home-discovery.js','/splatworks/shared/google-drive.js','/splatworks/shared/google-drive-auth.js','/splatworks/showsplat/app.js','/assets/js/privacy-controls.js','/assets/css/privacy-controls.css','/assets/js/privacy-center.js','/assets/js/protect-review.js','/splatworks/shared/file-bridge.js','/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;
@@ -143,7 +143,8 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if(url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname === '/setup' || url.searchParams.has('open-file') || req.headers.has('Authorization') || req.cache === 'no-store') return;
   const isDiscoveryAsset = url.pathname.startsWith('/assets/js/tool-') || url.pathname === '/data/drawsplat-tools.json';
-  const isShellScript = url.pathname.startsWith('/solutions/pdfsplat/') || url.pathname.startsWith('/splatworks/layoutsplat/') || url.pathname.startsWith('/splatworks/shared/') || url.pathname === '/assets/js/layoutsplat-cache-recovery.js' || url.pathname === '/assets/css/support-wiki.css' || url.pathname.startsWith('/assets/js/support-') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
+  const isBackdropShell = url.pathname.startsWith('/solutions/backdropsplat/') && !url.pathname.includes('/vendor/');
+  const isShellScript = isBackdropShell || url.pathname.startsWith('/solutions/pdfsplat/') || url.pathname.startsWith('/splatworks/layoutsplat/') || url.pathname.startsWith('/splatworks/shared/') || url.pathname === '/assets/js/layoutsplat-cache-recovery.js' || url.pathname === '/assets/css/support-wiki.css' || url.pathname.startsWith('/assets/js/support-') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
   e.respondWith((async()=>{
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){

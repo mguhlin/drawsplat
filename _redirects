@@ -25,6 +25,8 @@
 # App names open tools; guides keep their explicit /wiki/ and /pages/ addresses.
 /audiosplat  /solutions/audiosplat/  301
 /audiosplat/  /solutions/audiosplat/  301
+/backdropsplat  /solutions/backdropsplat/  301
+/backdropsplat/  /solutions/backdropsplat/  301
 /ciphersplat  /solutions/CipherSplat/  301
 /ciphersplat/  /solutions/CipherSplat/  301
 /clipsplat  /solutions/clipsplat/  301
@@ -81,6 +83,7 @@
 /writesplat  /splatworks/writesplat/  301
 /writesplat/  /splatworks/writesplat/  301
 /audiosplat/*  /solutions/audiosplat/:splat  301
+/backdropsplat/*  /solutions/backdropsplat/:splat  301
 /ciphersplat/*  /solutions/CipherSplat/:splat  301
 /clipsplat/*  /solutions/clipsplat/:splat  301
 /conceptsplat/*  /solutions/concept-map/:splat  301

@@ -6,6 +6,12 @@
     "target": "/solutions/audiosplat/"
   },
   {
+    "id": "backdropsplat",
+    "name": "BackdropSplat",
+    "path": "/backdropsplat",
+    "target": "/solutions/backdropsplat/"
+  },
+  {
     "id": "ciphersplat",
     "name": "CipherSplat",
     "path": "/ciphersplat",

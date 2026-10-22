@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../../assets/css/privacy-controls.css"><script src="../../assets/js/privacy-controls.js"></script><!-- splat-privacy:end -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Remove photo, white, or colored backgrounds locally. Compare cutouts, process a batch, and export transparent PNG or solid-background images with BackdropSplat.">
+  <meta name="theme-color" content="#7c3aed">
+  <title>BackdropSplat · Background removal in SplatWorks</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="../../vendor/jszip.min.js" defer></script>
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to image workspace</a>
+  <header class="app-header">
+    <a class="brand" href="../../"><img src="icon.svg" alt="" width="46" height="46"><span><small>SplatWorks</small><h1>BackdropSplat</h1></span></a>
+    <nav aria-label="App links"><a href="#help">How it works</a><a href="../../studio/">All tools</a></nav>
+  </header>
+  <main id="workspace" class="workspace" tabindex="-1">
+    <aside class="controls" aria-label="Background and export controls">
+      <section>
+        <h2>Remove a background</h2>
+        <label for="mode">What are you working with?</label>
+        <select id="mode"><option value="photo">Photo subject</option><option value="white">White background</option><option value="color">Colored background</option></select>
+        <div id="photoControls">
+          <label for="model">Photo quality</label>
+          <select id="model"><option value="fast">Fast · smaller download</option><option value="best">Best quality · supported devices</option></select>
+          <p class="hint" id="modelHint">Fast downloads about 44 MB of model data plus a 22 MB local engine on first use. Best quality uses about 219 MB. Browser caching may avoid repeat downloads. Photos stay on this device.</p>
+        </div>
+        <div id="colorControls" hidden>
+          <div id="keyColorRow" hidden><label for="keyColor">Color to remove</label><input id="keyColor" type="color" value="#ffffff"><p class="hint">Or click the original image to sample a color.</p></div>
+          <label for="scope">Where to remove it</label><select id="scope"><option value="edges">Connected to the image edges</option><option value="all">Every matching pixel</option></select>
+          <p class="hint">Edges protects enclosed white or matching areas inside the subject. Choose every matching pixel to clear the centers of letters and logos, too.</p>
+          <label for="tolerance">Tolerance <output id="toleranceValue" for="tolerance">20</output></label><input id="tolerance" type="range" min="0" max="150" value="20">
+          <label for="softness">Soft edge <output id="softnessValue" for="softness">20</output></label><input id="softness" type="range" min="0" max="100" value="20">
+        </div>
+        <div class="button-stack"><button class="primary" id="process" disabled>Remove background</button><button id="processAll" disabled>Process all images</button><button id="cancel" hidden>Cancel processing</button></div>
+        <p class="status" id="status" role="status" aria-live="polite">Choose an image to begin.</p>
+        <progress id="progress" max="1" value="0" hidden aria-label="Batch progress"></progress>
+      </section>
+      <section>
+        <h2>Save your cutout</h2>
+        <label for="background">Output background</label><select id="background"><option value="transparent">Transparent</option><option value="white">White</option><option value="color">Custom color</option></select>
+        <label id="backgroundColorLabel" for="backgroundColor" hidden>Background color</label><input id="backgroundColor" type="color" value="#7c3aed" hidden>
+        <label for="format">File format</label><select id="format"><option value="png">PNG · keeps transparency</option><option value="jpeg">JPEG · solid background</option></select>
+        <p id="formatHint" class="hint">Full image dimensions are preserved. The checkerboard is only a transparency preview.</p>
+        <div class="button-stack"><button class="primary" id="download" disabled>Download image</button><button id="downloadAll" disabled>Download completed images as ZIP</button></div>
+      </section>
+      <p class="local-note">Images stay in this tab until you clear or close it. Downloads stay wherever you save them. <a href="../../privacy/">Privacy controls</a></p>
+    </aside>
+    <div class="work-area">
+      <section class="image-area" aria-label="Image workspace">
+        <div class="workspace-toolbar"><button id="choose">Add images</button><button id="paste">Paste image</button><button id="sample">Try a white-background example</button><button id="clear" disabled>Clear all</button><input type="file" id="files" accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/bmp,image/heic,image/heif" multiple hidden></div>
+        <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Choose images, or drop images here" aria-describedby="dropHint">
+          <div class="drop-mark" aria-hidden="true">＋</div><h2>Keep the subject. Clear the background.</h2><p>Drop images here, choose files, or paste an image.</p><p id="dropHint" class="hint">PNG, JPG, WebP, AVIF, GIF, and browser-supported HEIC. Up to 20 images; 40 MB and 16 megapixels each. GIF imports the first frame.</p>
+        </div>
+        <div id="preview" hidden>
+          <div class="preview-heading"><h2 id="imageName">Image preview</h2><span id="dimensions"></span></div>
+          <p class="hint" id="previewNote">The original is shown until processing finishes.</p>
+          <div id="viewport" class="viewport">
+            <div id="comparison" class="comparison">
+              <img id="resultImage" alt="Cutout result" draggable="false">
+              <img id="originalImage" alt="Original image" draggable="false">
+              <div id="revealLine" class="reveal-line" hidden aria-hidden="true"><span>↔</span></div>
+            </div>
+          </div>
+          <div class="view-controls"><label for="reveal">Original / result <output id="revealValue">50%</output></label><input id="reveal" type="range" min="0" max="100" value="50" aria-label="Reveal original image: zero shows result, one hundred shows original" disabled><label for="zoom">Zoom</label><select id="zoom"><option value="1">Fit</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option></select><button id="showOriginal" disabled>Original</button><button id="showResult" disabled>Result</button></div>
+        </div>
+      </section>
+      <section class="queue-section" aria-labelledby="queueTitle"><div class="queue-heading"><h2 id="queueTitle">Your images</h2><span id="queueCount">0 images</span></div><p id="queueEmpty" class="hint">Add several images to process them one at a time.</p><ul id="queue" class="queue"></ul></section>
+      <section id="help" class="help" aria-labelledby="helpTitle">
+        <h2 id="helpTitle">A clean start for your next design</h2>
+        <p><a href="../../wiki/backdropsplat.html">Read the BackdropSplat guide</a> · <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/backdropsplat" target="_blank" rel="noopener noreferrer">Source code · AGPL-3.0-or-later</a></p>
+        <div class="help-columns"><div><h3>Photos</h3><p>Choose Photo subject, then remove the background. The first use downloads a model from Hugging Face. Processing happens here, without uploading your picture. Best quality uses your graphics hardware when supported; a visible note explains any fallback to Fast.</p><p>One clear subject works best. Hair, transparent objects, shadows, and busy groups can need further editing. Check the edges before saving.</p></div><div><h3>White backgrounds and logos</h3><p>White and color removal work immediately, with no model or external download. Adjust tolerance and soft edge, then process again. Choose edges to protect enclosed matching colors, or every matching pixel for logo openings.</p><p>Save transparent PNG for a slide or publication. JPEG uses white when a transparent background is selected. Use your cutout in <a href="../../splatworks/layoutsplat/">LayoutSplat</a>, <a href="../../splatworks/showsplat/">ShowSplat</a>, or <a href="../imagesplat/">ImageSplat</a>.</p></div></div>
+        <details><summary>Models, downloads, and licenses</summary><p>BackdropSplat uses <a href="https://huggingface.co/onnx-community/ormbg-ONNX" target="_blank" rel="noopener noreferrer">ORMBG</a> (Apache-2.0) and <a href="https://huggingface.co/onnx-community/BEN2-ONNX" target="_blank" rel="noopener noreferrer">BEN2</a> (MIT) with a locally hosted Transformers.js/ONNX engine. Only model files are requested from Hugging Face and its file hosts. Images are not sent there. See <a href="THIRD_PARTY_NOTICES.md">licenses and pinned versions</a>. White/color mode remains available when external connections are off. Browser settings or the suite’s privacy clearing controls can remove cached models.</p></details>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

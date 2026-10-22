@@ -60,6 +60,7 @@ registry and updates the rules, static fallbacks and shortcut manifest.
 | App | Short path | Tool target |
 | --- | --- | --- |
 | AudioSplat | [/audiosplat](../audiosplat/) | `/solutions/audiosplat/` |
+| BackdropSplat | [/backdropsplat](../backdropsplat/) | `/solutions/backdropsplat/` |
 | CipherSplat | [/ciphersplat](../ciphersplat/) | `/solutions/CipherSplat/` |
 | ClipSplat | [/clipsplat](../clipsplat/) | `/solutions/clipsplat/` |
 | ConceptSplat | [/conceptsplat](../conceptsplat/) | `/solutions/concept-map/` |

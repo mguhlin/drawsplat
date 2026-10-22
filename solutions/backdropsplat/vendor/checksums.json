@@ -1,0 +1,46 @@
+{
+  "LICENSE-BEN2.txt": {
+    "bytes": 1066,
+    "sha256": "a4843132cbd56c50f20ae008739d85b7563d38905fd692a337af52ad588c581a"
+  },
+  "LICENSE-ORMBG.txt": {
+    "bytes": 11517,
+    "sha256": "c20260156bfa6636b06e2272df6804e36c8097ece5e539a39796b2166a427d7b"
+  },
+  "LICENSE-jinja.txt": {
+    "bytes": 1069,
+    "sha256": "d6e7b19451c1b3d1d66353bb4b1274138953b3bfd9ae60c56e77b1f548796982"
+  },
+  "LICENSE-jszip.txt": {
+    "bytes": 33753,
+    "sha256": "566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4"
+  },
+  "LICENSE-onnxruntime.txt": {
+    "bytes": 1073,
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+  },
+  "LICENSE-transformers.txt": {
+    "bytes": 11358,
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  "ThirdPartyNotices-onnxruntime.txt": {
+    "bytes": 326866,
+    "sha256": "e9e90971a8e75a9a8ac0c6412e29c1202d079998389915aa485f46c816c3b4cc"
+  },
+  "ort-wasm-simd-threaded.jsep.mjs": {
+    "bytes": 44484,
+    "sha256": "08fb86ec433c78bfb032c5d84a68b8e8e5a8d81268fa39e24314179a5767a5b9"
+  },
+  "ort-wasm-simd-threaded.jsep.wasm": {
+    "bytes": 21596019,
+    "sha256": "c46655e8a94afc45338d4cb2b840475f88e5012d524509916e505079c00bfa39"
+  },
+  "ort.bundle.min.mjs": {
+    "bytes": 398170,
+    "sha256": "96e80b413dda387fbcefbd2bb0015f6708323767cc0dd5383260106582e77781"
+  },
+  "transformers.min.js": {
+    "bytes": 888173,
+    "sha256": "aa5002b70e789798da263f5f99c62bd3e8fcd0c119258a493c40c180648365fa"
+  }
+}

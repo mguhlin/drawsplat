@@ -477,5 +477,11 @@
     "Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.",
     "Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.",
     "One Google sign-in connects Drive and optional one-way Calendar updates for deadlines/study blocks in an app-created calendar; header connection/retry without visiting settings. Six interface languages with Arabic RTL; Purple, Ocean, Forest and High contrast themes saved on the device. Local offline drafts, native JSON backup/reload/merge, CSV task import/export, calendar export and printable agendas."
+  ],
+  "backdropsplat": [
+    "Local photo cutouts with pinned ORMBG and optional BEN2 models; visible Fast fallback on unsupported devices.",
+    "Instant white or sampled-color removal, tolerance, soft edges, and border-connected or all-matching areas.",
+    "Original/result comparison, zoom, paste and batch import, full-size transparent or solid-background PNG/JPEG, and ZIP export.",
+    "Cancellable worker processing; original files stay unchanged and photos are not uploaded."
   ]
 }
