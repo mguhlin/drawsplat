@@ -616,6 +616,14 @@ copy_file splatworks_hero_image.png "$SPLATWORKS_SUITE_ROOT/splatworks_hero_imag
 copy_tree assets "$TOOLS_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree vendor "$TOOLS_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/tools.html "$TOOLS_ROOT/pages/tools.html"
+# Keep the new tools' help and short links usable in an extracted Tools bundle.
+copy_tree wiki "$TOOLS_ROOT/wiki" "${MODULE_EXCLUDES[@]}"
+for guide in backdropsplat imagesplat-remove-color; do
+  copy_file "docs/$guide.md" "$TOOLS_ROOT/docs/$guide.md"
+done
+for shortcut in backdropsplat imagesplat; do
+  copy_tree "$shortcut" "$TOOLS_ROOT/$shortcut" "${MODULE_EXCLUDES[@]}"
+done
 mkdir -p "$TOOLS_ROOT/solutions"
 for solution in "${TOOLS_SOLUTIONS[@]}"; do
   copy_tree "solutions/$solution" "$TOOLS_ROOT/solutions/$solution" "${MODULE_EXCLUDES[@]}"
