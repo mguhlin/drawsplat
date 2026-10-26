@@ -36,7 +36,7 @@ test('key relationships provide parent pickers and protect referenced records', 
   await expect(page.locator('.relationship-list p')).toHaveCount(1);
   await expect(page.locator('.relationship-example')).toContainText('Your connection');
   await expect(page.locator('.rel-links')).toContainText('1 ─── ∞');
-  await page.locator('[data-action="close-dialog"]').click();
+  await page.getByRole('button', {name: 'Close dialog', exact: true}).click();
   await page.locator('[data-table-id="assignments"]').click();
   await expect(page.locator('.foreign-key-cell select').first()).toContainText('Alex · 101');
   await page.locator('.foreign-key-cell select').first().selectOption('102');
@@ -56,6 +56,14 @@ test('key relationships provide parent pickers and protect referenced records', 
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('listsplat.autosave.v1')));
   expect(saved.schema.relationships[0].enforceKeys).toBe(true);
   expect(saved.schema.tables[1].records[0].values.student).toBe(102);
+  await page.locator('[data-table-id="assignments"]').click();
+  await page.getByRole('button', {name: 'Close Assignments tab', exact: true}).click();
+  await expect(page.locator('[data-table-id="assignments"]')).toHaveCount(0);
+  await expect(page.locator('.table-tab.active')).toHaveText('Students');
+  await expect(page.getByRole('button', {name: 'Close Students tab', exact: true})).toBeDisabled();
+  await page.getByRole('combobox', {name: 'Reopen table', exact: true}).selectOption('assignments');
+  await expect(page.locator('.table-tab.active')).toHaveText('Assignments');
+  await expect(page.locator('.foreign-key-cell select')).toHaveCount(2);
   await page.setViewportSize({width: 390, height: 844});
   await page.locator('.relationship-launch').click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

@@ -226,6 +226,7 @@ const appRoot = root;
 
 let project = loadAutosave() ?? createStarterProject();
 let activeTableId = project.schema.tables[0].id;
+const closedTableIds = new Set<string>();
 let activeRecordId = project.schema.tables[0].records[0]?.id ?? '';
 let viewMode: ViewMode = 'table';
 let saveStatus = 'Saved locally';
@@ -813,6 +814,9 @@ function icon(name: string): string {
 }
 
 function decorateControls(): void {
+  appRoot.querySelectorAll('.modal').forEach(modal => {
+    modal.insertAdjacentHTML('afterbegin', '<button type="button" class="dialog-close" data-action="close-dialog" aria-label="Close dialog" title="Close dialog">×</button>');
+  });
   const actions: Record<string, string> = { new: 'plus', 'save-json': 'save', 'open-json': 'open', 'export-csv': 'export', 'add-record': 'plus', 'add-field': 'plus', find: 'search', 'sort-dialog': 'sort', views: 'cards' };
   appRoot.querySelectorAll<HTMLElement>('.quick-actions [data-action], .toolbar [data-action], [data-view-mode], .table-tab').forEach((button) => {
     const name = button.dataset.viewMode ?? actions[button.dataset.action ?? ''] ?? (button.classList.contains('table-tab') ? 'table' : '');
@@ -1114,16 +1118,13 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
 }
 
 function renderTableTabs(table: ListSplatTable): string {
-  return `
-    <div class="table-tabs">
-      ${project.schema.tables
-        .map(
-          (item) =>
-            `<button type="button" class="table-tab ${item.id === table.id ? 'active' : ''}" data-table-id="${item.id}">${html(item.name)}</button>`,
-        )
-        .join('')}
-    </div>
-  `;
+  closedTableIds.delete(table.id);
+  const open = project.schema.tables.filter(item => !closedTableIds.has(item.id));
+  const closed = project.schema.tables.filter(item => closedTableIds.has(item.id));
+  return `<div class="table-tabs" aria-label="Open tables">
+    ${open.map(item => `<div class="table-tab-item ${item.id === table.id ? 'active' : ''}"><button type="button" class="table-tab ${item.id === table.id ? 'active' : ''}" data-table-id="${item.id}">${html(item.name)}</button><button type="button" class="table-tab-close" data-close-table-id="${item.id}" aria-label="Close ${html(item.name)} tab" title="${open.length === 1 ? 'Keep at least one table open' : 'Close tab; keep its data'}" ${open.length === 1 ? 'disabled' : ''}>×</button></div>`).join('')}
+    ${closed.length ? `<select class="reopen-table" data-reopen-table aria-label="Reopen table"><option value="">Reopen table (${closed.length})</option>${closed.map(item => `<option value="${item.id}">${html(item.name)}</option>`).join('')}</select>` : ''}
+  </div>`;
 }
 
 function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string {
@@ -3590,6 +3591,20 @@ appRoot.addEventListener('click', (event) => {
   const recordActionId = target.closest<HTMLElement>('[data-record-action-id]')?.dataset.recordActionId;
   const qualityTarget = target.closest<HTMLElement>('[data-quality-field-id]');
 
+  const closeTableId = target.closest<HTMLElement>('[data-close-table-id]')?.dataset.closeTableId;
+  if (closeTableId) {
+    const remaining = project.schema.tables.filter(item => item.id !== closeTableId && !closedTableIds.has(item.id));
+    if (!remaining.length) return;
+    closedTableIds.add(closeTableId);
+    if (activeTableId === closeTableId) {
+      activeTableId = remaining[0].id;
+      clearFind(); sortKeys = []; selectedRecordIds = new Set(); cellRange = null;
+      ensureActiveRecord(activeTable());
+    }
+    render();
+    appRoot.querySelector<HTMLButtonElement>('.table-tab.active')?.focus();
+    return;
+  }
   if (tableId) {
     activeTableId = tableId;
     clearFind();
@@ -4156,7 +4171,15 @@ appRoot.addEventListener('click', (event) => {
 
 appRoot.addEventListener('change', (event) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-  if (target.matches('#languageSwitcher') && target instanceof HTMLSelectElement) {
+  if (target.matches('[data-reopen-table]')) {
+    if (!project.schema.tables.some(table => table.id === target.value)) return;
+    activeTableId = target.value;
+    closedTableIds.delete(activeTableId);
+    clearFind(); sortKeys = []; selectedRecordIds = new Set(); cellRange = null;
+    ensureActiveRecord(activeTable());
+    render();
+    appRoot.querySelector<HTMLButtonElement>('.table-tab.active')?.focus();
+  } else if (target.matches('#languageSwitcher') && target instanceof HTMLSelectElement) {
     language = normalizeLanguage(target.value);
     try {
       localStorage.setItem(LANGUAGE_KEY, language);
