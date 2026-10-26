@@ -785,6 +785,38 @@ function applyTemplate(templateId: string): void {
   });
 }
 
+// Small inline SVGs keep controls recognizable without loading an icon font.
+function icon(name: string): string {
+  const paths: Record<string, string> = {
+    table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>',
+    form: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    cards: '<rect x="3" y="4" width="8" height="16" rx="2"/><rect x="14" y="4" width="7" height="16" rx="2"/>',
+    gallery: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1"/><path d="m3 17 6-6 4 4 3-3 5 5"/>',
+    list: '<path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/>',
+    kanban: '<rect x="3" y="4" width="5" height="14" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M7 15h2M13 15h2"/>',
+    labels: '<path d="m3 3 9 0 9 9-9 9-9-9Z"/><circle cx="8" cy="8" r="1"/>',
+    report: '<path d="M5 3h10l4 4v14H5Z M14 3v5h5M9 17v-4M13 17v-7M16 17v-3"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    save: '<path d="M5 3h12l4 4v14H3V3ZM7 3v6h10V3M7 21v-8h10v8"/>',
+    open: '<path d="M3 8V5h6l2 3h10l-3 12H3V8Z"/>',
+    export: '<path d="M12 3v12m-4-4 4 4 4-4M4 15v6h16v-6"/>',
+    search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
+    sort: '<path d="M8 3v18m-4-4 4 4 4-4M14 5h7M14 10h5M14 15h3"/>',
+    check: '<path d="m5 12 4 4 10-10"/>',
+  };
+  return `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name] ?? paths.table}</svg>`;
+}
+
+function decorateControls(): void {
+  const actions: Record<string, string> = { new: 'plus', 'save-json': 'save', 'open-json': 'open', 'export-csv': 'export', 'add-record': 'plus', 'add-field': 'plus', find: 'search', 'sort-dialog': 'sort', views: 'cards' };
+  appRoot.querySelectorAll<HTMLElement>('.quick-actions [data-action], .toolbar [data-action], [data-view-mode], .table-tab').forEach((button) => {
+    const name = button.dataset.viewMode ?? actions[button.dataset.action ?? ''] ?? (button.classList.contains('table-tab') ? 'table' : '');
+    if (name) button.insertAdjacentHTML('afterbegin', icon(name));
+    if (button.dataset.viewMode) button.setAttribute('aria-pressed', String(button.classList.contains('active')));
+  });
+}
+
 function createMenu(label: string, items: Array<[string, string]>): string {
   return `
     <details class="menu">
@@ -1688,7 +1720,7 @@ function renderTeacherPanel(table: ListSplatTable): string {
     : '';
   return `
     <aside class="teacher-panel" aria-label="Teacher tools and database stats">
-      <h2>Database Check</h2>
+      <h2>${icon('check')} Database Check</h2>
       <div class="stat-grid">
         <div class="stat-card"><strong>${visibleRecords(table).length}</strong> shown</div>
         <div class="stat-card"><strong>${table.records.length}</strong> records</div>
@@ -1707,7 +1739,7 @@ function renderTeacherPanel(table: ListSplatTable): string {
         )
         .join('')}
       ${relationshipCards ? `<h3>Related Records</h3>${relationshipCards}` : ''}
-      <h3>Template Starters</h3>
+      <details class="template-starters"><summary>Template Starters <span>${listSplatTemplates.length} ideas</span></summary><div class="template-list">
       ${listSplatTemplates
         .map(
           (template) => `
@@ -1720,6 +1752,7 @@ function renderTeacherPanel(table: ListSplatTable): string {
           `,
         )
         .join('')}
+      </div></details>
     </aside>
   `;
 }
@@ -2720,6 +2753,7 @@ function render(): void {
     <input class="hidden-file" type="file" accept=".csv,text/csv" data-import-csv>
     ${renderDialog(table)}
   `;
+  decorateControls();
   activeCellDirtyKey = '';
   if (pendingFocusCell) {
     const target = pendingFocusCell;
