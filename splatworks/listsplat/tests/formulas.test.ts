@@ -4,7 +4,7 @@ import { evaluateSimpleFormula } from '../src/model/formulas';
 import { addRelationship, createRelationship } from '../src/model/relationships';
 
 function starterTable() {
-  const table = createStarterProject().schema.tables[0];
+  const table = queryTable();
   const scoreField = { ...table.fields[0], id: 'score', name: 'Score', type: 'number' as const };
   const bonusField = { ...table.fields[1], id: 'bonus', name: 'Bonus', type: 'number' as const };
   return {
@@ -19,6 +19,11 @@ function starterTable() {
       },
     })),
   };
+}
+
+function queryTable() {
+  const table = createStarterProject().schema.tables[0];
+  return {...table, records: table.records.slice(0, 2)};
 }
 
 describe('calculation formulas', () => {

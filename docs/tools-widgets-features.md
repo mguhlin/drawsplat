@@ -311,11 +311,11 @@ Category: **Data** · 3 components
 
 **Workspace** · [Open ListSplat](../splatworks/listsplat/)
 
-- Define fields and records
-- Switch between table, form, and card views
-- Search and organize classroom lists
-- Create labels and reports
-- Import and export CSV
+- 15 classroom starters with 12 records per table; two connected-table projects include ready-to-use library loans and science trials.
+- Primary/foreign key badges, relationship diagrams, validated one-to-many and one-to-one links, and parent pickers showing names and IDs.
+- CSV/TSV import/export and pasted or file-based Markdown table import with multi-table selection and column mapping.
+- Nine views: table, form, cards, gallery, list, board, calendar, labels and report; search, sort, calculations and summaries.
+- Local autosave, native project backups, optional Google Drive saving, teacher reflection questions, close/reopen tabs and dialog close buttons.
 
 ## Think & Organize
 
@@ -389,11 +389,11 @@ Category: **Organize** · 12 components
 
 **Workspace** · [Open ListSplat](../splatworks/listsplat/)
 
-- Define fields and records
-- Switch between table, form, and card views
-- Search and organize classroom lists
-- Create labels and reports
-- Import and export CSV
+- 15 classroom starters with 12 records per table; two connected-table projects include ready-to-use library loans and science trials.
+- Primary/foreign key badges, relationship diagrams, validated one-to-many and one-to-one links, and parent pickers showing names and IDs.
+- CSV/TSV import/export and pasted or file-based Markdown table import with multi-table selection and column mapping.
+- Nine views: table, form, cards, gallery, list, board, calendar, labels and report; search, sort, calculations and summaries.
+- Local autosave, native project backups, optional Google Drive saving, teacher reflection questions, close/reopen tabs and dialog close buttons.
 
 ### MarkdownSplat
 
@@ -643,11 +643,11 @@ Category: **Writing** · 21 components
 
 **Workspace** · [Open ListSplat](../splatworks/listsplat/)
 
-- Define fields and records
-- Switch between table, form, and card views
-- Search and organize classroom lists
-- Create labels and reports
-- Import and export CSV
+- 15 classroom starters with 12 records per table; two connected-table projects include ready-to-use library loans and science trials.
+- Primary/foreign key badges, relationship diagrams, validated one-to-many and one-to-one links, and parent pickers showing names and IDs.
+- CSV/TSV import/export and pasted or file-based Markdown table import with multi-table selection and column mapping.
+- Nine views: table, form, cards, gallery, list, board, calendar, labels and report; search, sort, calculations and summaries.
+- Local autosave, native project backups, optional Google Drive saving, teacher reflection questions, close/reopen tabs and dialog close buttons.
 
 ### MarkdownSplat
 

@@ -68,3 +68,19 @@ test('key relationships provide parent pickers and protect referenced records', 
   await page.locator('.relationship-launch').click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+
+test('linked classroom starter loads two tables with twelve records and working parent pickers', async ({page}) => {
+  await page.goto('/splatworks/listsplat/');
+  await page.locator('.template-starters summary').click();
+  await expect(page.locator('[data-template-id]')).toHaveCount(15);
+  await page.locator('[data-template-id="library-loans"]').click();
+  await expect(page.locator('.table-tab.active')).toHaveText('Library Books');
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('listsplat.autosave.v1')));
+  expect(saved.schema.tables).toHaveLength(3);
+  for (const table of saved.schema.tables) expect(table.records).toHaveLength(12);
+  expect(saved.schema.relationships[0].enforceKeys).toBe(true);
+  const loans = saved.schema.tables.find(table => table.name === 'Library Loans');
+  await page.locator(`[data-table-id="${loans.id}"]`).click();
+  await expect(page.locator('.foreign-key-cell select')).toHaveCount(12);
+  await expect(page.locator('.foreign-key-cell select').first()).toContainText('The Lantern Map');
+});

@@ -516,7 +516,8 @@ Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
-- splatworks/listsplat/ — the ListSplatTM browser classroom database app,
+- splatworks/listsplat/ — the ListSplatTM classroom database app with 15 starters,
+  12 records per table, linked examples, primary/foreign keys and Markdown import,
   including source, tests, docs, package metadata, and icon assets.
 - splatworks/listsplat/docs/plan.md — the ListSplatTM feature plan and release
   scope.

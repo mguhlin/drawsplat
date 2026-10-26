@@ -1514,3 +1514,4 @@ button:not(:disabled):hover { border-color:#b09ad7; }
 .modal > h2 { padding-inline-end:38px; }
 .dialog-close { position:absolute; inset-block-start:12px; inset-inline-end:12px; width:32px; height:32px; padding:0; display:grid; place-items:center; border:1px solid var(--line); border-radius:7px; background:#f7f8fc; color:var(--ink); font-size:24px; line-height:1; z-index:2; }
 .dialog-close:hover { background:#eee8fa; color:var(--accent-dark); }
+.template-note { margin:10px 0 0; font-size:.8rem; line-height:1.5; color:var(--muted); }

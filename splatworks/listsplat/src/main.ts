@@ -56,7 +56,7 @@ import type {
   SavedView,
   SortKey,
 } from './model/types';
-import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
+import { cloneTemplateProject, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'list' | 'kanban' | 'calendar' | 'labels' | 'report';
@@ -782,11 +782,13 @@ function applyTemplate(templateId: string): void {
   if (!template) {
     return;
   }
-  const table = cloneTemplateTable(template);
+  const imported = cloneTemplateProject(template);
+  const table = imported.tables[0];
   pushUndo('template load');
   activeTableId = table.id;
   activeRecordId = table.records[0]?.id ?? '';
-  lastMessage = `Loaded ${template.title}.`;
+  lastMessage = `Loaded ${template.title}: ${imported.tables.length} table(s), ${imported.tables.reduce((sum, item) => sum + item.records.length, 0)} practice records. All people, books, observations, and measurements are fictional sample data.`;
+  clearFind(); sortKeys = []; selectedRecordIds = new Set(); viewMode = 'table';
   setProject({
     ...project,
     metadata: {
@@ -795,7 +797,8 @@ function applyTemplate(templateId: string): void {
     },
     schema: {
       ...project.schema,
-      tables: [...project.schema.tables, table],
+      tables: [...project.schema.tables, ...imported.tables],
+      relationships: [...project.schema.relationships, ...imported.relationships],
     },
     teacher: {
       ...project.teacher,
@@ -1783,13 +1786,13 @@ function renderTeacherPanel(table: ListSplatTable): string {
       ${relationshipCards ? `<h3>Related Records</h3>${relationshipCards}` : ''}
       <button type="button" class="button relationship-launch" data-action="relationships">${icon('key')} Keys &amp; Relationships</button>
       ${relationalIssues(project).length ? `<p class="relationship-error" role="status">${html(relationalIssues(project)[0])}</p>` : ''}
-      <details class="template-starters"><summary>Template Starters <span>${listSplatTemplates.length} ideas</span></summary><div class="template-list">
+      <details class="template-starters"><summary>Classroom Templates <span>${listSplatTemplates.length} starters</span></summary><p class="template-note">12 records in every table. People, books, observations, and measurements are fictional practice data; verify facts before a research report.</p><div class="template-list">
       ${listSplatTemplates
         .map(
           (template) => `
             <div class="template-card">
               <strong>${html(template.title)}</strong>
-              <span>${html(template.gradeBand)}</span>
+              <span>${html(template.gradeBand)} · ${template.table.records.length} records${template.relatedTables?.length ? ` per table · ${1 + template.relatedTables.length} linked tables` : ''}</span>
               <p>${html(template.goal)}</p>
               <button type="button" data-template-id="${template.id}">Use template</button>
             </div>

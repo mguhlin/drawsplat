@@ -39,7 +39,7 @@ test('Markdown files preview and append to the existing table', async ({page}) =
   await page.locator('[data-action="apply-csv-append"]').click();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('listsplat.autosave.v1')));
   expect(saved.schema.tables).toHaveLength(1);
-  expect(saved.schema.tables[0].records).toHaveLength(3);
+  expect(saved.schema.tables[0].records).toHaveLength(13);
   const animal = saved.schema.tables[0].fields.find(field => field.name === 'Animal');
-  expect(saved.schema.tables[0].records[2].values[animal.id]).toBe('Owl');
+  expect(saved.schema.tables[0].records[12].values[animal.id]).toBe('Owl');
 });

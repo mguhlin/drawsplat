@@ -14,27 +14,27 @@ or cloud storage.
 
 ## Development
 
-ListSplatTM now has a working classroom database app foundation.
+ListSplatTM v0.2.0 includes the following classroom database workflows.
 
 Current working surface:
 
 - SplatWorksTM purple/white app chrome
 - local autosave
 - native `.listsplat.json` save/open
-- CSV import/export
+- CSV/TSV import/export and Markdown table paste/file import with column previews
 - editable tables, fields, and records
 - field settings with name, type, description, required, hidden, and starter
   calculation formula controls
-- table, form, card, gallery, label, and report views
+- nine views: table, form, cards, gallery, list, board, calendar, labels, and report
 - quick search across all fields or one field
 - sorting
 - missing-value and duplicate-value checks
 - replace values in a selected field
 - printable/exportable HTML report
-- classroom template starters
+- 15 classroom starters with 12 records per table, including two connected-table projects
 - image fields with upload and paste support
 - language switching using the shared SplatWorks preference
-- basic relationship builder
+- primary/foreign keys, one-to-many and one-to-one relationships, name/ID pickers, and reference validation
 - calculation fields with text, math, and table-summary functions
 - lookup-style calculation formulas for related records
 - Functions and Data quality dialogs for teacher-friendly guidance
@@ -107,3 +107,44 @@ the current table using the same preview and duplicate-handling controls as CSV.
 The importer supports optional outer pipes, alignment separators, escaped pipes,
 empty cells, and tables embedded in longer documents. Cell content remains plain
 text. File actions are in File; Undo/Redo are in Edit and retain their shortcuts.
+
+
+## Classroom starters in v0.2.0
+
+Every template table has **12 records**. The 15 starters contain 17 tables and
+204 practice records in total; a new Animals project also starts with 12 records.
+Loading a template adds its tables to the current project and preserves existing
+records. Existing saved projects keep their original data; load a starter to try
+the expanded examples. Every load gets fresh table, field, record and relationship IDs.
+
+| Starter | Classroom task |
+| --- | --- |
+| Classroom Library Catalog | Sort fictional books and recommend a reading choice. |
+| Science Observation Log | Compare simulated plant growth and written observations. |
+| State Facts Database | Locate capitals and add source notes from a class atlas. |
+| Book Review Collection | Compare fictional reader ratings and supporting evidence. |
+| Vocabulary Word Bank | Search cross-subject words and revise example sentences. |
+| Simple Survey Results | Summarize anonymous simulated group preferences. |
+| Museum Exhibit Cards | Curate sample objects and print visitor labels. |
+| Weather Watch | Compare simulated temperature, rain and sky conditions. |
+| School Garden Planner | Allocate beds, teams, seed packets and growing space. |
+| Class Project Budget | Calculate pretend supply costs and spending priorities. |
+| Reading Goal Tracker | Calculate pages remaining for fictional reader aliases. |
+| Classroom Jobs Rotation | Compare team workloads and plan a fair rotation. |
+| Makerspace Inventory | Find low stock and group supplies by storage bin. |
+| Library Books & Loans | Open 12 books and 12 loans with a working one-to-many link. |
+| Investigations & Trials | Open 12 investigations and 12 simulated trial results with linked IDs. |
+
+People, books, observations and measurements are fictional practice data. State
+capitals and animal notes are starting points for a research task; students should
+verify factual claims and add sources. No real student records are included.
+
+Open **Database Check → Classroom Templates** and choose **Use template**.
+Reflection questions load into teacher notes. Numeric and date columns use their
+appropriate field types so students can sort, summarize and try calendar views.
+The two linked starters include primary/foreign key badges and parent record
+pickers immediately. Use Keys & Relationships to inspect the diagram.
+
+The v0.2.0 refresh also includes a cleaner purple workspace, icons on actions and
+views, contextual relationship examples, reversible table-tab closing, top-right
+close buttons on dialogs, Markdown import, and file actions in the File menu.

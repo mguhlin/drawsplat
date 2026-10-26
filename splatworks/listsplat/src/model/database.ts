@@ -87,20 +87,21 @@ export function createTable(name: string, fieldNames: string[]): ListSplatTable 
 export function createStarterProject(title = 'Animal Research Database'): ListSplatFile {
   const now = new Date().toISOString();
   const table = createTable('Animals', ['Animal', 'Habitat', 'Diet', 'Interesting Fact']);
-  table.records = [
-    createRecord(table.fields, {
-      [table.fields[0].id]: 'Axolotl',
-      [table.fields[1].id]: 'Freshwater lakes',
-      [table.fields[2].id]: 'Worms and insects',
-      [table.fields[3].id]: 'It can regrow some body parts.',
-    }),
-    createRecord(table.fields, {
-      [table.fields[0].id]: 'Red panda',
-      [table.fields[1].id]: 'Mountain forests',
-      [table.fields[2].id]: 'Bamboo and fruit',
-      [table.fields[3].id]: 'It uses its tail like a blanket.',
-    }),
+  const animals = [
+    ['Axolotl', 'Freshwater lakes', 'Worms and insects', 'Has feathery external gills'],
+    ['Red panda', 'Mountain forests', 'Bamboo and fruit', 'Uses a long tail for balance'],
+    ['River otter', 'Rivers and wetlands', 'Fish and invertebrates', 'Moves easily between water and land'],
+    ['Barn owl', 'Grasslands and farmland', 'Small animals', 'Has a heart-shaped face'],
+    ['Monarch butterfly', 'Meadows and gardens', 'Nectar', 'Begins life as a caterpillar'],
+    ['Green sea turtle', 'Coastal ocean', 'Seagrass and algae', 'Breathes air at the surface'],
+    ['Honeybee', 'Meadows and gardens', 'Nectar and pollen', 'Visits flowers while gathering food'],
+    ['Beaver', 'Rivers and ponds', 'Bark and aquatic plants', 'Builds with branches'],
+    ['Giraffe', 'Savanna', 'Leaves', 'Has a long neck'],
+    ['Bottlenose dolphin', 'Coastal ocean', 'Fish and squid', 'Breathes through a blowhole'],
+    ['Tree frog', 'Forests and wetlands', 'Insects', 'Can rest on leaves and branches'],
+    ['Desert tortoise', 'Desert', 'Grasses and wildflowers', 'Shelters in burrows'],
   ];
+  table.records = animals.map(values => createRecord(table.fields, Object.fromEntries(table.fields.map((field, index) => [field.id, values[index]]))));
 
   return {
     app: 'ListSplatTM',

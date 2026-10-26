@@ -3,15 +3,20 @@ import { convertValueForType, createStarterProject, nextAutoNumber, updateCell }
 import { summarizeTable } from '../src/model/formulas';
 import { filterAdvanced, findDuplicateRecords, findMissingRecords, findRecords, previewReplaceValues, replaceValues, sortRecords, sortRecordsByKeys } from '../src/model/query';
 
+function queryTable() {
+  const table = createStarterProject().schema.tables[0];
+  return {...table, records: table.records.slice(0, 2)};
+}
+
 describe('query tools', () => {
   it('finds records across all fields and within one field', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     expect(findRecords(table, { query: 'forest', fieldId: 'all' })).toHaveLength(1);
     expect(findRecords(table, { query: 'forest', fieldId: table.fields[0].id })).toHaveLength(0);
   });
 
   it('sorts by multiple keys with empty cells last', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const habitat = table.fields[1].id;
     const animal = table.fields[0].id;
     const sorted = sortRecordsByKeys(table.records, [
@@ -22,7 +27,7 @@ describe('query tools', () => {
   });
 
   it('filters with advanced find using all/any', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const diet = table.fields[2].id;
     const all = filterAdvanced(table.records, { match: 'all', rules: [{ fieldId: diet, operator: 'contains', value: 'bamboo' }] });
     expect(all).toHaveLength(1);
@@ -43,14 +48,14 @@ describe('query tools', () => {
     expect(convertValueForType('$1,200', 'currency').value).toBe(1200);
     expect(convertValueForType('yes', 'checkbox').value).toBe(true);
     expect(convertValueForType('banana', 'number').lost).toBe(true);
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const auto = { ...table, fields: [...table.fields], records: table.records };
     // no auto-number field in starter, so nextAutoNumber falls back to 1
     expect(nextAutoNumber(auto, 'missing')).toBe(1);
   });
 
   it('sorts text fields', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const sorted = sortRecords(table, table.fields[0].id, 'desc');
     expect(sorted.records[0].values[table.fields[0].id]).toBe('Red panda');
   });
@@ -66,7 +71,7 @@ describe('query tools', () => {
   });
 
   it('replaces values in selected fields', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const result = replaceValues(table, {
       fieldIds: [table.fields[1].id],
       find: 'lakes',
@@ -77,7 +82,7 @@ describe('query tools', () => {
   });
 
   it('previews replace changes without changing the table', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const preview = previewReplaceValues(table, {
       fieldIds: [table.fields[1].id],
       find: 'lakes',
@@ -89,7 +94,7 @@ describe('query tools', () => {
   });
 
   it('supports whole-word replace', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const habitatField = table.fields[1];
     const edited = updateCell(table, table.records[0].id, habitatField.id, 'lake lakes laketown');
     const result = replaceValues(edited, {
@@ -104,7 +109,7 @@ describe('query tools', () => {
 
 describe('summaries', () => {
   it('summarizes numeric fields', () => {
-    const table = createStarterProject().schema.tables[0];
+    const table = queryTable();
     const numberField = { ...table.fields[0], type: 'number' as const };
     const numericTable = {
       ...table,

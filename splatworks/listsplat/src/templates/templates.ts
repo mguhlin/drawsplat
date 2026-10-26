@@ -1,121 +1,71 @@
-import { createRecord } from '../model/database';
-import type { ListSplatTable } from '../model/types';
+import { createId, createRecord } from '../model/database';
+import type { ListSplatTable, ListSplatRelationship } from '../model/types';
 import { tableFromCsv } from '../io/csv';
 
 export interface ListSplatTemplate {
-  id: string;
-  title: string;
-  gradeBand: string;
-  goal: string;
-  table: ListSplatTable;
+  id: string; title: string; gradeBand: string; goal: string;
+  table: ListSplatTable; relatedTables?: ListSplatTable[];
+  relationships?: ListSplatRelationship[];
   reflectionQuestions: string[];
 }
 
-function templateFromCsv(
-  id: string,
-  title: string,
-  gradeBand: string,
-  goal: string,
-  csv: string,
-  reflectionQuestions: string[],
-): ListSplatTemplate {
-  return {
-    id,
-    title,
-    gradeBand,
-    goal,
-    table: tableFromCsv(title, csv),
-    reflectionQuestions,
-  };
+function templateFromCsv(id: string, title: string, gradeBand: string, goal: string, csv: string, reflectionQuestions: string[]): ListSplatTemplate {
+  const table = tableFromCsv(title, csv);
+  table.id = createId('template');
+  table.fields = table.fields.map(field => {
+    const values = table.records.map(record => String(record.values[field.id] ?? '').trim()).filter(Boolean);
+    const type = values.length && values.every(value => /^-?\d+(\.\d+)?$/.test(value)) ? 'number' : values.length && values.every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) ? 'date' : 'text';
+    return {...field, type};
+  });
+  table.records = table.records.map(record => ({...record, values: Object.fromEntries(table.fields.map(field => [field.id, field.type === 'number' ? Number(record.values[field.id]) : record.values[field.id]]))}));
+  return {id, title, gradeBand, goal, table, reflectionQuestions};
 }
 
 export const listSplatTemplates: ListSplatTemplate[] = [
-  templateFromCsv(
-    'classroom-library',
-    'Classroom Library Catalog',
-    'Grades 3-8',
-    'Track books, genres, reading levels, and recommendations.',
-    `Title,Author,Genre,Pages,Who would enjoy it?
-Charlotte's Web,E. B. White,Fiction,192,Readers who like animals
-Hidden Figures,Margot Lee Shetterly,Biography,240,Readers who like history`,
-    ['Which genre appears most often?', 'What book would you recommend first?'],
-  ),
-  templateFromCsv(
-    'science-observations',
-    'Science Observation Log',
-    'Grades 3-8',
-    'Collect observations over time and look for patterns.',
-    `Date,Object observed,Location,Measurement,Observation
-2026-06-29,Bean plant,Window,8 cm,Two new leaves
-2026-06-30,Bean plant,Window,8.5 cm,Stem leaned toward light`,
-    ['What changed over time?', 'What might explain the pattern?'],
-  ),
-  templateFromCsv(
-    'state-facts',
-    'State Facts Database',
-    'Grades 4-8',
-    'Compare places using consistent fields.',
-    `State,Capital,Region,Population note,Interesting fact
-Texas,Austin,South,Large population,Has many different ecosystems
-New Mexico,Santa Fe,Southwest,Medium population,Capital is over 400 years old`,
-    ['Which fields help compare states?', 'What new field would improve this database?'],
-  ),
-  templateFromCsv(
-    'book-reviews',
-    'Book Review Collection',
-    'Grades 3-8',
-    'Collect opinions and evidence from student reading.',
-    `Book,Reviewer,Rating,Favorite part,Would recommend?
-Because of Winn-Dixie,Jordan,5,The friendship story,Yes
-Wonder,Avery,4,The different points of view,Yes`,
-    ['Which book has the strongest recommendation?', 'What evidence supports each rating?'],
-  ),
-  templateFromCsv(
-    'vocabulary-bank',
-    'Vocabulary Word Bank',
-    'Grades 2-8',
-    'Build a searchable word list with definitions and examples.',
-    `Word,Definition,Example sentence,Subject
-evaporate,To change from liquid to gas,Water can evaporate in sunlight,Science
-compare,To tell how things are alike,Compare two characters,Reading`,
-    ['Which words belong to more than one subject?', 'Which examples help you remember the word?'],
-  ),
-  templateFromCsv(
-    'survey-results',
-    'Simple Survey Results',
-    'Grades 3-8',
-    'Organize survey answers and look for patterns.',
-    `Question,Answer,Student group,Count,Notes
-Favorite recess activity,Soccer,Grade 4,12,Most common outdoor choice
-Favorite recess activity,Drawing,Grade 4,6,Quiet activity choice`,
-    ['Which answer appears most often?', 'What new question should the class ask next?'],
-  ),
-  templateFromCsv(
-    'museum-cards',
-    'Museum Exhibit Cards',
-    'Grades 4-8',
-    'Create printable exhibit cards for objects, images, or research topics.',
-    `Item,Creator or source,Year,Category,Why it matters
-Printing press,Johannes Gutenberg,1440,Invention,Changed how books were made
-Apollo 11 mission,NASA,1969,Space exploration,First humans walked on the Moon`,
-    ['How should the exhibit be grouped?', 'What field would help visitors understand the item?'],
-  ),
+  templateFromCsv("classroom-library", "Classroom Library Catalog", "Grades 3–8", "Compare genres and build a reading recommendation. Fictional book data.", "Title,Author,Genre,Pages,Who would enjoy it?\nThe Lantern Map,Classroom sample author,Adventure,96,Readers who enjoy puzzles\nRiver of Paper Boats,Classroom sample author,Realistic fiction,108,Readers who enjoy friendship stories\nThe Quiet Inventor,Classroom sample author,Biography-style fiction,120,Readers who enjoy making things\nA Garden on Mars,Classroom sample author,Science fiction,132,Readers who enjoy puzzles\nThe Missing Moonstone,Classroom sample author,Mystery,144,Readers who enjoy friendship stories\nA Pocket of Poems,Classroom sample author,Poetry,156,Readers who enjoy making things\nThe Clockwork Kite,Classroom sample author,Adventure,168,Readers who enjoy puzzles\nUnder the Library Stairs,Classroom sample author,Fantasy,180,Readers who enjoy friendship stories\nThe Last Snow Seed,Classroom sample author,Fantasy,192,Readers who enjoy making things\nThe Bicycle Orchestra,Classroom sample author,Realistic fiction,204,Readers who enjoy puzzles\nThe Secret of Willow Pond,Classroom sample author,Mystery,216,Readers who enjoy friendship stories\nOur Neighborhood Stars,Classroom sample author,Realistic fiction,228,Readers who enjoy making things", ["Which genre appears most often?", "Sort by pages. Which three books would suit a short reading challenge?"]),
+  templateFromCsv("science-observations", "Science Observation Log", "Grades 3–8", "Track a simulated plant investigation and compare measurements.", "Date,Plant,Location,Height cm,Observation\n2026-10-01,Bean A,Window,8.0,Two new leaves\n2026-10-02,Bean B,Shelf,8.6,Stem leaning toward light\n2026-10-03,Bean A,Window,9.2,Soil feels dry\n2026-10-04,Bean B,Shelf,9.8,New leaf unfolding\n2026-10-05,Bean A,Window,10.4,Two new leaves\n2026-10-06,Bean B,Shelf,11.0,Stem leaning toward light\n2026-10-07,Bean A,Window,11.6,Soil feels dry\n2026-10-08,Bean B,Shelf,12.2,New leaf unfolding\n2026-10-09,Bean A,Window,12.8,Two new leaves\n2026-10-10,Bean B,Shelf,13.4,Stem leaning toward light\n2026-10-11,Bean A,Window,14.0,Soil feels dry\n2026-10-12,Bean B,Shelf,14.6,New leaf unfolding", ["Compare growth in the two locations. What else should you measure?", "Which observations are measurements and which are descriptions?"]),
+  templateFromCsv("state-facts", "State Facts Database", "Grades 4–8", "Practice state/capital comparisons; research and add source notes.", "State,Capital,Region,Map question\nTexas,Austin,South,Locate the capital on a map\nNew Mexico,Santa Fe,West,Locate the capital on a map\nArizona,Phoenix,West,Locate the capital on a map\nCalifornia,Sacramento,West,Locate the capital on a map\nColorado,Denver,West,Locate the capital on a map\nOregon,Salem,West,Locate the capital on a map\nWashington,Olympia,West,Locate the capital on a map\nFlorida,Tallahassee,South,Locate the capital on a map\nGeorgia,Atlanta,South,Locate the capital on a map\nVirginia,Richmond,South,Locate the capital on a map\nOhio,Columbus,Midwest,Locate the capital on a map\nNew York,Albany,Northeast,Locate the capital on a map", ["Which states share a region?", "Add a source field and verify each capital using your class atlas."]),
+  templateFromCsv("book-reviews", "Book Review Collection", "Grades 3–8", "Compare fictional reader opinions and support recommendations.", "Book,Reviewer,Rating,Evidence from reading,Would recommend?\nThe Lantern Map,Alex,3,The character solves a problem,Maybe\nRiver of Paper Boats,Sam,4,The setting changes the story,Yes\nThe Quiet Inventor,Jordan,5,The ending connects to the beginning,Yes\nA Garden on Mars,Avery,3,The character solves a problem,Yes\nThe Missing Moonstone,Riley,4,The setting changes the story,Maybe\nA Pocket of Poems,Morgan,5,The ending connects to the beginning,Yes\nThe Clockwork Kite,Casey,3,The character solves a problem,Yes\nUnder the Library Stairs,Taylor,4,The setting changes the story,Yes\nThe Last Snow Seed,Drew,5,The ending connects to the beginning,Maybe\nThe Bicycle Orchestra,Quinn,3,The character solves a problem,Yes\nThe Secret of Willow Pond,Jamie,4,The setting changes the story,Yes\nOur Neighborhood Stars,Sky,5,The ending connects to the beginning,Yes", ["Which books have the highest ratings?", "What stronger evidence could a reviewer add?"]),
+  templateFromCsv("vocabulary-bank", "Vocabulary Word Bank", "Grades 2–8", "Search useful words across subjects and revise example sentences.", "Word,Definition,Example sentence,Subject\nevaporate,Change from liquid to gas,Water can evaporate in sunlight,Science\ncompare,Describe similarities and differences,Compare the two characters,Reading\npredict,Suggest what may happen using evidence,Predict the next plant height,Science\ninfer,Use clues to reach a conclusion,Infer how the character feels,Reading\nestimate,Find an approximate amount,Estimate the number of beans,Math\nfraction,A number representing part of a whole,One half is a fraction,Math\nhabitat,The place where an organism lives,Describe the pond habitat,Science\nevidence,Information supporting a claim,Find evidence in the text,Reading\ncommunity,A group with something in common,Our class is a community,Social studies\nresource,Something people can use,Water is a resource,Social studies\npattern,A repeated or predictable arrangement,Find a pattern in the data,Math\nrevise,Make changes to improve something,Revise the explanation,Writing", ["Which words can be used in more than one subject?", "Write a new sentence that makes each word meaning clear."]),
+  templateFromCsv("survey-results", "Simple Survey Results", "Grades 3–8", "Analyze simulated class preferences using counts and charts.", "Question,Answer,Group,Count,Notes\nPreferred reading spot,Window seat,Group 1,5,Simulated anonymous survey\nPreferred reading spot,Carpet,Group 1,7,Simulated anonymous survey\nPreferred reading spot,Desk,Group 1,4,Simulated anonymous survey\nPreferred reading spot,Library corner,Group 1,8,Simulated anonymous survey\nPreferred reading spot,Window seat,Group 2,7,Simulated anonymous survey\nPreferred reading spot,Carpet,Group 2,4,Simulated anonymous survey\nPreferred reading spot,Desk,Group 2,8,Simulated anonymous survey\nPreferred reading spot,Library corner,Group 2,5,Simulated anonymous survey\nPreferred reading spot,Window seat,Group 3,4,Simulated anonymous survey\nPreferred reading spot,Carpet,Group 3,8,Simulated anonymous survey\nPreferred reading spot,Desk,Group 3,5,Simulated anonymous survey\nPreferred reading spot,Library corner,Group 3,7,Simulated anonymous survey", ["Which spot has the largest total across groups?", "What is the difference between a count and an individual answer?"]),
+  templateFromCsv("museum-cards", "Museum Exhibit Cards", "Grades 4–8", "Curate a fictional classroom exhibit and print visitor labels.", "Item,Creator or source,Year,Category,Why it matters\nClay bowl,Classroom sample collection,2026,Art,Shows a way to reuse materials\nWoven bookmark,Classroom sample collection,2026,Design,Tells a story about a place\nPaper lantern,Classroom sample collection,2026,Community,Combines function and decoration\nSeed collection,Classroom sample collection,2026,Art,Shows a way to reuse materials\nCardboard bridge,Classroom sample collection,2026,Design,Tells a story about a place\nFamily recipe card,Classroom sample collection,2026,Community,Combines function and decoration\nPainted tile,Classroom sample collection,2026,Art,Shows a way to reuse materials\nModel canoe,Classroom sample collection,2026,Design,Tells a story about a place\nClass poem,Classroom sample collection,2026,Community,Combines function and decoration\nRecycled sculpture,Classroom sample collection,2026,Art,Shows a way to reuse materials\nNeighborhood map,Classroom sample collection,2026,Design,Tells a story about a place\nHandmade drum,Classroom sample collection,2026,Community,Combines function and decoration", ["How would you arrange these objects for visitors?", "Which labels need stronger source information?"]),
+  templateFromCsv("weather-watch", "Weather Watch", "Grades 2–8", "Graph simulated weather and compare daily patterns.", "Date,Temperature C,Sky,Rain mm,Wind\n2026-10-01,22,Clear,0,Calm\n2026-10-02,23,Partly cloudy,0,Light\n2026-10-03,21,Cloudy,0,Breezy\n2026-10-04,19,Rain,8,Calm\n2026-10-05,20,Clear,1,Light\n2026-10-06,24,Partly cloudy,0,Breezy\n2026-10-07,25,Cloudy,0,Calm\n2026-10-08,22,Rain,3,Light\n2026-10-09,18,Clear,12,Breezy\n2026-10-10,20,Partly cloudy,0,Calm\n2026-10-11,23,Cloudy,0,Light\n2026-10-12,21,Rain,2,Breezy", ["Compare temperature on wet and dry days.", "Why should you label temperature and rainfall units?"]),
+  templateFromCsv("garden-planner", "School Garden Planner", "Grades 3–8", "Plan a fictional garden using space and supply counts.", "Bed,Plant,Seed packets,Area m2,Team,Status\nBed 1,Beans,1,2,Team 1,Planned\nBed 2,Lettuce,2,3,Team 2,Planted\nBed 3,Carrots,3,4,Team 3,Growing\nBed 4,Peas,1,5,Team 4,Planned\nBed 5,Sunflowers,2,2,Team 1,Planted\nBed 6,Radishes,3,3,Team 2,Growing\nBed 7,Beans,1,4,Team 3,Planned\nBed 8,Lettuce,2,5,Team 4,Planted\nBed 9,Carrots,3,2,Team 1,Growing\nBed 10,Peas,1,3,Team 2,Planned\nBed 11,Sunflowers,2,4,Team 3,Planted\nBed 12,Radishes,3,5,Team 4,Growing", ["How much space does each team use?", "What fields would help plan watering?"]),
+  templateFromCsv("class-budget", "Class Project Budget", "Grades 4–10", "Calculate a pretend project budget and discuss spending choices.", "Supply,Category,Quantity,Unit cost,Priority\nCard stock,Art,4,2.5,Essential\nMarkers,Building,12,1.25,Helpful\nGlue sticks,Display,6,3,Optional\nTape rolls,Art,3,4.5,Essential\nCraft sticks,Building,8,0.75,Helpful\nPaint sets,Display,2,6,Optional\nString spools,Art,10,1.5,Essential\nDisplay boards,Building,5,2,Helpful\nStorage box,Display,1,12,Optional\nPaper cups,Art,20,0.5,Essential\nBrushes,Building,7,1.75,Helpful\nLabels,Display,9,2.25,Optional", ["Add a calculation field for quantity multiplied by unit cost.", "Which choices fit a pretend budget of 150?"]),
+  templateFromCsv("reading-goals", "Reading Goal Tracker", "Grades 3–8", "Practice planning and summaries with fictional reading groups.", "Reader alias,Book,Pages read,Page goal,Check-in date,Strategy\nAlex,The Lantern Map,30,80,2026-10-01,Read with a partner\nSam,River of Paper Boats,35,86,2026-10-02,Pause to summarize\nJordan,The Quiet Inventor,40,92,2026-10-03,Keep a word list\nAvery,A Garden on Mars,45,98,2026-10-04,Read with a partner\nRiley,The Missing Moonstone,50,104,2026-10-05,Pause to summarize\nMorgan,A Pocket of Poems,55,110,2026-10-06,Keep a word list\nCasey,The Clockwork Kite,60,116,2026-10-07,Read with a partner\nTaylor,Under the Library Stairs,65,122,2026-10-08,Pause to summarize\nDrew,The Last Snow Seed,70,128,2026-10-09,Keep a word list\nQuinn,The Bicycle Orchestra,75,134,2026-10-10,Read with a partner\nJamie,The Secret of Willow Pond,80,140,2026-10-11,Pause to summarize\nSky,Our Neighborhood Stars,85,146,2026-10-12,Keep a word list", ["Calculate pages remaining for each reader.", "What would make a goal achievable and useful?"]),
+  templateFromCsv("classroom-jobs", "Classroom Jobs Rotation", "Grades 2–8", "Organize a pretend job rotation without real student information.", "Job,Team,Week,Estimated minutes,Status\nMaterials helper,Team 1,1,3,Ready\nLibrary organizer,Team 2,1,4,In progress\nPlant care,Team 3,1,5,Done\nLine leader,Team 4,1,6,Ready\nTechnology helper,Team 1,2,7,In progress\nBoard cleaner,Team 2,2,3,Done\nRecycling helper,Team 3,2,4,Ready\nArt organizer,Team 4,2,5,In progress\nTimekeeper,Team 1,3,6,Done\nDoor greeter,Team 2,3,7,Ready\nSupply checker,Team 3,3,3,In progress\nClass messenger,Team 4,3,4,Done", ["Does each team have a fair amount of work?", "How could you rotate jobs next week?"]),
+  templateFromCsv("makerspace-inventory", "Makerspace Inventory", "Grades 3–10", "Sort a fictional supply inventory and flag low stock.", "Item,Category,Quantity,Reorder level,Storage\nCardboard sheets,Building,24,6,Bin 1\nLED packs,Electronics,12,6,Bin 2\nFelt squares,Art,8,6,Bin 3\nWheel sets,Building,6,6,Bin 4\nCopper tape rolls,Electronics,30,6,Bin 1\nFabric bundles,Art,4,6,Bin 2\nCraft sticks,Building,16,6,Bin 3\nBattery holders,Electronics,10,6,Bin 4\nGlue bottles,Art,5,6,Bin 1\nDowels,Building,20,6,Bin 2\nSmall motors,Electronics,3,6,Bin 3\nRubber bands,Art,18,6,Bin 4", ["Which supplies are below the reorder level?", "What fields would help track checkouts?"])
 ];
 
+listSplatTemplates.push(linkedTemplate("library-loans", "Library Books & Loans", "Library Books", "Book ID,Title,Genre\n1,The Lantern Map,Adventure\n2,River of Paper Boats,Realistic fiction\n3,The Quiet Inventor,Biography-style fiction\n4,A Garden on Mars,Science fiction\n5,The Missing Moonstone,Mystery\n6,A Pocket of Poems,Poetry\n7,The Clockwork Kite,Adventure\n8,Under the Library Stairs,Fantasy\n9,The Last Snow Seed,Fantasy\n10,The Bicycle Orchestra,Realistic fiction\n11,The Secret of Willow Pond,Mystery\n12,Our Neighborhood Stars,Realistic fiction", "Library Loans", "Loan ID,Book ID,Reader alias,Due date\n1,1,Alex,2026-11-01\n2,1,Sam,2026-11-02\n3,2,Jordan,2026-11-03\n4,2,Avery,2026-11-04\n5,3,Riley,2026-11-05\n6,3,Morgan,2026-11-06\n7,4,Casey,2026-11-07\n8,4,Taylor,2026-11-08\n9,5,Drew,2026-11-09\n10,5,Quinn,2026-11-10\n11,6,Jamie,2026-11-11\n12,6,Sky,2026-11-12", "Explore one-to-many book loans with fictional readers and connected ID fields.", ["Why can one book have several loan records?", "Open a loan and use the parent arrow to inspect its book."]));
+
+listSplatTemplates.push(linkedTemplate("science-trials", "Investigations & Trials", "Investigations", "Investigation ID,Question,Team\n1,Which paper holds the most coins?,Team 1\n2,Does a ramp angle change distance?,Team 2\n3,Which material absorbs more water?,Team 3\n4,How does light affect a bean plant?,Team 4\n5,Which design keeps ice longer?,Team 1\n6,How does surface affect a rolling ball?,Team 2\n7,Which bridge shape supports more mass?,Team 3\n8,Does water temperature affect mixing?,Team 4\n9,Which soil drains fastest?,Team 1\n10,How does string length affect a pendulum?,Team 2\n11,Which container reduces evaporation?,Team 3\n12,Which wing shape travels farthest?,Team 4", "Trial Results", "Trial ID,Investigation ID,Trial,Result,Unit\n1,1,1,10,coins\n2,1,2,12,coins\n3,2,1,14,cm\n4,2,2,16,cm\n5,3,1,18,ml\n6,3,2,20,ml\n7,4,1,22,cm\n8,4,2,24,cm\n9,5,1,26,minutes\n10,5,2,28,minutes\n11,6,1,30,cm\n12,6,2,32,cm", "Use connected investigations and simulated trial results to discuss repeat measurements.", ["Compare repeated trials of the same investigation.", "Why should measurements with different units be compared separately?"]));
+
+function linkedTemplate(id: string, title: string, parentName: string, parentCsv: string, childName: string, childCsv: string, goal: string, questions: string[]): ListSplatTemplate {
+  const parent = templateFromCsv(id, parentName, 'Grades 3–10', goal, parentCsv, questions);
+  const child = templateFromCsv(`${id}-children`, childName, parent.gradeBand, goal, childCsv, questions).table;
+  parent.table.fields[0] = {...parent.table.fields[0], primaryKey: true, required: true, unique: true};
+  child.fields[0] = {...child.fields[0], primaryKey: true, required: true, unique: true};
+  return {...parent, title, relatedTables: [child], relationships: [{id: createId('relationship'), name: `${parentName} to ${childName}`, fromTableId: parent.table.id, fromFieldId: parent.table.fields[0].id, toTableId: child.id, toFieldId: child.fields[1].id, enforceKeys: true, cardinality: 'one-to-many'}]};
+}
+
 export function cloneTemplateTable(template: ListSplatTemplate): ListSplatTable {
-  const fields = template.table.fields.map((field) => ({ ...field, id: `${field.id}_${Date.now().toString(36)}` }));
-  const records = template.table.records.map((record) =>
-    createRecord(
-      fields,
-      Object.fromEntries(
-        template.table.fields.map((oldField, index) => [fields[index].id, record.values[oldField.id] ?? '']),
-      ),
-    ),
-  );
-  return {
-    ...template.table,
-    id: `table_${template.id}_${Date.now().toString(36)}`,
-    fields,
-    records,
+  return cloneTable(template.table);
+}
+function cloneTable(table: ListSplatTable): ListSplatTable {
+  const fields = table.fields.map(field => ({...field, id: createId('field')}));
+  return {...table, id: createId('table'), fields, records: table.records.map(record => createRecord(fields, Object.fromEntries(table.fields.map((field, index) => [fields[index].id, record.values[field.id] ?? '']))))};
+}
+export function cloneTemplateProject(template: ListSplatTemplate): {tables: ListSplatTable[]; relationships: ListSplatRelationship[]} {
+  const originals = [template.table, ...(template.relatedTables ?? [])];
+  const tables = originals.map(cloneTable);
+  const mapped = (tableId: string, fieldId: string) => {
+    const index = originals.findIndex(table => table.id === tableId);
+    return {tableId: tables[index].id, fieldId: tables[index].fields[originals[index].fields.findIndex(field => field.id === fieldId)].id};
   };
+  const relationships = (template.relationships ?? []).map(rel => {
+    const from = mapped(rel.fromTableId, rel.fromFieldId), to = mapped(rel.toTableId, rel.toFieldId);
+    return {...rel, id: createId('relationship'), fromTableId: from.tableId, fromFieldId: from.fieldId, toTableId: to.tableId, toFieldId: to.fieldId};
+  });
+  return {tables, relationships};
 }
