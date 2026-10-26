@@ -1,5 +1,6 @@
 import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../shared/file-bridge.js';
+import { parseMarkdownTables, tableFromMarkdownRows } from './io/markdown';
 import { escapeCsvCell, tableFromCsv, tableToCsv } from './io/csv';
 import { downloadFile, loadAutosave, saveAutosave } from './io/storage';
 import {
@@ -67,6 +68,7 @@ type DialogName =
   | 'projectIdeas'
   | 'relationship'
   | 'csvImport'
+  | 'markdownImport'
   | 'layout'
   | 'functions'
   | 'quality'
@@ -271,6 +273,10 @@ let relationshipFromTableId = activeTableId;
 let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
 let pendingCsvTable: ListSplatTable | null = null;
 let pendingCsvFileName = '';
+let importSource = 'CSV';
+let markdownDraft = '';
+let markdownName = 'Imported Markdown';
+let markdownError = '';
 let language = initialLanguage();
 
 function html(value: unknown): string {
@@ -626,28 +632,37 @@ function openJson(file: File): void {
     });
 }
 
-function importCsv(file: File): void {
-  file.text().then((text) => {
-    const table = tableFromCsv(file.name.replace(/\.csv$/i, ''), text);
-    pendingCsvTable = table;
-    pendingCsvFileName = file.name;
-    const existing = activeTable();
-    pendingCsvMap = table.fields.map((field) => {
-      const samples = table.records.slice(0, 12).map((record) => String(record.values[field.id] ?? ''));
-      const match = existing.fields.find((item) => item.name.trim().toLowerCase() === field.name.trim().toLowerCase());
-      return {
-        header: field.name,
-        action: match ? 'existing' : 'new',
-        type: guessFieldType(samples),
-        fieldId: match?.id ?? '',
-      };
-    });
-    pendingCsvKeyField = '';
-    pendingCsvDupMode = 'add';
-    dialog = 'csvImport';
-    lastMessage = `Previewing ${table.records.length} CSV record${table.records.length === 1 ? '' : 's'} from ${file.name}.`;
-    render();
+function previewTableImport(table: ListSplatTable, fileName: string, source: string): void {
+  pendingCsvTable = table;
+  pendingCsvFileName = fileName;
+  importSource = source;
+  const existing = activeTable();
+  pendingCsvMap = table.fields.map(field => {
+    const samples = table.records.slice(0, 12).map(record => String(record.values[field.id] ?? ''));
+    const match = existing.fields.find(item => item.name.trim().toLowerCase() === field.name.trim().toLowerCase());
+    return { header: field.name, action: match ? 'existing' : 'new', type: guessFieldType(samples), fieldId: match?.id ?? '' };
   });
+  pendingCsvKeyField = '';
+  pendingCsvDupMode = 'add';
+  dialog = 'csvImport';
+  lastMessage = `Previewing ${table.records.length} ${source} records from ${fileName}.`;
+  render();
+}
+
+function importCsv(file: File): void {
+  file.text().then(text => previewTableImport(tableFromCsv(file.name.replace(/\.csv$/i, ''), text), file.name, 'CSV'));
+}
+
+function markdownOptions(): string {
+  const tables = parseMarkdownTables(markdownDraft);
+  return tables.length ? tables.map((rows, index) => `<option value="${index}">Table ${index + 1}: ${html(rows[0].join(' · '))} (${rows.length - 1} rows)</option>`).join('') : '<option value="">No tables found — include a header and --- separator row</option>';
+}
+
+function refreshMarkdownOptions(): void {
+  const select = appRoot.querySelector<HTMLSelectElement>('[data-markdown-table]');
+  if (select) select.innerHTML = markdownOptions();
+  const button = appRoot.querySelector<HTMLButtonElement>('[data-action="preview-markdown"]');
+  if (button) button.disabled = !parseMarkdownTables(markdownDraft).length;
 }
 
 function applyCsvImport(mode: 'new' | 'append'): void {
@@ -2426,6 +2441,18 @@ function renderDialog(table: ListSplatTable): string {
     `;
   }
 
+  if (dialog === 'markdownImport') {
+    return `<div class="modal-backdrop"><section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Import Markdown table">
+      <h2>Import Markdown table</h2>
+      <p>Paste a Markdown table or load a .md file. If the document has several tables, choose which one to import. Preview columns before creating a new table or adding records to the current table.</p>
+      <label>Markdown file <input type="file" data-markdown-file accept=".md,.markdown,text/markdown,text/plain"></label>
+      <label>Markdown text <textarea data-markdown-text rows="8" placeholder="| Name | Age |&#10;| --- | --- |&#10;| Alex | 12 |">${html(markdownDraft)}</textarea></label>
+      <label>Table to import <select data-markdown-table>${markdownOptions()}</select></label>
+      <label>Table name <input data-markdown-name value="${html(markdownName)}"></label>
+      <p class="relationship-error" role="alert">${html(markdownError)}</p>
+      <div class="modal-actions"><button type="button" class="button" data-action="preview-markdown" ${parseMarkdownTables(markdownDraft).length ? '' : 'disabled'}>Preview columns</button><button type="button" data-action="close-dialog">Cancel</button></div>
+    </section></div>`;
+  }
   if (dialog === 'csvImport' && pendingCsvTable) {
     const previewRows = pendingCsvTable.records.slice(0, 4);
     const existingOptions = (selected: string) =>
@@ -2448,8 +2475,8 @@ function renderDialog(table: ListSplatTable): string {
       .join('');
     return `
       <div class="modal-backdrop">
-        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="CSV import">
-          <h2>Import CSV</h2>
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="${html(importSource)} import">
+          <h2>Import ${html(importSource)}</h2>
           <p>${html(pendingCsvFileName)} has ${pendingCsvTable.fields.length} column${pendingCsvTable.fields.length === 1 ? '' : 's'} and ${pendingCsvTable.records.length} row${pendingCsvTable.records.length === 1 ? '' : 's'}. Choose how each column maps.</p>
           <div class="csv-map">${mapRows}</div>
           <div class="preview-table-wrap">
@@ -2696,12 +2723,6 @@ function render(): void {
         </span>
       </a>
       <div class="quick-actions">
-        <button type="button" class="button" data-action="undo-change"${undoStack.length ? '' : ' disabled'} title="Undo (Ctrl+Z)" aria-label="Undo">↶ ${html(t('Undo'))}</button>
-        <button type="button" class="button" data-action="redo-change"${redoStack.length ? '' : ' disabled'} title="Redo (Ctrl+Y)" aria-label="Redo">↷ ${html(t('Redo'))}</button>
-        <button type="button" class="button primary" data-action="new">${html(t('New'))}</button>
-        <button type="button" class="button primary" data-action="save-json">${html(t('Save JSON'))}</button>
-        <button type="button" class="button primary" data-action="open-json">${html(t('Open JSON'))}</button>
-        <button type="button" class="button primary" data-action="export-csv">${html(t('Export CSV'))}</button>
         <select id="languageSwitcher" class="lang-switcher" aria-label="Language">${languageOptions(language)}</select>
       </div>
     </header>
@@ -2713,6 +2734,7 @@ function render(): void {
           ['save-drive', 'Save to Google Drive'],
           ['open-json', 'Open .listsplat.json'],
           ['import-csv', 'Import CSV or TSV'],
+          ['import-markdown', 'Import Markdown table'],
           ['export-csv', 'Export table CSV'],
           ['export-found-csv', 'Export shown records CSV'],
           ['export-markdown', 'Export Markdown table'],
@@ -3692,6 +3714,15 @@ appRoot.addEventListener('click', (event) => {
     void saveToGoogleDrive({ appName: 'ListSplat', fileName: `${project.metadata.title || 'listsplat-project'}.listsplat.json`, buildFile: () => new Blob([snapshot], { type: 'application/json' }) }).catch(error => { lastMessage = error.message; render(); });
   } else if (action === 'open-json') {
     appRoot.querySelector<HTMLInputElement>('[data-open-json]')?.click();
+  } else if (action === 'import-markdown') {
+    markdownDraft = ''; markdownName = 'Imported Markdown'; markdownError = '';
+    dialog = 'markdownImport'; render();
+  } else if (action === 'preview-markdown') {
+    const index = Number(appRoot.querySelector<HTMLSelectElement>('[data-markdown-table]')?.value ?? '0');
+    const rows = parseMarkdownTables(markdownDraft)[index];
+    if (!rows) { markdownError = 'Include a Markdown table with a header and separator row.'; render(); return; }
+    markdownName = appRoot.querySelector<HTMLInputElement>('[data-markdown-name]')?.value || 'Imported Markdown';
+    previewTableImport(tableFromMarkdownRows(markdownName, rows), markdownName, 'Markdown');
   } else if (action === 'import-csv') {
     appRoot.querySelector<HTMLInputElement>('[data-import-csv]')?.click();
   } else if (action === 'export-csv') {
@@ -4171,7 +4202,10 @@ appRoot.addEventListener('click', (event) => {
 
 appRoot.addEventListener('change', (event) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-  if (target.matches('[data-reopen-table]')) {
+  if (target.matches('[data-markdown-file]') && target instanceof HTMLInputElement && target.files?.[0]) {
+    const file = target.files[0];
+    void file.text().then(text => { markdownDraft = text; markdownName = file.name.replace(/\.(md|markdown)$/i, ''); markdownError = ''; render(); }).catch(error => { markdownError = String(error.message || error); render(); });
+  } else if (target.matches('[data-reopen-table]')) {
     if (!project.schema.tables.some(table => table.id === target.value)) return;
     activeTableId = target.value;
     closedTableIds.delete(activeTableId);
@@ -4326,6 +4360,8 @@ appRoot.addEventListener('paste', (event) => {
 
 appRoot.addEventListener('input', (event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+  if (target.matches('[data-markdown-text]')) { markdownDraft = target.value; refreshMarkdownOptions(); return; }
+  if (target.matches('[data-markdown-name]')) { markdownName = target.value; return; }
   if (target.matches('[data-project-title]')) {
     updateTitle(target.value);
     return;

@@ -97,3 +97,13 @@ links also reject repeated foreign keys. Remove or reassign child links before
 changing a referenced parent. Use **Remove link** to remove a relationship without
 deleting its tables or records. Undo and project-file export preserve key metadata.
 Legacy value-match relationships continue to work without being silently converted.
+
+## Import Markdown tables
+
+Choose **File → Import Markdown table**. Paste Markdown or load a `.md`/`.markdown`
+file, choose a table if the document contains several, give it a name, and select
+**Preview columns**. Map columns and types, then create a new table or append to
+the current table using the same preview and duplicate-handling controls as CSV.
+The importer supports optional outer pipes, alignment separators, escaped pipes,
+empty cells, and tables embedded in longer documents. Cell content remains plain
+text. File actions are in File; Undo/Redo are in Edit and retain their shortcuts.
