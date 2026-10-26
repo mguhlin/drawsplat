@@ -1785,6 +1785,32 @@ function renderTeacherPanel(table: ListSplatTable): string {
   `;
 }
 
+function renderRelationshipExample(parent: ListSplatTable, child: ListSplatTable): string {
+  if (parent.id === child.id) return `<aside class="relationship-example"><h3>Example for ${html(parent.name)}</h3><p>Add a second table, then choose it as the related table to see an example using your records.</p></aside>`;
+  const existing = project.schema.relationships.find(rel => rel.fromTableId === parent.id && rel.toTableId === child.id && rel.enforceKeys);
+  const pk = parent.fields.find(field => field.id === existing?.fromFieldId) ?? parent.fields.find(field => field.primaryKey);
+  const fk = child.fields.find(field => field.id === existing?.toFieldId);
+  const pkName = pk?.name ?? 'ID';
+  const fkName = fk?.name ?? `${parent.name} ID`;
+  const parentRecord = parent.records.find(record => pk && keyValue(record.values[pk.id])) ?? parent.records[0];
+  const key = pk && parentRecord ? parentRecord.values[pk.id] : 1;
+  const childRecord = existing && parentRecord ? relatedRecords(existing, parent, parentRecord, child)[0] : child.records[0];
+  const label = (source: ListSplatTable, record: ListSplatRecord | undefined, keyFieldId?: string) => {
+    const field = source.fields.find(item => item.id !== keyFieldId && item.type === 'text');
+    return record && field ? `${field.name}: ${String(record.values[field.id] ?? '')}` : 'Example record';
+  };
+  return `<aside class="relationship-example" aria-label="Example using loaded tables">
+    <h3>${existing ? 'Your connection' : 'Example using your tables'}</h3>
+    <p>${existing ? 'These fields already connect your records.' : 'Use this structure if records in the related table belong to records in the parent table. The sample link below is an illustration, not a change to your data.'}</p>
+    <div class="relationship-example-tables">
+      <section><h4>${html(parent.name)}</h4><p>${html(label(parent, parentRecord, pk?.id))}</p><div><span class="key-badge primary-key">${icon('key')} PK</span> ${html(pkName)} <strong>${html(key)}</strong></div></section>
+      <span class="example-connector" aria-label="connects to">1 → ${existing?.cardinality === 'one-to-one' ? '1' : 'many'}</span>
+      <section><h4>${html(child.name)}</h4><p>${html(label(child, childRecord, fk?.id))}${existing && !childRecord ? ' — no linked records yet' : ''}</p><div><span class="key-badge foreign-key">↗ FK</span> ${html(fkName)} <strong>${html(key)}</strong></div></section>
+    </div>
+    ${existing ? `<p>The same ID appears in both fields. Choose a parent in the ${html(child.name)} picker to store its ${html(pkName)}.</p>` : `<ol><li>${pk ? `Use <strong>${html(parent.name)}.${html(pkName)}</strong> as the parent primary key.` : `Click <strong>Add an ID primary key to ${html(parent.name)}</strong> below to give each record its own ID.`}</li><li>Add a <strong>${html(fkName)}</strong> ${pk?.type === 'text' ? 'text' : 'number'} field in <strong>${html(child.name)}</strong>. Use an existing field only if it stores these parent IDs.</li><li>Choose those two fields below and create the relationship. In ${html(child.name)}, select the parent record by name; ListSplat stores its ID.</li></ol>`}
+  </aside>`;
+}
+
 function renderRelationshipDiagram(): string {
   const tables = project.schema.tables;
   const relationships = project.schema.relationships;
@@ -2484,7 +2510,7 @@ function renderDialog(table: ListSplatTable): string {
 
   if (dialog === 'relationship') {
     const fromTable = project.schema.tables.find((item) => item.id === relationshipFromTableId) ?? table;
-    const toTable = project.schema.tables.find((item) => item.id === relationshipToTableId) ?? table;
+    const toTable = project.schema.tables.find((item) => item.id === relationshipToTableId && item.id !== fromTable.id) ?? project.schema.tables.find(item => item.id !== fromTable.id) ?? table;
     const fromFieldOptions = fromTable.fields.filter(field => field.primaryKey)
       .map((field) => `<option value="${fromTable.id}:${field.id}">${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
       .join('');
@@ -2495,12 +2521,13 @@ function renderDialog(table: ListSplatTable): string {
       <div class="modal-backdrop">
         <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Relationships">
           <h2>Keys &amp; Relationships</h2>
-          <p>Connect a parent primary key (PK) to a child foreign key (FK). For example, Students.Student ID → Assignments.Student ID. IDs stay stored in the child table; the picker shows names.</p>
+          <p>Connect a parent primary key (PK) to a child foreign key (FK). IDs stay stored in the child table; the picker shows names.</p>
           <p>Set a primary key by clicking a column heading and choosing Primary key. New relationships enforce unique, nonempty parent keys and valid references. Existing value-match links remain available.</p>
           <p class="relationship-error" role="alert">${html(relationshipError)}</p>
           ${renderRelationshipDiagram()}
+          ${renderRelationshipExample(fromTable, toTable)}
           <label>Relationship type <select data-relationship-cardinality><option value="one-to-many">One parent → many children</option><option value="one-to-one">One parent → one child (unique foreign key)</option></select></label>
-          <label>Name <input data-relationship-name placeholder="Books to reviews"></label>
+          <label>Name <input data-relationship-name placeholder="${html(`${fromTable.name} to ${toTable.name}`)}"></label>
           <label>Parent table <select data-relationship-from-table>${project.schema.tables
             .map((item) => `<option value="${item.id}" ${item.id === fromTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
             .join('')}</select></label>

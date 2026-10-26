@@ -27,9 +27,14 @@ test('key relationships provide parent pickers and protect referenced records', 
   await page.locator('[data-action="save-field-settings"]').click();
   await page.locator('.relationship-launch').click();
   await page.locator('[data-relationship-to-table]').selectOption('assignments');
+  await expect(page.locator('.relationship-example')).toContainText('Students');
+  await expect(page.locator('.relationship-example')).toContainText('Assignments');
+  await expect(page.locator('.relationship-example')).toContainText('101');
+  await expect(page.locator('.relationship-example')).toContainText('illustration');
   await page.locator('[data-relationship-to-field]').selectOption('assignments:student');
   await page.locator('[data-action="create-relationship"]').click();
   await expect(page.locator('.relationship-list p')).toHaveCount(1);
+  await expect(page.locator('.relationship-example')).toContainText('Your connection');
   await expect(page.locator('.rel-links')).toContainText('1 ─── ∞');
   await page.locator('[data-action="close-dialog"]').click();
   await page.locator('[data-table-id="assignments"]').click();

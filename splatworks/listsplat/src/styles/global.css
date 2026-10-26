@@ -1492,3 +1492,14 @@ button:not(:disabled):hover { border-color:#b09ad7; }
 .relationship-error:empty { display:none; }
 .key-badge .ui-icon { width:12px; height:12px; }
 .rel-arrow .ui-icon { width:14px; height:14px; }
+.relationship-example { padding:16px; border:1px solid #cbdfea; border-radius:12px; background:#f4faff; line-height:1.55; }
+.relationship-example h3 { margin:0 0 8px; color:#234d69; font-size:1rem; }
+.relationship-example p { margin:6px 0 12px; }
+.relationship-example-tables { display:flex; gap:12px; align-items:center; }
+.relationship-example-tables section { flex:1; min-width:0; padding:12px; border:1px solid var(--line); border-radius:9px; background:white; overflow-wrap:anywhere; }
+.relationship-example-tables h4 { margin:0; }
+.relationship-example-tables strong { margin-inline-start:8px; color:var(--accent-dark); }
+.example-connector { flex:none; color:var(--accent-dark); font-weight:700; }
+.relationship-example ol { margin:12px 0 0; padding-inline-start:22px; }
+.relationship-example li + li { margin-top:6px; }
+@media(max-width:600px) { .relationship-example-tables { flex-direction:column; align-items:stretch; } .example-connector { text-align:center; } }
