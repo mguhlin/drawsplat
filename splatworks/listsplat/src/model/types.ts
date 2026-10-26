@@ -34,6 +34,7 @@ export interface ListSplatField {
   options?: string[];
   formula?: string;
   unique?: boolean;
+  primaryKey?: boolean;
   min?: number;
   max?: number;
   pattern?: ValidationPattern;
@@ -90,6 +91,8 @@ export interface ListSplatRelationship {
   fromFieldId: string;
   toTableId: string;
   toFieldId: string;
+  enforceKeys?: boolean;
+  cardinality?: 'one-to-many' | 'one-to-one';
 }
 
 export type LayoutMode = 'table' | 'form' | 'cards' | 'gallery' | 'list' | 'kanban' | 'calendar' | 'labels' | 'report';

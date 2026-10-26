@@ -52,10 +52,11 @@ export function createRecord(fields: ListSplatField[], values: Record<string, Li
   const now = new Date().toISOString();
   const normalizedValues = Object.fromEntries(
     fields.map((field, index) => {
+      if (field.primaryKey && values[field.id] === undefined && field.type === 'text') return [field.id, createId('key')];
       if (field.type === 'createdAt' || field.type === 'updatedAt') {
         return [field.id, values[field.id] ?? now];
       }
-      if (field.type === 'autoNumber') {
+      if ((field.type === 'autoNumber' || (field.primaryKey && field.type === 'number'))) {
         return [field.id, values[field.id] ?? index + 1];
       }
       if (values[field.id] === undefined && field.defaultValue != null && field.defaultValue !== '') {
@@ -173,7 +174,7 @@ export function nextAutoNumber(table: ListSplatTable, fieldId: string): number {
 function autoNumberValues(table: ListSplatTable): Record<string, ListSplatCellValue> {
   const values: Record<string, ListSplatCellValue> = {};
   table.fields
-    .filter((field) => field.type === 'autoNumber')
+    .filter((field) => (field.type === 'autoNumber' || (field.primaryKey && field.type === 'number')))
     .forEach((field) => {
       values[field.id] = nextAutoNumber(table, field.id);
     });
@@ -259,7 +260,7 @@ export function duplicateRecord(table: ListSplatTable, recordId: string): ListSp
   }
   return {
     ...table,
-    records: [...table.records, createRecord(table.fields, { ...source.values, ...autoNumberValues(table) })],
+    records: [...table.records, createRecord(table.fields, { ...source.values, ...Object.fromEntries(table.fields.filter(field => field.primaryKey && field.type === 'text').map(field => [field.id, createId('key')])), ...autoNumberValues(table) })],
   };
 }
 

@@ -25,7 +25,7 @@ export function validateCell(
 function validateCellRaw(field: ListSplatField, value: ListSplatCellValue, table?: ListSplatTable, recordId?: string): string {
   const text = cellText(value).trim();
   if (text === '') {
-    return field.required ? 'This field is required.' : '';
+    return (field.required || field.primaryKey) ? 'This field is required.' : '';
   }
   if (field.maxLength && text.length > field.maxLength) {
     return `Keep this ${field.maxLength} characters or fewer.`;
@@ -63,7 +63,7 @@ function validateCellRaw(field: ListSplatField, value: ListSplatCellValue, table
       return `Enter a valid ${field.pattern}.`;
     }
   }
-  if (field.unique && table) {
+  if ((field.unique || field.primaryKey) && table) {
     const duplicate = table.records.some(
       (record) => record.id !== recordId && cellText(record.values[field.id]).trim().toLowerCase() === text.toLowerCase(),
     );

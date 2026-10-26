@@ -39,7 +39,7 @@ import {
   replaceValues,
   sortRecordsByKeys,
 } from './model/query';
-import { addRelationship, createRelationship, relatedRecords, relationshipLabel } from './model/relationships';
+import { addRelationship, createRelationship, relatedRecords, relationshipLabel, keyValue, relationalIssues, newRelationalIssue } from './model/relationships';
 import { tableValidationIssues, validateCell } from './model/validation';
 import type {
   FieldType,
@@ -265,6 +265,7 @@ let redoStack: Array<{ label: string; project: ListSplatFile }> = [];
 let activeCellDirtyKey = '';
 let pendingFocusCell: { recordId: string; fieldId: string } | null = null;
 let replacePreview: Array<{ recordId: string; fieldId: string; before: string; after: string }> = [];
+let relationshipError = '';
 let relationshipFromTableId = activeTableId;
 let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
 let pendingCsvTable: ListSplatTable | null = null;
@@ -351,6 +352,8 @@ function ensureActiveRecord(table: ListSplatTable): void {
 }
 
 function setProject(nextProject: ListSplatFile): void {
+  const issue = newRelationalIssue(project, nextProject);
+  if (issue) { lastMessage = `Change blocked: ${issue}`; relationshipError = issue; render(); return; }
   project = nextProject;
   ensureActiveRecord(activeTable());
   saveAutosave(project);
@@ -788,6 +791,7 @@ function applyTemplate(templateId: string): void {
 // Small inline SVGs keep controls recognizable without loading an icon font.
 function icon(name: string): string {
   const paths: Record<string, string> = {
+    key: '<circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-5-5 3-3m-6 0 3-3"/>',
     table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>',
     form: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
     cards: '<rect x="3" y="4" width="8" height="16" rx="2"/><rect x="14" y="4" width="7" height="16" rx="2"/>',
@@ -974,6 +978,15 @@ function recordTitle(table: ListSplatTable, record: ListSplatRecord): string {
   return String(value || 'Untitled record');
 }
 
+function keyBadge(table: ListSplatTable, field: ListSplatField): string {
+  const foreign = project.schema.relationships.some(rel => rel.enforceKeys && rel.toTableId === table.id && rel.toFieldId === field.id);
+  return `${field.primaryKey ? `<span class="key-badge primary-key" title="Primary key: unique, required identifier">${icon('key')} PK</span>` : ''}${foreign ? '<span class="key-badge foreign-key" title="Foreign key: links to a parent record">↗ FK</span>' : ''}`;
+}
+
+function foreignRelationship(tableId: string, fieldId: string) {
+  return project.schema.relationships.find(rel => rel.enforceKeys && rel.toTableId === tableId && rel.toFieldId === fieldId);
+}
+
 function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: string, rowIndex: number): string {
   const field = table.fields.find((item) => item.id === fieldId);
   const value = displayValue(table, record, fieldId);
@@ -987,6 +1000,19 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
   const maxLenAttr = field?.maxLength ? ` maxlength="${field.maxLength}"` : '';
   const extra = `${invalidAttr}${readonlyAttr}${maxLenAttr}`;
 
+  const relation = foreignRelationship(table.id, fieldId);
+  if (relation) {
+    const parent = project.schema.tables.find(item => item.id === relation.fromTableId);
+    const current = keyValue(value);
+    const match = parent?.records.find(item => keyValue(item.values[relation.fromFieldId]) === current);
+    const options = (parent?.records ?? []).filter(item => keyValue(item.values[relation.fromFieldId])).map(item => {
+      const key = item.values[relation.fromFieldId];
+      const labelField = parent?.fields.find(candidate => candidate.id !== relation.fromFieldId && candidate.type === 'text');
+      const label = labelField ? item.values[labelField.id] : '';
+      return `<option value="${html(key)}" ${keyValue(key) === current ? 'selected' : ''}>${html(label ? `${label} · ${key}` : key)}</option>`;
+    }).join('');
+    return `<div class="foreign-key-cell"><select class="${cellClass}" ${common}${field?.readonly ? ' disabled' : ''}><option value="">Choose a parent…</option>${current && !match ? `<option selected value="${html(value)}">Missing parent: ${html(value)}</option>` : ''}${options}</select>${match ? `<button type="button" class="linked-record" data-action="open-related" data-rel-table="${parent!.id}" data-rel-record="${match.id}" title="Open linked record" aria-label="Open linked ${html(parent!.name)} record">↗</button>` : ''}</div>`;
+  }
   if (field?.type === 'checkbox') {
     return `<input class="cell-checkbox" type="checkbox" ${common} ${field.readonly ? 'disabled' : ''} ${value === true || value === 'true' ? 'checked' : ''}>`;
   }
@@ -1162,7 +1188,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
                 (field) => `
                   <th class="col-head" data-col-field="${field.id}" draggable="true" style="${columnWidthStyle(field.id)}">
                     <button type="button" class="field-button" data-field-settings="${field.id}">
-                      ${html(field.name)}${field.required ? '<span class="req" title="Required field" aria-label="required">*</span>' : ''}<br><small>${html(field.type)}</small>
+                      ${keyBadge(table, field)} ${html(field.name)}${field.required ? '<span class="req" title="Required field" aria-label="required">*</span>' : ''}<br><small>${html(field.type)}</small>
                     </button>
                     <button type="button" class="col-sort" data-action="sort-toggle" data-sort-toggle="${field.id}" title="Sort by ${html(field.name)}">${sortMark(field.id)}</button>
                     <span class="col-resize" data-col-resize="${field.id}" title="Drag to resize" aria-hidden="true"></span>
@@ -1317,7 +1343,7 @@ function renderFormView(table: ListSplatTable): string {
           .map(
             (field, index) => `
               <label>
-                <span>${html(field.name)}</span>
+                <span>${keyBadge(table, field)} ${html(field.name)}</span>
                 ${renderInput(table, record, field.id, index)}
                 ${field.description ? `<small>${html(field.description)}</small>` : ''}
               </label>
@@ -1460,7 +1486,7 @@ function groupSummary(table: ListSplatTable, records: ListSplatRecord[]): string
 }
 
 function fieldSelectOptions(fields: ListSplatField[], selected: string): string {
-  return fields.map((field) => `<option value="${field.id}" ${selected === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+  return fields.map((field) => `<option value="${field.id}" ${selected === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('');
 }
 
 function renderViewControls(table: ListSplatTable): string {
@@ -1739,6 +1765,8 @@ function renderTeacherPanel(table: ListSplatTable): string {
         )
         .join('')}
       ${relationshipCards ? `<h3>Related Records</h3>${relationshipCards}` : ''}
+      <button type="button" class="button relationship-launch" data-action="relationships">${icon('key')} Keys &amp; Relationships</button>
+      ${relationalIssues(project).length ? `<p class="relationship-error" role="status">${html(relationalIssues(project)[0])}</p>` : ''}
       <details class="template-starters"><summary>Template Starters <span>${listSplatTemplates.length} ideas</span></summary><div class="template-list">
       ${listSplatTemplates
         .map(
@@ -1769,6 +1797,7 @@ function renderRelationshipDiagram(): string {
       (table) => `
         <div class="rel-box${table.id === activeTableId ? ' active' : ''}${relatedIds.has(table.id) ? ' linked' : ''}">
           <strong>${html(table.name)}</strong>
+          <div class="rel-fields">${table.fields.map(field => `<div>${keyBadge(table, field)} ${html(field.name)} <small>${html(field.type)}</small></div>`).join('')}</div>
           <span>${table.records.length} record${table.records.length === 1 ? '' : 's'} · ${table.fields.length} field${table.fields.length === 1 ? '' : 's'}</span>
         </div>
       `,
@@ -1780,7 +1809,7 @@ function renderRelationshipDiagram(): string {
           (relationship) => `
             <div class="rel-link">
               <span class="rel-badge">${html(tableName(relationship.fromTableId))}</span>
-              <span class="rel-arrow">${html(fieldName(relationship.fromTableId, relationship.fromFieldId))} <b>1 → &#8734;</b> ${html(fieldName(relationship.toTableId, relationship.toFieldId))}</span>
+              <span class="rel-arrow">${relationship.enforceKeys ? `${icon('key')} PK ` : ''}${html(fieldName(relationship.fromTableId, relationship.fromFieldId))} <b>${relationship.cardinality === 'one-to-one' ? '1 ─── 1' : '1 ─── ∞'}</b> ${relationship.enforceKeys ? '↗ FK ' : ''}${html(fieldName(relationship.toTableId, relationship.toFieldId))}</span>
               <span class="rel-badge">${html(tableName(relationship.toTableId))}</span>
             </div>
           `,
@@ -1883,7 +1912,7 @@ function renderTypeChangePreview(table: ListSplatTable, field: ListSplatField, n
 
 function renderFindDialog(table: ListSplatTable): string {
   const fieldOptions = (selected: string) =>
-    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('');
   const rows = findDraft.rules
     .map((rule, index) => {
       const op = FIND_OPERATORS.find((item) => item.value === rule.operator) ?? FIND_OPERATORS[0];
@@ -1922,7 +1951,7 @@ function renderFindDialog(table: ListSplatTable): string {
 
 function renderSortDialog(table: ListSplatTable): string {
   const fieldOptions = (selected: string) =>
-    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('');
   const rows = sortDraft
     .map(
       (key, index) => `
@@ -1997,7 +2026,7 @@ function renderBulkFillDialog(table: ListSplatTable): string {
         <p>Set the same value in ${count} selected record${count === 1 ? '' : 's'}.</p>
         <label>Field <select data-bulk-field>${table.fields
           .filter((field) => !['calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type))
-          .map((field) => `<option value="${field.id}">${html(field.name)}</option>`)
+          .map((field) => `<option value="${field.id}">${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
           .join('')}</select></label>
         <label>Value <input data-bulk-value type="text" placeholder="value to fill in"></label>
         <div class="modal-actions">
@@ -2095,9 +2124,9 @@ function renderChartsDialog(table: ListSplatTable): string {
         <p>Charts use the records currently shown (${visibleRecords(table).length}). Change filters to focus a chart.</p>
         <div class="chart-controls">
           <label>Type <select data-chart-type>${(['bar', 'pie', 'line'] as const).map((option) => `<option value="${option}" ${chartType === option ? 'selected' : ''}>${option}</option>`).join('')}</select></label>
-          <label>Category <select data-chart-category><option value="">Choose a field</option>${categorical.map((field) => `<option value="${field.id}" ${chartCategoryField === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('')}</select></label>
+          <label>Category <select data-chart-category><option value="">Choose a field</option>${categorical.map((field) => `<option value="${field.id}" ${chartCategoryField === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('')}</select></label>
           <label>Measure <select data-chart-value-mode><option value="count" ${chartValueMode === 'count' ? 'selected' : ''}>count records</option><option value="sum" ${chartValueMode === 'sum' ? 'selected' : ''}>sum a number</option></select></label>
-          ${chartValueMode === 'sum' ? `<label>Number field <select data-chart-value-field><option value="">Choose</option>${numberFields.map((field) => `<option value="${field.id}" ${chartValueField === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('')}</select></label>` : ''}
+          ${chartValueMode === 'sum' ? `<label>Number field <select data-chart-value-field><option value="">Choose</option>${numberFields.map((field) => `<option value="${field.id}" ${chartValueField === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('')}</select></label>` : ''}
         </div>
         <div class="chart-area">${renderChartSvg(data)}</div>
         ${
@@ -2284,7 +2313,7 @@ function renderDialog(table: ListSplatTable): string {
           <h2>Replace values</h2>
           <label>Find <input data-replace-find placeholder="Text to find"></label>
           <label>Replace with <input data-replace-with placeholder="New text"></label>
-          <label>Field <select data-replace-field>${table.fields.map((field) => `<option value="${field.id}">${html(field.name)}</option>`).join('')}</select></label>
+          <label>Field <select data-replace-field>${table.fields.map((field) => `<option value="${field.id}">${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('')}</select></label>
           <label class="check-row"><input type="checkbox" data-replace-case-sensitive> Case-sensitive</label>
           <label class="check-row"><input type="checkbox" data-replace-whole-word> Whole word only</label>
           <p>Replacement applies to the current found set when search is active. Preview first, then apply. The last replace can be undone from Edit.</p>
@@ -2321,6 +2350,7 @@ function renderDialog(table: ListSplatTable): string {
           ${renderTypeChangePreview(table, field, previewType)}
           <label>Description <textarea data-field-description>${html(field.description)}</textarea></label>
           <label>Choice options <input data-field-options value="${html(field.options?.join(', ') ?? '')}" placeholder="Yes, No, Maybe"></label>
+          <label class="check-row"><input type="checkbox" data-field-primary-key ${field.primaryKey ? 'checked' : ''}> Primary key (one per table; unique and required)</label>
           <label class="check-row"><input type="checkbox" data-field-required ${field.required ? 'checked' : ''}> Required field</label>
           <label class="check-row"><input type="checkbox" data-field-hidden ${field.hidden ? 'checked' : ''}> Hide field</label>
           ${renderFieldConstraints(field, previewType)}
@@ -2328,7 +2358,7 @@ function renderDialog(table: ListSplatTable): string {
           ${previewType === 'calculation' ? renderFormulaBuilder(table) : ''}
           <p>Try <code>FIELD(Animal)</code>, <code>JOIN(Animal, " lives in ", Habitat)</code>, <code>UPPER(Animal)</code>, <code>ADD(Score, Bonus)</code>, <code>AVERAGE(Score)</code>, or <code>LOOKUP("Book reviews", Rating)</code>.</p>
           <div class="modal-actions">
-            <button type="button" data-action="save-field-settings">Save field</button>
+            <p class="relationship-error" role="alert">${html(relationshipError)}</p><button type="button" data-action="save-field-settings">Save field</button>
             <button type="button" data-action="close-dialog">Cancel</button>
           </div>
         </section>
@@ -2372,7 +2402,7 @@ function renderDialog(table: ListSplatTable): string {
   if (dialog === 'csvImport' && pendingCsvTable) {
     const previewRows = pendingCsvTable.records.slice(0, 4);
     const existingOptions = (selected: string) =>
-      table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+      table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`).join('');
     const mapRows = pendingCsvMap
       .map(
         (column, index) => `
@@ -2416,7 +2446,7 @@ function renderDialog(table: ListSplatTable): string {
           <div class="csv-dup">
             <label>When appending, match on <select data-csv-key><option value="">nothing (always add)</option>${table.fields
               .filter((field) => !['image', 'calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type))
-              .map((field) => `<option value="${field.id}" ${pendingCsvKeyField === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
+              .map((field) => `<option value="${field.id}" ${pendingCsvKeyField === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
               .join('')}</select></label>
             <label>Duplicates <select data-csv-dup ${pendingCsvKeyField ? '' : 'disabled'}>
               <option value="add" ${pendingCsvDupMode === 'add' ? 'selected' : ''}>always add</option>
@@ -2455,31 +2485,35 @@ function renderDialog(table: ListSplatTable): string {
   if (dialog === 'relationship') {
     const fromTable = project.schema.tables.find((item) => item.id === relationshipFromTableId) ?? table;
     const toTable = project.schema.tables.find((item) => item.id === relationshipToTableId) ?? table;
-    const fromFieldOptions = fromTable.fields
-      .map((field) => `<option value="${fromTable.id}:${field.id}">${html(field.name)}</option>`)
+    const fromFieldOptions = fromTable.fields.filter(field => field.primaryKey)
+      .map((field) => `<option value="${fromTable.id}:${field.id}">${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
       .join('');
     const toFieldOptions = toTable.fields
-      .map((field) => `<option value="${toTable.id}:${field.id}">${html(field.name)}</option>`)
+      .map((field) => `<option value="${toTable.id}:${field.id}">${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
       .join('');
     return `
       <div class="modal-backdrop">
         <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Relationships">
-          <h2>Relationships</h2>
-          <p>Create a simple one-to-many relationship by matching values in two fields, such as Books:Title to Reviews:Book.</p>
+          <h2>Keys &amp; Relationships</h2>
+          <p>Connect a parent primary key (PK) to a child foreign key (FK). For example, Students.Student ID → Assignments.Student ID. IDs stay stored in the child table; the picker shows names.</p>
+          <p>Set a primary key by clicking a column heading and choosing Primary key. New relationships enforce unique, nonempty parent keys and valid references. Existing value-match links remain available.</p>
+          <p class="relationship-error" role="alert">${html(relationshipError)}</p>
           ${renderRelationshipDiagram()}
+          <label>Relationship type <select data-relationship-cardinality><option value="one-to-many">One parent → many children</option><option value="one-to-one">One parent → one child (unique foreign key)</option></select></label>
           <label>Name <input data-relationship-name placeholder="Books to reviews"></label>
           <label>Parent table <select data-relationship-from-table>${project.schema.tables
             .map((item) => `<option value="${item.id}" ${item.id === fromTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
             .join('')}</select></label>
-          <label>Parent match field <select data-relationship-from-field>${fromFieldOptions}</select></label>
+          ${fromTable.fields.some(field => field.primaryKey) ? '' : `<button type="button" class="button" data-action="generate-primary-key">${icon('key')} Add an ID primary key to ${html(fromTable.name)}</button>`}
+          <label>Parent primary key <select data-relationship-from-field>${fromFieldOptions || '<option value="">Add or choose a primary key first</option>'}</select></label>
           <label>Related table <select data-relationship-to-table>${project.schema.tables
             .map((item) => `<option value="${item.id}" ${item.id === toTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
             .join('')}</select></label>
-          <label>Related match field <select data-relationship-to-field>${toFieldOptions}</select></label>
+          <label>Child foreign key <select data-relationship-to-field>${toFieldOptions}</select></label>
           ${
             project.schema.relationships.length
               ? `<div class="relationship-list">${project.schema.relationships
-                  .map((relationship) => `<p><strong>${html(relationship.name)}</strong><br>${html(relationshipLabel(project, relationship))}</p>`)
+                  .map((relationship) => `<p><strong>${html(relationship.name)}</strong><br>${html(relationshipLabel(project, relationship))}<br><button type="button" class="button" data-action="remove-relationship" data-relationship-id="${relationship.id}">Remove link</button></p>`)
                   .join('')}</div>`
               : '<p>No relationships yet. Add a second table first for the most useful results.</p>'
           }
@@ -2724,10 +2758,10 @@ function render(): void {
         <label>${html(t('Title'))} <input data-project-title value="${html(project.metadata.title)}"></label>
         <label>${html(t('Search'))} <input data-search value="${html(searchQuery)}" placeholder="${html(t('Find records'))}"></label>
         <label>${html(t('In'))} <select data-search-field><option value="all">${html(t('All fields'))}</option>${table.fields
-          .map((field) => `<option value="${field.id}" ${searchFieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
+          .map((field) => `<option value="${field.id}" ${searchFieldId === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
           .join('')}</select></label>
         <label>${html(t('Sort'))} <select data-sort-field><option value="">${html(t('Choose field'))}</option>${table.fields
-          .map((field) => `<option value="${field.id}" ${sortKeys[0]?.fieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
+          .map((field) => `<option value="${field.id}" ${sortKeys[0]?.fieldId === field.id ? 'selected' : ''}>${html(field.name)}${field.primaryKey ? ' (PK)' : ''}</option>`)
           .join('')}</select></label>
         <button type="button" data-action="toggle-sort" title="${html(t('Sort direction'))}">${sortKeys[0]?.direction === 'desc' ? 'Z-A' : 'A-Z'}</button>
         <button type="button" data-action="sort-dialog" title="${html(t('Sort by more than one field'))}">${html(t('Sort…'))}</button>
@@ -2745,7 +2779,7 @@ function render(): void {
       <footer class="status-bar">
         <span>${html(table.name)}: ${visibleRecords(table).length} shown of ${table.records.length} records, ${table.fields.length} fields</span>
         ${studentView ? '<span>Student view hides teacher notes and teacher tools.</span>' : ''}
-        <span>${html(lastMessage)}</span>
+        <span role="status" aria-live="polite">${html(lastMessage)}</span>
         <span>${saveStatus}</span>
       </footer>
     </main>
@@ -2779,9 +2813,17 @@ function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement | HTMLSe
   if (!recordId || !fieldId) {
     return;
   }
-  project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, cellValueFromInput(input)));
+  const field = activeTable().fields.find(item => item.id === fieldId);
+  const raw = cellValueFromInput(input);
+  const relation = foreignRelationship(activeTableId, fieldId);
+  const value = relation && field?.type === 'number' && raw !== '' ? Number(raw) : raw;
+  const candidate = replaceTable(project, updateCell(activeTable(), recordId, fieldId, value));
+  const issue = newRelationalIssue(project, candidate);
+  if (issue) { lastMessage = `Change blocked: ${issue}`; render(); return; }
+  project = candidate;
   saveAutosave(project);
   saveStatus = 'Saved locally';
+  if (field?.primaryKey || relation) render();
 }
 
 // Shrink and re-encode large images before storing so they do not bloat the
@@ -2974,6 +3016,7 @@ function runFieldSettingsSave(): void {
   const name = appRoot.querySelector<HTMLInputElement>('[data-field-name]')?.value ?? field.name;
   const type = (appRoot.querySelector<HTMLSelectElement>('[data-field-type]')?.value ?? field.type) as FieldType;
   const description = appRoot.querySelector<HTMLTextAreaElement>('[data-field-description]')?.value ?? '';
+  const primaryKey = appRoot.querySelector<HTMLInputElement>('[data-field-primary-key]')?.checked ?? false;
   const required = appRoot.querySelector<HTMLInputElement>('[data-field-required]')?.checked ?? false;
   const hidden = appRoot.querySelector<HTMLInputElement>('[data-field-hidden]')?.checked ?? false;
   const formula = appRoot.querySelector<HTMLInputElement>('[data-field-formula]')?.value ?? '';
@@ -2998,11 +3041,12 @@ function runFieldSettingsSave(): void {
     name,
     type,
     description,
-    required,
+    required: required || primaryKey,
+    primaryKey,
     hidden,
     formula,
     options,
-    unique,
+    unique: unique || primaryKey,
     min,
     max,
     pattern,
@@ -3015,6 +3059,9 @@ function runFieldSettingsSave(): void {
   if (typeChanged && !['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
     nextTable = convertFieldValues(nextTable, field.id, type, options);
   }
+  const fieldIssue = newRelationalIssue(project, replaceTable(project, nextTable));
+  if (fieldIssue) { relationshipError = fieldIssue; lastMessage = fieldIssue; render(); return; }
+  relationshipError = '';
   setActiveTable(nextTable);
   dialog = 'none';
   lastMessage = typeChanged ? `Updated ${name} and converted values to ${type}.` : `Updated ${name}.`;
@@ -3092,8 +3139,15 @@ function createRelationshipFromDialog(): void {
     render();
     return;
   }
-  pushUndo('relationship create');
   const relationship = createRelationship(name, fromTableId, fromField.fieldId, toTableId, toField.fieldId);
+  relationship.enforceKeys = true;
+  relationship.cardinality = appRoot.querySelector<HTMLSelectElement>('[data-relationship-cardinality]')?.value === 'one-to-one' ? 'one-to-one' : 'one-to-many';
+  if (project.schema.tables.find(item => item.id === toTableId)?.fields.find(field => field.id === toField.fieldId)?.primaryKey) relationship.cardinality = 'one-to-one';
+  const candidate = addRelationship(project, relationship);
+  const issue = relationalIssues(candidate)[0];
+  if (issue) { relationshipError = issue; lastMessage = issue; render(); return; }
+  relationshipError = '';
+  pushUndo('relationship create');
   lastMessage = `Created relationship: ${relationship.name}.`;
   setProject(addRelationship(project, relationship));
 }
@@ -3542,6 +3596,7 @@ appRoot.addEventListener('click', (event) => {
   if (fieldSettings) {
     selectedFieldId = fieldSettings;
     fieldDialogType = '';
+    relationshipError = '';
     dialog = 'field';
     render();
     return;
@@ -3611,7 +3666,13 @@ appRoot.addEventListener('click', (event) => {
     window.print();
   } else if (action === 'add-record') {
     pushUndo('add record');
-    setActiveTable(addRecord(activeTable()));
+    const table = activeTable();
+    const next = addRecord(table);
+    const added = next.records[next.records.length - 1];
+    for (const field of table.fields) {
+      if (!field.primaryKey && foreignRelationship(table.id, field.id)) added.values[field.id] = '';
+    }
+    setActiveTable(next);
   } else if (action === 'add-field') {
     const input = appRoot.querySelector<HTMLInputElement>('[data-new-field]');
     const type = appRoot.querySelector<HTMLSelectElement>('[data-new-field-type]')?.value as FieldType | undefined;
@@ -3799,7 +3860,8 @@ appRoot.addEventListener('click', (event) => {
     if (relationship && parent && targetTable) {
       pushUndo('add related record');
       const matchValue = parent.values[relationship.fromFieldId] ?? '';
-      const child = createRecord(targetTable.fields, { [relationship.toFieldId]: matchValue });
+      const created = addRecord(targetTable).records.at(-1)!;
+      const child = { ...created, values: { ...created.values, [relationship.toFieldId]: matchValue } };
       const nextProject = replaceTable(project, { ...targetTable, records: [...targetTable.records, child] });
       activeTableId = targetTable.id;
       activeRecordId = child.id;
@@ -3936,6 +3998,19 @@ appRoot.addEventListener('click', (event) => {
     pushUndo('layout settings');
     dialog = 'none';
     updateCurrentLayout({ locked, fieldOrder, hiddenFieldIds });
+  } else if (action === 'generate-primary-key') {
+    const parent = project.schema.tables.find(item => item.id === relationshipFromTableId) ?? activeTable();
+    if (parent.fields.some(field => field.primaryKey)) { relationshipError = 'This table already has a primary key. Edit its column heading to change it.'; render(); return; }
+    const field = { ...createField('ID', 'number'), primaryKey: true, required: true, unique: true };
+    const updated = { ...parent, fields: [...parent.fields, field], records: parent.records.map((record, index) => ({...record, values: {...record.values, [field.id]: index + 1}})) };
+    pushUndo('add primary key');
+    relationshipError = '';
+    setProject(replaceTable(project, updated));
+  } else if (action === 'remove-relationship') {
+    const id = target.closest<HTMLElement>('[data-relationship-id]')?.dataset.relationshipId;
+    pushUndo('remove relationship');
+    relationshipError = '';
+    setProject({...project, schema: {...project.schema, relationships: project.schema.relationships.filter(item => item.id !== id)}});
   } else if (action === 'create-relationship') {
     createRelationshipFromDialog();
   } else if (action === 'undo-change') {
@@ -3972,6 +4047,7 @@ appRoot.addEventListener('click', (event) => {
     dialog = 'projectIdeas';
     render();
   } else if (action === 'relationships') {
+    relationshipError = '';
     dialog = 'relationship';
     render();
   } else if (action === 'charts') {
@@ -4216,6 +4292,8 @@ appRoot.addEventListener('input', (event) => {
     if (target.dataset.recordId && target.dataset.fieldId) {
       noteCellEdit(target.dataset.recordId, target.dataset.fieldId);
     }
+    const field = activeTable().fields.find(item => item.id === target.dataset.fieldId);
+    if (field?.primaryKey || foreignRelationship(activeTableId, target.dataset.fieldId ?? '')) return;
     updateActiveCell(target);
   }
 });
@@ -4315,7 +4393,10 @@ appRoot.addEventListener('drop', (event) => {
     draggedRecordId = null;
     const value = column.dataset.kanbanCol ?? '';
     pushUndo('move card');
-    project = replaceTable(project, updateCell(activeTable(), recordId, boardFieldId, value));
+    const candidate = replaceTable(project, updateCell(activeTable(), recordId, boardFieldId, value));
+    const issue = newRelationalIssue(project, candidate);
+    if (issue) { lastMessage = `Change blocked: ${issue}`; render(); return; }
+    project = candidate;
     saveAutosave(project);
     lastMessage = `Moved card to ${value || 'Unassigned'}.`;
     render();

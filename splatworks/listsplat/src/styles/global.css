@@ -1474,3 +1474,21 @@ button:not(:disabled):hover { border-color:#b09ad7; }
 .template-starters summary span { color:var(--muted); font-size:.8rem; font-weight:500; margin-inline-start:6px; }
 .template-list { display:grid; gap:10px; margin-top:14px; }
 @media(max-width:1050px) { .template-starters { grid-column:1/-1; } .template-list { grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); } }
+
+.key-badge { display:inline-flex; align-items:center; gap:3px; border-radius:5px; padding:2px 5px; font-size:.7rem; font-weight:750; white-space:nowrap; vertical-align:middle; }
+.primary-key { background:#fff0cc; color:#76510a; }
+.foreign-key { background:#e4f2fd; color:#185680; }
+.foreign-key-cell { display:flex; align-items:center; min-width:180px; }
+.foreign-key-cell select { flex:1; min-width:0; padding-inline-end:2px; }
+.linked-record { flex:none; background:#e4f2fd; color:#185680; border:1px solid #bad9ed; border-radius:7px; margin:5px; min-height:34px; min-width:30px; cursor:pointer; }
+.relationship-launch { width:100%; text-align:start; border:1px solid var(--line); padding:10px; background:var(--soft); color:var(--accent-dark); font-weight:650; }
+.rel-fields { display:grid; gap:7px; margin:10px 0; }
+.rel-fields > div { display:flex; align-items:center; flex-wrap:wrap; gap:5px; font-size:.85rem; }
+.rel-fields small { margin-inline-start:auto; color:var(--muted); }
+.rel-box { min-width:220px; }
+.rel-link { flex-wrap:wrap; }
+.rel-arrow b { white-space:nowrap; }
+.relationship-error { color:#a32727; background:#fff2f2; border-radius:7px; padding:10px; overflow-wrap:anywhere; }
+.relationship-error:empty { display:none; }
+.key-badge .ui-icon { width:12px; height:12px; }
+.rel-arrow .ui-icon { width:14px; height:14px; }
