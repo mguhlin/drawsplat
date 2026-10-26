@@ -454,7 +454,7 @@ function readRubricDraft(): void {
 }
 
 function closeMenus(): void {
-  document.querySelectorAll<HTMLDetailsElement>('.menu[open]').forEach((menu) => {
+  document.querySelectorAll<HTMLDetailsElement>('.menu[open], .file-submenu[open]').forEach((menu) => {
     menu.open = false;
   });
 }
@@ -843,15 +843,10 @@ function decorateControls(): void {
   });
 }
 
-function createMenu(label: string, items: Array<[string, string]>): string {
-  return `
-    <details class="menu">
-      <summary>${html(t(label))}</summary>
-      <div class="menu-panel">
-        ${items.map(([action, text]) => `<button type="button" data-action="${action}">${html(t(text))}</button>`).join('')}
-      </div>
-    </details>
-  `;
+type MenuItem = [string, string] | {label: string; items: Array<[string, string]>};
+function createMenu(label: string, items: MenuItem[]): string {
+  const button = ([action, text]: [string, string]) => `<button type="button" data-action="${action}">${html(t(text))}</button>`;
+  return `<details class="menu"><summary>${html(t(label))}</summary><div class="menu-panel">${items.map(item => Array.isArray(item) ? button(item) : `<details class="file-submenu"><summary>${html(t(item.label))}</summary><div class="submenu-panel">${item.items.map(button).join('')}</div></details>`).join('')}</div></details>`;
 }
 
 function fieldTypeOptions(selected: FieldType = 'text'): string {
@@ -2736,12 +2731,16 @@ function render(): void {
           ['save-json', 'Save .listsplat.json'],
           ['save-drive', 'Save to Google Drive'],
           ['open-json', 'Open .listsplat.json'],
-          ['import-csv', 'Import CSV or TSV'],
-          ['import-markdown', 'Import Markdown table'],
-          ['export-csv', 'Export table CSV'],
-          ['export-found-csv', 'Export shown records CSV'],
-          ['export-markdown', 'Export Markdown table'],
-          ['export-report', 'Export report HTML'],
+          {label: 'Import', items: [
+            ['import-csv', 'CSV or TSV'],
+            ['import-markdown', 'Markdown table'],
+          ]},
+          {label: 'Export', items: [
+            ['export-csv', 'Table CSV'],
+            ['export-found-csv', 'Shown records CSV'],
+            ['export-markdown', 'Markdown table'],
+            ['export-report', 'Report HTML'],
+          ]},
           ['print', 'Print'],
         ])}
         ${createMenu('Edit', [
@@ -4568,6 +4567,22 @@ appRoot.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
+  const target = event.target as HTMLElement;
+  const menu = target.closest<HTMLDetailsElement>('.menu');
+  if (menu && event.key === 'Escape') {
+    event.preventDefault();
+    const submenu = target.closest<HTMLDetailsElement>('.file-submenu');
+    if (submenu?.open) { submenu.open = false; submenu.querySelector<HTMLElement>('summary')?.focus(); }
+    else { closeMenus(); menu.querySelector<HTMLElement>('summary')?.focus(); }
+    return;
+  }
+  const submenu = target.closest<HTMLDetailsElement>('.file-submenu');
+  if (submenu && event.key === 'ArrowRight' && target.matches('summary')) {
+    event.preventDefault(); submenu.open = true; submenu.querySelector<HTMLButtonElement>('button')?.focus(); return;
+  }
+  if (submenu && event.key === 'ArrowLeft') {
+    event.preventDefault(); submenu.open = false; submenu.querySelector<HTMLElement>('summary')?.focus(); return;
+  }
   const mod = event.ctrlKey || event.metaKey;
   if (!mod) {
     return;
@@ -4603,6 +4618,10 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('toggle', (event) => {
   const menu = event.target;
+  if (menu instanceof HTMLDetailsElement && menu.matches('.file-submenu') && menu.open) {
+    menu.parentElement?.querySelectorAll<HTMLDetailsElement>('.file-submenu[open]').forEach(other => { if (other !== menu) other.open = false; });
+    return;
+  }
   if (!(menu instanceof HTMLDetailsElement) || !menu.matches('.menu') || !menu.open) {
     return;
   }

@@ -1515,3 +1515,12 @@ button:not(:disabled):hover { border-color:#b09ad7; }
 .dialog-close { position:absolute; inset-block-start:12px; inset-inline-end:12px; width:32px; height:32px; padding:0; display:grid; place-items:center; border:1px solid var(--line); border-radius:7px; background:#f7f8fc; color:var(--ink); font-size:24px; line-height:1; z-index:2; }
 .dialog-close:hover { background:#eee8fa; color:var(--accent-dark); }
 .template-note { margin:10px 0 0; font-size:.8rem; line-height:1.5; color:var(--muted); }
+
+/* Expandable submenus stay inside the File panel on touch and narrow screens. */
+.menu-panel { max-height:min(70vh, 620px); overflow-y:auto; }
+.file-submenu > summary { display:flex; align-items:center; justify-content:space-between; min-width:0; width:100%; border:0; font-weight:650; }
+.file-submenu > summary::after { content:'›'; font-size:1.1rem; }
+.file-submenu[open] > summary::after { content:'⌄'; }
+.file-submenu[open] > summary { background:var(--soft); color:var(--accent-dark); }
+.submenu-panel { display:grid; margin:4px 4px 8px 12px; padding-inline-start:6px; border-inline-start:2px solid #ddd2f4; }
+.submenu-panel button { width:100%; font-weight:500; }

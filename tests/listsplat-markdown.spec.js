@@ -2,6 +2,7 @@ const {test, expect} = require('@playwright/test');
 const markdown = '# Notes\n\n| Name | Age |\n| --- | ---: |\n| Alex | 12 |\n\n# Books\n\nTitle | Pages\n--- | ---\nBook \\| One | 200\nSecond | 100';
 async function openImport(page) {
   await page.locator('summary').filter({hasText: /^File/}).click();
+  await page.locator('.file-submenu > summary').filter({hasText: 'Import'}).click();
   await page.locator('[data-action="import-markdown"]').click();
 }
 test('pasted Markdown supports choosing tables, typed import and safe text cells', async ({page}) => {
@@ -42,4 +43,37 @@ test('Markdown files preview and append to the existing table', async ({page}) =
   expect(saved.schema.tables[0].records).toHaveLength(13);
   const animal = saved.schema.tables[0].fields.find(field => field.name === 'Animal');
   expect(saved.schema.tables[0].records[12].values[animal.id]).toBe('Owl');
+});
+
+test('File import/export submenus support keyboard, downloads and mobile taps', async ({page}) => {
+  await page.goto('/splatworks/listsplat/');
+  const file = page.locator('.menu').filter({has: page.locator('summary').filter({hasText: /^File$/})});
+  await file.locator(':scope > summary').click();
+  await expect(page.locator('[data-action="import-markdown"]')).toBeHidden();
+  await expect(page.locator('[data-action="export-csv"]')).toBeHidden();
+  const imports = page.locator('.file-submenu > summary').filter({hasText: /^Import$/});
+  const exports = page.locator('.file-submenu > summary').filter({hasText: /^Export$/});
+  await imports.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('[data-action="import-csv"]')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(imports).toBeFocused();
+  await expect(page.locator('[data-action="import-csv"]')).toBeHidden();
+  await exports.click();
+  await expect(page.locator('.submenu-panel button:visible')).toHaveCount(4);
+  const downloading = page.waitForEvent('download');
+  await page.locator('[data-action="export-markdown"]').click();
+  expect((await downloading).suggestedFilename()).toMatch(/\.md$/);
+  await expect(file).not.toHaveAttribute('open');
+  await page.setViewportSize({width:390,height:844});
+  await file.locator(':scope > summary').click();
+  await imports.click();
+  await exports.click();
+  await expect(page.locator('[data-action="import-markdown"]')).toBeHidden();
+  await expect(page.locator('[data-action="export-csv"]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await exports.focus();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
+  await expect(file).not.toHaveAttribute('open');
 });

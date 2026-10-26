@@ -100,7 +100,7 @@ Legacy value-match relationships continue to work without being silently convert
 
 ## Import Markdown tables
 
-Choose **File → Import Markdown table**. Paste Markdown or load a `.md`/`.markdown`
+Choose **File → Import → Markdown table**. Paste Markdown or load a `.md`/`.markdown`
 file, choose a table if the document contains several, give it a name, and select
 **Preview columns**. Map columns and types, then create a new table or append to
 the current table using the same preview and duplicate-handling controls as CSV.
