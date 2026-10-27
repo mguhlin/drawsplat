@@ -6,3 +6,17 @@ test('independent text and picture handles move, resize, rotate and survive proj
  await page.locator('#layerSelect').selectOption('text-main');await drag(page,page.locator('.fs-layer-hit[data-layer="text-main"]'),20,15);await drag(page,page.locator('.fs-selection .fs-resize.se'),25,20);await drag(page,page.locator('.fs-selection .fs-rotate'),45,45);const p=await save(page);expect(p.textTransforms.main.x).toBeGreaterThan(0);expect(p.textTransforms.main.y).toBeGreaterThan(0);expect(p.textTransforms.main.scale).toBeGreaterThan(1);expect(Math.abs(p.textTransforms.main.rotation)).toBeGreaterThan(5);expect(p.images[0].width).toBeGreaterThan(50);
  await page.locator('#reset').click();await page.locator('#projectFile').setInputFiles({name:'handles.fontsplat.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(p))});await expect(page.locator('#status')).toHaveText('Project opened.');await page.locator('#layerSelect').selectOption('text-main');await expect(page.locator('.fs-selection .fs-rotate')).toBeVisible();const svgDl=page.waitForEvent('download');await page.locator('#svg').click();const svg=await fs.readFile(await(await svgDl).path(),'utf8');expect(svg).not.toContain('fs-selection');expect(svg).toContain('data-layer="text-main"');await page.screenshot({path:info.outputPath('editable-handles.png'),fullPage:true});
 });
+
+test('selection overlay stays transparent and positioned with an older stylesheet cached',async({page})=>{
+ // Simulate a returning browser whose unversioned stylesheet predates handles.
+ await page.route('**/fontsplat.css',route=>route.fulfill({contentType:'text/css',body:'button{background:#f2eaff;border:1px solid purple}'}));
+ await page.goto('/solutions/fontsplat/');
+ await expect(page.locator('.fs-selection')).toBeVisible();
+ const hit=page.locator('.fs-layer-hit[data-layer="text-main"]');
+ await hit.focus();await hit.hover();
+ const styles=await hit.evaluate(e=>{const s=getComputedStyle(e);return {position:s.position,background:s.backgroundColor}});
+ expect(styles.position).toBe('absolute');expect(styles.background).toBe('rgba(0, 0, 0, 0)');
+ const handle=page.locator('.fs-selection .fs-resize.se');
+ await expect(handle).toBeVisible();expect(await handle.evaluate(e=>getComputedStyle(e).position)).toBe('absolute');
+ await expect(page.locator('link[href^="fontsplat.css?"]')).toHaveCount(1);
+});
