@@ -33,7 +33,7 @@ export function setupBookSource(api){
     let source=$('bookSourceCode').value;
     if(visual()){
      const doc=parseBookXml(value.r.xhtml),body=doc.getElementsByTagNameNS('*','body')[0],edited=$('bookSourcePreview').contentDocument.body.cloneNode(true);edited.removeAttribute('contenteditable');edited.setAttributeNS('http://www.w3.org/2000/xmlns/','xmlns:epub','http://www.idpf.org/2007/ops');
-     for(const image of edited.querySelectorAll('[data-book-src]')){image.setAttribute('src',image.dataset.bookSrc);image.removeAttribute('data-book-src');}
+     for(const image of edited.querySelectorAll('[data-book-src],[data-book-poster]'))for(const key of ['src','poster'])if(image.hasAttribute('data-book-'+key)){image.setAttribute(key,image.getAttribute('data-book-'+key));image.removeAttribute('data-book-'+key);}
      for(const anchor of edited.querySelectorAll('[data-book-href]')){anchor.setAttribute('href',anchor.dataset.bookHref);anchor.removeAttribute('data-book-href');}
      const parser=new DOMParser().parseFromString(new XMLSerializer().serializeToString(edited),'application/xhtml+xml');if(parser.querySelector('parsererror'))throw Error(t('invalidSourceVisual'));
      body.replaceChildren(...[...parser.documentElement.childNodes].map(n=>doc.importNode(n,true)));source=new XMLSerializer().serializeToString(doc);

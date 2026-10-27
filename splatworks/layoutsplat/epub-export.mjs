@@ -1,7 +1,7 @@
 import {readingHtml,pageCanvas,canvasBlob} from './exports.mjs';
 import {readingObjects} from './publication-fields.mjs';
 import {exportSourceBook} from './ebook-source.mjs';
-export const EBOOK_CSS='html{color-scheme:light dark}body{font-family:serif;line-height:1.6;margin:5%;overflow-wrap:break-word}article{margin:1em 0}p{white-space:pre-wrap;margin:.7em 0}h1,h2,h3,h4,h5,h6{line-height:1.2;break-after:avoid}img{max-width:100%;height:auto}table{border-collapse:collapse;max-width:100%}td,th{border:1px solid #888;padding:.4em}.page-image{display:block;width:100%;height:100%;object-fit:contain}.fixed{margin:0;padding:0}';
+export const EBOOK_CSS='html{color-scheme:light dark}body{font-family:serif;line-height:1.6;margin:5%;overflow-wrap:break-word}article{margin:1em 0}p{white-space:pre-wrap;margin:.7em 0}h1,h2,h3,h4,h5,h6{line-height:1.2;break-after:avoid}img,video,audio{max-width:100%;height:auto}figure{margin:1em 0}figcaption{font-size:.85em}audio{width:100%}.fixed{position:relative}.fixed-media{position:absolute;object-fit:contain}table{border-collapse:collapse;max-width:100%}td,th{border:1px solid #888;padding:.4em}.page-image{display:block;width:100%;height:100%;object-fit:contain}.fixed{margin:0;padding:0}';
 export const xml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const NS='http://www.w3.org/1999/xhtml';
 export function ebookXhtml(title,body,language='en',{fixed=false,width,height,css='styles.css'}={}){
@@ -12,23 +12,25 @@ export function ebookSections(doc,pages=doc.pages.map((_,i)=>i)){
  const selected={...doc,pages:pages.map(i=>doc.pages[i])},html=new DOMParser().parseFromString(readingHtml(selected),'text/html');
  const source=pages.flatMap(i=>readingObjects(doc.pages[i]).filter(o=>!o.readingExcluded&&o.type==='text')),seen=new Set(),stories=source.filter(o=>!seen.has(o.storyId)&&seen.add(o.storyId));
  [...html.querySelectorAll('article')].forEach((article,i)=>{const role=stories[i]?.readingHeading;if(role){const first=article.firstElementChild;if(first){const h=html.createElement('h'+role);h.append(...first.childNodes);first.replaceWith(h);}}});
- const allowed=new Set(['section','article','p','div','h1','h2','h3','h4','h5','h6','strong','b','em','i','u','span','br','a','table','thead','tbody','tr','th','td','img']);
- const convert=node=>{if(node.nodeType===3)return xml(node.nodeValue);if(node.nodeType!==1)return '';let tag=node.localName;if(tag==='video'){tag='img';node.setAttribute('src',node.getAttribute('poster')||'');node.setAttribute('alt','Video poster');}if(!allowed.has(tag))return [...node.childNodes].map(convert).join('');
-  const attrs=[];for(const key of ['id','src','alt','scope','dir','colspan','rowspan'])if(node.hasAttribute(key))attrs.push(`${key}="${xml(node.getAttribute(key))}"`);
+ const allowed=new Set(['section','article','p','div','h1','h2','h3','h4','h5','h6','strong','b','em','i','u','span','br','a','table','thead','tbody','tr','th','td','img','figure','figcaption','video','audio','source']);
+ const convert=node=>{if(node.nodeType===3)return xml(node.nodeValue);if(node.nodeType!==1)return '';let tag=node.localName;if(!allowed.has(tag))return [...node.childNodes].map(convert).join('');
+  const attrs=[];for(const key of ['id','src','alt','scope','dir','colspan','rowspan','poster','type','aria-label'])if(node.hasAttribute(key))attrs.push(`${key}="${xml(node.getAttribute(key))}"`);
+  if(['audio','video'].includes(tag)){attrs.push('controls="controls"','preload="metadata"');}
   const href=node.getAttribute('href');if(tag==='a'&&/^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(href||''))attrs.push(`href="${xml(href)}"`);
   // Relative type sizes remain adjustable in reading systems. Layout geometry is removed.
   if(!node.hasAttribute('dir')&&['ltr','rtl'].includes(node.style.direction))attrs.push(`dir="${node.style.direction}"`);
   const css=[];for(const key of ['font-weight','font-style','text-decoration','text-align','white-space'])if(node.style.getPropertyValue(key))css.push(`${key}:${node.style.getPropertyValue(key)}`);
   if(tag==='span'&&node.style.fontSize){const size=parseFloat(node.style.fontSize);if(Number.isFinite(size))css.push(`font-size:${Math.max(.5,Math.min(6,size/12))}em`);}
   if(css.length)attrs.push(`style="${xml(css.join(';'))}"`);
-  return `<${tag}${attrs.length?' '+attrs.join(' '):''}${['img','br'].includes(tag)?'/>':'>'+[...node.childNodes].map(convert).join('')+`</${tag}>`}`;
+  return `<${tag}${attrs.length?' '+attrs.join(' '):''}${['img','br','source'].includes(tag)?'/>':'>'+[...node.childNodes].map(convert).join('')+`</${tag}>`}`;
  };
  return [...html.body.querySelectorAll(':scope > section')].map((section,i)=>{const headings=[...section.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((h,n)=>{h.id='heading-'+n;return {id:h.id,level:Number(h.tagName[1]),title:h.textContent.trim().slice(0,200)};});return {page:pages[i],title:headings[0]?.title||`Page ${pages[i]+1}`,headings,body:[...section.childNodes].map(convert).join('')};}).filter(s=>s.body.trim());
 }
 export function ebookChecks(doc){
  const objects=doc.pages.flatMap(p=>p.objects),reading=objects.filter(o=>!o.readingExcluded),messages=[];
  if(!reading.some(o=>o.readingHeading))messages.push('No ebook headings are marked. Set heading levels in Reading order to build a structured table of contents.');
- const missing=reading.filter(o=>o.type==='image'&&!doc.assets[o.assetId].alt?.trim()).length;if(missing)messages.push(`${missing} picture(s) have no description. Add alternative text before sharing.`);
+ const missing=reading.filter(o=>o.type==='image'&&!doc.assets[o.assetId]?.alt?.trim()).length;if(missing)messages.push(`${missing} picture(s) have no description. Add alternative text before sharing.`);
+ const media=reading.filter(o=>o.type==='image'&&['audio','video'].includes(doc.assets[o.assetId]?.media?.kind)).length;if(media)messages.push(`${media} embedded audio/video item(s). Playback depends on the ebook reader; add descriptive text and captions or transcripts for your audience.`);
  const omitted=objects.filter(o=>o.readingExcluded).length;if(omitted)messages.push(`${omitted} object(s) are omitted from the reading edition by Reading order settings.`);
  if(!doc.ebookMetadata?.author?.trim())messages.push('Add the author in Ebook tools.');
  return messages;
@@ -42,11 +44,49 @@ export async function exportEpub(doc,layout,{pages=doc.pages.map((_,i)=>i),epubM
  zip.file('META-INF/container.xml','<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="EPUB/package.opf" media-type="application/oebps-package+xml"/></rootfiles></container>');
  const put=(name,value,type,properties='')=>{zip.file('EPUB/'+name,value);items.push({name,type,properties,id:'r'+items.length});return items.at(-1);};
  put('styles.css',EBOOK_CSS,'text/css');
- if(fixed){warnings.add('Fixed-layout EPUB preserves each page as a picture. Text is not selectable. Keep the LayoutSplat project for complete editing.');
-  for(const [i,index]of pages.entries()){onProgress(i+1,pages.length);const canvas=await pageCanvas(doc,doc.pages[index],layout,ppi,0);try{const blob=await canvasBlob(canvas);bytes+=blob.size;if(bytes>128000000)throw Error('EPUB pictures exceed 128 MB. Choose a lower resolution or fewer pages.');const image=`images/page-${i+1}.png`;put(image,blob,'image/png',i===0?'cover-image':'');const title=doc.pages[index].objects.map(o=>doc.stories[o.storyId]?.text).find(Boolean)?.slice(0,200)||`Page ${index+1}`;sections.push({title,body:`<img class="page-image" src="${image}" alt="${xml(title)}"/>`});}finally{canvas.width=canvas.height=1;}}
+ const resources=new Map();
+ const embed=async(src,kind='image')=>{
+  if(resources.has(src))return resources.get(src);
+  const allowed=kind==='image'?/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/:kind==='audio'?/^data:audio\/(mpeg|mp4);base64,[A-Za-z0-9+/=]+$/:/^data:video\/(mp4|webm|ogg);base64,[A-Za-z0-9+/=]+$/;
+  if(!allowed.test(src||''))throw Error(kind==='audio'?'EPUB audio must be embedded MP3 or M4A. Import the audio again to convert it locally.':'EPUB pictures and media must be embedded in the publication.');
+  let blob=await (await fetch(src)).blob();
+  if(blob.type==='image/webp'){
+   const bitmap=await createImageBitmap(blob),canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;canvas.getContext('2d').drawImage(bitmap,0,0);bitmap.close();blob=await canvasBlob(canvas);canvas.width=canvas.height=1;
+  }
+  bytes+=blob.size;if(bytes>128000000)throw Error('EPUB pictures and media exceed 128 MB. Choose smaller media or fewer pages.');
+  const extensions={'image/png':'png','image/jpeg':'jpg','audio/mpeg':'mp3','audio/mp4':'m4a','video/mp4':'mp4','video/webm':'webm','video/ogg':'ogv'},folder=kind==='image'?'images':'media',name=`${folder}/${kind==='image'?'picture':'clip'}-${resources.size+1}.${extensions[blob.type]}`;
+  put(name,blob,blob.type);resources.set(src,name);return name;
+ };
+ const packageSection=async section=>{
+  const parsed=new DOMParser().parseFromString(`<body xmlns="${NS}">${section.body}</body>`,'application/xhtml+xml');
+  if(parsed.querySelector('parsererror'))throw Error('The ebook reading content could not be serialized as XHTML.');
+  for(const image of parsed.querySelectorAll('img'))image.setAttribute('src',await embed(image.getAttribute('src')));
+  for(const media of parsed.querySelectorAll('video,audio')){
+   media.setAttribute('src',await embed(media.getAttribute('src'),media.localName));
+   if(media.hasAttribute('poster'))media.setAttribute('poster',await embed(media.getAttribute('poster')));
+   media.removeAttribute('autoplay');media.removeAttribute('loop');
+  }
+  section.body=[...parsed.documentElement.childNodes].map(n=>new XMLSerializer().serializeToString(n)).join('');sections.push(section);
+ };
+ if(fixed){warnings.add('Fixed-layout EPUB preserves the page as a picture with playable audio/video overlays. Text is not selectable. Keep the LayoutSplat project for complete editing.');
+  for(const [i,index]of pages.entries()){
+   onProgress(i+1,pages.length);const page=doc.pages[index],canvas=await pageCanvas(doc,page,layout,ppi,0);
+   try{
+    const blob=await canvasBlob(canvas);bytes+=blob.size;if(bytes>128000000)throw Error('EPUB pictures and media exceed 128 MB. Choose a lower resolution or fewer pages.');
+    const image=`images/page-${i+1}.png`;put(image,blob,'image/png',i===0?'cover-image':'');
+    const title=page.objects.map(o=>doc.stories[o.storyId]?.text).find(Boolean)?.slice(0,200)||`Page ${index+1}`;
+    let body=`<img class="page-image" src="${image}" alt="${xml(title)}"/>`;
+    const master=(doc.masters||[]).find(m=>m.id===page.masterId),objects=[...(master?.objects||[]).filter(o=>!(page.masterOverrides||[]).includes(o.id)),...page.objects];
+    for(const o of objects){const a=doc.assets[o.assetId],m=a?.media;if(!['audio','video'].includes(m?.kind))continue;
+     const src=await embed(m.src,m.kind),poster=m.kind==='video'?` poster="${await embed(a.src)}"`:'',style=`left:${o.x/doc.width*100}%;top:${o.y/doc.height*100}%;width:${o.w/doc.width*100}%;height:${o.h/doc.height*100}%;transform:rotate(${o.rotation||0}deg)`;
+     body+=`<${m.kind} class="fixed-media" controls="controls" preload="metadata" src="${src}"${poster} aria-label="${xml(a.alt||a.name)}" style="${xml(style)}"><p>${xml(a.alt||a.name)}. Playback requires a compatible reader.</p></${m.kind}>`;
+    }
+    sections.push({title,body});
+   }finally{canvas.width=canvas.height=1;}
+  }
  }else{
-  warnings.add('Reflowable EPUB follows Reading order. Linked stories appear once with their complete text, including overflow. Decorative shapes and master furniture are omitted; motion media use posters. Fonts and page breaks adapt to the reader.');
-  const images=new Map();for(const section of ebookSections(doc,pages)){const parsed=new DOMParser().parseFromString(`<body xmlns="${NS}">${section.body}</body>`,'application/xhtml+xml');for(const image of parsed.querySelectorAll('img')){const src=image.getAttribute('src');if(!/^data:image\/(png|jpeg|webp);base64,/.test(src||''))throw Error('EPUB pictures must be embedded in the publication.');if(!images.has(src)){let blob=await (await fetch(src)).blob(),extension=blob.type==='image/jpeg'?'jpg':'png';if(blob.type==='image/webp'){const bitmap=await createImageBitmap(blob),canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;canvas.getContext('2d').drawImage(bitmap,0,0);bitmap.close();blob=await canvasBlob(canvas);canvas.width=canvas.height=1;}bytes+=blob.size;if(bytes>128000000)throw Error('EPUB pictures exceed 128 MB.');const name=`images/picture-${images.size+1}.${extension}`;put(name,blob,blob.type);images.set(src,name);}image.setAttribute('src',images.get(src));}section.body=[...parsed.documentElement.childNodes].map(n=>new XMLSerializer().serializeToString(n)).join('');sections.push(section);}
+  warnings.add('Reflowable EPUB follows Reading order. Linked stories appear once with complete text, including overflow. Decorative shapes and master furniture are omitted. Audio and video are embedded; playback depends on the reader. Fonts and page breaks adapt to the reader.');
+  for(const section of ebookSections(doc,pages))await packageSection(section);
  }
  if(!sections.length)throw Error('The selected pages have no content for the reading edition.');
  const toc=sections.map((section,i)=>{const name=`chapter-${i+1}.xhtml`,entry=put(name,ebookXhtml(section.title,section.body,language,{fixed,width:Math.round(doc.width*4/3),height:Math.round(doc.height*4/3)}),'application/xhtml+xml');return {...section,name,id:entry.id};});

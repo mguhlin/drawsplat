@@ -45,12 +45,21 @@ export async function pdfProof(doc, layout, { pages = doc.pages.map((_, i) => i)
 }
 function readingColor(color){const channels=(color.match(/[\da-f]{2}/gi)||[]).map(v=>parseInt(v,16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);const luminance=(channels[0]||0)*.2126+(channels[1]||0)*.7152+(channels[2]||0)*.0722;return 1.05/(luminance+.05)>=4.5?color:'#25304b';}
 export function readingHtml(doc) {
-  const out = document.implementation.createHTMLDocument(doc.title), css = out.createElement('style'); css.textContent = 'body{max-width:70ch;margin:2rem auto;padding:0 1rem;font:18px/1.6 system-ui;color:#25304b}img,video{max-width:100%;height:auto}p{white-space:pre-wrap}table{border-collapse:collapse}td,th{padding:.5rem;border:1px solid #aaa}section{margin-block:3rem}'; out.head.append(css); const viewport = out.createElement('meta'); viewport.name = 'viewport'; viewport.content = 'width=device-width,initial-scale=1'; out.head.append(viewport); const charset = out.createElement('meta'); charset.setAttribute('charset', 'utf-8'); out.head.prepend(charset); const title = out.createElement('h1'); title.textContent = doc.title; out.body.append(title); const seen = new Set();
+  const out = document.implementation.createHTMLDocument(doc.title), css = out.createElement('style'); css.textContent = 'body{max-width:70ch;margin:2rem auto;padding:0 1rem;font:18px/1.6 system-ui;color:#25304b}img,video,audio{max-width:100%;height:auto}p{white-space:pre-wrap}table{border-collapse:collapse}td,th{padding:.5rem;border:1px solid #aaa}section{margin-block:3rem}'; out.head.append(css); const viewport = out.createElement('meta'); viewport.name = 'viewport'; viewport.content = 'width=device-width,initial-scale=1'; out.head.append(viewport); const charset = out.createElement('meta'); charset.setAttribute('charset', 'utf-8'); out.head.prepend(charset); const title = out.createElement('h1'); title.textContent = doc.title; out.body.append(title); const seen = new Set();
   doc.pages.forEach((page, index) => { const section = out.createElement('section'); section.setAttribute('aria-label', `Page ${index + 1}`);
     const ordered = readingObjects(page).filter(o=>!o.readingExcluded);
     for (const o of ordered) {
       if (o.type === 'text' && !seen.has(o.storyId)) { seen.add(o.storyId); const article=out.createElement('article'),original=doc.stories[o.storyId],story={...original,style:{...original.style,color:readingColor(original.style.color)},marks:(original.marks||[]).map(mark=>({...mark,...(mark.color?{color:readingColor(mark.color)}:{})}))},style={...story.style,wordArt:'none',dropCap:0};article.className='reading-story';applyTextStyle(article,style);if(story.paragraphs?.length){appendRich(article,story,0,story.text.length,{first:true,style});for(const block of [...article.children])if(block.tagName==='DIV'){const p=out.createElement('p');p.style.cssText=block.style.cssText;p.append(...block.childNodes);block.replaceWith(p);}}else{const p=out.createElement('p');appendRich(p,story,0,story.text.length,{first:true,style});article.append(p);}section.append(article); }
-      if (o.type === 'image') { const a = doc.assets[o.assetId], el = out.createElement(a.media?.kind === 'video' ? 'video' : 'img'); el.src = a.media?.src || a.src; if (el.tagName === 'VIDEO') { el.controls = true; el.poster = a.src; } else el.alt = a.alt || a.name; section.append(el); }
+      if (o.type === 'image') {
+        const a = doc.assets[o.assetId], kind = ['video','audio'].includes(a.media?.kind) ? a.media.kind : 'img', el = out.createElement(kind);
+        el.src = kind === 'img' ? a.src : a.media.src;
+        if (kind !== 'img') {
+          el.controls = true; el.preload = 'metadata'; el.setAttribute('aria-label', a.alt || a.name);
+          if (kind === 'video') el.poster = a.src;
+          const fallback = out.createElement('p'); fallback.textContent = (a.alt || a.name) + '. Playback requires a reader that supports embedded ' + kind + '.'; el.append(fallback);
+          const figure = out.createElement('figure'), caption = out.createElement('figcaption'); caption.textContent = a.alt || a.name; figure.append(el,caption); section.append(figure);
+        } else { el.alt = a.alt || a.name; section.append(el); }
+      }
       if (o.type === 'table') { const table = out.createElement('table'); o.cells.forEach((row, i) => { const tr = out.createElement('tr'); row.forEach(text => { const cell = out.createElement(o.header && !i ? 'th' : 'td'); cell.textContent = text; if (cell.tagName === 'TH') cell.scope = 'col'; tr.append(cell); }); table.append(tr); }); section.append(table); }
     }
     out.body.append(section);

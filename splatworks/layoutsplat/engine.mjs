@@ -1,4 +1,6 @@
 // LayoutSplat publication model. Geometry is always in typographic points.
+import {LOREM} from './template-copy.mjs';
+import {TEMPLATE_ASSETS} from './template-assets.mjs';
 import {validateBookSource} from './ebook-source-model.mjs';
 export const VERSION = 1;
 export const UNITS = { in: 72, cm: 72 / 2.54, pc: 12, pt: 1, px: 72 / 96 };
@@ -40,9 +42,9 @@ export function newPublication(blank = false) {
   addText(page, 'A newsletter made together', 36, 228, 540, 32, { size: 17, color: '#7c3aed' });
   // A local SVG becomes an ordinary raster asset: no external image requests.
   const assetId = uid();
-  doc.assets[assetId] = { name: 'Community illustration', width: 1080, height: 420, src: 'sample-art.svg', sample: true };
+  doc.assets[assetId] = { name: 'LayoutSplat publishing studio', alt: 'An open book, page layouts, colorful shapes and a pen in the LayoutSplat publishing studio', width: 1080, height: 420, src: 'sample-art.svg', sample: true };
   page.objects.push({ id: uid(), type: 'image', assetId, x: 36, y: 281, w: 540, h: 210, rotation: 0, fit: 'contain', locked: false });
-  const paragraph = 'A good publication gives every idea a place. Start with a clear story, leave room for the pictures, and let your readers move through the page at their own pace. This edition celebrates the people who make our community a welcoming place to learn.\n\n';
+  const paragraph = LOREM + '\n\n';
   const story = addText(page, paragraph.repeat(8), 36, 515, 261, 175, { size: 12 });
   const continuation = frame(story.storyId, 36, 117, 261, 495);
   const third = frame(story.storyId, 315, 117, 261, 495);
@@ -224,9 +226,9 @@ export function validatePublication(input) {
     if (p.masterOverrides !== undefined && (!Array.isArray(p.masterOverrides) || p.masterOverrides.length > 200 || p.masterOverrides.some(id => typeof id !== 'string'))) fail();
   }
   for (const a of Object.values(d.assets)) {
-    if (typeof a.name !== 'string' || a.name.length > 2000 || a.alt !== undefined && (typeof a.alt !== 'string' || a.alt.length > 2000) || !number(a.width, 1, 20000) || !number(a.height, 1, 20000) || typeof a.src !== 'string' || a.src.length > 64000000 || !(a.sample === true && ['sample-art.svg', 'splatworks-logo.png'].includes(a.src)) && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(a.src)) fail();
+    if (typeof a.name !== 'string' || a.name.length > 2000 || a.alt !== undefined && (typeof a.alt !== 'string' || a.alt.length > 2000) || !number(a.width, 1, 20000) || !number(a.height, 1, 20000) || typeof a.src !== 'string' || a.src.length > 64000000 || !(a.sample === true && TEMPLATE_ASSETS.includes(a.src)) && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(a.src)) fail();
     if (a.media) {
-      const m = a.media, types = m.kind === 'video' ? ['video/mp4', 'video/webm', 'video/ogg'] : m.kind === 'animation' ? ['image/gif', 'image/apng', 'image/png', 'image/webp'] : [];
+      const m = a.media, types = m.kind === 'video' ? ['video/mp4', 'video/webm', 'video/ogg'] : m.kind === 'audio' ? ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/webm'] : m.kind === 'animation' ? ['image/gif', 'image/apng', 'image/png', 'image/webp'] : [];
       if (!types.includes(m.mime) || typeof m.src !== 'string' || m.src.length > 128000000 || !m.src.startsWith(`data:${m.mime};base64,`) || !/^[A-Za-z0-9+/=]+$/.test(m.src.slice(m.src.indexOf(',') + 1))) fail();
       if (m.duration !== undefined && !number(m.duration, 0, 86400)) fail();
     }

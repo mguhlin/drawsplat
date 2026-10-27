@@ -1,3 +1,4 @@
+import {templateBodyCopy} from './template-copy.mjs';
 import {newPublication,uid,frame,shape,textStyle,validatePublication} from './engine.mjs';
 export const EBOOK_TEMPLATES=[
  {id:'ebook-novel',name:'The Quiet Journey · novel',description:'6 × 9 in · cover, title page and two story chapters',variant:0},
@@ -25,5 +26,5 @@ export function ebookPublication(id,{language='en',theme}={}){
  if(v===2){art(cover,0,0,576,330);text(cover,w[2],42,368,492,90,34,1);text(cover,w[3],42,480,492,42,14);}
  const title=page();text(title,w[v],42,90,d.width-84,145,25,1);text(title,w[3],42,270,d.width-84,45,13);text(title,'© '+new Date().getFullYear()+' '+w[3],42,d.height-110,d.width-84,36,10);
  for(let i=0;i<2;i++){const p=page();text(p,w[i+4],42,45,d.width-84,85,24,1);if(v===2){art(p,42,150,492,238);text(p,w[7],42,418,492,110,16);}else{text(p,w[6]+'\n\n'+w[6],42,160,348,310,12);if(v===1){text(p,w[8],42,493,348,34,16,2);text(p,w[9],42,535,348,80,11);}}}
- return validatePublication(d);
+ return validatePublication(templateBodyCopy(d));
 }

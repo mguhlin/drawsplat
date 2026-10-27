@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-27",
+  "version": "0.8.0",
+  "chromiumTargetedWorkflowsPassed": 29,
+  "visualFollowupPassed": 2,
+  "templateEditionsChecked": 804,
+  "templateOverflowFailures": 0,
+  "independentEpubcheckBooksPassed": 7,
+  "epubcheckErrors": 0,
+  "epubcheckWarnings": 0,
+  "modesWithEmbeddedAudioVideo": [
+    "reflowable",
+    "fixed",
+    "source"
+  ],
+  "shortcutsVerified": [
+    "https://splatworks.org/layoutsplat",
+    "https://drawsplat.org/layoutsplat"
+  ],
+  "limits": [
+    "Reader-specific playback/codec support",
+    "No SMIL media-overlay authoring",
+    "Source import keeps 16 MB resource limit",
+    "Comic sample story text is English"
+  ]
+}

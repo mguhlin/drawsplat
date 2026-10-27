@@ -1,10 +1,10 @@
 # LayoutSplat · Ebooks and EPUB
 
-LayoutSplat v0.7.0 creates EPUB 3 ebooks and imports supported EPUB 2/3 books
+LayoutSplat v0.8.0 creates EPUB 3 ebooks and imports supported EPUB 2/3 books
 locally. Open **File → Templates → Ebooks** for three original, editable starters:
 **The Quiet Journey** (novel), **A Field Guide to New Ideas** (nonfiction), and
 **Small Wonders** (illustrated story). Each has a cover, title page and two
-chapter pages, with example text in the six publication languages.
+chapter pages, with language-specific headings and neutral lorem ipsum body copy.
 
 ## Write and organize
 
@@ -38,16 +38,16 @@ all pages, then choose the ebook layout and Download.
 
 | Layout | Content | Best suited to |
 | --- | --- | --- |
-| Reflowable | Selectable rich text, packaged pictures and tables in reading order; heading navigation | Novels, guides and text-led books |
-| Source book | Saved XHTML/CSS, local fonts and images, chapter links, footnotes and imported navigation | Editing an imported EPUB without rebuilding its source structure |
-| Fixed layout | Each selected page becomes a PNG picture at the chosen resolution, with EPUB page dimensions | Illustrated books and exact page compositions |
+| Reflowable | Selectable rich text, packaged pictures, tables, audio and video in reading order; heading navigation | Novels, guides and text-led books |
+| Source book | Saved XHTML/CSS, local fonts, images, supported audio/video, chapter links, footnotes and imported navigation | Editing an imported EPUB without rebuilding its source structure |
+| Fixed layout | Each selected page becomes a PNG picture at the chosen resolution, with EPUB page dimensions and playable audio/video overlays | Illustrated books and exact page compositions |
 
 Reflowable EPUB includes each linked story once and includes its complete text,
 including text that overflows its page frames. Selecting a page containing a
 continuation frame therefore includes that whole story. Decorative shapes and
 master-page furniture are omitted. Pictures use their embedded source image;
 page crops, masks, overlapping artwork and image effects are not reproduced in
-the reading edition. Motion media use poster images. Fonts are not embedded.
+the reading edition. Audio and video are embedded with playback controls. Fonts are not embedded.
 Readers choose fonts, type size and page breaks. Review reading order and picture
 descriptions in Ebook tools before publishing.
 
@@ -75,7 +75,7 @@ becomes paragraphs. Book metadata is retained.
 
 Import creates two editions. The **page edition** repaginates supported text and pictures into editable frames. The **source edition**, available for supported reflowable XHTML books, separately retains sanitized XHTML, supported CSS, local pictures, unencrypted fonts, IDs, links, footnote/endnote markup, nonlinear chapters and imported EPUB 3 navigation. Page edits and source edits are independent; choose the corresponding edition at export. Original complex CSS can render differently between readers.
 
-Single-picture fixed-layout pages retain their appearance. Other fixed-layout text repaginates; fixed-layout imports do not create a source edition. Scripts, forms, SVG/MathML source content, remote resources, audio/video and media overlays are omitted. DRM content is rejected; only the specific encrypted/obfuscated font resources are excluded. Missing required chapters or invalid markup leave the current publication intact. Local CSS imports are expanded with depth/size limits; remote imports are discarded. Source capture can be unavailable for books outside the supported subset; the conversion report explains this.
+Single-picture fixed-layout pages retain their appearance. Other fixed-layout text repaginates; fixed-layout imports do not create a source edition. Scripts, forms, SVG/MathML source content and remote resources are omitted. Page-canvas import omits audio/video playback; supported local media are retained in the separate source edition. SMIL synchronized media overlays are not supported. DRM content is rejected; only the specific encrypted/obfuscated font resources are excluded. Missing required chapters or invalid markup leave the current publication intact. Local CSS imports are expanded with depth/size limits; remote imports are discarded. Source capture can be unavailable for books outside the supported subset; the conversion report explains this.
 
 ## Edit the source edition
 
@@ -106,3 +106,47 @@ patterns from [Sigil](https://sigil-ebook.com/about/) and
 [InkWeave](https://github.com/mengmopqje/inkweave). This implementation uses
 LayoutSplat's existing editor and local ZIP/markup tooling; it does not bundle
 those applications or copy their implementation. LayoutSplat now includes its own XHTML/CSS and visual chapter editing. Sigil/PageEdit remain useful for advanced ebook workflows; independent acceptance evidence is recorded in [release verification](layoutsplat-verification.md).
+
+## Enhanced ebooks and comics (v0.8.0)
+
+Use the Audio or Video toolbar button, or File → Import → Images, audio & video.
+Files are processed locally. MP3/M4A audio is retained; other supported audio
+formats are converted locally to MP3. Video uses the existing local MP4
+conversion when necessary. Add a useful description in Picture description and
+include captions or a transcript in a text frame.
+
+Both EPUB layouts package audio/video inside the book with playback controls.
+Fixed layout overlays the player at its page-frame position. Ebook tools
+previews the playable reading edition. HTML includes players; print/PDF and
+layout-exchange formats keep the poster or audio card. No autoplay is added.
+Playback and codec support vary by reader: test in your audience's reader.
+EPUB export limits the combined picture/media payload to 128 MB. Imported
+source-book resources keep the existing 16 MB per-resource limit. Source-book
+export retains local MP3/M4A, supported video and WebVTT without scripts or
+remote loads.
+
+File → Templates → Comics & panel layouts offers two original two-page samples,
+The Missing Color and Signal from the Library, plus six blank layouts: six-panel,
+nine-panel, hero splash, four-panel, horizontal strip and vertical story.
+Captions, dialogue, panels and pictures remain editable. The sample stories are
+in English; their original artwork and copy are offered under CC0 for reuse.
+Panel templates contain lorem ipsum. Fixed-layout EPUB preserves panel placement;
+use reading order for a text-led edition.
+
+The new stock illustration is the original LayoutSplat idea studio. Generic body
+areas use lorem ipsum; headings, contact merge fields, menus and completed comic
+stories keep their purpose. Saved user projects are not rewritten. Welcome uses
+the LayoutSplat SplatWorks-style mark and omits the development-roadmap link.
+
+Both https://splatworks.org/layoutsplat and https://drawsplat.org/layoutsplat
+redirect to the app on the same domain; browser workspaces remain origin-local.
+
+Validation: 29 targeted Chromium workflows, all 134 templates in six language
+settings without text overflow, model tests, and seven independent EPUBCheck
+proofs including embedded-media reflowable/fixed/source books passed.
+
+[EPUB multimedia and fallback requirements](https://www.w3.org/TR/epub-33/#sec-fallback-processing-flow)
+
+![Original editable comic sample](../assets/layoutsplat-guide/v0.8.0/original-comic.png)
+
+![LayoutSplat welcome branding](../assets/layoutsplat-guide/v0.8.0/welcome-brand.png)

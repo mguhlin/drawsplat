@@ -1,3 +1,4 @@
+import {TEMPLATE_ASSETS} from './template-assets.mjs';
 import { loadStarterPublication } from './starter.mjs';
 import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
 import { UNITS, PAPER, uid, clone, newPublication, frame, shape, textStyle, findObject, guidePositions, snapPosition, removeObject, linkFrames, validatePublication, formatMeasure, toPoints, setStoryStyle } from './engine.mjs';
@@ -198,7 +199,7 @@ function continueStory() {
 }
 async function rasterSample(publication) {
   await loadProjectFonts(publication);
-  for (const asset of Object.values(publication.assets)) if (['sample-art.svg', 'splatworks-logo.png'].includes(asset.src)) {
+  for (const asset of Object.values(publication.assets)) if (TEMPLATE_ASSETS.includes(asset.src)) {
     const image = new Image(); image.src = asset.src; await image.decode();
     const scale = asset.brandExample ? Math.min(1, 160 / Math.max(image.naturalWidth, image.naturalHeight)) : 1, canvas = document.createElement('canvas'); canvas.width = Math.round(image.naturalWidth * scale); canvas.height = Math.round(image.naturalHeight * scale); canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height); asset.width = canvas.width; asset.height = canvas.height; asset.src = canvas.toDataURL('image/png');
   }
@@ -313,6 +314,7 @@ async function action(name) {
     }
     case 'image': $('pictureInput').click(); break;
     case 'video': $('videoInput').click(); break;
+    case 'audio': $('audioInput').click(); break;
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#7c3aed', name)); break;
     case 'editStory': editStory(); break;
     case 'continue': continueStory(); break;
@@ -464,7 +466,8 @@ async function boot() {
   }
   installPublishingUI();
   $('pictureInput').accept = MEDIA_ACCEPT; $('projectInput').accept = '.layoutsplat,.json,.svg,.idml,.sla,.zip,.pdf,.epub,.html,.htm,.pub,.pages,.ai,.eps,.ps,.indd,.indt,.qxp,.qxd,.qxt';
-  document.body.insertAdjacentHTML('beforeend', '<input id="videoInput" type="file" accept="video/*,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp" hidden><dialog id="mediaImportDialog"><p id="mediaProgress" role="status"></p><button type="button" id="mediaCancel" data-i18n="cancel">Cancel</button></dialog><dialog id="importReportDialog"><form method="dialog"><h2 data-i18n="conversionReport">Import / conversion report</h2><p id="importReportText" style="white-space:pre-wrap"></p><button data-i18n="close">Close</button></form></dialog>');
+  document.body.insertAdjacentHTML('beforeend', '<input id="audioInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.oga,.opus,.flac" hidden><input id="videoInput" type="file" accept="video/*,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp" hidden><dialog id="mediaImportDialog"><p id="mediaProgress" role="status"></p><button type="button" id="mediaCancel" data-i18n="cancel">Cancel</button></dialog><dialog id="importReportDialog"><form method="dialog"><h2 data-i18n="conversionReport">Import / conversion report</h2><p id="importReportText" style="white-space:pre-wrap"></p><button data-i18n="close">Close</button></form></dialog>');
+  $('audioInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
   $('videoInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
   $('mediaImportDialog').addEventListener('cancel', event => { event.preventDefault(); $('mediaCancel').click(); });
   setupMovableDialogs(); storyEditor = setupStoryEditor();
@@ -492,6 +495,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.7.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.8.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

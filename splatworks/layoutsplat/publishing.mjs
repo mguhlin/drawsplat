@@ -153,7 +153,7 @@ export function setupPublishing(api) {
     if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
     if (name === 'whiteboardBackgrounds') { await backgrounds.open(); return true; }
     if (name === 'importSuite') { suite.open(); return true; }
-    if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates','ebookTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu',ebookTemplates:'ebook'}[name]); return true; }
+    if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates','ebookTemplates','comicTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu',ebookTemplates:'ebook',comicTemplates:'comic'}[name]); return true; }
     if(name==='labelSettings'){labels.open();return true;}
     if (name === 'publisherSettings') { $('publisherSettingsDialog').showModal(); return true; }
     if (name === 'merge') { merge.open(); return true; }

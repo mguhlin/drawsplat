@@ -23,7 +23,7 @@ test('rich editing preserves blank paragraphs, mixed fonts, tracking and paragra
   setStoryStyle(story,'size',30);assert.equal(story.marks[1].size,15);assert.equal(story.paragraphs[2].leading,21);setStoryStyle(story,'align','right');assert.ok(story.paragraphs.every(p=>p.align==='right'));
 });
 test('every original template and its six language editions has a valid editable model', () => {
-  assert.equal(TEMPLATE_CATALOG.length, 126);
+  assert.equal(TEMPLATE_CATALOG.length, 134);
   for (const entry of TEMPLATE_CATALOG) for (const language of ['en', 'es', 'vi', 'ar', 'zh', 'uh']) {
     const doc = validatePublication(catalogPublication(entry.id, { language })); assert.equal(doc.templateId, entry.id); assert.ok(doc.pages.length); assert.ok(Object.keys(doc.stories).length);
     if (language === 'ar') assert.ok(Object.values(doc.stories).every(story => story.style.direction === 'rtl'));

@@ -1,5 +1,17 @@
 # LayoutSplat development progress
 
+## October 27, 2026 — v0.8.0 enhanced ebooks and original comics
+
+Local audio import, embedded audio/video in reflowable and fixed-layout EPUB,
+retained supported source-book media, and playback controls/descriptions.
+Print uses posters/audio cards. Two original editable English comics and six
+reusable panel layouts bring the catalog to 134. New template artwork is the
+LayoutSplat idea studio, with lorem ipsum in generic body-copy areas. Welcome
+shows the original SplatWorks-style LayoutSplat mark with no roadmap link.
+Both branded short URLs were verified. The 29 targeted browser workflows,
+all-template/six-language text-fit proof, model tests, and seven independent
+EPUBCheck proofs passed. See docs/layoutsplat-ebooks.md for reader/format limits.
+
 ## October 16, 2026 — v0.7.0 source ebooks and composition
 
 Added XHTML/CSS and visual source editing, safe preview and link checks; retained local fonts, semantic notes, nonlinear chapters and imported EPUB 3 navigation; source EPUB export. Invalid edits are atomic, valid mode/resource/close changes save, and resource edits can be discarded. Source/page editions remain independent. Local CSS imports expand within limits, obfuscated fonts are excluded individually, and export filenames avoid collisions.

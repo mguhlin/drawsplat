@@ -71,8 +71,8 @@ export function exportHtml(doc, layout, { interactive = false, nativeDoc = doc }
     const rendered = publicationPage(doc, page, layout);
     if (interactive) rendered.querySelectorAll('.object.image').forEach(el => {
       const o = [...page.objects, ...((doc.masters || []).find(m => m.id === page.masterId)?.objects || [])].find(o => o.id === el.dataset.objectId), a = doc.assets[o.assetId]; if (!a.media) return;
-      const poster = el.querySelector('img'), player = documentOut.createElement(a.media.kind === 'video' ? 'video' : 'img'); player.className = 'object-image motion-player'; player.style.objectFit = o.fit; player.src = a.media.src;
-      if (player.tagName === 'VIDEO') { player.controls = true; player.preload = 'metadata'; player.poster = a.src; player.setAttribute('aria-label', a.alt || a.name); } else player.alt = a.alt || a.name;
+      const poster = el.querySelector('img'), player = documentOut.createElement(['video','audio'].includes(a.media.kind) ? a.media.kind : 'img'); player.className = 'object-image motion-player'; player.style.objectFit = o.fit; player.src = a.media.src;
+      if (['VIDEO','AUDIO'].includes(player.tagName)) { player.controls = true; player.preload = 'metadata'; if (player.tagName === 'VIDEO') player.poster = a.src; player.setAttribute('aria-label', a.alt || a.name); } else player.alt = a.alt || a.name;
       poster.classList.add('motion-poster'); el.append(player);
     }); documentOut.body.append(rendered);
   });

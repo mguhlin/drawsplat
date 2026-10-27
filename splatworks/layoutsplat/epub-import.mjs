@@ -26,7 +26,7 @@ function rulesFrom(css,warnings){
 }
 export async function importEpub(file,{signal,onProgress=()=>{}}={}){
  if(!file.size||file.size>96000000)throw Error('Choose an EPUB under 96 MB.');
- const zip=await readZip(file),warnings=new Set(['EPUB chapters are imported in spine order as editable text and packaged pictures. Source typography and page breaks may change. Scripts, remote resources, embedded fonts and audio/video playback are not imported. Internal link labels remain text; external HTTP(S)/email links remain usable.']);
+ const zip=await readZip(file),warnings=new Set(['EPUB chapters are imported in spine order as editable text and packaged pictures. Source typography and page breaks may change. Scripts and remote resources are omitted. Page layouts do not import audio/video playback; Source book retains supported local audio/video and fonts. Internal link labels remain text; external HTTP(S)/email links remain usable.']);
  for(const entry of Object.values(zip.files))if(/(^|\/)\.\.(\/|$)|\\|\0/.test(entry.unsafeOriginalName||entry.name))throw Error('EPUB contains an unsafe archive path.');
  const read=async(path,max=8000000)=>{signal?.throwIfAborted();const entry=path&&zip.file(path);if(!entry||entry._data?.uncompressedSize>max)throw Error('Missing or oversized EPUB resource: '+(path||'unknown'));const text=await entry.async('string');if(text.length>max)throw Error('EPUB resource exceeds its size limit.');return text;};
  if((await read('mimetype',100)).trim()!=='application/epub+zip')throw Error('This archive is not an EPUB.');

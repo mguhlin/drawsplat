@@ -1,6 +1,6 @@
 // Local media import: browser decoders first, then bundled HEIF/FFmpeg/PDF decoders.
 // A raster poster always accompanies motion media so print never has an empty frame.
-export const MEDIA_ACCEPT = 'image/*,video/*,.tif,.tiff,.heic,.heif,.avif,.psd,.psb,.tga,.dds,.exr,.hdr,.jp2,.j2k,.jxl,.ico,.pcx,.ppm,.pgm,.pbm,.pdf,.ai,.eps,.ps,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp';
+export const MEDIA_ACCEPT = 'image/*,video/*,audio/*,.mp3,.m4a,.aac,.wav,.oga,.opus,.flac,.tif,.tiff,.heic,.heif,.avif,.psd,.psb,.tga,.dds,.exr,.hdr,.jp2,.j2k,.jxl,.ico,.pcx,.ppm,.pgm,.pbm,.pdf,.ai,.eps,.ps,.mov,.mkv,.avi,.mpg,.mpeg,.m4v,.wmv,.flv,.mts,.m2ts,.ogv,.3gp';
 export const readData = blob => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(blob); });
 export const loadScript = (src, global) => window[global] ? Promise.resolve() : new Promise((resolve, reject) => { const el = document.createElement('script'); el.src = src; el.onload = resolve; el.onerror = () => reject(Error('The local decoder could not load.')); document.head.append(el); });
 const extension = file => file.name.split('.').at(-1).toLowerCase();
@@ -23,20 +23,20 @@ async function getEngine() {
   })().finally(() => loading = null);
   return loading;
 }
-async function convert(file, video, onStatus, signal) {
+async function convert(file, video, onStatus, signal, audio = false) {
   const work = async () => {
     signal?.throwIfAborted(); onStatus('Loading local format converter…'); const ff = await getEngine();
-    const input = `input.${extension(file).replace(/[^a-z0-9]/g, '') || 'bin'}`, output = video ? 'output.mp4' : 'output.png';
+    const input = `input.${extension(file).replace(/[^a-z0-9]/g, '') || 'bin'}`, output = audio ? 'output.mp3' : video ? 'output.mp4' : 'output.png';
     const abort = () => { ff.terminate(); engine = null; }, progress = ({ progress }) => onStatus(`Converting locally… ${Math.round(Math.max(0, Math.min(.99, progress || 0)) * 100)}%`);
     signal?.addEventListener('abort', abort, { once: true }); ff.on('progress', progress);
     const timer = setTimeout(abort, 180000);
     try {
       await ff.writeFile(input, new Uint8Array(await file.arrayBuffer())); signal?.throwIfAborted();
-      const args = video ? ['-map', '0:v:0', '-map', '0:a?', '-vf', "scale=w='min(1920,iw)':h=-2", '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '22', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-movflags', '+faststart'] : ['-frames:v', '1', '-vf', "scale=w='min(6000,iw)':h=-1"];
+      const args = audio ? ['-vn', '-c:a', 'libmp3lame', '-b:a', '128k'] : video ? ['-map', '0:v:0', '-map', '0:a?', '-vf', "scale=w='min(1920,iw)':h=-2", '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '22', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-movflags', '+faststart'] : ['-frames:v', '1', '-vf', "scale=w='min(6000,iw)':h=-1"];
       const code = await ff.exec(['-i', input, ...args, output]);
       if (code !== 0) throw Error('This variant is not supported by the local converter.');
       const bytes = await ff.readFile(output); if (typeof bytes === 'string' || !bytes.length || bytes.length > 96000000) throw Error('The converted media is too large.');
-      return new Blob([bytes], { type: video ? 'video/mp4' : 'image/png' });
+      return new Blob([bytes], { type: audio ? 'audio/mpeg' : video ? 'video/mp4' : 'image/png' });
     } finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); ff.off('progress', progress); for (const name of [input, output]) try { await ff.deleteFile(name); } catch { /* terminated */ } }
   };
   const result = queue.then(work); queue = result.catch(() => {}); return result;
@@ -83,12 +83,29 @@ async function videoPoster(blob, signal) {
   finally { video.pause(); video.removeAttribute('src'); video.load(); URL.revokeObjectURL(url); }
 }
 export async function importMedia(file, { onStatus = () => {}, signal, choosePage = count => Promise.resolve(Number(prompt(`PDF has ${count} pages. Which page should be placed?`, '1'))) } = {}) {
-  if (!file.size || file.size > 96000000) throw Error('Choose a file smaller than 96 MB.'); signal?.throwIfAborted(); const ext = extension(file), video = file.type.startsWith('video/') || VIDEO.has(ext); let result, notes = [];
-  if (video) {
+  if (!file.size || file.size > 96000000) throw Error('Choose a file smaller than 96 MB.'); signal?.throwIfAborted(); const ext = extension(file), audio = file.type.startsWith('audio/') || ['mp3','m4a','aac','wav','oga','opus','flac'].includes(ext), video = !audio && file.type.startsWith('video/') || VIDEO.has(ext); let result, notes = [];
+  if (audio) {
+    const type = ({mp3:'audio/mpeg',m4a:'audio/mp4',wav:'audio/wav',ogg:'audio/ogg',oga:'audio/ogg',opus:'audio/ogg',webm:'audio/webm'})[ext] || file.type;
+    let playable = new Blob([file], {type});
+    if (!['audio/mpeg','audio/mp4'].includes(type)) {
+      playable = await convert(file, false, onStatus, signal, true);
+      notes.push('Converted locally to MP3 for ebook playback.');
+    }
+    signal?.throwIfAborted();
+    const canvas = document.createElement('canvas'); canvas.width = 720; canvas.height = 220;
+    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#ede7fb'; ctx.fillRect(0,0,720,220);
+    ctx.fillStyle = '#7c3aed'; ctx.beginPath(); ctx.arc(83,110,46,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(72,84); ctx.lineTo(72,136); ctx.lineTo(110,110); ctx.fill();
+    ctx.fillStyle = '#34205c'; ctx.font = 'bold 26px sans-serif'; ctx.fillText('Audio',156,85);
+    ctx.font = '20px sans-serif'; ctx.fillText(file.name.slice(0,43),156,124,520);
+    ctx.fillStyle = '#64748b'; ctx.font = '17px sans-serif'; ctx.fillText('Listen in the ebook or HTML edition',156,161);
+    result = {width:720,height:220,src:canvas.toDataURL('image/png'),media:{kind:'audio',mime:playable.type,src:await readData(playable)}};
+    notes.push('Audio is embedded in EPUB and HTML. Print and PDF show its audio card. Playback depends on the reader.');
+  } else if (video) {
     let playable = new Blob([file], { type: file.type || mime(ext) });
     try { if (!['mp4', 'webm', 'ogv', 'ogg'].includes(ext)) throw Error('Convert container.'); result = await videoPoster(playable, signal); }
     catch { signal?.throwIfAborted(); playable = await convert(file, true, onStatus, signal); result = await videoPoster(playable, signal); notes.push('Converted locally to MP4/H.264 for wider playback compatibility.'); }
-    result.media = { kind: 'video', mime: playable.type, src: await readData(playable), duration: result.duration }; delete result.duration; notes.push('Videos play in HTML. Print, PDF, SVG, and layout exchange use the poster picture.');
+    result.media = { kind: 'video', mime: playable.type, src: await readData(playable), duration: result.duration }; delete result.duration; notes.push('Videos play in EPUB and HTML where supported. Print, PDF, SVG, and layout exchange use the poster picture.');
   } else if (['eps', 'ps'].includes(ext)) { const { convertPostscript } = await import('./postscript.mjs'); result = await raster((await convertPostscript(file, { signal, onStatus })).blob); notes.push('EPS/PostScript rendered locally as a picture. Text, paths, spot colors, and overprint settings are flattened.'); }
   else if (['pdf', 'ai'].includes(ext) || file.type === 'application/pdf') result = await pdfPicture(file, choosePage);
   else if (['heic', 'heif'].includes(ext)) { onStatus('Decoding HEIC locally…'); result = await heif(file); }

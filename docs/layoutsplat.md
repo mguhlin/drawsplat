@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.7.0** is the SplatWorks publication editor.
+LayoutSplat **v0.8.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -9,14 +9,14 @@ and its existing tools; SplatWorks is the ecosystem brand.
 ## Illustrated feature guide
 
 [Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
-It covers the workspace, all 18 template types, text, graphics, masters, labels,
+It covers the workspace, all 20 template types, text, graphics, masters, labels,
 mail merge, imports, suite exchange, digital output and current print limits.
 The guide covers v0.7.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
 
 ## Templates
 
 Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,
-business cards, or menus. There is one template library, with **126 distinct editable compositions**
+business cards, menus, ebooks, or comics. There is one template library, with **134 distinct editable compositions**
 and six publication-language editions. Filter by industry, publication type,
 orientation, palette, or search. Descriptive card titles identify the design;
 industry remains a filter. Download a filtered collection as JSON files in a ZIP.

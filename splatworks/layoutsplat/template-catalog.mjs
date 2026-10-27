@@ -1,3 +1,4 @@
+import {COMIC_TEMPLATES, comicPublication} from './comic-templates.mjs';
 // Original SplatWorks design systems. No StockLayouts artwork, files, or copy is used.
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
 import { LABEL_STOCKS, labelPublication, labelDescription } from './label-stocks.mjs';
@@ -5,7 +6,7 @@ import { MENU_DESIGNS, menuPublication } from './menu-designs.mjs';
 import { DESIGN_FAMILIES, designPublication } from './publication-designs.mjs';
 import { addBrandMark } from './brand-mark.mjs';
 import {EBOOK_TEMPLATES,ebookPublication} from './ebook-templates.mjs';
-export const CATALOG_TYPES = ['flyer', 'brochure', 'newsletter', 'business-card', 'catalog', 'greeting-card', 'labels', 'postcard', 'poster', 'letterhead', 'rack-card', 'datasheet', 'menu', 'invitation', 'certificate', 'resume', 'photo-collage', 'document', 'ebook'];
+export const CATALOG_TYPES = ['flyer', 'brochure', 'newsletter', 'business-card', 'catalog', 'greeting-card', 'labels', 'postcard', 'poster', 'letterhead', 'rack-card', 'datasheet', 'menu', 'invitation', 'certificate', 'resume', 'photo-collage', 'document', 'ebook', 'comic'];
 export const SECTORS = [
   ['education', 'Education & training', 'Learning opens doors', 'Explore programs, meet the people behind them, and find your next opportunity to learn.', ['Programs for every learner', 'Family connections', 'Student projects'], '#285a89', '#18344e', '#e9f1f8'],
   ['community', 'Community & civic', 'Good things happen together', 'Meet your neighbors, share an idea, and take part in the work that makes our community stronger.', ['Neighborhood events', 'Volunteer opportunities', 'Community resources'], '#7c3aed', '#34205c', '#ede7fb'],
@@ -29,6 +30,7 @@ export const SECTORS = [
 const INDUSTRY_GROUPS = [SECTORS.map(s=>s.id), ['professional','technology','finance','construction','manufacturing','real-estate','wellness'], ['education','community','nonprofit','library','environment','sports'], ['arts','food','travel','retail','celebration']];
 export const TEMPLATE_CATALOG = [
   ...EBOOK_TEMPLATES,
+  ...COMIC_TEMPLATES,
   ...Object.entries(DESIGN_FAMILIES).flatMap(([type,names])=>names.map((name,variant)=>({id:`${type}-${variant+1}`,type,sector:'community',industries:INDUSTRY_GROUPS[variant%4],variant,name,designName:name,description:type==='brochure'?`${variant<4?'Trifold · three panels':'Bifold · two panels'} · outside & inside`:type==='flyer'&&variant>=6?'10 vertical name & phone tear-off tabs · dotted cutting lines':type==='business-card'?'3.5 × 2 in · two-sided · replaceable logo':'Distinct editable composition',orientation:type==='brochure'||type==='business-card'||type==='greeting-card'||type==='postcard'||type==='certificate'||type==='poster'&&variant===3||type==='photo-collage'&&variant===5?'landscape':'portrait'}))),
   ...MENU_DESIGNS.map(menu=>({id:`menu-${menu.id}`,type:'menu',sector:'food',industries:['food','travel','celebration'],menuDesign:menu.id,variant:0,name:menu.name,designName:menu.name,description:'Distinct restaurant menu composition',orientation:['pizza','buffet'].includes(menu.id)?'landscape':'portrait'})),
   ...LABEL_STOCKS.map(stock=>({id:`avery-${stock.id}`,type:'labels',sector:'labels',stock:stock.id,name:`Avery ${stock.codes.slice(0,2).join(' / ')}`,designName:`Avery ${stock.codes.slice(0,2).join(' / ')}`,description:labelDescription(stock),searchCodes:stock.codes.join(' '),orientation:stock.geometry[8]>stock.geometry[9]?'landscape':'portrait',variant:0})),
@@ -50,6 +52,7 @@ export function catalogPublication(id, { theme, language = 'en', sector: sectorI
     if(!entry && id.startsWith('restaurant-'))entry=TEMPLATE_CATALOG.find(e=>e.id==='menu-'+id.replace(/^restaurant-/,'').replace(/-\d+$/,''));
   }
   if (!entry) throw Error('Unknown template.');
+  if(entry.type==='comic')return comicPublication(entry.id,{theme,language});
   if(entry.type==='ebook')return ebookPublication(entry.id,{theme,language});
   if(entry.stock)return labelPublication(entry.stock,{language});
   const sector = SECTORS.find(s => s.id === (sectorId || entry.sector)) || SECTORS[1]; if(entry.type==='menu')return menuPublication(entry,{language,theme,sector});
@@ -60,7 +63,7 @@ export function catalogPublication(id, { theme, language = 'en', sector: sectorI
   const page = () => { const p = { id: uid(), objects: [] }; d.pages.push(p); return p; };
   const text = (p, content, x, y, w, h, size = 12, options = {}) => { const key = uid(), f = frame(key, x, y, w, h); f.padding = 0; d.stories[key] = { text: content, frames: [f.id], marks: [], style: { ...textStyle(), size, color: palette.ink, lineHeight: 1.3, font: variant === 4 ? 'Georgia' : 'Arial', direction: rtl ? 'rtl' : 'ltr', align: rtl ? 'right' : 'left', ...options } }; p.objects.push(f); return f; };
   const box = (p, x, y, w, h, fill = palette.accent, kind = 'rect') => { const o = shape(x, y, Math.max(6, w), Math.max(6, h), fill, kind); p.objects.push(o); return o; };
-  const picture = (p, x, y, w, h) => { const key = uid(); d.assets[key] = { name: `${sector.name} picture placeholder`, alt: 'Decorative community illustration; replace with your own picture.', width: 1080, height: 420, src: 'sample-art.svg', sample: true }; const o = { id: uid(), type: 'image', assetId: key, x, y, w, h, rotation: 0, fit: 'cover', locked: false }; p.objects.push(o); return o; };
+  const picture = (p, x, y, w, h) => { const key = uid(); d.assets[key] = { name: `${sector.name} picture placeholder`, alt: 'LayoutSplat publishing studio; replace with your own picture.', width: 1080, height: 420, src: 'sample-art.svg', sample: true }; const o = { id: uid(), type: 'image', assetId: key, x, y, w, h, rotation: 0, fit: 'cover', locked: false }; p.objects.push(o); return o; };
   const heading = (p, label = headline, y = 64, size = 34) => text(p, label, d.margin, y, d.width - 2 * d.margin, size * 3, size, { weight: 'bold', lineHeight: 1.08 });
   const footer = p => {addBrandMark(d,p,d.margin,d.height-d.margin-22,18);text(p, `${words[11]} · ${website}`, d.margin+24, d.height - d.margin - 22, d.width - 2 * d.margin-24, 22, 10, { color: palette.accent });};
   let p;

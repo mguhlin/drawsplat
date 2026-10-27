@@ -9,7 +9,7 @@ export function validateBookSource(book){
   const value=kind==='chapter'?item.xhtml:kind==='style'?item.css:item.data;
   if(typeof value!=='string'||value.length>(kind==='resource'?22000000:kind==='style'?2000000:8000000))fail();bytes+=value.length;
   if(kind==='chapter'&&(typeof item.title!=='string'||item.title.length>200||item.linear!==undefined&&typeof item.linear!=='boolean'||item.navigation!==undefined&&typeof item.navigation!=='boolean'))fail();
-  if(kind==='resource'&&(!['image/png','image/jpeg','image/gif','image/webp','font/ttf','font/otf','font/woff','font/woff2','application/vnd.ms-opentype','application/font-sfnt','application/font-woff'].includes(item.type)||!/^[A-Za-z0-9+/]*={0,2}$/.test(item.data)))fail();
+  if(kind==='resource'&&(!['audio/mpeg','audio/mp4','video/mp4','video/webm','video/ogg','text/vtt','image/png','image/jpeg','image/gif','image/webp','font/ttf','font/otf','font/woff','font/woff2','application/vnd.ms-opentype','application/font-sfnt','application/font-woff'].includes(item.type)||!/^[A-Za-z0-9+/]*={0,2}$/.test(item.data)))fail();
  }
  if(bytes>128000000||book.chapters.filter(c=>c.navigation).length>1||!book.chapters.some(c=>!c.navigation&&c.linear!==false))fail();return book;
 }

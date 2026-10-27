@@ -15,7 +15,7 @@ export function cleanBookCss(css,path,paths){
  function rules(list){return [...list].map(rule=>{if(++count>4000)throw Error('Too many stylesheet rules.');if(rule.selectorText&&rule.style)return `${rule.selectorText}{${declarations(rule.style)}}`;if(rule.type===CSSRule.FONT_FACE_RULE)return `@font-face{${declarations(rule.style)}}`;if(rule.type===CSSRule.MEDIA_RULE)return `@media ${rule.conditionText}{${rules(rule.cssRules)}}`;if(rule.type===CSSRule.SUPPORTS_RULE)return `@supports ${rule.conditionText}{${rules(rule.cssRules)}}`;return '';}).join('\n');}
  return rules(sheet.cssRules);
 }
-const tags=new Set('html head title meta link style body main section article aside header footer nav h1 h2 h3 h4 h5 h6 p div span strong b em i u s sub sup small mark abbr cite q blockquote pre code kbd samp var br hr wbr a img figure figcaption ol ul li dl dt dd table caption colgroup col thead tbody tfoot tr th td ruby rt rp bdi bdo address time'.split(' '));
+const tags=new Set('html head title meta link style body main section article aside header footer nav h1 h2 h3 h4 h5 h6 p div span strong b em i u s sub sup small mark abbr cite q blockquote pre code kbd samp var br hr wbr a img figure figcaption ol ul li dl dt dd table caption colgroup col thead tbody tfoot tr th td ruby rt rp bdi bdo address time audio video source track'.split(' '));
 export function cleanBookChapter(source,path,paths,{strict=false}={}){
  const doc=parseBookXml(source);if(doc.documentElement.localName!=='html'||!doc.getElementsByTagNameNS('*','body').length)throw Error('A chapter needs an XHTML html element and body.');
  const ids=new Set();
@@ -28,14 +28,19 @@ export function cleanBookChapter(source,path,paths,{strict=false}={}){
    if(key==='epub:type'||attr.namespaceURI===EPUB)continue;
    if(key==='id'){if(!value||ids.has(value)){if(strict)throw Error('Chapter IDs must be nonempty and unique.');node.removeAttribute(key);}else ids.add(value);continue;}
    if(key==='style'){try{const css=cleanBookCss(`p{${value}}`,path,paths);node.setAttribute(key,css.slice(css.indexOf('{')+1,css.lastIndexOf('}')));}catch{node.removeAttribute(key);}continue;}
-   if(key==='href'||key==='src'){
+   if(key==='href'||key==='src'||key==='poster'){
     const external=key==='href'&&node.localName==='a'&&/^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(value),target=bookPath(path,value);
     if(external||target&&paths.has(target.path))continue;if(strict)throw Error('Missing or unsupported link/image resource: '+value);
    }
+   if(['audio','video'].includes(node.localName)&&key==='controls')continue;
+   if(['audio','video'].includes(node.localName)&&key==='preload'&&['none','metadata'].includes(value))continue;
+   if(node.localName==='source'&&key==='type'&&/^(audio\/(mpeg|mp4)|video\/(mp4|webm|ogg))$/.test(value))continue;
+   if(node.localName==='track'&&['kind','srclang','label','default'].includes(key))continue;
    if(node.localName==='link'&&key==='rel'&&value==='stylesheet'||node.localName==='link'&&key==='type'&&value==='text/css')continue;
    if(node.localName==='meta'&&['name','content','charset'].includes(key)&&!/refresh/i.test(value))continue;
    node.removeAttributeNode(attr);
   }
+  if(['audio','video'].includes(node.localName)){node.setAttribute('controls','controls');node.setAttribute('preload','metadata');}
   if(node.localName==='link'&&!node.hasAttribute('href'))node.remove();
   if(node.localName==='img'&&!node.hasAttribute('src'))node.remove();
   if(node.localName==='meta'&&!node.hasAttribute('charset')&&!node.hasAttribute('name'))node.remove();
@@ -64,7 +69,7 @@ export async function captureBookSource(zip,spine,manifest,read){
  if(!spine.every(s=>chapters.some(c=>c.path===s.path)))return null;
  for(const item of manifest.values()){
   if(item.type==='text/css'&&item.path&&zip.file(item.path)){try{styles.push({path:item.path,css:cleanBookCss(await expandedCss(item.path),item.path,paths)});}catch{/* Unsupported remote CSS is omitted. */}}
-  else if(/^(image\/(png|jpeg|gif|webp)|font\/(ttf|otf|woff2?)|application\/(vnd.ms-opentype|font-sfnt|font-woff))$/.test(item.type)&&item.path&&zip.file(item.path)&&!encrypted.has(item.path)){
+  else if(/^(audio\/(mpeg|mp4)|video\/(mp4|webm|ogg)|text\/vtt|image\/(png|jpeg|gif|webp)|font\/(ttf|otf|woff2?)|application\/(vnd.ms-opentype|font-sfnt|font-woff))$/.test(item.type)&&item.path&&zip.file(item.path)&&!encrypted.has(item.path)){
    const entry=zip.file(item.path);if(entry._data?.uncompressedSize>16000000)throw Error('Source ebook resources exceed import limits.');resources.push({path:item.path,type:item.type,data:await entry.async('base64')});
   }
  }
@@ -80,9 +85,9 @@ export function sourcePreview(book,index){
  for(const style of doc.getElementsByTagNameNS('*','style'))style.textContent=embed(style.textContent,chapter.path);
  for(const element of doc.querySelectorAll('[style]'))element.setAttribute('style',embed(element.getAttribute('style'),chapter.path));
  for(const link of [...doc.getElementsByTagNameNS('*','link')]){const target=bookPath(chapter.path,link.getAttribute('href')),sheet=book.styles.find(s=>s.path===target?.path);link.remove();if(sheet){const el=doc.createElementNS(XHTML,'style');el.textContent=sheet.css.replace(/url\(\s*(['"]?)(.*?)\1\s*\)/gi,(_,q,href)=>`url("${resource.get(bookPath(sheet.path,href)?.path)||''}")`);head.append(el);}}
- for(const image of doc.getElementsByTagNameNS('*','img')){const original=image.getAttribute('src');image.setAttribute('data-book-src',original);image.setAttribute('src',resource.get(bookPath(chapter.path,original)?.path)||'');}
+ for(const image of doc.querySelectorAll('[src],[poster]'))for(const key of ['src','poster'])if(image.hasAttribute(key)){const original=image.getAttribute(key);image.setAttribute('data-book-'+key,original);image.setAttribute(key,resource.get(bookPath(chapter.path,original)?.path)||'');}
  for(const anchor of doc.getElementsByTagNameNS('*','a')){anchor.setAttribute('data-book-href',anchor.getAttribute('href')||'');anchor.removeAttribute('href');}
- const csp=doc.createElementNS(XHTML,'meta');csp.setAttribute('http-equiv','Content-Security-Policy');csp.setAttribute('content',"default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; form-action 'none'; base-uri 'none'");head.prepend(csp);
+ const csp=doc.createElementNS(XHTML,'meta');csp.setAttribute('http-equiv','Content-Security-Policy');csp.setAttribute('content',"default-src 'none'; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:; form-action 'none'; base-uri 'none'");head.prepend(csp);
  return new XMLSerializer().serializeToString(doc.documentElement);
 }
 export async function exportSourceBook(doc){
@@ -96,5 +101,5 @@ export async function exportSourceBook(doc){
  if(!originalNav)put(nav,`<?xml version="1.0"?><!DOCTYPE html><html xmlns="${XHTML}" xmlns:epub="${EPUB}" lang="${xml(lang)}" xml:lang="${xml(lang)}"><head><title>Contents</title></head><body><nav epub:type="toc"><h1>Contents</h1><ol>${book.chapters.map(c=>`<li><a href="${xml(c.path)}">${xml(c.title)}</a></li>`).join('')}</ol></nav></body></html>`,'application/xhtml+xml','nav');
  const metadata=['author','publisher','description','rights'].filter(k=>doc.ebookMetadata?.[k]).map(k=>`<dc:${k==='author'?'creator':k}>${xml(doc.ebookMetadata[k])}</dc:${k==='author'?'creator':k}>`).join('');
  zip.file(packagePath,`<?xml version="1.0"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="${xml(lang)}"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="book-id">${identifier}</dc:identifier><dc:title>${xml(doc.title)}</dc:title><dc:language>${xml(lang)}</dc:language>${metadata}<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/,'Z')}</meta></metadata><manifest>${items.map(i=>`<item id="${i.id}" href="${xml(i.path)}" media-type="${i.type}"${i.properties?` properties="${i.properties}"`:''}/>`).join('')}</manifest><spine>${spine.map(({c,id})=>`<itemref idref="${id}"${c.linear===false?' linear="no"':''}/>`).join('')}</spine></package>`);
- return {blob:await zip.generateAsync({type:'blob',mimeType:'application/epub+zip',compression:'DEFLATE'}),extension:'.epub',warnings:['The source edition includes saved chapter and stylesheet edits. Page-canvas edits belong to the reflowable or fixed-layout edition. Scripts and remote resources are omitted.']};
+ return {blob:await zip.generateAsync({type:'blob',mimeType:'application/epub+zip',compression:'DEFLATE'}),extension:'.epub',warnings:['The source edition includes saved chapter and stylesheet edits. Page-canvas edits belong to the reflowable or fixed-layout edition. Scripts and remote resources are omitted. Local MP3/M4A and video resources are retained; playback depends on the reader.']};
 }
