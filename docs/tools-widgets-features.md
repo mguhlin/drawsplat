@@ -143,6 +143,8 @@ Category: **Create** · 21 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GIFsplat™
 
@@ -528,6 +530,8 @@ Category: **Media** · 9 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GIFsplat™
 
@@ -675,6 +679,8 @@ Category: **Writing** · 22 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GridSplat
 
@@ -857,7 +863,7 @@ Category: **Writing** · 22 components
 
 ## Assess & Practice
 
-Category: **Assessment** · 18 components
+Category: **Assessment** · 19 components
 
 ### Bingo Caller
 
@@ -1032,6 +1038,16 @@ Category: **Assessment** · 18 components
 - Optionally use a configured external AI provider
 - Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication
 
+### WebBingoMaker
+
+**Tool** · [Open WebBingoMaker](../solutions/web-bingo-maker/)
+
+- Create virtual bingo games from pasted terms, CSV, text, Markdown, or English starter vocabulary banks
+- Choose three-by-three, four-by-four, or five-by-five grids and a winning pattern
+- Share one link with the class; each participant gets a randomized card without an account
+- Mark squares with a tap or keyboard, print cards, or embed a game in Google Sites
+- Use the DrawSplat interface in English, Spanish, Vietnamese, Arabic, Chinese, or Hindi; teacher vocabulary stays unchanged
+
 ### Word Search Maker
 
 **Tool** · [Open Word Search Maker](../solutions/wordsearch/)
@@ -1057,7 +1073,7 @@ Category: **Assessment** · 18 components
 
 ## Engage the Classroom
 
-Category: **Classroom** · 23 components
+Category: **Classroom** · 24 components
 
 ### Big Link
 
@@ -1299,6 +1315,16 @@ Category: **Classroom** · 23 components
 - Optionally use a configured external AI provider
 - Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication
 
+### WebBingoMaker
+
+**Tool** · [Open WebBingoMaker](../solutions/web-bingo-maker/)
+
+- Create virtual bingo games from pasted terms, CSV, text, Markdown, or English starter vocabulary banks
+- Choose three-by-three, four-by-four, or five-by-five grids and a winning pattern
+- Share one link with the class; each participant gets a randomized card without an account
+- Mark squares with a tap or keyboard, print cards, or embed a game in Google Sites
+- Use the DrawSplat interface in English, Spanish, Vietnamese, Arabic, Chinese, or Hindi; teacher vocabulary stays unchanged
+
 ### Wheel Spinner
 
 **Widget** · [Open Wheel Spinner](../solutions/wheel-spinner/)
@@ -1311,7 +1337,7 @@ Category: **Classroom** · 23 components
 
 ## Play & Puzzle
 
-Category: **Games** · 29 components
+Category: **Games** · 30 components
 
 ### Bingo Caller
 
@@ -1580,6 +1606,16 @@ Category: **Games** · 29 components
 - Choose beginner, intermediate, or advanced puzzles
 - Reset or skip a puzzle
 - Toggle sound
+
+### WebBingoMaker
+
+**Tool** · [Open WebBingoMaker](../solutions/web-bingo-maker/)
+
+- Create virtual bingo games from pasted terms, CSV, text, Markdown, or English starter vocabulary banks
+- Choose three-by-three, four-by-four, or five-by-five grids and a winning pattern
+- Share one link with the class; each participant gets a randomized card without an account
+- Mark squares with a tap or keyboard, print cards, or embed a game in Google Sites
+- Use the DrawSplat interface in English, Spanish, Vietnamese, Arabic, Chinese, or Hindi; teacher vocabulary stays unchanged
 
 ### Wheel Spinner
 

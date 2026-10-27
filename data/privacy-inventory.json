@@ -31,7 +31,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "239ee5a336aa787afc70208531ced82e78c2a6ce3285644d7a8ccfc0c368d78b"
+      "entrySha256": "994c66b5a78a255c677860660f65394f954f97175a763b7735d59583142f841d"
     },
     {
       "id": "backdropsplat",
@@ -461,6 +461,31 @@
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
       "entrySha256": "a2e10a4073baba633f25491ecd2cbf25037ec4e6cd5e9e313575fb41a73f0074"
+    },
+    {
+      "id": "ibingo",
+      "name": "WebBingoMaker",
+      "path": "/solutions/web-bingo-maker/",
+      "entry": "solutions/web-bingo-maker/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "mglearn.github.io",
+        "splatworks.org",
+        "yoursite.github.io"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-16",
+      "entrySha256": "7261b34b79f1958fb827008c8e3899cbd02aba13ebb3f3db0e9964bdc9b6306e"
     },
     {
       "id": "brain-sort",

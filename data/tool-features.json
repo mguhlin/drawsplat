@@ -505,6 +505,15 @@
     "Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation",
     "Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore",
     "Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports",
-    "Copy PNG directly to the system clipboard at the selected size, including pictures and transparency"
+    "Copy PNG directly to the system clipboard at the selected size, including pictures and transparency",
+    "Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field",
+    "Use grouped sidebar controls and quick links while the desktop preview stays visible"
+  ],
+  "ibingo": [
+    "Create virtual bingo games from pasted terms, CSV, text, Markdown, or English starter vocabulary banks",
+    "Choose three-by-three, four-by-four, or five-by-five grids and a winning pattern",
+    "Share one link with the class; each participant gets a randomized card without an account",
+    "Mark squares with a tap or keyboard, print cards, or embed a game in Google Sites",
+    "Use the DrawSplat interface in English, Spanish, Vietnamese, Arabic, Chinese, or Hindi; teacher vocabulary stays unchanged"
   ]
 }
