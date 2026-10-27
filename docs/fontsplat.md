@@ -4,10 +4,10 @@ Open [FontSplat](https://splatworks.org/fontsplat). Text and font files are
 processed on your device. No generation account, external font service, or
 text-upload backend is used.
 
-Choose one of 16 original looks: Splat shine, Neon nights, Chrome studio,
+Choose one of 22 original looks: Splat shine, Neon nights, Chrome studio,
 Liquid gold, Retro print, Comic pop, Rainbow ribbon, Sunset glow, Outline only,
 RGB glitch, Ice lettering, Ink stamp, Dimensional, Sticker cutout, Satin gradient,
-or Soft shadow. Change text, typeface, colors, weight, italic, letter spacing,
+Soft shadow, Blue burst, Spectrum serif, Golden rise, Silver press, Forest carved, or Swift outline. Change text, typeface, colors, weight, italic, letter spacing,
 outline, depth, arch, rotation, and slant. Use up to eight text lines.
 
 Download a PNG with a transparent or colored background at 1×, 2×, or 3×,
@@ -35,7 +35,13 @@ FontGlitch APIs or include those services' artwork, fonts, or code.
 
 ## SpellArt shapes, pictures and motion
 
-The feature formerly labeled WordArt is now **SpellArt**. Enter up to eight lines (400 characters); press Enter for a new line. Shape buttons offer text-only, banner, ribbon, oval, circle, badge and rounded backgrounds. Change shape fill/edge colors separately from lettering. Circle keeps a square canvas. Shapes remain part of editable saved projects and SVG/PNG output.
+**SpellArt · bend lettering** provides actual text-on-path presets: Straight, Arch up, Arch down, Circle, Oval, Wave, Banner curve and Chevron. Letters rotate with the path; no filled shape is required. Each of up to eight text lines (400 characters) gets its own curve or concentric ring. Press Enter for another line. **Spread lettering to fill the path** distributes short text around the available path; long lines compress to avoid disappearing beyond its end. Circle/Oval offer a position slider that moves the lettering around the ring without cutting off the beginning or end. The custom arch slider remains available for a manual bend with the Straight preset.
+
+Six additional classic-inspired styles offer bright blue extrusion, multicolor serif lettering, rising gold, slanted metallic silver, carved green and italic outlines. They combine with the selected path. These are original FontSplat implementations rather than imported Microsoft artwork.
+
+**Optional background badge** separately retains the old filled banner, ribbon, oval, circle, badge and rounded backplates, with independent fill/edge colors. Previously saved projects keep those choices. New projects use no background badge. Lettering paths and all style choices travel in saved projects, SVG, PNG and pulse animation exports.
+
+![Lettering follows curves and rings](../assets/fontsplat-guide/lettering-paths.png)
 
 Use **Add image**, drop pictures onto the preview, or paste a clipboard picture while the preview is focused. Up to six PNG/JPEG/WebP/GIF pictures can be added; GIF input uses a still frame. Imports are rasterized locally and reduced to a maximum 2048-pixel edge. Choose a picture, drag it in the preview, or adjust horizontal/vertical position, width, opacity, rotation and layer. Choose “In front” to place it above the text/shape. Pictures embed in project files, PNG and SVG exports. Project loading validates local raster data and limits embedded sizes; SVG picture uploads and remote image URLs are not accepted.
 

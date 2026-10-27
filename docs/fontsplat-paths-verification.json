@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-27",
+  "letteringPaths": ["straight", "arch-up", "arch-down", "circle", "oval", "wave", "banner", "chevron"],
+  "styleCount": 22,
+  "newClassicStyles": ["Blue burst", "Spectrum serif", "Golden rise", "Silver press", "Forest carved", "Swift outline"],
+  "checks": [
+    "11 FontSplat browser checks passed, including the existing app integrations and GIF/MP4 exports",
+    "SVG glyph rotations change along every curved preset; no filled background shape is required",
+    "Two text lines remain inside output bounds for every path",
+    "Circle glyph positions stay inside the canvas at path offsets0,50,100",
+    "Circle path, fit setting and position survive native save/open",
+    "SVG retains editable textPath lettering; PNG export succeeds",
+    "Six classic presets apply their own style settings and preserve the selected lettering path",
+    "Path gallery visually inspected"
+  ],
+  "screenshots": ["assets/fontsplat-guide/lettering-paths.png", "assets/fontsplat-guide/classic-spellart.png"],
+  "compatibility": "Existing saved background badges remain available under Optional background badge. Existing projects default to straight lettering unless they select a new text path."
+}

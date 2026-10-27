@@ -130,14 +130,14 @@ Category: **Create** · 21 components
 
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
-- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- Twenty-two original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
 - SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
-- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 
@@ -512,14 +512,14 @@ Category: **Media** · 9 components
 
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
-- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- Twenty-two original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
 - SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
-- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 
@@ -656,14 +656,14 @@ Category: **Writing** · 22 components
 
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
-- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- Twenty-two original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
 - SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
-- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 

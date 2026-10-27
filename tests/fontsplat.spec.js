@@ -1,8 +1,8 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs/promises');
 async function ready(page){await page.goto('/solutions/fontsplat/');await expect.poll(()=>page.locator('#artwork').evaluate(i=>i.complete&&i.naturalWidth>0)).toBe(true);}
-test('sixteen styles export real transparent PNG, portable SVG and editable project without remote requests',async({page},info)=>{
- const external=[];page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).hostname!=='127.0.0.1')external.push(r.url());});await ready(page);await expect(page.locator('.preset')).toHaveCount(16);await page.locator('#text').fill('Hello & <world>');await page.locator('[data-preset=chrome]').click();await page.locator('#curve').fill('40');await page.locator('#curve').dispatchEvent('input');await page.waitForTimeout(250);
+test('twenty-two styles export real transparent PNG, portable SVG and editable project without remote requests',async({page},info)=>{
+ const external=[];page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).hostname!=='127.0.0.1')external.push(r.url());});await ready(page);await expect(page.locator('.preset')).toHaveCount(22);await page.locator('#text').fill('Hello & <world>');await page.locator('[data-preset=chrome]').click();await page.locator('#curve').fill('40');await page.locator('#curve').dispatchEvent('input');await page.waitForTimeout(250);
  for(const [button,extension] of [['svg','.svg'],['png','.png'],['saveProject','.fontsplat.json']]){
   if(button==='saveProject')await page.locator('summary').filter({hasText:'Your own font'}).click();
   const pending=page.waitForEvent('download');await page.locator('#'+button).click();const download=await pending,bytes=await fs.readFile(await download.path());expect(download.suggestedFilename()).toContain(extension);await fs.writeFile(info.outputPath('wordart'+extension),bytes);

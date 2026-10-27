@@ -31,7 +31,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "5619836b070305431d45a648ea916c68cf5abf07aaba1a263bf23284b9d9d3bf"
+      "entrySha256": "33db0892372e917342a9cd4b088df6cfbee7bd6a40dccd70aa8e74cff4e4d98e"
     },
     {
       "id": "backdropsplat",
