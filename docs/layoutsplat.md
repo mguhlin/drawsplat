@@ -395,3 +395,9 @@ Twelve illustrated book starters include editable covers, titles, contents, chap
 New publication templates use six original photorealistic placeholder photographs, selected to suit the publication subject. Images are embedded as compact JPEGs when a template opens, so saved projects and collection downloads remain portable. Generated photographs are illustrative, not documentary. Reuse information and prompts accompany the bundled images.
 
 Lorem ipsum now fills each template story to the measured capacity of its frames and columns at the template’s font size. Existing saved publications keep their text unchanged. The catalog contains 169 designs, including 15 ebook starters.
+
+## Multi-selection font sizing and picture resizing
+
+Shift-click text frames to select several. Use **Size (pt)** to give their stories a common point size, or **A− / A+** to decrease or increase each story by one point while preserving size differences. Mixed sizes show a blank “Mixed” field. Linked frames share one story, so a size change is applied once to that story, including linked continuation frames. Rich-text size differences are scaled proportionally. Manual point-size changes disable shrink-to-fit for those stories so the requested size is visible; the checker flags any overflow for you to resolve.
+
+Shift-click pictures, then drag a corner of the combined selection box. Selected pictures and the spacing between them scale together, preserving their proportions. Mixed object selections can resize in both directions; hold Shift to keep their proportions. Locked and unselected objects stay unchanged. Corner handles support arrow-key resizing, and the numeric properties remain available. Each drag or font-size action can be undone.

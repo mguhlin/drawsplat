@@ -1,6 +1,15 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
+bulkFontHint|Shift-click more text frames, then use Size or A−/A+ to change them together.|Pulsa Mayús y haz clic en más marcos; usa Tamaño o A−/A+ para cambiarlos juntos.|Giữ Shift và chọn thêm khung, rồi dùng Cỡ hoặc A−/A+ để đổi cùng lúc.|اضغط Shift وحدد إطارات أخرى ثم استخدم الحجم أو A−/A+ لتغييرها معًا.|按住 Shift 单击更多文本框，然后使用字号或 A−/A+ 一起调整。|Shift दबाकर और टेक्स्ट फ़्रेम चुनें, फिर आकार या A−/A+ से एक साथ बदलें।
+bulkImageHint|Shift-click more pictures, then drag a corner of the selection box. Pictures keep their proportions.|Pulsa Mayús y selecciona más imágenes; arrastra una esquina del cuadro. Se conservan las proporciones.|Giữ Shift chọn thêm ảnh rồi kéo góc khung chọn. Ảnh giữ nguyên tỷ lệ.|اضغط Shift وحدد صورًا أخرى ثم اسحب زاوية مربع التحديد. تُحفظ النسب.|按住 Shift 单击更多图片，然后拖动选框角点。图片保持比例。|Shift दबाकर और चित्र चुनें, फिर चयन बॉक्स का कोना खींचें। अनुपात बना रहेगा।
+
+mixedValue|Mixed|Mixto|Hỗn hợp|مختلط|混合|मिश्रित
+bulkTextInfo|Font size applies to {count} selected text frames. Linked frames share story formatting.|El tamaño se aplica a {count} marcos de texto seleccionados. Los marcos enlazados comparten formato.|Cỡ chữ áp dụng cho {count} khung văn bản đã chọn. Khung liên kết dùng chung định dạng.|يطبق حجم الخط على {count} إطار نص محدد. تشترك الإطارات المرتبطة في التنسيق.|字号适用于所选的 {count} 个文本框。链接的文本框共享文章格式。|फ़ॉन्ट आकार {count} चयनित टेक्स्ट फ़्रेम पर लागू होगा। जुड़े फ़्रेम साझा स्वरूप का उपयोग करते हैं।
+increaseFont|Increase font size|Aumentar tamaño de fuente|Tăng cỡ chữ|زيادة حجم الخط|增大字号|फ़ॉन्ट आकार बढ़ाएँ
+decreaseFont|Decrease font size|Reducir tamaño de fuente|Giảm cỡ chữ|تقليل حجم الخط|减小字号|फ़ॉन्ट आकार घटाएँ
+resizeSelection|Resize selected objects|Cambiar tamaño de objetos seleccionados|Đổi kích thước đối tượng đã chọn|تغيير حجم العناصر المحددة|调整所选对象大小|चयनित वस्तुओं का आकार बदलें
+
 exportEpub|EPUB ebook|Libro EPUB|Sách EPUB|كتاب EPUB|EPUB 电子书|EPUB ईबुक
 audio|Audio|Audio|Âm thanh|صوت|音频|ऑडियो
 comicCharacters|Comic character library|Biblioteca de personajes|Thư viện nhân vật|مكتبة شخصيات القصص المصورة|漫画角色库|कॉमिक पात्र संग्रह

@@ -30,6 +30,24 @@ const measurer = createMeasurer(); let layout, issues;
 const printStyle = document.createElement('style'); document.head.append(printStyle);
 let publishing, storyEditor;
 const page = () => (doc.masters || []).find(m => m.id === publishing?.masterId()) || doc.pages[activePage], selectedObject = () => findObject(doc, selected)?.object;
+function selectedTextStories() {
+ const objects=publishing?.members().length?publishing.members():[selectedObject()].filter(Boolean);
+ return [...new Set(objects.filter(o=>o.type==='text'&&!o.locked).map(o=>o.storyId))].map(id=>doc.stories[id]).filter(Boolean);
+}
+function selectionBox(objects){const x=Math.min(...objects.map(o=>o.x)),y=Math.min(...objects.map(o=>o.y));return {x,y,w:Math.max(...objects.map(o=>o.x+o.w))-x,h:Math.max(...objects.map(o=>o.y+o.h))-y};}
+function paintGroupHandles(){
+ const surface=$('pageSurface');surface.querySelector('.selection-bounds')?.remove();const all=publishing?.members()||[],members=all.filter(o=>!o.locked);if(all.length<2||!members.length)return;
+ surface.querySelectorAll('.resize-handle').forEach(h=>h.remove());const b=selectionBox(members),box=document.createElement('div');box.className='selection-bounds';Object.assign(box.style,{left:b.x+'pt',top:b.y+'pt',width:b.w+'pt',height:b.h+'pt'});
+ for(const corner of ['nw','ne','sw','se']){const handle=document.createElement('button');handle.type='button';handle.className='selection-resize '+corner;handle.dataset.corner=corner;handle.setAttribute('aria-label',t('resizeSelection')+' '+corner.toUpperCase());handle.addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;event.preventDefault();event.stopPropagation();const step=event.shiftKey?10:1,dx=['ArrowLeft','ArrowRight'].includes(event.key)?(event.key==='ArrowRight'?step:-step):0,dy=['ArrowUp','ArrowDown'].includes(event.key)?(event.key==='ArrowDown'?step:-step):0;mutate(()=>resizeMembers(members.map(clone),b,corner,dx,dy,event.shiftKey));$('pageSurface').querySelector('.selection-resize.'+corner)?.focus({preventScroll:true});});box.append(handle);}surface.append(box);
+}
+function resizeMembers(originals,b,corner,dx,dy,keepRatio=false){
+ let sx=(b.w+(corner.includes('w')?-dx:dx))/b.w,sy=(b.h+(corner.includes('n')?-dy:dy))/b.h;
+ if(keepRatio||originals.every(o=>o.type==='image'))sx=sy=Math.abs(sx-1)>Math.abs(sy-1)?sx:sy;
+ const minX=Math.max(...originals.map(o=>6/o.w)),maxX=Math.min(...originals.map(o=>2000/o.w)),minY=Math.max(...originals.map(o=>6/o.h)),maxY=Math.min(...originals.map(o=>2000/o.h));
+ if(keepRatio||originals.every(o=>o.type==='image'))sx=sy=Math.max(minX,minY,Math.min(sx,maxX,maxY));else{sx=Math.max(minX,Math.min(sx,maxX));sy=Math.max(minY,Math.min(sy,maxY));}
+ const x=corner.includes('w')?b.x+b.w-b.w*sx:b.x,y=corner.includes('n')?b.y+b.h-b.h*sy:b.y;
+ for(const original of originals){const object=findObject(doc,original.id)?.object;if(!object||object.locked)continue;object.x=Math.max(-2000,Math.min(4000,x+(original.x-b.x)*sx));object.y=Math.max(-2000,Math.min(4000,y+(original.y-b.y)*sy));object.w=original.w*sx;object.h=original.h*sy;}
+}
 function status(key, vars) { lastStatus = key; statusVars = vars; $('statusText').textContent = t(key, vars); }
 function checkpoint(snapshot = doc) { undoStack.push(clone(snapshot)); if (undoStack.length > 40) undoStack.shift(); redoStack = []; }
 function remember() {
@@ -66,7 +84,7 @@ function paintSelection() {
     el.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
     if (active && !selectedObject().locked) { const handle = document.createElement('div'); handle.className = 'resize-handle'; handle.setAttribute('aria-hidden', 'true'); el.append(handle); }
   });
-  renderProperties(); renderLayers(); publishing?.render();
+  paintGroupHandles(); renderProperties(); renderLayers(); publishing?.render();
 }
 function render() {
   refreshPageNumbers(doc);
@@ -101,7 +119,7 @@ function renderPage() {
     surface.append(el);
   });
   if ($('guidesToggle').checked) renderGuides(surface);
-  renderRulers();
+  paintGroupHandles(); renderRulers();
 }
 function renderGuides(surface) {
   function guide(axis, position, kind = '') {
@@ -157,8 +175,8 @@ function renderProperties() {
   $('textProperties').hidden = o.type !== 'text'; $('shapeProperties').hidden = o.type !== 'shape'; $('imageProperties').hidden = o.type !== 'image';
   if (o.type === 'text') {
     const story = doc.stories[o.storyId], s = story.style;
-    value('propFont', s.font); value('propFontSize', s.size); $('propBold').checked = s.weight === 'bold'; value('propTextColor', s.color); value('propLineHeight', s.lineHeight); value('propAlign', s.align); value('propDirection', s.direction);
-    $('storyInfo').textContent = t('linkedInfo', { count: story.frames.length });
+    const sizes=selectedTextStories().map(story=>story.style.size),mixed=sizes.some(size=>size!==sizes[0]);value('propFont', s.font); value('propFontSize', mixed?'':s.size);$('propFontSize').placeholder=mixed?t('mixedValue'):''; $('propBold').checked = s.weight === 'bold'; value('propTextColor', s.color); value('propLineHeight', s.lineHeight); value('propAlign', s.align); value('propDirection', s.direction);
+    const count=(publishing?.members()||[o]).filter(item=>item.type==='text'&&!item.locked).length;$('storyInfo').textContent=count>1?t('bulkTextInfo',{count}):t('linkedInfo', { count: story.frames.length });
   } else if (o.type === 'shape') { value('propFill', o.fill); value('propOpacity', o.opacity); }
   else if (o.type === 'image') { value('propFit', o.fit); const a = doc.assets[o.assetId]; $('imageInfo').textContent = `${a.width} × ${a.height} px`; }
   $('objectProperties').querySelectorAll('button').forEach(button => { button.disabled = o.locked; });
@@ -364,19 +382,20 @@ $('pageSurface').addEventListener('dblclick', event => {
 });
 $('pageSurface').addEventListener('pointerdown', event => {
   if (event.button !== 0 || event.target.closest('.guide.custom')) return;
-  const el = event.target.closest('[data-object-id]'); if (!el) { select(null); return; }
-  const id = el.dataset.objectId, resizing = event.target.classList.contains('resize-handle');
+  const el = event.target.closest('[data-object-id]'); if (!el && !event.target.closest('.selection-resize')) { select(null); return; }
+  const groupHandle=event.target.closest('.selection-resize'),id=groupHandle?selected:el.dataset.objectId,resizing=!!groupHandle||event.target.classList.contains('resize-handle');
   if (linking) { select(id); return; }
-  selected = publishing ? publishing.onSelect(id, event) : id; const object = selectedObject(), before = clone(doc);
+  if(!groupHandle)selected = publishing ? publishing.onSelect(id, event) : id;const groupMembers=(publishing?.members()||[]).filter(o=>!o.locked);if(groupHandle&&groupMembers.length)selected=groupMembers[0].id;const object = selectedObject(), before = clone(doc);
   paintSelection(); $('pageSurface').focus({ preventScroll: true });
   if (!object || object.locked) return;
-  pointer = { id, resize: resizing, before, startX: event.clientX, startY: event.clientY, x: object.x, y: object.y, w: object.w, h: object.h, changed: false, pointerId: event.pointerId, members: (publishing?.members() || [object]).map(clone) };
+  pointer = { id:object.id, groupResize:!!groupHandle, corner:groupHandle?.dataset.corner, bounds:groupHandle?selectionBox(groupMembers):null, resize: resizing, before, startX: event.clientX, startY: event.clientY, x: object.x, y: object.y, w: object.w, h: object.h, changed: false, pointerId: event.pointerId, members: (publishing?.members() || [object]).map(clone) };
   $('pageSurface').setPointerCapture(event.pointerId); event.preventDefault();
 });
 $('pageSurface').addEventListener('pointermove', event => {
   if (!pointer || event.pointerId !== pointer.pointerId) return;
-  const o = selectedObject(), dx = (event.clientX - pointer.startX) / (zoom * PT_TO_PX), dy = (event.clientY - pointer.startY) / (zoom * PT_TO_PX);
+  const o = findObject(doc,pointer.id)?.object, dx = (event.clientX - pointer.startX) / (zoom * PT_TO_PX), dy = (event.clientY - pointer.startY) / (zoom * PT_TO_PX);
   if (Math.abs(dx) + Math.abs(dy) < 0.1) return;
+  if(pointer.groupResize){resizeMembers(pointer.members.filter(o=>!o.locked),pointer.bounds,pointer.corner,dx,dy,event.shiftKey);pointer.changed=true;renderPage();renderProperties();return;}
   if (pointer.resize) { o.w = Math.max(6, Math.min(2000, pointer.w + dx)); o.h = Math.max(6, Math.min(2000, pointer.h + dy)); }
   else {
     let x = pointer.x + dx, y = pointer.y + dy;
@@ -421,6 +440,7 @@ $('objectProperties').addEventListener('change', event => {
   if (id === 'propFontSize' || id === 'propLineHeight') { value = Number(value); if (!Number.isFinite(value) || value < (id === 'propFontSize' ? 6 : 1) || value > (id === 'propFontSize' ? 120 : 3)) { status('invalidMeasure'); renderProperties(); return; } }
   mutate(() => {
     if (geometry[id]) { if (publishing?.members().length > 1) publishing.transformSelection(geometry[id], value); else o[geometry[id]] = value; }
+    else if(id==='propFontSize')for(const story of selectedTextStories()){setStoryStyle(story,'size',value);story.style.autoFit='none';}
     else if (styles[id] && o.type === 'text') {const story=doc.stories[o.storyId];setStoryStyle(story, styles[id], value);}
     else if (id === 'propBold') setStoryStyle(doc.stories[o.storyId], 'weight', event.target.checked ? 'bold' : 'normal');
     else if (id === 'propLocked') (publishing?.members() || [o]).forEach(member => member.locked = event.target.checked);
@@ -429,6 +449,7 @@ $('objectProperties').addEventListener('change', event => {
     else if (id === 'propFit') o.fit = value;
   });
 });
+for(const [id,step] of [['increaseFont',1],['decreaseFont',-1]])$(id).addEventListener('click',()=>{const stories=selectedTextStories();if(stories.length)mutate(()=>{for(const story of stories){setStoryStyle(story,'size',Math.max(6,Math.min(120,story.style.size+step)));story.style.autoFit='none';}});});
 $('applyStory').addEventListener('click', () => { const id = editingStoryId; if (doc.stories[id]) { const value = storyEditor.value(), next = clone(doc); Object.assign(next.stories[id], value); try { validatePublication(next); mutate(() => {Object.assign(doc.stories[id], value);delete doc.stories[id].pageNumberFormat;delete doc.stories[id].pageNumberValue;}); } catch { status('invalidProject'); return; } } $('storyDialog').close(); });
 $('applySetup').addEventListener('click', () => {
   const next = clone(doc), dims = $('paperSize').value === 'custom' ? [Number($('customPageW').value), Number($('customPageH').value)] : [...PAPER[$('paperSize').value]]; if ($('paperSize').value !== 'custom' && $('landscape').checked) dims.reverse(); [next.width, next.height] = dims;
