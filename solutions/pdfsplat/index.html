@@ -8,7 +8,7 @@
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
   <link rel="stylesheet" href="./css/app.css?v=20261009-presentation">
-  <link rel="stylesheet" href="./css/branding.css">
+  <link rel="stylesheet" href="./css/branding.css?v=20261027-about">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
 <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.2" />
@@ -188,10 +188,16 @@
       <span id="zoomLabel">100%</span>
       <button id="zoomInButton" type="button" disabled aria-label="Zoom in">+</button>
       <button id="fitButton" type="button" disabled>Fit width</button>
-      <button id="privacyButton" class="privacy" type="button">🔒 Local Processing</button>
+      <button id="aboutButton" type="button">About PDFSplat</button><button id="privacyButton" class="privacy" type="button">🔒 Local Processing</button>
     </div>
   </footer>
 
+  <dialog id="aboutDialog" class="about-dialog" aria-labelledby="aboutTitle">
+    <form method="dialog"><div class="about-heading"><h2 id="aboutTitle">About PDFSplat</h2><button value="close" autofocus aria-label="Close About PDFSplat">Close</button></div></form>
+    <img class="about-features" src="./about-features.png" width="1491" height="1055" alt="PDFSplat features: private browser-based PDF tools for school and classroom work. Open and convert files; edit and annotate; capture and scan; organize pages; export documents; process locally; sanitize and encrypt PDFs; and check accessibility.">
+    <p><a href="./about-features.png" target="_blank" rel="noopener">Open the full-size feature graphic</a></p>
+    <p class="about-summary">Free browser-based PDF tools for school and classroom work. Open, convert, annotate, scan, organize, export, sanitize, protect and review accessibility.</p>
+  </dialog>
   <dialog id="privacyDialog">
     <form method="dialog">
       <h2>Your files stay here</h2>
@@ -411,7 +417,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=20261015-creative-drive"></script>
+  <script src="./src/boot.js?v=20261027-about"></script>
   <script src="../../assets/js/pdf-ui-strings.js?v=20261009-presentation"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>

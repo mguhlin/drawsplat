@@ -13,7 +13,7 @@ test('numbered masters resolve separately after page edits and retain dynamic fi
  await check(2);await page.locator('[data-action=duplicatePage]').first().click();await check(3);await page.locator('[data-action=deletePage]').first().click();await check(2);await page.locator('#undoBtn').click();await check(3);await page.locator('[data-action=addPage]').first().click();await page.locator('[data-action=masters]').click();await page.locator('[data-action=applyMasterAll]').click();await page.locator('#mastersDialog [value=cancel]').last().click();await check(4);
  const pending=page.waitForEvent('download');await page.locator('.header-actions [data-action=save]').click();const buffer=await fs.readFile(await(await pending).path());await page.locator('#projectInput').setInputFiles({name:'master.layoutsplat',mimeType:'application/zip',buffer});await check(4);
  const snapshot=await page.evaluate(()=>LayoutSplat.getPublication());snapshot.pages[0].masterOverrides=[footer.id];await page.locator('#projectInput').setInputFiles({name:'override.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(snapshot))});
- expect(await page.locator(`#pageSurface [data-object-id="${footer.id}"]`).count()).toBe(0);
+ await expect(page.locator(`#pageSurface [data-object-id="${footer.id}"]`)).toHaveCount(0);
 });
 test('Publisher master associations and repeated source text IDs preserve reusable artwork and one linked story',async({page})=>{
  await page.goto('/splatworks/layoutsplat/');await page.waitForFunction(()=>!!window.LayoutSplat);

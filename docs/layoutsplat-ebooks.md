@@ -150,3 +150,7 @@ proofs including embedded-media reflowable/fixed/source books passed.
 ![Original editable comic sample](../assets/layoutsplat-guide/v0.8.0/original-comic.png)
 
 ![LayoutSplat welcome branding](../assets/layoutsplat-guide/v0.8.0/welcome-brand.png)
+
+## Illustrated ebook starters
+
+Open **File → Templates → Ebook templates** to choose among 15 ebook designs, including 12 editions using the original illustrated book covers. Cover lettering stays editable in the publication. Reflowable EPUB exports package the composed cover as the EPUB cover image and retain adjustable chapter text; fixed-layout EPUB preserves page geometry. The illustrations are embedded in saved projects and exported books.

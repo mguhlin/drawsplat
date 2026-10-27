@@ -1948,6 +1948,7 @@ els.fitButton.onclick = () => {
 };
 els.previousPageButton.onclick = () => navigatePage(-1);
 els.nextPageButton.onclick = () => navigatePage(1);
+$('aboutButton').onclick = () => $('aboutDialog').showModal();
 els.privacyButton.onclick = () => els.privacyDialog.showModal();
 for (const name of ["dragenter", "dragover"])
   els.dropZone.addEventListener(name, (e) => {

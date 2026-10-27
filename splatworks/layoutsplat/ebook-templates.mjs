@@ -1,9 +1,13 @@
+import {BOOK_DESIGNS} from './book-catalog.mjs';
+import {bookPublication} from './book-templates.mjs';
+import {photoPlaceholder} from './photo-placeholders.mjs';
 import {templateBodyCopy} from './template-copy.mjs';
 import {newPublication,uid,frame,shape,textStyle,validatePublication} from './engine.mjs';
 export const EBOOK_TEMPLATES=[
  {id:'ebook-novel',name:'The Quiet Journey · novel',description:'6 × 9 in · cover, title page and two story chapters',variant:0},
  {id:'ebook-guide',name:'A Field Guide to New Ideas',description:'6 × 9 in · cover, introduction, practical chapters and checklist',variant:1},
  {id:'ebook-picture',name:'Small Wonders · illustrated story',description:'8 × 8 in · illustrated cover and picture-book spreads',variant:2},
+ ...BOOK_DESIGNS.map(e=>({id:'ebook-'+e.key,name:e.title+' · illustrated EPUB',description:e.genre+' · illustrated cover, editable chapters and author page',bookKey:e.key})),
 ].map(e=>({...e,type:'ebook',sector:'library',industries:['library','education','arts','community'],orientation:'portrait',designName:e.name}));
 const words={
  en:['THE QUIET JOURNEY','A FIELD GUIDE TO NEW IDEAS','SMALL WONDERS','Your name','A beginning','The road ahead','Every journey begins with a question. This is where your story takes its first step. Replace these words with your own voice, and give your reader a reason to turn the page.','Notice one small thing today. Look closely, ask a question, and imagine the story it could tell.','Try it yourself','Choose a question.\nCollect what you notice.\nShare what you discover.'],
@@ -15,11 +19,12 @@ const words={
 };
 export function ebookPublication(id,{language='en',theme}={}){
  const entry=EBOOK_TEMPLATES.find(e=>e.id===id);if(!entry)throw Error('Unknown ebook template.');
+ if(entry.bookKey){const d=bookPublication('book-'+entry.bookKey,{language,ebook:true});d.templateId=id;d.publicationType='ebook';return validatePublication(d);}
  const w=words[language]||words.en,v=entry.variant,d=newPublication(true),ink=theme?.ink||'#233b43',accent=theme?.accent||'#b16e42',pale=theme?.pale||'#edf1e9';
  d.pages=[];d.width=v===2?576:432;d.height=v===2?576:648;d.margin=42;d.guides.columns=1;d.title=w[v];d.language=language;d.publicationType='ebook';d.templateId=id;d.ebookMetadata={author:w[3],language:language==='uh'?'hi':language,publisher:'',description:'',rights:''};
  const page=()=>{const p={id:uid(),objects:[]};d.pages.push(p);return p;};
  const text=(p,t,x,y,width,h,size=12,heading=0)=>{const key=uid(),f=frame(key,x,y,width,h);f.padding=0;if(heading)f.readingHeading=heading;d.stories[key]={text:t,frames:[f.id],marks:[],style:{...textStyle(),font:v===1?'Arial':'Georgia',size,color:ink,lineHeight:1.5,direction:language==='ar'?'rtl':'ltr',align:language==='ar'?'right':'left',weight:heading?'bold':'normal'}};p.objects.push(f);return f;};
- const art=(p,x,y,width,h)=>{const key=uid();d.assets[key]={src:'sample-art.svg',sample:true,name:'Story illustration',alt:w[7],width:1080,height:420};p.objects.push({id:uid(),type:'image',assetId:key,x,y,w:width,h,rotation:0,fit:'cover',locked:false});};
+ const art=(p,x,y,width,h)=>{const key=uid();d.assets[key]=photoPlaceholder(v===2?'travel':'library',d.pages.length);p.objects.push({id:uid(),type:'image',assetId:key,x,y,w:width,h,rotation:0,fit:'cover',locked:false});};
  const cover=page();cover.objects.push(shape(0,0,d.width,d.height,pale));
  if(v===0){cover.objects.push(shape(42,54,4,210,accent));text(cover,w[0],64,70,296,190,34,1);cover.objects.push(shape(64,301,258,2,accent));text(cover,w[3],64,326,296,50,14);}
  if(v===1){cover.objects.push(shape(0,0,d.width,48,ink));text(cover,w[1],42,91,348,200,33,1);cover.objects.push(shape(42,328,78,7,accent));text(cover,w[3],42,376,348,48,14);}

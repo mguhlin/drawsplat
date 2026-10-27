@@ -1,3 +1,4 @@
+import {prepareTemplate} from './template-fill.mjs';
 import {setupCharacterLibrary} from './character-library.mjs';
 import {pictureContour} from './text-wrap.mjs';
 import { uid, clone, frame, shape, textStyle, findObject, removeObject, validatePublication, linkFrames, unlinkFrame } from './engine.mjs';
@@ -102,9 +103,9 @@ export function setupPublishing(api) {
     richEditor?.destroy(); const s = getDoc().stories[o.storyId]; $('richStoryEditor').replaceChildren(); richEditor = createRichEditor($('richStoryEditor'), textToRichDocument(s)); $('richStoryEditor').dir = s.style.direction;
     $('richStoryDialog').dataset.storyId = o.storyId; $('richStoryDialog').showModal(); richEditor.view.focus();
   }
-  document.addEventListener('click', event => {
+  document.addEventListener('click', async event => {
     const template = event.target.closest('[data-template]');
-    if (template) { const next = makeTemplate(template.dataset.template, $('templateTheme').value); if (confirm(t('replaceConfirm'))) api.replaceDoc(next); $('templateDialog').close(); }
+    if (template) { const next = makeTemplate(template.dataset.template, $('templateTheme').value); if (confirm(t('replaceConfirm'))) await api.replaceDoc(await prepareTemplate(next)); $('templateDialog').close(); }
     const rich = event.target.closest('[data-rich]'); if (rich && richEditor) richEditor.toggle(rich.dataset.rich);
   });
   $('applyRichStory').onclick = () => { const id = $('richStoryDialog').dataset.storyId, value = richDocumentToText(richEditor.value(), getDoc().stories[id].style); mutate(() => { const story = getDoc().stories[id]; Object.assign(story, value);delete story.pageNumberFormat;delete story.pageNumberValue; }); $('richStoryDialog').close(); };

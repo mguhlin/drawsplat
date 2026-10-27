@@ -1,3 +1,4 @@
+import {createMeasurer,layoutStories} from './layout.mjs';
 import {readingHtml,pageCanvas,canvasBlob} from './exports.mjs';
 import {readingObjects} from './publication-fields.mjs';
 import {exportSourceBook} from './ebook-source.mjs';
@@ -86,7 +87,15 @@ export async function exportEpub(doc,layout,{pages=doc.pages.map((_,i)=>i),epubM
   }
  }else{
   warnings.add('Reflowable EPUB follows Reading order. Linked stories appear once with complete text, including overflow. Decorative shapes and master furniture are omitted. Audio and video are embedded; playback depends on the reader. Fonts and page breaks adapt to the reader.');
-  for(const section of ebookSections(doc,pages))await packageSection(section);
+  const coverPage=doc.ebookCoverPageId?doc.pages.findIndex(p=>p.id===doc.ebookCoverPageId):-1;
+  if(coverPage>=0&&pages.includes(coverPage)){
+   const measurer=layout?.fragments?null:createMeasurer(),coverLayout=measurer?layoutStories(doc,measurer):layout;let canvas;
+   try{canvas=await pageCanvas(doc,doc.pages[coverPage],coverLayout,150,0);const blob=await canvasBlob(canvas);bytes+=blob.size;if(bytes>128000000)throw Error('EPUB pictures and media exceed 128 MB.');put('images/cover.png',blob,'image/png','cover-image');let body=`<figure><img src="images/cover.png" alt="${xml('Cover of '+doc.title)}"/></figure>`;
+   for(const object of readingObjects(doc.pages[coverPage])){const asset=doc.assets[object.assetId],media=asset?.media;if(object.readingExcluded||!['audio','video'].includes(media?.kind))continue;const src=await embed(media.src,media.kind),poster=media.kind==='video'?` poster="${await embed(asset.src)}"`:'';body+=`<${media.kind} controls="controls" preload="metadata" src="${src}"${poster} aria-label="${xml(asset.alt||asset.name)}"><p>${xml(asset.alt||asset.name)}</p></${media.kind}>`;}
+   sections.push({page:coverPage,title:'Cover · '+doc.title,headings:[],body});}
+   finally{if(canvas)canvas.width=canvas.height=1;measurer?.remove();}
+  }
+  for(const section of ebookSections(doc,pages.filter(i=>i!==coverPage)))await packageSection(section);
  }
  if(!sections.length)throw Error('The selected pages have no content for the reading edition.');
  const toc=sections.map((section,i)=>{const name=`chapter-${i+1}.xhtml`,entry=put(name,ebookXhtml(section.title,section.body,language,{fixed,width:Math.round(doc.width*4/3),height:Math.round(doc.height*4/3)}),'application/xhtml+xml');return {...section,name,id:entry.id};});

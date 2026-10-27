@@ -16,3 +16,5 @@
   margin: 0 auto 0.5rem;
   border-radius: 18px;
 }
+
+#aboutDialog.about-dialog{width:min(1440px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:94dvh;padding:12px;overflow:auto}#aboutDialog .about-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}#aboutDialog .about-heading h2{margin:.25em 0}#aboutDialog .about-features{display:block;width:100%;height:auto}#aboutDialog .about-summary{font-size:14px;line-height:1.5}

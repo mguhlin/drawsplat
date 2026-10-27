@@ -1,3 +1,4 @@
+import {fillTemplateFrames} from './template-fill.mjs';
 import {templateBodyCopy} from './template-copy.mjs';
 import { newPublication, uid, frame, shape, textStyle } from './engine.mjs';
 export const TEMPLATE_TYPES = [
@@ -76,5 +77,5 @@ export function makeTemplate(type, themeId = 'splatworks', language = 'en') {
     d.labelLayout = { columns: 3, rows: 10, perSheet: 30, instructions: 'Generic 3 × 10 Letter label sheet. Confirm the exact label stock dimensions in Page layout; print a plain-paper alignment test at actual size.' };
   } else throw new Error('Unknown publication template.');
   if (language === 'ar') for (const s of Object.values(d.stories)) { s.style.direction = 'rtl'; s.style.align = 'right'; }
-  return templateBodyCopy(d);
+  return fillTemplateFrames(templateBodyCopy(d));
 }

@@ -1,3 +1,5 @@
+import {photoPlaceholder} from './photo-placeholders.mjs';
+import {fillTemplateFrames} from './template-fill.mjs';
 import {BOOK_TEMPLATES,bookPublication} from './book-templates.mjs';
 import {COMIC_TEMPLATES, comicPublication} from './comic-templates.mjs';
 // Original SplatWorks design systems. No StockLayouts artwork, files, or copy is used.
@@ -44,7 +46,7 @@ const editions = {
   zh: ['发现更多可能', '分享帮助读者迈出下一步的详情。请添加自己的故事、日期、服务和联系信息。', '了解更多', '您的组织', '诚邀您参加', '感谢您成为我们故事的一部分', '用心制作', '表彰证书', '颁发给', '感谢您的贡献', '精选系列', '联系我们'],
   uh: ['संभावनाएँ खोजें', 'पाठक को अगला कदम लेने में मदद करने वाली जानकारी दें। अपनी कहानी, तारीखें, सेवाएँ और संपर्क जोड़ें।', 'और जानें', 'आपका संगठन', 'आप आमंत्रित हैं', 'हमारी कहानी का हिस्सा बनने के लिए धन्यवाद', 'ध्यान से बनाया गया', 'सम्मान प्रमाणपत्र', 'प्रदान किया जाता है', 'आपके योगदान के लिए आभार', 'विशेष संग्रह', 'संपर्क करें'],
 };
-export function catalogPublication(id, { theme, language = 'en', sector: sectorId } = {}) {
+function makeCatalogPublication(id, { theme, language = 'en', sector: sectorId } = {}) {
   let entry = TEMPLATE_CATALOG.find(item => item.id === id);
   // Existing saved recipes and older collection links still resolve to a design.
   if (!entry) {
@@ -65,7 +67,7 @@ export function catalogPublication(id, { theme, language = 'en', sector: sectorI
   const page = () => { const p = { id: uid(), objects: [] }; d.pages.push(p); return p; };
   const text = (p, content, x, y, w, h, size = 12, options = {}) => { const key = uid(), f = frame(key, x, y, w, h); f.padding = 0; d.stories[key] = { text: content, frames: [f.id], marks: [], style: { ...textStyle(), size, color: palette.ink, lineHeight: 1.3, font: variant === 4 ? 'Georgia' : 'Arial', direction: rtl ? 'rtl' : 'ltr', align: rtl ? 'right' : 'left', ...options } }; p.objects.push(f); return f; };
   const box = (p, x, y, w, h, fill = palette.accent, kind = 'rect') => { const o = shape(x, y, Math.max(6, w), Math.max(6, h), fill, kind); p.objects.push(o); return o; };
-  const picture = (p, x, y, w, h) => { const key = uid(); d.assets[key] = { name: `${sector.name} picture placeholder`, alt: 'LayoutSplat publishing studio; replace with your own picture.', width: 1080, height: 420, src: 'sample-art.svg', sample: true }; const o = { id: uid(), type: 'image', assetId: key, x, y, w, h, rotation: 0, fit: 'cover', locked: false }; p.objects.push(o); return o; };
+  const picture = (p, x, y, w, h) => { const key = uid(); d.assets[key] = photoPlaceholder(sector.id, variant); const o = { id: uid(), type: 'image', assetId: key, x, y, w, h, rotation: 0, fit: 'cover', locked: false }; p.objects.push(o); return o; };
   const heading = (p, label = headline, y = 64, size = 34) => text(p, label, d.margin, y, d.width - 2 * d.margin, size * 3, size, { weight: 'bold', lineHeight: 1.08 });
   const footer = p => {addBrandMark(d,p,d.margin,d.height-d.margin-22,18);text(p, `${words[11]} · ${website}`, d.margin+24, d.height - d.margin - 22, d.width - 2 * d.margin-24, 22, 10, { color: palette.accent });};
   let p;
@@ -85,3 +87,5 @@ export function catalogPublication(id, { theme, language = 'en', sector: sectorI
   if(!Object.values(d.assets).some(a=>a.brandExample)) for(const p of d.pages) addBrandMark(d,p,entry.type==='certificate'?54:Math.max(12,d.width-d.margin-24),entry.type==='certificate'?52:8,18);
   return validatePublication(d);
 }
+
+export function catalogPublication(id,options={}){return fillTemplateFrames(makeCatalogPublication(id,options));}

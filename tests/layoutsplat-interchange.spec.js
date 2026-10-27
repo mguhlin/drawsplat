@@ -3,8 +3,8 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const snapshot = page => page.evaluate(() => LayoutSplat.getPublication());
 async function ready(page) { await page.goto('/splatworks/layoutsplat/'); await expect.poll(() => page.evaluate(() => !!window.LayoutSplat)).toBe(true); page.on('dialog', dialog => dialog.accept()); }
-test('template library filters 157 designs, opens a brochure, and preserves publication direction across interface changes', async ({ page }, info) => {
-  await ready(page); await page.locator('#fileMenu > summary').click(); if(!await page.locator('#fileTemplates').evaluate(e=>e.open))await page.locator('#fileTemplates > summary').click(); await page.locator('[data-action=browseTemplates]').click(); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(157); await expect(page.locator('#libraryCount')).toContainText('157');
+test('template library filters 169 designs, opens a brochure, and preserves publication direction across interface changes', async ({ page }, info) => {
+  await ready(page); await page.locator('#fileMenu > summary').click(); if(!await page.locator('#fileTemplates').evaluate(e=>e.open))await page.locator('#fileTemplates > summary').click(); await page.locator('[data-action=browseTemplates]').click(); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(169); await expect(page.locator('#libraryCount')).toContainText('169');
   await page.locator('#libraryType').selectOption('brochure'); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(8);
   await page.locator('#librarySector').selectOption('education'); await expect(page.locator('#libraryGrid .library-card')).toHaveCount(4);
   await page.locator('#libraryLanguage').selectOption('ar'); await page.locator('[data-catalog-id=brochure-1]').click(); await expect(page.locator('#templateLibraryDialog')).toBeHidden(); const doc = await snapshot(page); expect(doc.pages).toHaveLength(2); expect(doc.width).toBe(792); expect(doc.foldGuides).toEqual([264, 528]); expect(Object.values(doc.stories).every(s => s.style.direction === 'rtl')).toBe(true);

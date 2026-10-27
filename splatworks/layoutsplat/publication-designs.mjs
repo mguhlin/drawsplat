@@ -1,3 +1,4 @@
+import {photoPlaceholder} from './photo-placeholders.mjs';
 import {templateBodyCopy} from './template-copy.mjs';
 // Original publication compositions. Industry and color customize a composition;
 // neither is counted as another design. All artwork is editable local geometry.
@@ -30,8 +31,8 @@ export function designPublication(entry,{sector,theme,language='en',words}) {
  const bx=(p,x,y,w,h,fill=accent,kind='rect')=>{const o=shape(x,y,w,h,fill,kind);p.objects.push(o);return o;};
  const rule=(p,x,y,w,color=accent,dash=false)=>{const o=bx(p,x,y,w,1,color);if(dash){o.kind='line';o.strokeWidth=.7;o.noFill=true;o.strokeDash='3 3';}return o;};
  const border=(p,x,y,w,h,color=accent)=>{const o=bx(p,x,y,w,h,color);o.noFill=true;o.strokeWidth=1.5;return o;};
- let pictureId;
- const im=(p,x,y,w,h,{round=false,rotation=0}={})=>{pictureId||=(uid());d.assets[pictureId]||={name:'Example illustration — replace with your own picture',alt:'LayoutSplat publishing studio with an open book, page layouts and colorful creative tools',width:1080,height:420,src:'sample-art.svg',sample:true};const o={id:uid(),type:'image',assetId:pictureId,x,y,w,h,rotation,fit:'cover',locked:false};if(round){o.path=`M${w/2} 0A${w/2} ${h/2} 0 1 1 ${w/2} ${h}A${w/2} ${h/2} 0 1 1 ${w/2} 0Z`;o.pathViewBox=[0,0,w,h];}p.objects.push(o);return o;};
+ let photoIndex=0;
+ const im=(p,x,y,w,h,{round=false,rotation=0}={})=>{const photo=photoPlaceholder(sector.id,photoIndex++),pictureId='photo-'+photo.src;d.assets[pictureId]||=photo;const o={id:uid(),type:'image',assetId:pictureId,x,y,w,h,rotation,fit:'cover',locked:false};if(round){o.path=`M${w/2} 0A${w/2} ${h/2} 0 1 1 ${w/2} ${h}A${w/2} ${h/2} 0 1 1 ${w/2} 0Z`;o.pathViewBox=[0,0,w,h];}p.objects.push(o);return o;};
  const foot=(p)=>{addBrandMark(d,p,36,d.height-52,18);tx(p,`${words[11]} · ${site}`,62,d.height-49,d.width-98,20,9,{color:accent});};
  const title=(p,value,x,y,w,h,size=30,opt={})=>tx(p,value,x,y,w,h,size,{weight:'bold',lineHeight:1.06,...opt});
  const body=(p,x,y,w,h,size=12,value=intro)=>tx(p,value,x,y,w,h,size);

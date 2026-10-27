@@ -1,0 +1,74 @@
+[
+  {
+    "id": "studio",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: A sunlit creative studio desk, open blank notebook, beautiful unbranded camera, colored pencils in a ceramic cup, a small green plant and textured paper, inviting natural wood surfaces; no writing visible. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/studio.jpg",
+    "sha256": "0b36649b9b481f48d4e1f3b1ea424baa6e041928cd354c9319b9a13c1a8d0434",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  },
+  {
+    "id": "garden",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: A thriving community garden with raised beds of leafy vegetables and wildflowers, a terracotta pot and small path, early morning light, welcoming and realistic, no people or signs. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/garden.jpg",
+    "sha256": "4e6879cf36507830ee7fe2b9cff36a22e7b1ddb04981cc92058fe53802f14284",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  },
+  {
+    "id": "library",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: A bright contemporary neighborhood library with warm wood tables, comfortable chairs and shelves of unbranded books, sunlight through large windows, no readable titles, no people. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/library.jpg",
+    "sha256": "7b4417b63bf2c76c4947826eede94c875520c144a3bd23b3b6e61fbe030ccdd5",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  },
+  {
+    "id": "cafe",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: An inviting neighborhood cafe table with fresh bread, fruit, a ceramic coffee cup and a small vase of flowers, leafy courtyard in soft focus, natural morning light, no logos or writing. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/cafe.jpg",
+    "sha256": "ea11622bd73274090652cb17a651a0e08c14e9716204cfbe0455829fe5344d17",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  },
+  {
+    "id": "workspace",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: A beautiful modern collaborative workspace with clean desks, comfortable chairs, green plants and generous windows, warm daylight, unbranded devices with screens turned away, no people, no readable text. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/workspace.jpg",
+    "sha256": "1541fe7bc284205186077f82f090f7d827ed2920f0b2a116254cce370ea931c1",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  },
+  {
+    "id": "coast",
+    "prompt": "Use case: photorealistic-natural. Asset type: reusable photographic placeholder in editable publication templates. Create one professional editorial photograph: A peaceful coastal walking trail winding through green grasses and wildflowers above a blue ocean, distant headland, warm sunrise, authentic travel photography, no people or buildings. Landscape 3:2 framing, with a clear main subject near center that remains attractive when cropped to wide banners, square or portrait image frames. Natural realistic textures, believable light, fine detail, tasteful colors, polished photographic quality. Absolutely a real photographic look, not an illustration, drawing, 3D render or collage. No text, watermarks, logos or borders. Original generic scene, no recognizable branded products.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/template-photos/coast.jpg",
+    "sha256": "0518621510ca7bb9997d5c968e9f6d89d325d9667431b767f4b79dcd2bb2e2a6",
+    "width": 1024,
+    "height": 683,
+    "sourceWidth": 1536,
+    "sourceHeight": 1024
+  }
+]

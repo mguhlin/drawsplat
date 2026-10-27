@@ -1,0 +1,17 @@
+LayoutSplat photorealistic template placeholders
+
+The six placeholder photographs (studio, garden, library, cafe, workspace,
+coast) were created with the built-in image_gen tool for LayoutSplat on
+2026-10-27. They are AI-generated illustrative placeholders, not documentary
+photographs of actual businesses or locations. Full prompts, dimensions and
+SHA-256 hashes are recorded in template-photos/GENERATION.json.
+
+To the extent rights are held in this original template artwork, it is
+dedicated under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+Reuse and adapt the images for personal, educational and commercial projects.
+No attribution is required. The legacy sample-art.svg embeds the studio photo.
+
+Book-cover illustrations and comic artwork have their own included reuse
+notices. Fonts retain their included licenses. SplatWorks names and logos
+remain brand marks; this dedication does not grant trademark rights.

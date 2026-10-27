@@ -1,0 +1,14 @@
+{
+  "version": "0.11.0",
+  "date": "2026-10-27",
+  "catalogDesigns": 169,
+  "ebookStarters": 15,
+  "photographicPlaceholders": 6,
+  "checks": [
+    "100 LayoutSplat browser tests passed",
+    "169 templates across six language settings fit without text overflow",
+    "Illustrated ebook covers are editable and packaged as EPUB cover images",
+    "Photo placeholders remain embedded JPEG assets in native projects",
+    "Lorem fitting preserves imported user text"
+  ]
+}

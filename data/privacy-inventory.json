@@ -31,7 +31,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "c8a419a59ebd90bb60b602ce108b14dfd343983f26cfa8adc084d039b826a972"
+      "entrySha256": "951a08b6e940eccb07687b9abe9af0510fefad57566fc16289326861bf2c7a36"
     },
     {
       "id": "backdropsplat",
@@ -267,7 +267,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "a6693f43cfcb9949eb6c56a1db6ccad0c032a58431fbca1e0a8b6d62bf4ca3f3"
+      "entrySha256": "9961f30d8cfa3b7b019d4f2c11dc85330b3e34344d43f948c59991be47d52145"
     },
     {
       "id": "plansplat",
@@ -942,7 +942,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "8d7e2834e01540815136d27d567a51c1acd8ddfd606a1f36bbd9dd08a4149b02"
+      "entrySha256": "20d0f18bf125cf804836b99be9520b39d30e2f632540cb2a381f3795e6788c77"
     },
     {
       "id": "qrsplat",

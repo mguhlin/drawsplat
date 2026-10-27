@@ -1,0 +1,4 @@
+const {test,expect}=require('@playwright/test');
+test('PDFSplat About opens the supplied responsive feature splash',async({page})=>{
+ await page.goto('/solutions/pdfsplat/');await page.locator('#aboutButton').click();await expect(page.locator('#aboutDialog')).toBeVisible();await expect.poll(()=>page.locator('#aboutDialog img').evaluate(i=>i.complete&&i.naturalWidth>1000)).toBe(true);await expect(page.locator('#aboutDialog img')).toHaveAttribute('src','./about-features.png');await expect(page.locator('#aboutDialog img')).toHaveAttribute('alt',/Open and convert/);await page.keyboard.press('Escape');await expect(page.locator('#aboutDialog')).toBeHidden();await page.setViewportSize({width:390,height:844});await page.locator('#aboutButton').click();const b=await page.locator('#aboutDialog img').boundingBox();expect(b.width).toBeLessThan(390);await page.locator('#aboutDialog button').click();await expect(page.locator('#aboutDialog')).toBeHidden();
+});

@@ -1,3 +1,4 @@
+import {photoPlaceholder} from './photo-placeholders.mjs';
 // LayoutSplat publication model. Geometry is always in typographic points.
 import {LOREM} from './template-copy.mjs';
 import {TEMPLATE_ASSETS} from './template-assets.mjs';
@@ -40,9 +41,9 @@ export function newPublication(blank = false) {
   addText(page, 'THE COMMUNITY EDITION', 36, 58, 540, 25, { size: 10, weight: 'bold', color: '#7c3aed' });
   addText(page, 'Small ideas.\nShared possibilities.', 36, 97, 540, 125, { size: 38, weight: 'bold', lineHeight: 1.08, color: '#34205c' });
   addText(page, 'A newsletter made together', 36, 228, 540, 32, { size: 17, color: '#7c3aed' });
-  // A local SVG becomes an ordinary raster asset: no external image requests.
+  // Local photographic placeholders embed as ordinary raster assets.
   const assetId = uid();
-  doc.assets[assetId] = { name: 'LayoutSplat publishing studio', alt: 'An open book, page layouts, colorful shapes and a pen in the LayoutSplat publishing studio', width: 1080, height: 420, src: 'sample-art.svg', sample: true };
+  doc.assets[assetId] = photoPlaceholder('community');
   page.objects.push({ id: uid(), type: 'image', assetId, x: 36, y: 281, w: 540, h: 210, rotation: 0, fit: 'contain', locked: false });
   const paragraph = LOREM + '\n\n';
   const story = addText(page, paragraph.repeat(8), 36, 515, 261, 175, { size: 12 });
@@ -137,6 +138,7 @@ export function validatePublication(input) {
   if (d.safeArea !== undefined && !number(d.safeArea, 0, Math.min(d.width, d.height) / 2 - 1)) fail();
   if (d.facingPages !== undefined && typeof d.facingPages !== 'boolean') fail();
   if(d.ebookSource!==undefined)validateBookSource(d.ebookSource);
+  if(d.ebookCoverPageId!==undefined&&(typeof d.ebookCoverPageId!=='string'||d.ebookCoverPageId.length>100))fail();
   if(d.ebookMetadata!==undefined){const meta=d.ebookMetadata;if(!meta||typeof meta!=='object'||Array.isArray(meta))fail();for(const key of ['author','language','publisher','description','rights'])if(meta[key]!==undefined&&(typeof meta[key]!=='string'||meta[key].length>(key==='description'?4000:500)))fail();if(meta.language&&!/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(meta.language))fail();}
   if(d.labelLayout?.stock){const l=d.labelLayout;if(typeof l.stock!=='string'||l.stock.length>40||!Number.isInteger(l.perSheet)||!number(l.perSheet,1,200)||!Number.isInteger(l.startAt)||!number(l.startAt,0,l.perSheet-1)||!number(l.offsetX,-36,36)||!number(l.offsetY,-36,36))fail();}
   if (d.rulerOrigin !== undefined && (!number(d.rulerOrigin.x, -2000, 2000) || !number(d.rulerOrigin.y, -2000, 2000))) fail();

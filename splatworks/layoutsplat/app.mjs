@@ -1,3 +1,4 @@
+import {prepareTemplate} from './template-fill.mjs';
 import {openPhotoBlur} from '../shared/photo-blur.js';
 import {openFontSplat} from '../shared/fontsplat-launcher.js';
 import {TEMPLATE_ASSETS} from './template-assets.mjs';
@@ -9,7 +10,7 @@ import { objectElement, publicationPage, exportHtml } from './render.mjs';
 import { consumeTransferredFile, routeFileToApp, workspaceStorage, isTransferredWorkspace } from '../shared/file-bridge.js';
 import { installPublishingUI } from './publishing-ui.mjs';
 import { setupPublishing } from './publishing.mjs';
-import { MEDIA_ACCEPT, importMedia } from './media.mjs';
+import { MEDIA_ACCEPT, importMedia, readData } from './media.mjs';
 import { importSvg, importFabric } from './compatibility.mjs';
 import { readZip, importIdml, importSla } from './desktop-formats.mjs';
 import { portableHtml } from './fonts.mjs';
@@ -202,6 +203,7 @@ function continueStory() {
 async function rasterSample(publication) {
   await loadProjectFonts(publication);
   for (const asset of Object.values(publication.assets)) if (TEMPLATE_ASSETS.includes(asset.src)) {
+    if(/\.jpe?g$/.test(asset.src)){const response=await fetch(asset.src);if(!response.ok)throw Error('The template photograph could not be loaded.');asset.src=await readData(await response.blob());const image=new Image();image.src=asset.src;await image.decode();asset.width=image.naturalWidth;asset.height=image.naturalHeight;continue;}
     const image = new Image(); image.src = asset.src; await image.decode();
     const scale = asset.brandExample ? Math.min(1, 160 / Math.max(image.naturalWidth, image.naturalHeight)) : 1, canvas = document.createElement('canvas'); canvas.width = Math.round(image.naturalWidth * scale); canvas.height = Math.round(image.naturalHeight * scale); canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height); asset.width = canvas.width; asset.height = canvas.height; asset.src = canvas.toDataURL('image/png');
   }
@@ -307,7 +309,7 @@ async function action(name) {
     }
     case 'blank': case 'sample': {
       if (!confirm(t('replaceConfirm'))) break;
-      const next = newPublication(name === 'blank'); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
+      const next = newPublication(name === 'blank'); await prepareTemplate(next); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
     }
     case 'undo': if (undoStack.length) { redoStack.push(clone(doc)); doc = undoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
     case 'redo': if (redoStack.length) { undoStack.push(clone(doc)); doc = redoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
@@ -510,6 +512,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.10.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.11.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });
