@@ -7,3 +7,11 @@ test('Copy PNG writes the rendered artwork with image pixels and transparency to
 test('blocked clipboard access gives an actionable message and leaves Copy PNG usable',async({page})=>{
  await page.goto('/solutions/fontsplat/');await expect(page.locator('#dimensions')).toContainText('×');await page.evaluate(()=>Object.defineProperty(navigator.clipboard,'write',{configurable:true,value:()=>Promise.reject(new DOMException('Denied','NotAllowedError'))}));await page.locator('#copyPng').click();await expect(page.locator('#status')).toContainText('Clipboard access was blocked');await expect(page.locator('#status')).toContainText('Download PNG');await expect(page.locator('#copyPng')).toBeEnabled();
 });
+
+test('large enlarged lettering exports and copies a fitted PNG within browser limits',async({page,context})=>{
+ await context.grantPermissions(['clipboard-read','clipboard-write']);await page.goto('/solutions/fontsplat/');
+ const project={app:'FontSplat',version:1,text:'Thanks for all the great work!\nKeep making a splash',textPath:'arch-up',pathFit:true,textTransforms:{main:{scale:3,rotation:25,x:15,y:10}}};
+ await page.locator('#projectFile').setInputFiles({name:'large.fontsplat.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(project))});await expect(page.locator('#status')).toHaveText('Project opened.');await page.locator('#scale').selectOption('3');
+ const dl=page.waitForEvent('download');await page.locator('#png').click();const file=await(await dl).path();const bytes=await require('node:fs/promises').readFile(file);const width=bytes.readUInt32BE(16),height=bytes.readUInt32BE(20);expect(width*height).toBeLessThanOrEqual(16000000);expect(Math.max(width,height)).toBeLessThanOrEqual(8192);await expect(page.locator('#status')).toContainText('fitted');
+ await page.locator('#copyPng').click();await expect(page.locator('#status')).toContainText('PNG copied');const clipboard=await page.evaluate(async()=>{const item=(await navigator.clipboard.read()).find(i=>i.types.includes('image/png'));return (await item.getType('image/png')).size;});expect(clipboard).toBeGreaterThan(1000);
+});

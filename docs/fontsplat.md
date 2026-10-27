@@ -64,3 +64,5 @@ Choose a text caption or picture in the layer selector, or click it in the previ
 Arch up and Arch down now follow stronger circular arcs. Use **Bend strength** to tighten the curve, or choose **Circle** for lettering around a full ring. Arch, Circle and Oval enable path filling when selected so short lettering spreads around the curve.
 
 Resizing, rotating or moving a layer beyond the original canvas expands the artwork bounds automatically. Preview and exported PNG/SVG/animations use the same expanded canvas, keeping enlarged lettering and pictures visible.
+
+Large PNG exports now fit automatically within the browser’s 16-megapixel / 8192-pixel edge limit, preserving the entire composition and transparency. Copy PNG uses the same fitted image. A status message reports adjusted dimensions; SVG remains available at full vector resolution.
