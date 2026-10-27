@@ -10,6 +10,12 @@ RGB glitch, Ice lettering, Ink stamp, Dimensional, Sticker cutout, Satin gradien
 Soft shadow, Blue burst, Spectrum serif, Golden rise, Silver press, Forest carved, or Swift outline. Change text, typeface, colors, weight, italic, letter spacing,
 outline, depth, arch, rotation, and slant. Use up to eight text lines.
 
+The sidebar groups Text & typography, Color & effects, SpellArt paths, badge,
+pictures, background & motion, and project controls. Quick links jump to Text,
+Bend, Pictures, and Project. On desktop, the controls scroll independently of
+the preview. Text size supports 24–640 px: drag the slider, enter an exact pixel
+size, or use A− / A+. Corner handles still resize each caption independently.
+
 **Copy PNG** sends the current artwork directly to your clipboard, using the selected PNG size and preserving images and transparency. Paste it into a document, slide, email or image editor. Clipboard image writing requires a supported browser and clipboard permission; if it is unavailable or blocked, use Download PNG. The copy is a still image, even when pulse animation is enabled.
 
 Download a PNG with a transparent or colored background at 1×, 2×, or 3×,

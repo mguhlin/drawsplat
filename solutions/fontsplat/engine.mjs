@@ -37,7 +37,7 @@ export function normalizeProject(input={}) {
  p.text=String(input.text??d.text).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g,'').slice(0,400).split('\n').slice(0,8).join('\n');
  p.preset=PRESETS.some(s=>s.id===input.preset)?input.preset:d.preset;
  p.font=FONTS.some(f=>f.id===input.font)||input.font==='custom'?input.font:d.font;
- for(const [key,min,max] of [['size',24,160],['weight',400,900],['outlineWidth',0,12],['spacing',-2,16],['curve',-100,100],['rotate',-20,20],['skew',-25,25],['depth',0,20],['above',0,8],['through',0,4],['below',0,8],['seed',1,999999]])p[key]=clamp(input[key]??d[key],min,max,d[key]);
+ for(const [key,min,max] of [['size',24,640],['weight',400,900],['outlineWidth',0,12],['spacing',-2,16],['curve',-100,100],['rotate',-20,20],['skew',-25,25],['depth',0,20],['above',0,8],['through',0,4],['below',0,8],['seed',1,999999]])p[key]=clamp(input[key]??d[key],min,max,d[key]);
  for(const key of ['italic','transparent','applyGlitch','pulse','pathFit'])p[key]=input[key]===undefined?d[key]:input[key]===true;
  for(const key of ['primary','secondary','outline','background','shapeFill','shapeStroke'])p[key]=hex(input[key],d[key]);
  p.fontData=typeof input.fontData==='string'?input.fontData:'';
@@ -70,7 +70,7 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
  const p=normalizeProject(input);if(p.imageLayout!=='free'&&p.images.length)return composeImageArt(p,{fontData,measure,motionOpacity},renderWordArt);
  const preset=PRESETS.find(s=>s.id===p.preset),glitch=glitchText(p.text,p),lines=(p.applyGlitch?glitch:p.text).split('\n'),plain=p.text||'Your words';
  const maxWidth=Math.max(80,...lines.map(line=>measure?measure(line,p):[...line].filter(c=>!/\p{Mark}/u.test(c)).length*p.size*.65));
- const textWidth=Math.min(2100,maxWidth+Math.max(0,p.spacing)*Math.max(1,[...plain].length)),padding=Math.ceil(p.size*(['arch-up','arch-down','circle','oval'].includes(p.textPath)?1.7:.65)+p.depth+Math.abs(p.curve)*1.3+(p.applyGlitch?(p.above+p.below)*p.size*.15:0));
+ const maxTextWidth=Math.max(2100,p.size*14),textWidth=Math.min(maxTextWidth,maxWidth+Math.max(0,p.spacing)*Math.max(1,[...plain].length)),padding=Math.ceil(p.size*(['arch-up','arch-down','circle','oval'].includes(p.textPath)?1.7:.65)+p.depth+Math.abs(p.curve)*1.3+(p.applyGlitch?(p.above+p.below)*p.size*.15:0));
  const arch=['arch-up','arch-down'].includes(p.textPath),arcAngle=Math.PI*Math.max(.001,p.bendStrength/100),arcRadius=textWidth/(2*Math.sin(arcAngle/2)),arcRise=p.bendStrength?arcRadius*(1-Math.cos(arcAngle/2)):0;
  const lineHeight=p.size*1.4,ring=['circle','oval'].includes(p.textPath),ringInset=(lines.length-1)*lineHeight,
  radiusX=Math.max(p.size*(p.textPath==='oval'?4:2.8),textWidth/(p.textPath==='oval'?4.5:5.3))+ringInset,
@@ -90,7 +90,7 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
  const fill=preset.effect==='outline'?'none':preset.effect==='ink'?p.primary:'url(#ink)';
  let paths='',content='';
  lines.forEach((line,i)=>{
-  const y=(height-lines.length*lineHeight)/2+p.size+i*lineHeight+(p.textPath==='arch-up'?pathRise/2:p.textPath==='arch-down'?-pathRise/2:0),x=width/2,estimated=maxWidth>2100?' textLength="2100" lengthAdjust="spacingAndGlyphs"':'';
+  const y=(height-lines.length*lineHeight)/2+p.size+i*lineHeight+(p.textPath==='arch-up'?pathRise/2:p.textPath==='arch-down'?-pathRise/2:0),x=width/2,estimated=maxWidth>maxTextWidth?` textLength="${maxTextWidth}" lengthAdjust="spacingAndGlyphs"`:'';
   let path='',pathLength=0;
   const left=(width-textWidth)/2,right=(width+textWidth)/2,rise=pathRise||Math.abs(p.curve),mid=width/2;
   if(ring){const rx=radiusX-i*lineHeight,ry=radiusY-i*lineHeight,cy=height/2,loop=`A${rx} ${ry} 0 1 1 ${mid} ${cy-ry}A${rx} ${ry} 0 1 1 ${mid} ${cy+ry}`;path=`M${mid} ${cy+ry}`+loop.repeat(3);pathLength=Math.PI*(3*(rx+ry)-Math.sqrt((3*rx+ry)*(rx+3*ry)));}

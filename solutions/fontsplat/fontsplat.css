@@ -8,3 +8,17 @@
 
 /* Selection hit areas must never paint over the artwork, including hover. */
 .fs-layer-hit,.fs-layer-hit:hover,.fs-layer-hit:focus-visible{background:transparent;border:0;box-shadow:none}.fs-layer-hit:focus-visible{outline:2px dashed #7c3aed}
+
+/* Keep related controls together and the artwork visible while editing. */
+main{grid-template-columns:350px minmax(0,1fr);align-items:start}
+aside{position:sticky;top:12px;max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-gutter:stable;padding:22px 18px;scroll-behavior:smooth}
+.section-title{margin-bottom:16px}.section-title h1{font-size:26px}
+.control-jumps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}.control-jumps a{font-size:12px;font-weight:600;text-decoration:none;padding:6px 11px;border-radius:20px;background:#f2ecfc;color:#60339b}
+.control-jumps a:hover{background:#e6d8fa}.control-group{border:1px solid #e4dbee;border-radius:12px;padding:14px;margin:0 0 12px;background:#fff;scroll-margin-top:10px}
+.control-group>h2{display:flex;align-items:center;gap:9px;font-size:14px;margin:0 0 12px}.control-group>summary{display:flex;align-items:center;gap:9px;font-size:14px;list-style:none;min-height:28px}.control-group>summary::-webkit-details-marker{display:none}.control-group>summary::after{content:'＋';margin-left:auto;color:#8552b7;font-size:17px}.control-group[open]>summary::after{content:'−'}.control-group[open]>summary{margin-bottom:12px}
+.control-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px;border-radius:8px;background:#f1e9fc;color:#7434d5;font-size:16px;font-weight:700}
+.control-subtitle{font-size:12px;color:#70568c;margin:16px 0 6px}.control-group label{font-size:12px}.control-group .row{gap:8px}.control-group details{margin-top:12px;padding-top:12px}.control-group details summary{font-size:12px;line-height:1.5}.control-group details .control-icon{width:23px;height:23px;margin-right:4px}
+.text-size-control{background:#f7f3fc;border:1px solid #e6dcf3;border-radius:9px;padding:10px;margin:12px 0}.text-size-control>label{display:flex;justify-content:space-between;margin:0 0 9px}.size-actions{display:flex;align-items:center;gap:7px;margin-bottom:8px}.size-actions button{min-width:42px;min-height:42px;padding:6px;font-size:16px}.size-actions input{flex:1;text-align:center;font-weight:700;font-size:16px!important}.size-actions .hint{margin-right:2px}.text-size-control .hint{margin:3px 0 0}.text-size-control output{font-size:12px}
+@media(max-width:1050px) and (min-width:621px){main{grid-template-columns:310px minmax(0,1fr)}.studio{padding:20px 16px}}
+@media(max-width:620px){main{display:flex}aside{position:static;display:block;max-height:none;overflow:visible;width:100%;padding:16px}.control-group{margin-bottom:10px}.control-jumps{position:sticky;top:0;background:#fff;padding:8px 0;z-index:4}.section-title p{display:block}.studio{width:100%}}
+@media(prefers-reduced-motion:reduce){aside{scroll-behavior:auto}}
