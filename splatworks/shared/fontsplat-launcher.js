@@ -8,7 +8,7 @@ export function openFontSplat({text='Your words',onInsert}={}) {
  const title=document.createElement('strong');title.textContent='FontSplat · Text effects & SpellArt';title.style.flex='1';
  const close=document.createElement('button');close.type='button';close.textContent='Close';close.setAttribute('aria-label','Close FontSplat editor');close.onclick=()=>dialog.close();
  const status=document.createElement('span');status.setAttribute('role','status');status.style.fontSize='12px';
- const frame=document.createElement('iframe');frame.title='FontSplat lettering studio';Object.assign(frame.style,{display:'block',width:'100%',height:'calc(100% - 53px)',border:'0'});frame.referrerPolicy='no-referrer';
+ const frame=document.createElement('iframe');frame.title='FontSplat lettering studio';frame.allow='clipboard-write';Object.assign(frame.style,{display:'block',width:'100%',height:'calc(100% - 53px)',border:'0'});frame.referrerPolicy='no-referrer';
  const url=new URL(location.href),marker=/\/(?:splatworks|solutions)\//.exec(url.pathname);url.pathname=(marker?url.pathname.slice(0,marker.index):'')+'/solutions/fontsplat/';url.search='';url.hash='';url.searchParams.set('embed','1');url.searchParams.set('request',requestId);frame.src=url.href;
  bar.append(title,status,close);dialog.append(bar,frame);document.body.append(dialog);
  let inserting=false;

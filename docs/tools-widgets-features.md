@@ -142,6 +142,7 @@ Category: **Create** · 21 components
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
+- Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
 
 ### GIFsplat™
 
@@ -526,6 +527,7 @@ Category: **Media** · 9 components
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
+- Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
 
 ### GIFsplat™
 
@@ -672,6 +674,7 @@ Category: **Writing** · 22 components
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
+- Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
 
 ### GridSplat
 
