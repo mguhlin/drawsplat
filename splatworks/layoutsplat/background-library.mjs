@@ -1,3 +1,4 @@
+import {sortSelectOptions} from './option-sorting.mjs';
 import { uid } from './engine.mjs';
 import { importMedia } from './media.mjs';
 
@@ -48,7 +49,7 @@ export function setupBackgroundLibrary(api) {
       catalog ||= await (await fetch(new URL('./whiteboard-catalog.json', import.meta.url))).json();
       $('backgroundSearch').value = ''; $('backgroundGroup').value = '';
       const selected = api.getSelectedObject(); $('backgroundPlacement').querySelector('[value="selected"]').disabled = selected?.type !== 'image' || selected.locked;
-      $('backgroundPlacement').value = 'background'; WidgetI18n.refresh(); render(); $('backgroundLibraryDialog').showModal();
+      $('backgroundPlacement').value = 'background'; WidgetI18n.refresh();for(const id of ['backgroundGroup','backgroundPlacement'])sortSelectOptions($(id)); render(); $('backgroundLibraryDialog').showModal();
     } catch (error) { api.showReport([error.message]); }
   } };
 }

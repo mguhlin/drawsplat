@@ -1,0 +1,19 @@
+LayoutSplat original book starters and AI-generated cover artwork
+
+The twelve book layouts, mock titles, subtitles and original sample copy are
+original LayoutSplat content. The twelve cover illustrations were generated
+with the built-in image_gen tool for this collection on 2026-10-27. Generation
+prompts, file hashes and provenance are recorded in book-covers/GENERATION.json.
+
+To the extent the project holds rights in this template content and artwork,
+it is dedicated under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+You may reuse and adapt it in personal, educational and commercial projects.
+No attribution is required. Mock titles are creative examples, not title clearance.
+
+No templates or artwork from Selfpublishing.com, Docs&Slides or TheGoodocs are
+redistributed here. These sites are linked as further resources. Their own
+files remain subject to their respective terms and attribution requirements.
+
+Application code remains under GPL-3.0-only. Fonts retain their included
+licenses. SplatWorks and LayoutSplat names and logos remain brand marks.

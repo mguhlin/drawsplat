@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lantern",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. Create one striking portrait 2:3 cover illustration: A lantern-lit floating island and tiny observatory above a sea of clouds, adventurous middle-grade fantasy, painterly gouache, midnight teal and amber. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for an editable title overlay, main detail in lower two thirds. Professional bookstore cover composition, rich material texture, crisp polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/lantern.jpg",
+    "sha256": "992a54764ac6297b1b14e62278c864c6834a4f531d400b219a693399b217f051",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "atlas",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: An antique map unfurling into a secret garden of impossible staircases, warm literary fantasy, intricate paper-cut illustration, forest green and antique gold. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/atlas.jpg",
+    "sha256": "e67ff66f1138a1c543f7357f131ae867c8da4ba5991d63732acaf65ae7ba0377",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "station",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A lone botanical greenhouse orbiting a luminous blue planet, hopeful science fiction, cinematic painted space art, indigo and coral. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/station.jpg",
+    "sha256": "6ca33ecff6992936f6650eb89a6cbe20f15bb73874263ddfc9bfc61f3e64c866",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "tideline",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A weathered lighthouse and a trail of footprints toward a mysterious glowing tide pool, gentle coastal mystery, atmospheric watercolor, slate blue and warm cream. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/tideline.jpg",
+    "sha256": "5c980e0b62344b3d5f69b50b6e178e3c30eb7580c2032a1672af6827469d0efd",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "orchard",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: Two empty chairs beneath an old flowering orchard tree with a ribbon of sunlight, uplifting contemporary family fiction, textured fine-art illustration, peach and olive. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/orchard.jpg",
+    "sha256": "5232d8eb3cadb55c4a7853c770f6773735cb7874b46c9af620210b2a5406e40d",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "fox",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A small curious fox carrying a paper star through a moonlit meadow, delightful children's storybook, tactile cut-paper and watercolor, lavender and golden yellow. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/fox.jpg",
+    "sha256": "6144b1cb53eb51529426e24466446113712354886c35c6a3ccc24bfdaf75d33d",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "curiosity",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A magnifying glass above a fascinating arrangement of leaves, stones and tiny nature specimens, inviting popular science fieldbook, exquisite botanical illustration, cream and emerald. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/curiosity.jpg",
+    "sha256": "9311f15024cca87471ada4d39421126325be0cf774e60e1a7ccb4446f15e764a",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "garden",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A small urban balcony overflowing with herbs, vegetables and flowers in terracotta pots, practical beginner gardening guide, bright editorial illustration, sage and ochre. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/garden.jpg",
+    "sha256": "1d8eadad19279d82283280d4164c0453093c7dbc02e1c8ab66f9fc82b8518e1a",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "focus",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: An elegant single winding path through colorful abstract clutter into a calm open circle, practical creativity and focus guide, sophisticated screenprinted editorial abstraction, navy and tangerine. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/focus.jpg",
+    "sha256": "adf8994eeb5825260a10c32c85d126093615e5aa3ce649155d6de9cd5ba0cd00",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "table",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: An inviting rustic table with a colorful bowl of vegetables, herbs and a handmade notebook, family recipe collection, warm overhead food photography, natural daylight. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/table.jpg",
+    "sha256": "4f2c22f24d98b2630c359655edf383104631f1592114f721504d2def7859451f",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "walks",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: A winding footpath past a small town and forest toward a sunrise over hills, reflective travel memoir, vintage travel-poster painting with contemporary polish, dusty teal and apricot. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/walks.jpg",
+    "sha256": "c0ea3c4bf41dce366f4280cdc2f363b39eebf149256fc05a47851ace3aa43b05",
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "id": "makers",
+    "prompt": "Use case: illustration-story. Asset type: original reusable book front-cover artwork. One striking portrait 2:3 cover illustration: Inventive paper sculpture, pencils and simple craft tools forming an upward spiral of ideas, classroom makerspace activity book, playful dimensional paper art, cobalt coral and yellow. Full-bleed flat artwork, no 3D book mockup. Leave upper third visually calm for editable title overlay; main detail in lower two thirds. Professional bookstore composition, rich material texture, polished detail. NO text, letters, logos, signatures, watermarks or border. Original work, no existing book or character references.",
+    "tool": "built-in image_gen",
+    "generated": "2026-10-27",
+    "file": "splatworks/layoutsplat/book-covers/makers.jpg",
+    "sha256": "c10c25217f598712bb9d87e626bfc6bab7ba17ccddafd461c0f5cc039cf87a56",
+    "width": 1024,
+    "height": 1536
+  }
+]

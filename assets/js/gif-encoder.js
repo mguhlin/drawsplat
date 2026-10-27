@@ -6,6 +6,7 @@
 //     loopCount: Number,   // 0 = forever (default 0)
 //     mode:      'fast' | 'best',  // 'fast' = fixed 256-color cube palette
 //                                    'best' = per-frame median-cut palette
+//     transparent: Boolean, // optional transparency + restore-background disposal
 //     dither:    Boolean   // Floyd-Steinberg error diffusion ('best' only)
 //   }
 //
@@ -298,7 +299,7 @@
         frameMinCode = 8;
       }
       // Graphic Control Extension.
-      out.push(0x21, 0xF9, 4, 0x00, delay&255, delay>>8, 0, 0);
+      out.push(0x21, 0xF9, 4, o.transparent===true?0x09:0x00, delay&255, delay>>8, o.transparent===true?transparentIdx:0, 0);
       // Image Descriptor. Packed byte: bit 7 = LCT flag, bits 2..0 = LCT size.
       const packed = hasLCT ? (0x80 | sizeField) : 0x00;
       out.push(0x2C, 0,0,0,0, w&255, w>>8, h&255, h>>8, packed);

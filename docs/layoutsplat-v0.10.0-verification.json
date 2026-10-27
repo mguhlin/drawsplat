@@ -1,0 +1,24 @@
+{
+  "version": "0.10.0",
+  "date": "2026-10-27",
+  "bookStarters": 12,
+  "fiction": 6,
+  "nonfiction": 6,
+  "pagesPerStarter": 6,
+  "catalogDesigns": 157,
+  "publicationTypes": 21,
+  "comicDesigns": 19,
+  "checks": [
+    "97 LayoutSplat browser publication tests passed",
+    "157 templates in six language settings fit without text overflow",
+    "10 engine/publishing model tests passed, including distinct physical compositions",
+    "Seven exported EPUB proofs passed upstream EPUBCheck5.4.0 without errors or warnings",
+    "Book cover embedding, native save/reopen and illustrated EPUB export passed",
+    "Template dropdown labels sort alphabetically while preserving selected values and All",
+    "Original AI cover images visually inspected as a complete contact sheet; editable title overlays inspected in editor",
+    "WriteSplat rebuilt with SpellArt menu label; built resources, 67-destination registry and privacy coverage passed"
+  ],
+  "artworkProvenance": "splatworks/layoutsplat/book-covers/GENERATION.json",
+  "artworkReuseNotice": "splatworks/layoutsplat/BOOK_TEMPLATE_LICENSE.txt",
+  "guide": "docs/layoutsplat-books.md"
+}

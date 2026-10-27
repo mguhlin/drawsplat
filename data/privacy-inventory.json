@@ -31,7 +31,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "3f55885651b6093de9998e541e9d85960cbf21907233c1f4d46799243e922599"
+      "entrySha256": "5619836b070305431d45a648ea916c68cf5abf07aaba1a263bf23284b9d9d3bf"
     },
     {
       "id": "backdropsplat",
@@ -225,7 +225,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "79252495a11b5383736e19dced615c4945167462bba38a61bbcc9d7b64910ae3"
+      "entrySha256": "46ada175d37cbb07771cb5dcfd8041600ed08ac8a55b695c87d08727f65801c9"
     },
     {
       "id": "layoutsplat",
@@ -241,6 +241,7 @@
       },
       "literalRemoteHosts": [
         "developer.apple.com",
+        "docsandslides.com",
         "en.wikipedia.org",
         "epub.invalid",
         "github.com",
@@ -249,7 +250,9 @@
         "purl.org",
         "sap.github.io",
         "schemas.openxmlformats.org",
+        "selfpublishing.com",
         "sheetjs.com",
+        "thegoodocs.com",
         "unpkg.com",
         "www.apache.org",
         "www.avery.co.uk",
@@ -264,7 +267,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "0a09c2211485cb7e9a5d8c6b66ba497616417e51c1b0ee146d6a3aeb00f26494"
+      "entrySha256": "a6693f43cfcb9949eb6c56a1db6ccad0c032a58431fbca1e0a8b6d62bf4ca3f3"
     },
     {
       "id": "plansplat",
@@ -1105,7 +1108,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "257b56f1831ddb00822561f89e7a51d3805a7492657971a9f7f37c90b5e880fe"
+      "entrySha256": "7048ee516408db987ef189c0bc0affcebb9f74c072054f2eb73a4db079f948af"
     },
     {
       "id": "step-splat",
@@ -1788,6 +1791,7 @@
         "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
+        "docsandslides.com",
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
@@ -1802,10 +1806,12 @@
         "openai.com",
         "privacy.anthropic.com",
         "script.google.com",
+        "selfpublishing.com",
         "sigil-ebook.com",
         "splatworks.org",
         "support.apple.com",
         "support.google.com",
+        "thegoodocs.com",
         "translate.google.com",
         "workspace.google.com",
         "www.anthropic.com",
@@ -1852,6 +1858,7 @@
         "developers.openai.com",
         "docs.digitalocean.com",
         "docs.railway.com",
+        "docsandslides.com",
         "drawsplat.org",
         "eur-lex.europa.eu",
         "github.com",
@@ -1866,10 +1873,12 @@
         "openai.com",
         "privacy.anthropic.com",
         "script.google.com",
+        "selfpublishing.com",
         "sigil-ebook.com",
         "splatworks.org",
         "support.apple.com",
         "support.google.com",
+        "thegoodocs.com",
         "translate.google.com",
         "workspace.google.com",
         "www.anthropic.com",

@@ -1,3 +1,4 @@
+import {sortSelectOptions} from './option-sorting.mjs';
 import {COMIC_CHARACTERS,CHARACTER_POSES,characterPath} from './character-catalog.mjs';
 export function setupCharacterLibrary(api){
  const dialog=document.createElement('dialog');dialog.id='characterLibraryDialog';dialog.className='character-library';dialog.setAttribute('aria-labelledby','characterLibraryTitle');
@@ -7,5 +8,5 @@ export function setupCharacterLibrary(api){
   for(const character of items){const button=document.createElement('button');button.type='button';button.dataset.character=character.id;const picture=document.createElement('img');picture.src=characterPath(character.id,pose);picture.alt=character.name+' — '+CHARACTER_POSES.find(p=>p.id===pose).name;picture.width=160;picture.height=200;const name=document.createElement('strong');name.textContent=character.name;const note=document.createElement('span');note.textContent=character.description;button.append(picture,name,note);button.onclick=async()=>{button.disabled=true;try{await picture.decode();const canvas=document.createElement('canvas');canvas.width=320;canvas.height=400;canvas.getContext('2d').drawImage(picture,0,0,320,400);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('The character picture could not be created.');if(!await api.importPicture(new File([blob],`${character.name} — ${$('characterPose').selectedOptions[0].text}.png`,{type:'image/png'}),null,{width:96,alt:character.description+' in a '+$('characterPose').selectedOptions[0].text.toLowerCase()+' pose'}))throw Error('The character could not be placed.');canvas.width=canvas.height=1;dialog.close();}catch(error){$('characterStatus').textContent=error.message;}finally{button.disabled=false;}};$('characterGrid').append(button);}
  }
  for(const id of ['characterSearch','characterCategory','characterPose'])$(id).addEventListener(id==='characterSearch'?'input':'change',render);
- return {open(){$('characterSearch').value='';$('characterCategory').value='';$('characterPose').value='wave';render();WidgetI18n.refresh();dialog.showModal();}};
+ return {open(){$('characterSearch').value='';$('characterCategory').value='';$('characterPose').value='wave';render();WidgetI18n.refresh();for(const id of ['characterCategory','characterPose'])sortSelectOptions($(id));dialog.showModal();}};
 }

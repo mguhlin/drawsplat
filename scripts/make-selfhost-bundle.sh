@@ -916,6 +916,9 @@ done
 for font_root in "$DRAWSPLAT_ROOT" "$TOOLS_ROOT" "$SPLATWORKS_SUITE_ROOT" "$WRITE_ROOT"; do
   copy_tree solutions/fontsplat "$font_root/solutions/fontsplat" "${MODULE_EXCLUDES[@]}"
   copy_tree splatworks/layoutsplat/fonts "$font_root/splatworks/layoutsplat/fonts" "${MODULE_EXCLUDES[@]}"
+  copy_tree splatworks/layoutsplat/vendor/ffmpeg "$font_root/splatworks/layoutsplat/vendor/ffmpeg" "${MODULE_EXCLUDES[@]}"
+  copy_tree solutions/mediasplat/ffmpeg "$font_root/solutions/mediasplat/ffmpeg" "${MODULE_EXCLUDES[@]}"
+  copy_file assets/js/gif-encoder.js "$font_root/assets/js/gif-encoder.js"
   copy_tree fontsplat "$font_root/fontsplat" "${MODULE_EXCLUDES[@]}"
 done
 

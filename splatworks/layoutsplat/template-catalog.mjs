@@ -1,3 +1,4 @@
+import {BOOK_TEMPLATES,bookPublication} from './book-templates.mjs';
 import {COMIC_TEMPLATES, comicPublication} from './comic-templates.mjs';
 // Original SplatWorks design systems. No StockLayouts artwork, files, or copy is used.
 import { newPublication, uid, frame, shape, textStyle, validatePublication } from './engine.mjs';
@@ -6,7 +7,7 @@ import { MENU_DESIGNS, menuPublication } from './menu-designs.mjs';
 import { DESIGN_FAMILIES, designPublication } from './publication-designs.mjs';
 import { addBrandMark } from './brand-mark.mjs';
 import {EBOOK_TEMPLATES,ebookPublication} from './ebook-templates.mjs';
-export const CATALOG_TYPES = ['flyer', 'brochure', 'newsletter', 'business-card', 'catalog', 'greeting-card', 'labels', 'postcard', 'poster', 'letterhead', 'rack-card', 'datasheet', 'menu', 'invitation', 'certificate', 'resume', 'photo-collage', 'document', 'ebook', 'comic'];
+export const CATALOG_TYPES = ['flyer', 'brochure', 'newsletter', 'business-card', 'catalog', 'greeting-card', 'labels', 'postcard', 'poster', 'letterhead', 'rack-card', 'datasheet', 'menu', 'invitation', 'certificate', 'resume', 'photo-collage', 'document', 'ebook', 'comic', 'book'];
 export const SECTORS = [
   ['education', 'Education & training', 'Learning opens doors', 'Explore programs, meet the people behind them, and find your next opportunity to learn.', ['Programs for every learner', 'Family connections', 'Student projects'], '#285a89', '#18344e', '#e9f1f8'],
   ['community', 'Community & civic', 'Good things happen together', 'Meet your neighbors, share an idea, and take part in the work that makes our community stronger.', ['Neighborhood events', 'Volunteer opportunities', 'Community resources'], '#7c3aed', '#34205c', '#ede7fb'],
@@ -29,7 +30,7 @@ export const SECTORS = [
 ].map(([id, name, headline, overview, topics, accent, ink, pale], index) => ({ id, name, headline, overview, topics, accent, ink, pale, index }));
 const INDUSTRY_GROUPS = [SECTORS.map(s=>s.id), ['professional','technology','finance','construction','manufacturing','real-estate','wellness'], ['education','community','nonprofit','library','environment','sports'], ['arts','food','travel','retail','celebration']];
 export const TEMPLATE_CATALOG = [
-  ...EBOOK_TEMPLATES,
+  ...EBOOK_TEMPLATES, ...BOOK_TEMPLATES,
   ...COMIC_TEMPLATES,
   ...Object.entries(DESIGN_FAMILIES).flatMap(([type,names])=>names.map((name,variant)=>({id:`${type}-${variant+1}`,type,sector:'community',industries:INDUSTRY_GROUPS[variant%4],variant,name,designName:name,description:type==='brochure'?`${variant<4?'Trifold · three panels':'Bifold · two panels'} · outside & inside`:type==='flyer'&&variant>=6?'10 vertical name & phone tear-off tabs · dotted cutting lines':type==='business-card'?'3.5 × 2 in · two-sided · replaceable logo':'Distinct editable composition',orientation:type==='brochure'||type==='business-card'||type==='greeting-card'||type==='postcard'||type==='certificate'||type==='poster'&&variant===3||type==='photo-collage'&&variant===5?'landscape':'portrait'}))),
   ...MENU_DESIGNS.map(menu=>({id:`menu-${menu.id}`,type:'menu',sector:'food',industries:['food','travel','celebration'],menuDesign:menu.id,variant:0,name:menu.name,designName:menu.name,description:'Distinct restaurant menu composition',orientation:['pizza','buffet'].includes(menu.id)?'landscape':'portrait'})),
@@ -52,6 +53,7 @@ export function catalogPublication(id, { theme, language = 'en', sector: sectorI
     if(!entry && id.startsWith('restaurant-'))entry=TEMPLATE_CATALOG.find(e=>e.id==='menu-'+id.replace(/^restaurant-/,'').replace(/-\d+$/,''));
   }
   if (!entry) throw Error('Unknown template.');
+  if(entry.type==='book')return bookPublication(entry.id,{theme,language});
   if(entry.type==='comic')return comicPublication(entry.id,{theme,language});
   if(entry.type==='ebook')return ebookPublication(entry.id,{theme,language});
   if(entry.stock)return labelPublication(entry.stock,{language});

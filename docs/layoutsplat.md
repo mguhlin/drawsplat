@@ -1,6 +1,6 @@
 # LayoutSplat: publications, templates, and file exchange
 
-LayoutSplat **v0.9.0** is the SplatWorks publication editor.
+LayoutSplat **v0.10.0** is the SplatWorks publication editor.
 [Open LayoutSplat](https://splatworks.org/splatworks/layoutsplat/).
 Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
@@ -16,7 +16,7 @@ The guide covers v0.7.0, with dated workspace screenshots and an updated export 
 ## Templates
 
 Choose **File → Templates**. Browse all designs or jump to Avery labels/name badges,
-business cards, menus, ebooks, or comics. There is one template library, with **145 distinct editable compositions**
+business cards, menus, ebooks, or comics. There is one template library, with **157 distinct editable compositions**
 and six publication-language editions. Filter by industry, publication type,
 orientation, palette, or search. Descriptive card titles identify the design;
 industry remains a filter. Download a filtered collection as JSON files in a ZIP.
@@ -385,3 +385,7 @@ XHTML/CSS editing, footnotes, navigation, font retention and export choices.
 ### Comic writing studio
 
 Choose from 19 comic designs, including ten guided storytelling starters and a five-page writing workbook. Insert eight original characters in three poses, and use the bundled Comic Neue font. See the [comic studio guide](layoutsplat-comic-studio.md) for the exercises and reading credits.
+
+### Fiction and nonfiction books
+
+Twelve illustrated book starters include editable covers, titles, contents, chapters and back covers. See the [book template guide](layoutsplat-books.md). Template, character and background filters sort their displayed choices alphabetically.

@@ -568,7 +568,7 @@ function appHtml(): string {
           ['open-link-dialog', 'Link'],
           ['remove-link', 'Remove link'],
           ['open-image-dialog', 'Image'],
-          ['fontsplat', 'FontSplat · WordArt'],
+          ['fontsplat', 'FontSplat · SpellArt'],
           ['open-emoji-dialog', 'Emoji…'],
           ['open-word-cloud', 'Word cloud…'],
           ['toggle-dictation', 'Dictate (speech to text)'],

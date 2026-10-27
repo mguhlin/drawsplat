@@ -5,7 +5,7 @@ export function openFontSplat({text='Your words',onInsert}={}) {
  const dialog=document.createElement('dialog');dialog.id='fontsplatEditorDialog';dialog.setAttribute('aria-label','FontSplat lettering editor');
  Object.assign(dialog.style,{width:'min(1250px,96vw)',height:'92dvh',maxWidth:'96vw',maxHeight:'94dvh',padding:'0',border:'1px solid #cdbce7',borderRadius:'13px',overflow:'hidden',background:'#f6f4fb',color:'#34205c',boxSizing:'border-box'});
  const bar=document.createElement('div');Object.assign(bar.style,{display:'flex',alignItems:'center',gap:'12px',padding:'10px 16px',background:'white',borderBottom:'1px solid #e5dbf0'});
- const title=document.createElement('strong');title.textContent='FontSplat · Text effects & WordArt';title.style.flex='1';
+ const title=document.createElement('strong');title.textContent='FontSplat · Text effects & SpellArt';title.style.flex='1';
  const close=document.createElement('button');close.type='button';close.textContent='Close';close.setAttribute('aria-label','Close FontSplat editor');close.onclick=()=>dialog.close();
  const status=document.createElement('span');status.setAttribute('role','status');status.style.fontSize='12px';
  const frame=document.createElement('iframe');frame.title='FontSplat lettering studio';Object.assign(frame.style,{display:'block',width:'100%',height:'calc(100% - 53px)',border:'0'});frame.referrerPolicy='no-referrer';

@@ -7,6 +7,7 @@ comicCharacters|Comic character library|Biblioteca de personajes|Thư viện nh�
 comic|Comics & panel layouts|Cómics y viñetas|Truyện tranh và bố cục khung|قصص مصورة وتخطيطات لوحات|漫画与分格模板|कॉमिक्स और पैनल लेआउट
 importEpub|EPUB — ebook text and pictures|EPUB — texto e imágenes|EPUB — văn bản và ảnh|EPUB — نص وصور|EPUB — 文字和图片|EPUB — पाठ और चित्र
 ebookTools|Ebook tools|Herramientas de libros|Công cụ sách|أدوات الكتب|电子书工具|ईबुक उपकरण
+book|Books · fiction & nonfiction|Libros · ficción y no ficción|Sách · hư cấu và phi hư cấu|كتب خيالية وغير خيالية|图书 · 小说与非虚构|किताबें · कथा और कथेतर
 ebook|Ebook|Libro electrónico|Sách điện tử|كتاب إلكتروني|电子书|ईबुक
 ebookLayout|Ebook layout|Diseño del libro|Bố cục sách|تخطيط الكتاب|电子书布局|ईबुक लेआउट
 reflowableEpub|Reflowable — text, pictures & media|Adaptable — texto, imágenes y medios|Linh hoạt — chữ, ảnh và nội dung nghe nhìn|مرن — نص وصور ووسائط|可重排 — 文字、图片与媒体|अनुकूल — पाठ, चित्र और मीडिया
@@ -304,7 +305,7 @@ shrinkText|Shrink to fit|Reducir para ajustar|Thu nhỏ cho vừa|تصغير ل�
 growChoice|Grow frame on request|Ampliar marco al solicitarlo|Mở rộng khung khi yêu cầu|توسيع الإطار عند الطلب|按需扩大文本框|अनुरोध पर फ़्रेम बढ़ाएँ
 minimumSize|Minimum size (pt)|Tamaño mínimo (pt)|Cỡ tối thiểu (pt)|أقل حجم (pt)|最小字号 (pt)|न्यूनतम आकार (pt)
 growFrame|Grow overflowing frame|Ampliar marco desbordado|Mở rộng khung tràn|توسيع إطار النص الزائد|扩大溢出文本框|ओवरफ़्लो फ़्रेम बढ़ाएँ
-wordArt|WordArt|WordArt|Chữ nghệ thuật|نص فني|艺术字|वर्डआर्ट
+wordArt|SpellArt|SpellArt|Chữ nghệ thuật|نص فني|艺术字|वर्डआर्ट
 normalText|Normal text|Texto normal|Chữ thường|نص عادي|普通文本|साधारण टेक्स्ट
 shadowText|Shadow|Sombra|Bóng|ظل|阴影|छाया
 outlineText|Outline|Contorno|Viền|مخطط|轮廓|आउटलाइन

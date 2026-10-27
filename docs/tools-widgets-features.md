@@ -131,12 +131,15 @@ Category: **Create** · 21 components
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
 - Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
-- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
+- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Add, drop, paste, move and resize up to six locally embedded pictures
+- Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 
 ### GIFsplat™
 
@@ -193,6 +196,9 @@ Category: **Create** · 21 components
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
 - Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
+- 19 comic designs with ten guided storytelling starters, a five-page writing workbook, eight original characters in three poses and bundled Comic Neue fonts
+- 12 fiction/nonfiction book starters with original AI-generated covers, editable titles and chapter interiors
+- Alphabetized template, character and background dropdowns that preserve selections
 
 ### MediaSplat
 
@@ -507,12 +513,15 @@ Category: **Media** · 9 components
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
 - Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
-- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
+- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Add, drop, paste, move and resize up to six locally embedded pictures
+- Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 
 ### GIFsplat™
 
@@ -648,12 +657,15 @@ Category: **Writing** · 22 components
 **Tool** · [Open FontSplat](../solutions/fontsplat/)
 
 - Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
-- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- SpellArt arch, rotation, slant, spacing, outlines and 3D depth
 - Unicode glitch marks with separate above, through and below controls; copy plain or styled text
 - Bundled local typefaces and optional local font import
 - Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
 - Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
 - Text and fonts are processed locally; no generation service or upload backend
+- Eight-line SpellArt with banner, ribbon, oval, circle, badge and rounded shape presets
+- Add, drop, paste, move and resize up to six locally embedded pictures
+- Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
 
 ### GridSplat
 
@@ -678,6 +690,9 @@ Category: **Writing** · 22 components
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
 - Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
+- 19 comic designs with ten guided storytelling starters, a five-page writing workbook, eight original characters in three poses and bundled Comic Neue fonts
+- 12 fiction/nonfiction book starters with original AI-generated covers, editable titles and chapter interiors
+- Alphabetized template, character and background dropdowns that preserve selections
 
 ### ListSplat
 

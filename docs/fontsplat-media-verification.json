@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-27",
+  "features": ["SpellArt naming", "eight text lines", "seven shape choices", "six embedded pictures", "drag, drop, paste and upload", "GIF and MP4 pulse export"],
+  "checks": [
+    "Original six FontSplat browser tests passed, including all 16 styles, PNG transparency, SVG fonts, project round trips, mobile layout and all three app integrations",
+    "Image upload, two-picture layering, slider positioning, pointer dragging, multiline circle, SVG embedding and native save/open passed",
+    "Remote picture payload rejected by project normalization",
+    "GIF and MP4 preview/download browser checks passed",
+    "Pillow decoded transparent GIF: 25 frames, 80 ms each, infinite loop, different alpha masks at full and reduced opacity",
+    "ffprobe decoded MP4: H.264, yuv420p, 598x408, 75 frames, duration6.000000 seconds",
+    "MP4 played with advancing currentTime in Chromium"
+  ],
+  "limits": {"motionMaxEdge": 960,"motionMaxPixels":600000,"GIFSeconds":2,"MP4Seconds":6,"imageCount":6,"textCharacters":400,"textLines":8},
+  "guide": "docs/fontsplat.md"
+}
