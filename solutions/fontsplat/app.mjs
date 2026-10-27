@@ -1,6 +1,6 @@
 import {setupHandles} from './handles.mjs';
 import {removePlainBackground} from './cutout.mjs';
-import {PRESETS,FONTS,TEXT_PATHS,DEFAULT_PROJECT,normalizeProject,renderWordArt} from './engine.mjs';
+import {PRESETS,FONTS,TEXT_PATHS,DEFAULT_PROJECT,normalizeProject,renderWordArt} from './engine.mjs?v=20261027-bounds';
 const $=id=>document.getElementById(id),numeric=['size','weight','outlineWidth','spacing','curve','rotate','skew','depth','pathOffset','bendStrength','imageGap','above','through','below'],checks=['italic','transparent','applyGlitch','pulse','pathFit'],colors=['primary','secondary','outline','background','shapeFill','shapeStroke'];
 const originalImages=new Map();let addingImages=false,cutoutBusy=false,imageEpoch=0;
 let project=normalizeProject(),art=null,sequence=0,renderTimer,fontFace,currentFontKey='',previewURL,selectedImage='',motionURL;
@@ -82,7 +82,7 @@ let motionController;
 for(const type of ['gif','mp4'])$(type).onclick=()=>action($(type),async()=>{
  if(motionController){status('An animation is already being prepared. Cancel it before starting another.');return;}
  const controller=new AbortController();motionController=controller;$('cancelMotion').hidden=false;
- try{project=normalizeProject({...project,pulse:true});controls();await refresh();const snapshot=structuredClone(project),{exportMotion}=await import('./animation.mjs'),result=await exportMotion(snapshot,{type,fontData:await fontData(),measure:(text,p)=>{measureContext.font=`${p.italic?'italic ':''}${p.weight} ${p.size}px FontSplatPreview`;return measureContext.measureText(text).width;},signal:controller.signal,onStatus:status});
+ try{project=normalizeProject({...project,pulse:true});controls();await refresh();const snapshot=structuredClone(project),{exportMotion}=await import('./animation.mjs?v=20261027-bounds'),result=await exportMotion(snapshot,{type,fontData:await fontData(),measure:(text,p)=>{measureContext.font=`${p.italic?'italic ':''}${p.weight} ${p.size}px FontSplatPreview`;return measureContext.measureText(text).width;},signal:controller.signal,onStatus:status});
  if(motionURL)URL.revokeObjectURL(motionURL);motionURL=URL.createObjectURL(result.blob);$('motionPreview').hidden=false;$('gifPreview').hidden=type!=='gif';$('videoPreview').hidden=type!=='mp4';$('videoPreview').pause();$('gifPreview').removeAttribute('src');$('videoPreview').removeAttribute('src');$(type==='gif'?'gifPreview':'videoPreview').src=motionURL;$('motionDownload').href=motionURL;$('motionDownload').download='FontSplat-pulse.'+type;$('motionDownload').textContent='Download '+type.toUpperCase();status(`${type.toUpperCase()} ready · ${result.width} × ${result.height} · ${result.duration} seconds. Preview it, then download.`);
  }catch(e){status(controller.signal.aborted?'Animation export cancelled.':e.message);}finally{motionController=null;$('cancelMotion').hidden=true;}
 });

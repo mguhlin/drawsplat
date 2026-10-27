@@ -20,3 +20,14 @@ test('selection overlay stays transparent and positioned with an older styleshee
  await expect(handle).toBeVisible();expect(await handle.evaluate(e=>getComputedStyle(e).position)).toBe('absolute');
  await expect(page.locator('link[href^="fontsplat.css?"]')).toHaveCount(1);
 });
+
+test('enlarging arched lettering expands the preview and exported PNG instead of clipping',async({page})=>{
+ await page.goto('/solutions/fontsplat/');await page.locator('[data-text-path="arch-up"]').click();await expect(page.locator('.fs-selection')).toBeVisible();
+ const dimensions=()=>page.locator('#dimensions').innerText();const before=await dimensions();
+ await drag(page,page.locator('.fs-selection .fs-resize.se'),260,180);
+ await expect.poll(dimensions).not.toBe(before);
+ const p=await save(page);expect(p.textTransforms.main.scale).toBeGreaterThan(1.3);
+ const download=page.waitForEvent('download');await page.locator('#png').click();const bytes=await fs.readFile(await(await download).path());
+ const proof=await page.evaluate(async data=>{const im=new Image();im.src='data:image/png;base64,'+data;await im.decode();const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const ctx=c.getContext('2d');ctx.drawImage(im,0,0);const a=ctx.getImageData(0,0,c.width,c.height).data;let edge=0,ink=0;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const alpha=a[(y*c.width+x)*4+3];if(alpha>20){ink++;if(x<2||y<2||x>=c.width-2||y>=c.height-2)edge++;}}return {edge,ink,width:c.width,height:c.height};},bytes.toString('base64'));
+ expect(proof.ink).toBeGreaterThan(1000);expect(proof.edge).toBe(0);
+});

@@ -1,3 +1,4 @@
+import {containArtwork,pictureBounds} from './art-bounds.mjs';
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 function captionSvg(art,prefix,x,y){
  const crop=art.cropTop||0,h=art.height-crop-(art.cropBottom||0);
@@ -11,5 +12,5 @@ export function composeImageArt(p,options,renderCaption){
  const width=Math.ceil(Math.max(photoW+pad*2,top?.width||0,bottom?.width||0)),photoX=(width-photoW)/2,photoY=top?Math.max(pad,topH+p.imageGap):pad,bottomY=Math.max(0,photoY+photoH+(bottom?p.imageGap:0)),height=Math.ceil(Math.max(photoY+photoH,bottom?bottomY+bottomH:0)+pad),plain=[top?.plainText,bottom?.plainText].filter(Boolean).join('\n')||'Picture composition';
  const picture=layer=>p.images.filter(im=>im.layer===layer).map(im=>{const w=photoW*im.width/100,h=w/im.aspect,x=photoX+photoW*im.x/100,y=photoY+photoH*im.y/100;return `<image data-layer="image:${im.id}" data-reference-width="${photoW}" data-reference-height="${photoH}" data-rotation="${im.rotation}" data-scale="1" href="${im.src}" x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" opacity="${im.opacity/100}" transform="rotate(${im.rotation} ${x} ${y})"/>`;}).join('');
  const backdrop=p.transparent?'':`<rect width="${width}" height="${height}" fill="${p.background}"/>`,svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="composition-title"><title id="composition-title">${escape(plain)}</title>${backdrop}${picture('behind')}${top?captionSvg(top,'upper',(width-top.width)/2,0):''}${bottom?captionSvg(bottom,around?'lower':'lower-main',(width-bottom.width)/2,bottomY):''}${picture('front')}</svg>`;
- return {svg,width,height,plainText:plain,glitchText:[top?.glitchText,bottom?.glitchText].filter(Boolean).join('\n'),pictureBox:{x:photoX,y:photoY,width:photoW,height:photoH}};
+ return containArtwork({svg,width,height,plainText:plain,glitchText:[top?.glitchText,bottom?.glitchText].filter(Boolean).join('\n'),pictureBox:{x:photoX,y:photoY,width:photoW,height:photoH}},pictureBounds(p.images,{x:photoX,y:photoY,width:photoW,height:photoH}),p);
 }

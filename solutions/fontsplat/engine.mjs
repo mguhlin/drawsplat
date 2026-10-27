@@ -1,4 +1,5 @@
-import {composeImageArt} from './image-layout.mjs';
+import {containArtwork,rotatedRect,pictureBounds} from './art-bounds.mjs';
+import {composeImageArt} from './image-layout.mjs?v=20261027-bounds';
 // FontSplat's original vector text effects. No third-party generator or service.
 export const PRESETS = [
  ['splat','Splat shine','#9f3aff','#4d17b1','gloss'],['neon','Neon nights','#ff4cca','#65f3fa','neon'],
@@ -116,5 +117,5 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
  const transform=p.textTransforms.main,textTransform=`translate(${width*transform.x/100} ${height*transform.y/100}) translate(${width/2} ${height/2}) rotate(${transform.rotation}) scale(${transform.scale}) translate(${-width/2} ${-height/2})`;
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title"><title id="title">${xml(plain)}</title><desc>Original FontSplat text artwork. ${xml(preset.name)}.</desc>${style}<defs>${defs}${paths}</defs>${backdrop}${images('behind')}${plate}<g data-layer="text-main" data-reference-width="${width}" data-reference-height="${height}" data-rotation="${transform.rotation}" data-scale="${transform.scale}" transform="${textTransform}"><g opacity="${clamp(motionOpacity,0,1,1)}" transform="translate(${width/2} ${height/2}) rotate(${p.rotate}) skewX(${p.skew}) translate(${-width/2} ${-height/2})">${pulse}${content}</g></g>${images('front')}</svg>`;
  const firstBaseline=(height-lines.length*lineHeight)/2+p.size+(p.textPath==='arch-up'?pathRise/2:p.textPath==='arch-down'?-pathRise/2:0),lastBaseline=firstBaseline+(lines.length-1)*lineHeight,up=p.textPath==='arch-up'?pathRise:p.textPath==='wave'?pathRise*1.5:p.textPath==='banner'?pathRise:p.textPath==='chevron'?pathRise*.5:p.textPath==='straight'?Math.max(0,p.curve):0,down=p.textPath==='arch-down'?pathRise:p.textPath==='wave'?pathRise*1.5:p.textPath==='banner'?pathRise:p.textPath==='chevron'?pathRise*.5:p.textPath==='straight'?Math.max(0,-p.curve):0,canCrop=!ring&&!p.rotate&&!p.skew&&p.shape==='none',cropTop=canCrop?Math.max(0,Math.floor(firstBaseline-up-p.size*1.2-p.outlineWidth-10-(p.applyGlitch?p.above*p.size*.2:0))):0,cropBottom=canCrop?Math.max(0,Math.floor(height-lastBaseline-down-p.size*.45-p.depth-p.outlineWidth-10-(p.applyGlitch?p.below*p.size*.2:0))):0;
- return {svg,width,height,plainText:plain,glitchText:glitch,cropTop,cropBottom};
+ return containArtwork({svg,width,height,plainText:plain,glitchText:glitch,cropTop,cropBottom},[...rotatedRect(0,0,width,height,transform.rotation,transform.scale,width*transform.x/100,height*transform.y/100),...pictureBounds(p.images,{x:0,y:0,width,height})],p);
 }

@@ -62,3 +62,5 @@ Under **Lettering around the picture**, choose **Arch above**, **Arch below**, o
 Choose a text caption or picture in the layer selector, or click it in the preview. Drag the selection to move it, drag a corner to resize it, and drag the round handle to rotate it. The lower caption and each picture have independent handles. Arrow keys nudge the selected layer; Reset layer restores its placement. Layer transforms survive project saving and all exports; editing handles never appear in exported artwork.
 
 Arch up and Arch down now follow stronger circular arcs. Use **Bend strength** to tighten the curve, or choose **Circle** for lettering around a full ring. Arch, Circle and Oval enable path filling when selected so short lettering spreads around the curve.
+
+Resizing, rotating or moving a layer beyond the original canvas expands the artwork bounds automatically. Preview and exported PNG/SVG/animations use the same expanded canvas, keeping enlarged lettering and pictures visible.
