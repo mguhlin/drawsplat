@@ -60,3 +60,14 @@ subject-image pixels. A failed or cancelled load keeps the previous background.
 Closing the studio or disabling optional connections stops an online load.
 Online loads time out after 30 seconds; use a local upload when a host blocks
 browser access. Background limits: 40 MB, 16 megapixels, 8,192 pixels per edge.
+
+## Photo blur and lettering
+
+Effects → Blur photo · selection / lasso opens the shared local blur editor.
+Use the whole photo or draw a rectangle/freehand lasso, adjust strength, compare
+the original, and Apply. Undo restores the previous image. The PNG contains
+edited pixels. See docs/photo-blur.md for working-resolution limits.
+
+Insert → FontSplat · WordArt opens the local lettering studio and inserts a
+transparent or colored PNG as a new layer. Save a FontSplat project separately
+to retain its editable text/style controls. See docs/fontsplat.md.

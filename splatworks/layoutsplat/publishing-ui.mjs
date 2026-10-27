@@ -1,4 +1,5 @@
 export function installPublishingUI() {
+  document.getElementById('imageProperties').insertAdjacentHTML('beforeend','<button type="button" data-action="blurPhoto" data-i18n="blurPhoto">Blur photo — whole image or selection</button>');
   const before = (selector, html) => document.querySelector(selector).insertAdjacentHTML('beforeend', html);
   before('#fileMenu .menu-panel', '<hr><button data-action="templates" data-i18n="templates">Templates</button><button data-action="saveTemplate" data-i18n="saveTemplate">Save as template</button>');
   before('#fileMenu .menu-panel', '<button data-action="templateLibrary" data-i18n="templateLibrary">Browse template library</button>');

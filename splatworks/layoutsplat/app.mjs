@@ -1,3 +1,4 @@
+import {openPhotoBlur} from '../shared/photo-blur.js';
 import {openFontSplat} from '../shared/fontsplat-launcher.js';
 import {TEMPLATE_ASSETS} from './template-assets.mjs';
 import { loadStarterPublication } from './starter.mjs';
@@ -312,6 +313,16 @@ async function action(name) {
       if (page().objects.length >= 200) { status('pageLimit'); break; }
       const storyId = uid(), object = frame(storyId, doc.margin + 12, doc.margin + 12, Math.min(240, doc.width - 2 * doc.margin), 110);
       mutate(() => { doc.stories[storyId] = { text: t('newText'), style: textStyle(), frames: [object.id] }; page().objects.push(object); selected = object.id; }); break;
+    }
+    case 'blurPhoto': {
+      if(o?.type!=='image'||o.locked)break;const asset=doc.assets[o.assetId],objectId=o.id;
+      if(asset.media){showImportReport(['Choose a still picture to blur. Audio and video keep their separate playback media.']);break;}
+      try{await openPhotoBlur(asset.src,{onApply:async canvas=>{
+        const found=findObject(doc,objectId)?.object;if(!found||found.locked)return;
+        const src=canvas.toDataURL('image/png');if(src.length>64000000)throw Error('The edited photo is too large. Choose a smaller photo.');mutate(()=>{const old=found.assetId,id=uid();doc.assets[id]={name:(asset.name+' — blurred').slice(0,2000),alt:asset.alt||asset.name,width:canvas.width,height:canvas.height,src};found.assetId=id;
+          if(![...doc.pages,...(doc.masters||[])].some(p=>p.objects.some(item=>item.type==='image'&&item.assetId===old)))delete doc.assets[old];
+        });
+      }});}catch(error){showImportReport([error.message||'The photo blur editor could not open.']);}break;
     }
     case 'image': $('pictureInput').click(); break;
     case 'fontsplat': openFontSplat({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make a splash',onInsert:async art=>{await importPicture(art.file);const placed=selectedObject();if(placed?.type==='image')mutate(()=>{doc.assets[placed.assetId].alt=art.alt;});}});break;

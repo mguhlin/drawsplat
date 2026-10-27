@@ -372,6 +372,7 @@ tableOverflow|Table rows need a taller frame.|La tabla necesita un marco más al
 mergeUnresolved|Merge fields need a data source or final text.|Los campos necesitan datos o texto final.|Trường trộn cần dữ liệu hoặc chữ cuối.|حقول الدمج تحتاج بيانات أو نصاً نهائياً.|合并字段需要数据源或最终文本。|मर्ज फ़ील्ड को डेटा या अंतिम टेक्स्ट चाहिए।
 dropCapWrap|Drop caps are suppressed while picture wrapping is active in this frame.|Las capitulares se omiten mientras se ajusta texto alrededor de imágenes.|Chữ cái lớn tắt khi bọc văn bản quanh ảnh.|الحروف الاستهلالية تتوقف مع التفاف الصور.|此框启用图片环绕时不显示首字下沉。|चित्र रैप सक्रिय होने पर ड्रॉप कैप नहीं दिखता।
 video|Video|Vídeo|Video|فيديو|视频|वीडियो
+blurPhoto|Blur photo — whole image or selection|Desenfocar foto — toda o selección|Làm mờ ảnh — toàn ảnh hoặc vùng chọn|تمويه الصورة — كاملة أو منطقة|模糊照片 — 整张或选区|फोटो धुंधला करें — पूरा या चयन
 previewMedia|Play imported media|Reproducir medios importados|Phát nội dung đã nhập|تشغيل الوسائط المستوردة|播放导入的媒体|आयातित मीडिया चलाएँ
 conversionReport|Import / conversion report|Informe de importación / conversión|Báo cáo nhập / chuyển đổi|تقرير الاستيراد / التحويل|导入 / 转换报告|आयात / रूपांतरण रिपोर्ट
 importingMedia|Importing media locally…|Importando medios localmente…|Đang nhập nội dung cục bộ…|جارٍ استيراد الوسائط محلياً…|正在本地导入媒体…|मीडिया स्थानीय रूप से आयात हो रहा है…

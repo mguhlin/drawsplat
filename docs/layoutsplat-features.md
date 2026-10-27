@@ -266,3 +266,14 @@ reflowable content or fixed-layout page pictures. [Ebook guide and limits](layou
 ![Source-book code and chapter preview](../assets/layoutsplat-guide/v0.7.0/ebook-source-editor.png)
 
 See [ebook instructions](layoutsplat-ebooks.md) and [verification evidence](layoutsplat-verification.md) for supported behavior and remaining external checks.
+
+## Photo blur and shared lettering
+
+Select a picture and choose Blur photo in its properties or context menu.
+The shared editor provides whole-photo, rectangle and freehand lasso modes,
+marching ants, adjustable strength, original comparison, PNG download and Undo.
+Frame geometry is retained. [Photo-blur guide](photo-blur.md).
+
+The FontSplat · WordArt toolbar button opens the same local lettering editor
+available as a standalone tool. Insert the rendered PNG directly into the page.
+[FontSplat guide](fontsplat.md).

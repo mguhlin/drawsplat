@@ -290,7 +290,8 @@
     "Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local",
     "Capture screens and paste clipboard images",
     "Export PNG, selections, GIFs, or image frames",
-    "Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations"
+    "Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations",
+    "Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels"
   ],
   "step-splat": [
     "Break a task into small action steps",
@@ -471,7 +472,8 @@
     "126 distinct compositions in 19 publication types across 18 industries, with six publication-language editions.",
     "Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.",
     "Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.",
-    "EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes."
+    "EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.",
+    "Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels"
   ],
   "plansplat": [
     "Student assignments, exams and projects with inline course creation, priorities, due dates, work dates, notes, resource links and checklists.",

@@ -177,6 +177,7 @@ Category: **Create** · 21 components
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
+- Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 
 ### LayoutSplat
 
@@ -191,6 +192,7 @@ Category: **Create** · 21 components
 - Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
+- Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 
 ### MediaSplat
 
@@ -538,6 +540,7 @@ Category: **Media** · 9 components
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
+- Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 
 ### MediaSplat
 
@@ -674,6 +677,7 @@ Category: **Writing** · 22 components
 - Native Publisher .pub import in a browser worker without LibreOffice; SVG, IDML, SLA, PDF, and SplatWorks content exchange with conversion limits.
 - Rich formatting, bold/italic/underline, columns, AutoFit, master pages, tables/groups, context imports, local image/video decoding, and CSV/Excel mail merge.
 - EPUB 2/3 import; reflowable and fixed-layout EPUB 3 export; three ebook starters; metadata, heading navigation, searchable outline and reading preview with type size and themes.
+- Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 
 ### ListSplat
 

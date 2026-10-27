@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-27",
+  "browserWorkflowsPassed": 3,
+  "checks": [
+    "Whole/rectangle/lasso pixel change",
+    "Pixel-exact preservation outside selection",
+    "Opaque full-image edges",
+    "ImageSplat apply and undo",
+    "LayoutSplat frame geometry preserved",
+    "Cancel leaves image unchanged",
+    "Native save/reopen preserves edited PNG"
+  ],
+  "workingPixelLimit": 16000000,
+  "workingEdgeLimit": 16384
+}

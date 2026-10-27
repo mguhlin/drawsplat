@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../assets/css/privacy-controls.css"><script src="../assets/js/privacy-controls.js"></script><!-- splat-privacy:end --><meta name="viewport" content="width=device-width,initial-scale=1"><title>photo-blur · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article><h1>Blur a whole photo or a selected area</h1>
+<p>ImageSplat and LayoutSplat share the same local photo-blur editor. Choose a still
+image, then open <strong>Effects → Blur photo · selection / lasso</strong> in ImageSplat,
+or <strong>Blur photo — whole image or selection</strong> in LayoutSplat's picture properties
+or picture context menu.</p>
+<p>Choose <strong>Whole photo</strong>, <strong>Rectangle</strong>, or <strong>Freehand lasso</strong>. For a partial blur,
+drag over the image; a lasso closes its shape when you release the pointer.
+The marching-ants outline shows the affected region. Drag again to redraw it,
+or Clear selection. Arrow keys move a selection by one pixel; Shift moves by
+10. Delete clears it. Adjust Blur strength and use Show original to compare.</p>
+<p><strong>Apply blur</strong> changes only the selected image. Rectangle/lasso mode requires
+a drawn selection. Cancel leaves the image unchanged, and the app's Undo can
+restore the earlier image after applying. LayoutSplat keeps the frame position,
+size, rotation, fit and crop. Other objects that use the same source picture
+keep their own image until you edit them.</p>
+<p><strong>Download PNG</strong> saves the edited picture directly. Blurring is baked into its
+pixels, so it carries into image exports, native projects, HTML, PDF and EPUB;
+it does not rely on a removable CSS filter. Native undo/history and separately
+retained source editions still follow the app's normal editing behavior.</p>
+<p>Large photos are proportionally resized to a maximum 16-megapixel working
+image and a 16,384-pixel longest edge; the editor reports the working dimensions.
+Processing stays on the device. LayoutSplat's audio/video players remain
+separate from their print posters; choose a still photo for this feature.</p>
+<p><img src="../assets/photo-blur-guide/image-lasso.png" alt="ImageSplat lasso selection" /></p>
+<p><img src="../assets/photo-blur-guide/layout-rectangle.png" alt="LayoutSplat rectangle selection" /></p>
+</article></main></body></html>
