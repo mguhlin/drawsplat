@@ -38,6 +38,8 @@
 /drawsplat  /app/whiteboard.html  301
 /drawsplat/  /app/whiteboard.html  301
 /drawsplat/index.html  /app/whiteboard.html  301
+/fontsplat  /solutions/fontsplat/  301
+/fontsplat/  /solutions/fontsplat/  301
 /gifsplat  /solutions/gifsplat/  301
 /gifsplat/  /solutions/gifsplat/  301
 /gilasplat  /games/gilasplat/  301
@@ -88,6 +90,7 @@
 /clipsplat/*  /solutions/clipsplat/:splat  301
 /conceptsplat/*  /solutions/concept-map/:splat  301
 /diagramsplat/*  /solutions/mermaid/:splat  301
+/fontsplat/*  /solutions/fontsplat/:splat  301
 /gifsplat/*  /solutions/gifsplat/:splat  301
 /gilasplat/*  /games/gilasplat/:splat  301
 /graphsplat/*  /solutions/graphsplat/:splat  301

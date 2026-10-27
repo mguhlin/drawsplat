@@ -11,6 +11,29 @@
   },
   "components": [
     {
+      "id": "fontsplat",
+      "name": "FontSplat",
+      "path": "/solutions/fontsplat/",
+      "entry": "solutions/fontsplat/index.html",
+      "storage": {
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
+        "literalKeys": [],
+        "namedConstants": []
+      },
+      "literalRemoteHosts": [
+        "www.w3.org"
+      ],
+      "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
+      "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
+      "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
+      "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
+      "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
+      "reviewed": "2026-10-16",
+      "entrySha256": "3f55885651b6093de9998e541e9d85960cbf21907233c1f4d46799243e922599"
+    },
+    {
       "id": "backdropsplat",
       "name": "BackdropSplat",
       "path": "/solutions/backdropsplat/",
@@ -202,7 +225,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "4b07ff726f12e65e8831e953778cc30384624a4f95dcb587fdf7434b2cb595c1"
+      "entrySha256": "79252495a11b5383736e19dced615c4945167462bba38a61bbcc9d7b64910ae3"
     },
     {
       "id": "layoutsplat",
@@ -1082,7 +1105,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "9ffdb0061ea62d25ee1dd9e5fb385197f187b48acf289c7c2052ebcda5e70834"
+      "entrySha256": "b22746945766f39bbcaeae6b8f8385ea65aed14d1b306f70c3c846b1a24ecb8c"
     },
     {
       "id": "step-splat",

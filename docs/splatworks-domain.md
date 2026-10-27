@@ -66,6 +66,7 @@ registry and updates the rules, static fallbacks and shortcut manifest.
 | ConceptSplat | [/conceptsplat](../conceptsplat/) | `/solutions/concept-map/` |
 | DiagramSplat | [/diagramsplat](../diagramsplat/) | `/solutions/mermaid/` |
 | DrawSplat Whiteboard | [/drawsplat](../drawsplat/) | `/app/whiteboard.html` |
+| FontSplat | [/fontsplat](../fontsplat/) | `/solutions/fontsplat/` |
 | GIFsplat™ | [/gifsplat](../gifsplat/) | `/solutions/gifsplat/` |
 | GilaSplat | [/gilasplat](../gilasplat/) | `/games/gilasplat/` |
 | GraphSplat | [/graphsplat](../graphsplat/) | `/solutions/graphsplat/` |

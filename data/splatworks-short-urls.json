@@ -42,6 +42,12 @@
     "target": "/app/whiteboard.html"
   },
   {
+    "id": "fontsplat",
+    "name": "FontSplat",
+    "path": "/fontsplat",
+    "target": "/solutions/fontsplat/"
+  },
+  {
     "id": "animated-gif",
     "name": "GIFsplat™",
     "path": "/gifsplat",

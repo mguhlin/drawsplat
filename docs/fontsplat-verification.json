@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-27",
+  "version": "1.0.0",
+  "browserWorkflowsPassed": 6,
+  "checks": [
+    "16 presets",
+    "SVG XML escaping and embedded typeface",
+    "PNG visible pixels and transparency",
+    "No remote HTTP requests",
+    "Custom font and project save/reopen",
+    "Untrusted embedded font rejection",
+    "Direct insertion into LayoutSplat, WriteSplat and ImageSplat",
+    "Forged message rejection",
+    "390px phone width"
+  ],
+  "rasterLimitPixels": 16000000
+}

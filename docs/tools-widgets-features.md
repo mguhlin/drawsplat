@@ -34,7 +34,7 @@ Use these activities to build keyboard familiarity, accuracy, and typing fluency
 
 ## Draw & Create
 
-Category: **Create** · 20 components
+Category: **Create** · 21 components
 
 ### AudioSplat
 
@@ -125,6 +125,18 @@ Category: **Create** · 20 components
 - Add audio and classroom activities
 - Save files and export PNG or PDF
 - Connect optional school saving and classroom services
+
+### FontSplat
+
+**Tool** · [Open FontSplat](../solutions/fontsplat/)
+
+- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- Unicode glitch marks with separate above, through and below controls; copy plain or styled text
+- Bundled local typefaces and optional local font import
+- Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
+- Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
+- Text and fonts are processed locally; no generation service or upload backend
 
 ### GIFsplat™
 
@@ -450,7 +462,7 @@ Category: **Organize** · 12 components
 
 ## Audio, Video & Media
 
-Category: **Media** · 8 components
+Category: **Media** · 9 components
 
 ### AudioSplat
 
@@ -487,6 +499,18 @@ Category: **Media** · 8 components
 - Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
 - Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
 - Suggested classroom uses: record a short explanation, create a project introduction, or combine a demonstration with title panels and image cards
+
+### FontSplat
+
+**Tool** · [Open FontSplat](../solutions/fontsplat/)
+
+- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- Unicode glitch marks with separate above, through and below controls; copy plain or styled text
+- Bundled local typefaces and optional local font import
+- Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
+- Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
+- Text and fonts are processed locally; no generation service or upload backend
 
 ### GIFsplat™
 
@@ -561,7 +585,7 @@ Category: **Media** · 8 components
 
 ## Write, Present & Organize Work
 
-Category: **Writing** · 21 components
+Category: **Writing** · 22 components
 
 ### Big Link
 
@@ -615,6 +639,18 @@ Category: **Writing** · 21 components
 - Export SVG/PNG or copy PNG
 - Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 - Save and reopen editable Mermaid .mmd source locally, or save a copy to Google Drive
+
+### FontSplat
+
+**Tool** · [Open FontSplat](../solutions/fontsplat/)
+
+- Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects
+- WordArt arch, rotation, slant, spacing, outlines and 3D depth
+- Unicode glitch marks with separate above, through and below controls; copy plain or styled text
+- Bundled local typefaces and optional local font import
+- Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open
+- Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat
+- Text and fonts are processed locally; no generation service or upload backend
 
 ### GridSplat
 

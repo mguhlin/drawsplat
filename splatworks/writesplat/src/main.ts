@@ -1,3 +1,4 @@
+import {openFontSplat} from '../../shared/fontsplat-launcher.js';
 import {activateProjectFonts,type ProjectFonts} from './storage/projectFonts';
 import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../../shared/file-bridge.js';
@@ -567,6 +568,7 @@ function appHtml(): string {
           ['open-link-dialog', 'Link'],
           ['remove-link', 'Remove link'],
           ['open-image-dialog', 'Image'],
+          ['fontsplat', 'FontSplat · WordArt'],
           ['open-emoji-dialog', 'Emoji…'],
           ['open-word-cloud', 'Word cloud…'],
           ['toggle-dictation', 'Dictate (speech to text)'],
@@ -1808,6 +1810,8 @@ function bootstrap(): void {
       const count = writer.replaceAll(findText.value, replaceText.value);
       findStatus.textContent = `Replaced ${count} match${count === 1 ? '' : 'es'}.`;
       refresh();
+    } else if (action === 'fontsplat') {
+      openFontSplat({text:'Make a splash',onInsert:async artwork=>{writer.insertImage(artwork.dataUrl,artwork.alt);writer.view.focus();refresh();}});
     } else if (action === 'open-image-dialog') {
       imageAlt.value = '';
       imageDialog.hidden = false;

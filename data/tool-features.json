@@ -486,5 +486,14 @@
     "Replacement backgrounds: upload an image, choose six original local scenes, or load a direct HTTPS image URL; centered Fill/Fit placement, instant preview, and matching PNG/JPEG/batch ZIP output without rerunning removal.",
     "Cancellable worker processing; original files stay unchanged and photos are not uploaded.",
     "Six-language header picker with a shared saved preference, Arabic RTL layout, and language switching that preserves images and cutouts."
+  ],
+  "fontsplat": [
+    "Sixteen original lettering presets: neon, chrome, gold, gradients, comic, retro, outline, sticker and dimensional effects",
+    "WordArt arch, rotation, slant, spacing, outlines and 3D depth",
+    "Unicode glitch marks with separate above, through and below controls; copy plain or styled text",
+    "Bundled local typefaces and optional local font import",
+    "Transparent or solid-background PNG, scalable SVG with embedded fonts, and editable project save/open",
+    "Shared editor inserts artwork directly into LayoutSplat, WriteSplat and ImageSplat",
+    "Text and fonts are processed locally; no generation service or upload backend"
   ]
 }

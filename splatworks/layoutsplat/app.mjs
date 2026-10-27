@@ -1,3 +1,4 @@
+import {openFontSplat} from '../shared/fontsplat-launcher.js';
 import {TEMPLATE_ASSETS} from './template-assets.mjs';
 import { loadStarterPublication } from './starter.mjs';
 import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
@@ -313,6 +314,7 @@ async function action(name) {
       mutate(() => { doc.stories[storyId] = { text: t('newText'), style: textStyle(), frames: [object.id] }; page().objects.push(object); selected = object.id; }); break;
     }
     case 'image': $('pictureInput').click(); break;
+    case 'fontsplat': openFontSplat({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make a splash',onInsert:async art=>{await importPicture(art.file);const placed=selectedObject();if(placed?.type==='image')mutate(()=>{doc.assets[placed.assetId].alt=art.alt;});}});break;
     case 'video': $('videoInput').click(); break;
     case 'audio': $('audioInput').click(); break;
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#7c3aed', name)); break;

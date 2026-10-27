@@ -340,6 +340,7 @@ MODULE_EXCLUDES=(
 )
 
 TOOLS_SOLUTIONS=(
+  fontsplat
   backdropsplat
   shared
   gifsplat
@@ -909,6 +910,13 @@ for privacy_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAM
   done
   copy_tree splatworks/shared "$privacy_root/splatworks/shared" "${MODULE_EXCLUDES[@]}"
   copy_file _headers "$privacy_root/_headers"
+done
+
+# FontSplat integrations keep the local editor and its licensed typefaces.
+for font_root in "$DRAWSPLAT_ROOT" "$TOOLS_ROOT" "$SPLATWORKS_SUITE_ROOT" "$WRITE_ROOT"; do
+  copy_tree solutions/fontsplat "$font_root/solutions/fontsplat" "${MODULE_EXCLUDES[@]}"
+  copy_tree splatworks/layoutsplat/fonts "$font_root/splatworks/layoutsplat/fonts" "${MODULE_EXCLUDES[@]}"
+  copy_tree fontsplat "$font_root/fontsplat" "${MODULE_EXCLUDES[@]}"
 done
 
 # Keep the hosted CipherSplat intact and include its direct-file edition beside it.
