@@ -5,15 +5,19 @@ on:
     paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/build-splatworks-short-urls.py', 'data/splatworks-short-urls.json', 'scripts/policy_content.py', 'data/policy-legacy-links.json', 'assets/css/policy.css', 'assets/js/policy.js', 'scripts/build-tool-features.py', 'data/tool-features.json', 'data/drawsplat-tools.json', 'scripts/build-district-guide.py', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/district-components.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css', 'tests/support-wiki.spec.js', 'tests/ecosystem-naming.spec.js', 'tests/protect-privacy.spec.js', 'tests/splatworks-drive.spec.js', 'tests/creative-drive.spec.js', 'splatworks/**', 'scripts/build-privacy-controls.py', 'scripts/check-privacy-coverage.cjs', 'assets/js/privacy-controls.js', 'assets/js/privacy-center.js', 'assets/js/protect-review.js', 'assets/css/privacy-controls.css', 'assets/css/privacy-center.css', 'data/privacy-*.json', 'privacy/**', '_headers', 'tests/splatworks-short-urls.spec.js', 'assets/js/privacy-builder.js', 'assets/js/consent-banner.js', '.github/workflows/support-wiki.yml']
   pull_request:
     paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/build-splatworks-short-urls.py', 'data/splatworks-short-urls.json', 'scripts/policy_content.py', 'data/policy-legacy-links.json', 'assets/css/policy.css', 'assets/js/policy.js', 'scripts/build-tool-features.py', 'data/tool-features.json', 'data/drawsplat-tools.json', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/district-components.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css', 'tests/ecosystem-naming.spec.js', 'tests/protect-privacy.spec.js', 'tests/splatworks-drive.spec.js', 'tests/creative-drive.spec.js', 'splatworks/**', 'scripts/build-privacy-controls.py', 'scripts/check-privacy-coverage.cjs', 'assets/js/privacy-controls.js', 'assets/js/privacy-center.js', 'assets/js/protect-review.js', 'assets/css/privacy-controls.css', 'assets/css/privacy-center.css', 'data/privacy-*.json', 'privacy/**', '_headers', 'tests/splatworks-short-urls.spec.js', 'assets/js/privacy-builder.js', 'assets/js/consent-banner.js', '.github/workflows/support-wiki.yml']
+permissions:
+  contents: read
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -21,5 +25,5 @@ jobs:
       - run: python scripts/build-district-guide.py && python scripts/build-support-wiki.py
       - run: python scripts/build-privacy-controls.py --check && node scripts/check-privacy-coverage.cjs
       - run: git diff --exit-code
-      - run: npm ci && npx playwright install --with-deps chromium
+      - run: npm ci --ignore-scripts && npx playwright install --with-deps chromium
       - run: npx playwright test tests/support-wiki.spec.js tests/district-quickstart.spec.js tests/site-navigation.spec.js tests/splatworks-short-urls.spec.js tests/ecosystem-naming.spec.js tests/protect-privacy.spec.js tests/splatworks-drive.spec.js tests/creative-drive.spec.js --workers=2

@@ -14,8 +14,10 @@ jobs:
       matrix:
         engine: [mariadb, mysql]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
       - run: node scripts/build-starter-sql.cjs --check
@@ -36,7 +38,7 @@ jobs:
         run: node tests/district-rerun-ci.mjs
       - name: Verify private boards, classroom isolation and roster transactions
         run: |
-          npm ci --prefix server/mysql-backend
+          npm ci --ignore-scripts --prefix server/mysql-backend
           node tests/district-database-ci.cjs
           node tests/starter-sql-ci.cjs
           node --test tests/setup-wizard.test.cjs
@@ -59,8 +61,10 @@ jobs:
     name: Extracted ZIP installation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
       - name: Build and install the delivered package with restrictive extraction permissions
@@ -78,7 +82,7 @@ jobs:
           bash start-district.sh > "$RUNNER_TEMP/package-launch.log" 2>&1
           test -r selfhost/district/.env
           node tests/district-stack.mjs
-          npm ci --prefix server/mysql-backend
+          npm ci --ignore-scripts --prefix server/mysql-backend
           node tests/district-database-ci.cjs
           node tests/starter-sql-ci.cjs
           bash selfhost/district/backup-district.sh

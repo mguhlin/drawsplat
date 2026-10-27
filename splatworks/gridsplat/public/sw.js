@@ -1,6 +1,6 @@
 /* global caches, fetch, self, URL, Response */
 
-const CACHE_NAME = 'gridsplat-cache-v2';
+const CACHE_NAME = 'gridsplat-cache-v3';
 const APP_SHELL = [
   '/splatworks/gridsplat/',
   '/splatworks/gridsplat/index.html',

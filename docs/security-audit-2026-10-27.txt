@@ -1,0 +1,45 @@
+Security maintenance — 2026-10-27
+
+Scope: known npm advisories in tracked lockfiles, GitHub Actions references and
+permissions, dependency maintenance controls, and the checks listed below.
+This is a scoped maintenance review, not a full penetration test or assurance
+against unknown vulnerabilities. Historical release archives, external CDNs,
+cloud/account configuration, and separately installed self-hosted instances are
+not covered by a zero-advisory lockfile result. A package advisory count can
+include development-only dependencies and repeat across projects.
+
+All ten tracked lockfiles now report zero known vulnerabilities, including
+development dependencies. Updated Vite to 7.3.7/8.3.5 and Vitest to 4.1.12;
+updated transitive body-parser, ProseMirror view, source-map-js, undici,
+PostCSS, nanoid, brace-expansion, Browserslist, Zod, and related dependencies
+where the advisory service identified affected versions. Transformers remains
+at 3.8.1; its native sharp dependency is explicitly overridden to 0.35.5.
+Native sharp is not used by the browser subtitle implementation.
+
+AudioSplat installs its local shared package as a packed dependency using
+install-links=true so isolated builds resolve subtitle dependencies correctly.
+Rebuilt AudioSplat, ClipSplat, MediaSplat, VideoSplat, GridSplat, ListSplat, and
+WriteSplat. Refreshed media/GridSplat PWA cache versions. Bundled assets are
+published alongside the source updates. Self-hosted installations must update
+their checkout, reinstall locked server dependencies, and restart/rebuild;
+changing GitHub cannot update already installed district servers.
+
+Pinned all workflow actions to official resolved commit hashes. Checkout
+credentials are not persisted except in the RSS workflow that must push its
+state. Added explicit read-only permissions to support-wiki. CI package installs
+skip dependency lifecycle scripts; tests and production build scripts remain
+explicit steps. Added weekly Dependabot coverage for every npm project and
+GitHub Actions, plus a weekly no-install advisory audit of all ten lockfiles.
+
+Checks: application unit tests and production builds; both GridSplat lint suites;
+server/mysql-backend tests; SplatWorks built entry/resource verification;
+LayoutSplat engine, publication, and presentation tests; Chromium smoke tests of
+all seven rebuilt browser applications with no page errors or failed JS/CSS.
+All passed. One existing GridSplat test remains skipped. Workflow YAML parsed
+and action references checked for full commit pins.
+
+Advisories:
+https://github.com/advisories/GHSA-c8x8-7fp4-3x9w
+https://github.com/advisories/GHSA-85c8-ppgw-ccpr
+https://github.com/advisories/GHSA-wq5f-xc86-pv6w
+https://github.blog/security/supply-chain-security/disrupting-supply-chain-attacks-on-npm-and-github-actions/

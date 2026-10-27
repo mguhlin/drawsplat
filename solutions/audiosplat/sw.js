@@ -1,4 +1,4 @@
-const CACHE = "audiosplat-v0.1.4";
+const CACHE = "audiosplat-v0.1.5";
 const SHELL = [
   "./",
   "./index.html",

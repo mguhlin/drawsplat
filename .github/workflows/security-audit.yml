@@ -1,0 +1,32 @@
+name: Dependency security audit
+on:
+  push:
+    branches: [main]
+    paths: ['**/package.json', '**/package-lock.json', '.github/workflows/security-audit.yml']
+  pull_request:
+    paths: ['**/package.json', '**/package-lock.json', '.github/workflows/security-audit.yml']
+  schedule:
+    - cron: '43 8 * * 2'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Audit every locked dependency tree without installing packages
+        shell: bash
+        run: |
+          result=0
+          for directory in . ./server/mysql-backend ./solutions/audiosplat ./solutions/clipsplat ./solutions/mediasplat ./solutions/pdfsplat ./solutions/videosplat ./splatworks/gridsplat ./splatworks/listsplat ./splatworks/writesplat; do
+            echo "Auditing $directory"
+            npm audit --prefix "$directory" --ignore-scripts --audit-level=low || result=1
+          done
+          exit "$result"
