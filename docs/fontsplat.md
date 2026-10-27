@@ -14,7 +14,9 @@ The sidebar groups Text & typography, Color & effects, SpellArt paths, badge,
 pictures, background & motion, and project controls. Quick links jump to Text,
 Bend, Pictures, and Project. On desktop, the controls scroll independently of
 the preview. Text size supports 24–640 px: drag the slider, enter an exact pixel
-size, or use A− / A+. Corner handles still resize each caption independently.
+size, or use A− / A+. Text relative to pictures enlarges the main lettering
+independently up to 600%, while picture dimensions stay the same. Corner
+handles still resize each caption independently.
 
 **Copy PNG** sends the current artwork directly to your clipboard, using the selected PNG size and preserving images and transparency. Paste it into a document, slide, email or image editor. Clipboard image writing requires a supported browser and clipboard permission; if it is unavailable or blocked, use Download PNG. The copy is a still image, even when pulse animation is enabled.
 

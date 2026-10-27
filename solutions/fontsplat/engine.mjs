@@ -51,7 +51,7 @@ export function normalizeProject(input={}) {
  p.imageGap=clamp(input.imageGap,-140,140,10);
  p.bottomText=String(input.bottomText||'').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g,'').slice(0,200).split('\n').slice(0,4).join('\n');
  p.shape=['none','banner','ribbon','oval','circle','badge','rounded'].includes(input.shape)?input.shape:'none';
- p.textTransforms=Object.fromEntries(['main','bottom'].map(key=>{const t=input.textTransforms?.[key]||{};return [key,{x:clamp(t.x,-150,150,0),y:clamp(t.y,-150,150,0),scale:clamp(t.scale,.2,3,1),rotation:clamp(t.rotation,-180,180,0)}];}));
+ p.textTransforms=Object.fromEntries(['main','bottom'].map(key=>{const t=input.textTransforms?.[key]||{};return [key,{x:clamp(t.x,-150,150,0),y:clamp(t.y,-150,150,0),scale:clamp(t.scale,.2,6,1),rotation:clamp(t.rotation,-180,180,0)}];}));
  p.images=(Array.isArray(input.images)?input.images:[]).slice(0,6).map((im,i)=>{
   if(typeof im.src!=='string'||!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(im.src)||im.src.length>6000000)throw Error('Use embedded PNG, JPEG or WebP pictures under 4 MB each.');
   return {id:String(im.id||i).replace(/[^a-z0-9-]/gi,'').slice(0,70),name:String(im.name||'Picture').slice(0,100),src:im.src,x:clamp(im.x,-100,200,50),y:clamp(im.y,-100,200,50),width:clamp(im.width,5,200,50),aspect:clamp(im.aspect,.05,20,1),opacity:clamp(im.opacity,0,100,100),rotation:clamp(im.rotation,-180,180,0),layer:im.layer==='front'?'front':'behind'};

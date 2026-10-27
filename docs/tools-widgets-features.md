@@ -143,7 +143,7 @@ Category: **Create** · 21 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
-- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field; enlarge text relative to pictures up to 600%
 - Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GIFsplat™
@@ -530,7 +530,7 @@ Category: **Media** · 9 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
-- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field; enlarge text relative to pictures up to 600%
 - Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GIFsplat™
@@ -679,7 +679,7 @@ Category: **Writing** · 22 components
 - Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
 - Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 - Copy PNG directly to the system clipboard at the selected size, including pictures and transparency
-- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field
+- Set text size from 24 to 640 pixels with A−/A+, a slider, or an exact number field; enlarge text relative to pictures up to 600%
 - Use grouped sidebar controls and quick links while the desktop preview stays visible
 
 ### GridSplat

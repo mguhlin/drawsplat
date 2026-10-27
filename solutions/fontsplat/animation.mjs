@@ -1,4 +1,4 @@
-import {renderWordArt} from './engine.mjs?v=20261027-large-text';
+import {renderWordArt} from './engine.mjs?v=20261027-text-scale';
 const canvasBlob=c=>new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('Could not prepare an animation frame.')),'image/png'));
 async function gif(frames,signal){
  const worker=new Worker(new URL('./gif-worker.js',import.meta.url));
