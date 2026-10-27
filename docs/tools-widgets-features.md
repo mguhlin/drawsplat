@@ -140,6 +140,8 @@ Category: **Create** · 21 components
 - Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
+- Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
+- Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 
 ### GIFsplat™
 
@@ -522,6 +524,8 @@ Category: **Media** · 9 components
 - Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
+- Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
+- Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 
 ### GIFsplat™
 
@@ -666,6 +670,8 @@ Category: **Writing** · 22 components
 - Eight-line SpellArt follows arches, circles, ovals, waves, banner curves and chevrons; optional background badges remain separate
 - Add, drop, paste, move and resize up to six locally embedded pictures
 - Looping animated GIF and six-second H.264 MP4 pulse exports with previews and cancellation
+- Automatic local plain-background removal with enclosed-detail preservation, manual color choices and session restore
+- Arch-above, arch-below and two-caption picture layouts with adjustable spacing and portable exports
 
 ### GridSplat
 

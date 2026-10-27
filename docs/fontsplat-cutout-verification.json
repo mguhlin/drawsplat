@@ -1,0 +1,15 @@
+{
+  "date":"2026-10-27",
+  "features":["automatic plain-background removal","manual white/black/color removal","session restore","arch above image","arch below image","two-caption image layout"],
+  "checks":[
+    "12 FontSplat browser tests passed, including app integrations, path geometry and classic styles",
+    "Synthetic face with mixed near-white background: outer backdrop removed, transparent margins cropped, enclosed white eyes retained",
+    "Restore original and manual automatic-detection removal passed",
+    "Above/below/around SVG geometry places captions outside picture bounds, with unique nested SVG IDs",
+    "Image layout, cutout pixels, lower caption and multiline text survive native save/open",
+    "Composite PNG, SVG, GIF and MP4 exports passed",
+    "User-supplied Crazy.png tested locally: internal white rectangle removed and eyes retained; arched captions placed above and below",
+    "Cutout worker has no remote requests or model downloads"
+  ],
+  "limits":"Plain-color edge-connected removal; complex photographs may need another background removal mode/tool. Original restore is available only during the session."
+}

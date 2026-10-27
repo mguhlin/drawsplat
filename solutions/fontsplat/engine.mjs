@@ -1,3 +1,4 @@
+import {composeImageArt} from './image-layout.mjs';
 // FontSplat's original vector text effects. No third-party generator or service.
 export const PRESETS = [
  ['splat','Splat shine','#9f3aff','#4d17b1','gloss'],['neon','Neon nights','#ff4cca','#65f3fa','neon'],
@@ -25,7 +26,7 @@ export const FONTS = [
  {id:'indic',name:'Devanagari · Noto',file:'LayoutSplatIndic.woff'},
  {id:'cjk',name:'CJK · Noto',file:'LayoutSplatCJK.woff'},
 ];
-export const DEFAULT_PROJECT = Object.freeze({app:'FontSplat',version:1,text:'Make a splash',preset:'splat',font:'display',size:96,weight:900,italic:false,primary:'#9f3aff',secondary:'#4d17b1',outline:'#34205c',outlineWidth:2,spacing:0,curve:0,rotate:0,skew:0,depth:7,background:'#ffffff',transparent:true,above:2,through:0,below:1,seed:1,applyGlitch:false,pulse:false,fontData:'',fontName:'',images:[],shape:'none',shapeFill:'#ede7ff',shapeStroke:'#7c3aed',textPath:'straight',pathOffset:50,pathFit:false});
+export const DEFAULT_PROJECT = Object.freeze({app:'FontSplat',version:1,text:'Make a splash',preset:'splat',font:'display',size:96,weight:900,italic:false,primary:'#9f3aff',secondary:'#4d17b1',outline:'#34205c',outlineWidth:2,spacing:0,curve:0,rotate:0,skew:0,depth:7,background:'#ffffff',transparent:true,above:2,through:0,below:1,seed:1,applyGlitch:false,pulse:false,fontData:'',fontName:'',images:[],shape:'none',shapeFill:'#ede7ff',shapeStroke:'#7c3aed',textPath:'straight',pathOffset:50,pathFit:false,imageLayout:'free',imageGap:10,bottomText:''});
 const clamp=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
 const hex=(value,fallback)=>/^#[0-9a-f]{6}$/i.test(value||'')?value:fallback;
 export const xml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -44,6 +45,9 @@ export function normalizeProject(input={}) {
  if(p.font==='custom'&&!p.fontData)p.font=d.font;
  p.textPath=TEXT_PATHS.some(path=>path.id===input.textPath)?input.textPath:'straight';
  p.pathOffset=clamp(input.pathOffset,0,100,50);
+ p.imageLayout=['free','above','below','around'].includes(input.imageLayout)?input.imageLayout:'free';
+ p.imageGap=clamp(input.imageGap,-140,140,10);
+ p.bottomText=String(input.bottomText||'').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g,'').slice(0,200).split('\n').slice(0,4).join('\n');
  p.shape=['none','banner','ribbon','oval','circle','badge','rounded'].includes(input.shape)?input.shape:'none';
  p.images=(Array.isArray(input.images)?input.images:[]).slice(0,6).map((im,i)=>{
   if(typeof im.src!=='string'||!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(im.src)||im.src.length>6000000)throw Error('Use embedded PNG, JPEG or WebP pictures under 4 MB each.');
@@ -60,7 +64,8 @@ export function glitchText(text,{above=2,through=0,below=1,seed=1}={}) {
  return [...String(text).slice(0,400)].map(c=>{if(/\s|\p{Mark}/u.test(c))return c;let out=c;for(const [list,n] of [[ABOVE,clamp(above,0,8,2)],[THROUGH,clamp(through,0,4,0)],[BELOW,clamp(below,0,8,1)]])for(let i=0;i<Math.floor(n);i++)out+=list[Math.floor(random()*list.length)];return out;}).join('');
 }
 export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
- const p=normalizeProject(input),preset=PRESETS.find(s=>s.id===p.preset),glitch=glitchText(p.text,p),lines=(p.applyGlitch?glitch:p.text).split('\n'),plain=p.text||'Your words';
+ const p=normalizeProject(input);if(p.imageLayout!=='free'&&p.images.length)return composeImageArt(p,{fontData,measure,motionOpacity},renderWordArt);
+ const preset=PRESETS.find(s=>s.id===p.preset),glitch=glitchText(p.text,p),lines=(p.applyGlitch?glitch:p.text).split('\n'),plain=p.text||'Your words';
  const maxWidth=Math.max(80,...lines.map(line=>measure?measure(line,p):[...line].filter(c=>!/\p{Mark}/u.test(c)).length*p.size*.65));
  const textWidth=Math.min(2100,maxWidth+Math.max(0,p.spacing)*Math.max(1,[...plain].length)),padding=Math.ceil(p.size*(['circle','oval'].includes(p.textPath)?1.7:.65)+p.depth+Math.abs(p.curve)*1.3+(p.applyGlitch?(p.above+p.below)*p.size*.15:0));
  const lineHeight=p.size*1.4,ring=['circle','oval'].includes(p.textPath),ringInset=(lines.length-1)*lineHeight,
@@ -75,7 +80,7 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
  const height=p.shape==='circle'?Math.max(rawWidth,rawHeight):rawHeight,width=p.shape==='circle'?height:rawWidth;
  if(font&&!/^data:font\/(ttf|otf|woff2?);base64,[A-Za-z0-9+/=]+$/.test(font))throw Error('Unsupported embedded font.');
  const stops=preset.effect==='rainbow'?['#ff6277','#ffc856','#31c8a4','#41aaff','#9962ed']:preset.effect==='chrome'?[p.primary,p.secondary,'#ffffff',p.secondary,p.primary]:preset.effect==='gold'?[p.primary,p.secondary,'#fff7ba',p.secondary]:preset.effect==='gloss'?[p.primary,'#d6a3ff',p.secondary,p.primary]:[p.primary,p.secondary];
- const defs=`<linearGradient id="ink" x2="0" y2="1">${stops.map((color,i)=>`<stop offset="${i/(stops.length-1)}" stop-color="${color}"/>`).join('')}</linearGradient><filter id="soft" x="-60%" y="-100%" width="220%" height="300%"><feDropShadow dx="0" dy="5" stdDeviation="${preset.effect==='neon'?7:3}" flood-color="${preset.effect==='neon'?p.primary:'#1c123b'}" flood-opacity="${preset.effect==='neon'?.85:.3}"/></filter>`;
+ const defs=`<linearGradient id="ink" x2="${preset.id==='spectrum'?1:0}" y2="${preset.id==='spectrum'?0:1}">${stops.map((color,i)=>`<stop offset="${i/(stops.length-1)}" stop-color="${color}"/>`).join('')}</linearGradient><filter id="soft" x="-60%" y="-100%" width="220%" height="300%"><feDropShadow dx="0" dy="5" stdDeviation="${preset.effect==='neon'?7:3}" flood-color="${preset.effect==='neon'?p.primary:'#1c123b'}" flood-opacity="${preset.effect==='neon'?.85:.3}"/></filter>`;
  const family=font?'FontSplatFace':'Arial,sans-serif',style=font?`<style>@font-face{font-family:FontSplatFace;src:url('${font}')}text{font-family:FontSplatFace,Arial,sans-serif}</style>`:'';
  const common=`font-family="${family}" font-size="${p.size}" font-weight="${p.weight}" font-style="${p.italic?'italic':'normal'}" letter-spacing="${p.spacing}" text-anchor="middle" stroke-linejoin="round" paint-order="stroke"`;
  const fill=preset.effect==='outline'?'none':preset.effect==='ink'?p.primary:'url(#ink)';
@@ -105,5 +110,6 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
  const plateAttrs=`fill="${p.shapeFill}" stroke="${p.shapeStroke}" stroke-width="3"`,inset=12;
  const plate=p.shape==='none'?'':['oval','circle'].includes(p.shape)?`<ellipse cx="${width/2}" cy="${height/2}" rx="${width/2-inset}" ry="${height/2-inset}" ${plateAttrs}/>`:p.shape==='banner'?`<path d="M12 12H${width-12}L${width-45} ${height/2}L${width-12} ${height-12}H12L45 ${height/2}Z" ${plateAttrs}/>`:p.shape==='ribbon'?`<path d="M12 35L65 12H${width-65}L${width-12} 35L${width-45} ${height/2}L${width-12} ${height-35}L${width-65} ${height-12}H65L12 ${height-35}L45 ${height/2}Z" ${plateAttrs}/>`:p.shape==='badge'?`<path d="M${width/2} 12L${width-12} ${height*.2}V${height*.7}L${width/2} ${height-12}L12 ${height*.7}V${height*.2}Z" ${plateAttrs}/>`:`<rect x="12" y="12" width="${width-24}" height="${height-24}" rx="${Math.min(50,height*.15)}" ${plateAttrs}/>`;
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title"><title id="title">${xml(plain)}</title><desc>Original FontSplat text artwork. ${xml(preset.name)}.</desc>${style}<defs>${defs}${paths}</defs>${backdrop}${images('behind')}${plate}<g opacity="${clamp(motionOpacity,0,1,1)}" transform="translate(${width/2} ${height/2}) rotate(${p.rotate}) skewX(${p.skew}) translate(${-width/2} ${-height/2})">${pulse}${content}</g>${images('front')}</svg>`;
- return {svg,width,height,plainText:plain,glitchText:glitch};
+ const firstBaseline=(height-lines.length*lineHeight)/2+p.size,lastBaseline=firstBaseline+(lines.length-1)*lineHeight,up=p.textPath==='arch-up'?pathRise:p.textPath==='wave'?pathRise*1.5:p.textPath==='banner'?pathRise:p.textPath==='chevron'?pathRise*.5:p.textPath==='straight'?Math.max(0,p.curve):0,down=p.textPath==='arch-down'?pathRise:p.textPath==='wave'?pathRise*1.5:p.textPath==='banner'?pathRise:p.textPath==='chevron'?pathRise*.5:p.textPath==='straight'?Math.max(0,-p.curve):0,canCrop=!ring&&!p.rotate&&!p.skew&&p.shape==='none',cropTop=canCrop?Math.max(0,Math.floor(firstBaseline-up-p.size*1.2-p.outlineWidth-10-(p.applyGlitch?p.above*p.size*.2:0))):0,cropBottom=canCrop?Math.max(0,Math.floor(height-lastBaseline-down-p.size*.45-p.depth-p.outlineWidth-10-(p.applyGlitch?p.below*p.size*.2:0))):0;
+ return {svg,width,height,plainText:plain,glitchText:glitch,cropTop,cropBottom};
 }

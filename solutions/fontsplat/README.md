@@ -13,3 +13,5 @@ DejaVu and Noto license files remain there. SVG export embeds the selected font;
 PNG export renders it to pixels. User-imported font rights remain the user's.
 
 SpellArt now supports eight text lines, eight lettering paths and optional background badges, six embedded pictures, a looping GIF and H.264 MP4 export. See [the full guide](../../docs/fontsplat.md) for controls, local processing, limits and portable project saving. The MP4 converter is the locally bundled FFmpeg runtime shared with MediaSplat; its notices remain included with that runtime.
+
+Plain-background removal uses the original local cutout worker in this directory, with no AI model or upload. Arch-above, arch-below and two-caption image layouts retain editable text and support all artwork and motion exports.
