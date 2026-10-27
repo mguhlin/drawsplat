@@ -4,6 +4,7 @@ const loaded=new Map();
 export const fontCategory=(doc,id)=>doc.customFonts?.[id]?.category|| (id==='Georgia'?'serif':'sans-serif');
 export const fontName=(doc,id)=>doc.customFonts?.[id]?.family||id;
 export async function loadProjectFonts(doc){
+  if(Object.values(doc.stories).some(s=>s.style.font==='Comic Neue'||s.marks?.some(m=>m.font==='Comic Neue')))await Promise.all([400,700].map(weight=>document.fonts.load(`${weight} 12px "Comic Neue"`)));
   for(const[id,item]of loaded)if(!Object.hasOwn(doc.customFonts||{},id)){document.fonts.delete(item.face);loaded.delete(id);}
   for(const [id,font]of Object.entries(doc.customFonts||{})){
     if(loaded.get(id)?.src===font.src)continue;
@@ -32,6 +33,6 @@ export async function importFont(file,doc){
 export function setupFontTools(api){
   const $=id=>document.getElementById(id);document.body.insertAdjacentHTML('beforeend','<input id="localFontInput" type="file" accept=".ttf,.otf,.woff,.woff2" hidden>');
   $('localFontInput').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const result=await importFont(file,api.getDoc());api.mutate(()=>{const d=api.getDoc();(d.customFonts||={})[result.id]=result.font;const o=api.getSelectedObject();if(o?.type==='text'&&!o.locked){d.stories[o.storyId].style.font=result.id;for(const mark of d.stories[o.storyId].marks||[])delete mark.font;}});}catch(e){api.showReport([e.message]);}};
-  $('propFontCategory').onchange=()=>{const d=api.getDoc(),o=api.getSelectedObject();if(o?.type!=='text'||o.locked)return;const category=$('propFontCategory').value,font=['Arial','Georgia','Verdana',...Object.keys(d.customFonts||{})].find(id=>fontCategory(d,id)===category);if(font)api.mutate(()=>{d.stories[o.storyId].style.font=font;for(const mark of d.stories[o.storyId].marks||[])delete mark.font;});};
-  return {open(){ $('localFontInput').click(); },render(){const d=api.getDoc(),o=api.getSelectedObject(),selected=o?.type==='text'?d.stories[o.storyId].style.font:'Arial';$('propFont').replaceChildren(...['Arial','Georgia','Verdana',...Object.keys(d.customFonts||{})].map(id=>new Option(`${fontName(d,id)} · ${api.t(fontCategory(d,id)==='serif'?'serif':'sansSerif')}`,id)));$('propFont').value=selected;$('propFontCategory').value=fontCategory(d,selected);}};
+  $('propFontCategory').onchange=()=>{const d=api.getDoc(),o=api.getSelectedObject();if(o?.type!=='text'||o.locked)return;const category=$('propFontCategory').value,font=['Arial','Georgia','Verdana','Comic Neue',...Object.keys(d.customFonts||{})].find(id=>fontCategory(d,id)===category);if(font)api.mutate(()=>{d.stories[o.storyId].style.font=font;for(const mark of d.stories[o.storyId].marks||[])delete mark.font;});};
+  return {open(){ $('localFontInput').click(); },render(){const d=api.getDoc(),o=api.getSelectedObject(),selected=o?.type==='text'?d.stories[o.storyId].style.font:'Arial';$('propFont').replaceChildren(...['Arial','Georgia','Verdana','Comic Neue',...Object.keys(d.customFonts||{})].map(id=>new Option(`${fontName(d,id)} · ${api.t(fontCategory(d,id)==='serif'?'serif':'sansSerif')}`,id)));$('propFont').value=selected;$('propFontCategory').value=fontCategory(d,selected);}};
 }

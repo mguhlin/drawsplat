@@ -210,7 +210,9 @@ function download(blob, extension) {
   const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = (doc.title.replace(/[^\p{L}\p{N} _-]/gu, '').trim() || 'publication') + extension; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 async function projectBlob(publication = doc) {
-  const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(publication, null, 2)); zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose File → Export → Pack and Go.\n');
+  const zip = new window.JSZip(); zip.file('publication.json', JSON.stringify(publication, null, 2));
+  if(Object.values(publication.stories).some(s=>s.style.font==='Comic Neue'||s.marks?.some(m=>m.font==='Comic Neue')))for(const file of ['ComicNeue-Regular.ttf','ComicNeue-Bold.ttf','ComicNeue-Italic.ttf','ComicNeue-BoldItalic.ttf','ComicNeue-LICENSE.txt']){const response=await fetch('fonts/'+file);if(!response.ok)throw Error('The comic typeface could not be packaged.');zip.file('fonts/'+file,await response.arrayBuffer());}
+ zip.file('README.txt', 'LayoutSplat version 1 publication. Open this .layoutsplat file in LayoutSplat.\nPictures, stories, rich formatting, masters, styles, and motion media are embedded in publication.json. LayoutSplat uses its bundled font substitutes. For separately packaged fonts and print proofs, choose File → Export → Pack and Go.\n');
   return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
 }
 async function saveProject() {
@@ -250,14 +252,14 @@ async function openProject(file, transferred = false) {
   } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); if (!controller.signal.aborted) showImportReport([t('mediaImportError'), error.message]); }
   finally { if (publisher) $('mediaImportDialog').close(); }
 }
-async function importPicture(file, replaceId = null) {
+async function importPicture(file, replaceId = null, metadata = {}) {
   if (!replaceId && page().objects.length >= 200) { status('pageLimit'); return; }
   const controller = new AbortController(); $('mediaCancel').onclick = () => controller.abort(); $('mediaProgress').textContent = t('importingMedia'); $('mediaImportDialog').showModal();
   try {
-    const asset = await importMedia(file, { signal: controller.signal, onStatus: text => $('mediaProgress').textContent = text }), notes = asset.notes || []; delete asset.notes; controller.signal.throwIfAborted();
+    const asset = await importMedia(file, { signal: controller.signal, onStatus: text => $('mediaProgress').textContent = text }), notes = asset.notes || []; if(typeof metadata.alt==='string')asset.alt=metadata.alt.slice(0,2000); delete asset.notes; controller.signal.throwIfAborted();
     const existing = replaceId ? findObject(doc, replaceId)?.object : null; if (replaceId && (!existing || existing.type !== 'image' || existing.locked)) throw Error(t('lockedNotice'));
-    mutate(() => { const assetId = uid(); doc.assets[assetId] = asset; if (existing) { existing.assetId = assetId; selected = existing.id; } else { const w = Math.min(300, doc.width - doc.margin * 2), h = Math.max(6, Math.min(doc.height - doc.margin * 2, w * asset.height / asset.width)); const o = { id: uid(), type: 'image', assetId, x: doc.margin, y: doc.margin, w, h, rotation: 0, fit: 'contain', locked: false }; page().objects.push(o); selected = o.id; } });
-    $('mediaImportDialog').close(); if (notes.length) showImportReport(notes);
+    mutate(() => { const assetId = uid(); doc.assets[assetId] = asset; if (existing) { existing.assetId = assetId; selected = existing.id; } else { const w = Math.min(Number.isFinite(metadata.width)?Math.max(12,metadata.width):300, doc.width - doc.margin * 2), h = Math.max(6, Math.min(doc.height - doc.margin * 2, w * asset.height / asset.width)); const o = { id: uid(), type: 'image', assetId, x: doc.margin, y: doc.margin, w, h, rotation: 0, fit: 'contain', locked: false }; page().objects.push(o); selected = o.id; } });
+    $('mediaImportDialog').close(); if (notes.length) showImportReport(notes); return true;
   } catch (error) { $('mediaImportDialog').close(); if (!controller.signal.aborted) showImportReport([t('mediaImportError'), error?.message || String(error)]); }
 }
 function showImportReport(lines) { $('importReportText').textContent = [...new Set(lines)].join('\n\n'); $('importReportDialog').showModal(); }
@@ -325,7 +327,7 @@ async function action(name) {
       }});}catch(error){showImportReport([error.message||'The photo blur editor could not open.']);}break;
     }
     case 'image': $('pictureInput').click(); break;
-    case 'fontsplat': openFontSplat({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make a splash',onInsert:async art=>{await importPicture(art.file);const placed=selectedObject();if(placed?.type==='image')mutate(()=>{doc.assets[placed.assetId].alt=art.alt;});}});break;
+    case 'fontsplat': openFontSplat({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make a splash',onInsert:async art=>{if(!await importPicture(art.file,null,{alt:art.alt}))throw Error('The artwork could not be placed.');}});break;
     case 'video': $('videoInput').click(); break;
     case 'audio': $('audioInput').click(); break;
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#7c3aed', name)); break;
@@ -508,6 +510,6 @@ async function boot() {
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.
-  window.LayoutSplat = Object.freeze({ version: '0.8.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
+  window.LayoutSplat = Object.freeze({ version: '0.9.0', getPublication: () => clone(doc), getLayout: () => ({ fragments: clone([...layout.fragments.entries()]), overflows: clone(layout.overflows), stats: clone(layout.stats) }), getFindings: () => clone(issues) });
 }
 boot().catch(error => { console.error(error); status('invalidProject'); });

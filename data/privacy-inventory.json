@@ -264,7 +264,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "7e464f43627e41d5124fd5350dbedbe4a224f83022e0dbdaaf1c863222bcc7b0"
+      "entrySha256": "0a09c2211485cb7e9a5d8c6b66ba497616417e51c1b0ee146d6a3aeb00f26494"
     },
     {
       "id": "plansplat",
@@ -1782,6 +1782,7 @@
       "literalRemoteHosts": [
         "buymeacoffee.com",
         "console.cloud.google.com",
+        "dauntlessstories.com",
         "developers.cloudflare.com",
         "developers.google.com",
         "developers.openai.com",
@@ -1810,6 +1811,7 @@
         "www.anthropic.com",
         "www.avery.co.uk",
         "www.avery.com",
+        "www.bigredhair.com",
         "www.cloudflare.com",
         "www.dropbox.com",
         "www.gnu.org",
@@ -1844,6 +1846,7 @@
       "literalRemoteHosts": [
         "buymeacoffee.com",
         "console.cloud.google.com",
+        "dauntlessstories.com",
         "developers.cloudflare.com",
         "developers.google.com",
         "developers.openai.com",
@@ -1872,6 +1875,7 @@
         "www.anthropic.com",
         "www.avery.co.uk",
         "www.avery.com",
+        "www.bigredhair.com",
         "www.cloudflare.com",
         "www.dropbox.com",
         "www.gnu.org",

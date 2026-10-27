@@ -1,0 +1,36 @@
+{
+  "license": "SIL Open Font License 1.1",
+  "upstreamCommit": "3dd78844021e948ceb633d1dcee3f7885561b5d9",
+  "files": [
+    {
+      "file": "ComicNeue-Regular.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/comicneue/ComicNeue-Regular.ttf",
+      "sha256": "a0ee5a37c8b27c4db0700137d928598b1e23b0089e1546a8961909176b779360",
+      "bytes": 57248
+    },
+    {
+      "file": "ComicNeue-Bold.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/comicneue/ComicNeue-Bold.ttf",
+      "sha256": "3e7e5fccfd7e0788f317b43312151c1bd5cf058c9697a8d83eac3939050bd61e",
+      "bytes": 55716
+    },
+    {
+      "file": "ComicNeue-Italic.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/comicneue/ComicNeue-Italic.ttf",
+      "sha256": "e06bfd1552f5c9464c5665733ffd69239b0593885dbb9e059688a5900f78cf98",
+      "bytes": 54392
+    },
+    {
+      "file": "ComicNeue-BoldItalic.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/comicneue/ComicNeue-BoldItalic.ttf",
+      "sha256": "5c312c2a2fa64eee82f3b87fcfab8f3b12a5e59b043124401d322eb323cfbf16",
+      "bytes": 55928
+    },
+    {
+      "file": "ComicNeue-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/comicneue/OFL.txt",
+      "sha256": "7c38a22e5878e60fe423360553e63dd7be23d29f1f60336034935dbfc96e8320",
+      "bytes": 4390
+    }
+  ]
+}

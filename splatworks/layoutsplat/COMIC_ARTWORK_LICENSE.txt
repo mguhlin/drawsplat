@@ -2,6 +2,7 @@ Original LayoutSplat comic sample content — CC0 1.0
 
 The two sample stories (The Missing Color and Signal from the Library), their
 Pip and Dot character illustrations in comic-art-1.svg through comic-art-6.svg,
+all character poses in characters/*.svg, the original prompts in comic-writing.mjs and comic-templates.mjs,
 and the sample captions/dialogue are dedicated to the public domain under CC0
 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
 Reuse, remix, and adapt this sample content. SplatWorks and LayoutSplat names

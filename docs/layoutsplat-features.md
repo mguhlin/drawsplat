@@ -24,7 +24,7 @@ The organized **File** menu contains project commands, Templates, alphabetized I
 
 ## 2. Original editable publication templates
 
-**File → Templates → Browse all designs** opens **134 distinct compositions across 20 publication types**. Filter by type, industry, orientation, language, palette, or search. Industry and palette are customizations; they are not counted as extra designs.
+**File → Templates → Browse all designs** opens **145 distinct compositions across 20 publication types**. Filter by type, industry, orientation, language, palette, or search. Industry and palette are customizations; they are not counted as extra designs.
 
 | Publication type | Examples and supported starting points |
 | --- | --- |

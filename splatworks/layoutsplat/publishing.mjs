@@ -1,3 +1,4 @@
+import {setupCharacterLibrary} from './character-library.mjs';
 import {pictureContour} from './text-wrap.mjs';
 import { uid, clone, frame, shape, textStyle, findObject, removeObject, validatePublication, linkFrames, unlinkFrame } from './engine.mjs';
 import { TEMPLATE_TYPES, THEMES, makeTemplate } from './templates.mjs';
@@ -21,6 +22,7 @@ export function setupPublishing(api) {
   const ebook=setupEbook({...api,openExports:format=>exports.open(format)});
   const context = setupContextMenu({ ...api, members, selectedIds: () => new Set(selection) });
   const library = setupTemplateLibrary(api);
+  const characters = setupCharacterLibrary(api);
   const backgrounds = setupBackgroundLibrary(api);
   const suite = setupSuiteImport(api);
   const labels = setupLabelSettings(api);
@@ -153,6 +155,7 @@ export function setupPublishing(api) {
     if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
     if (name === 'whiteboardBackgrounds') { await backgrounds.open(); return true; }
     if (name === 'importSuite') { suite.open(); return true; }
+    if(name==='comicCharacters'){characters.open();return true;}
     if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates','ebookTemplates','comicTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu',ebookTemplates:'ebook',comicTemplates:'comic'}[name]); return true; }
     if(name==='labelSettings'){labels.open();return true;}
     if (name === 'publisherSettings') { $('publisherSettingsDialog').showModal(); return true; }

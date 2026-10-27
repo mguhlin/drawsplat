@@ -1,0 +1,21 @@
+{
+  "version": "0.9.0",
+  "date": "2026-10-27",
+  "comicDesigns": 19,
+  "catalogDesigns": 145,
+  "guidedStarters": 10,
+  "workbookPages": 5,
+  "characters": 8,
+  "posesPerCharacter": 3,
+  "comicFont": "Comic Neue, four locally bundled faces, OFL-1.1",
+  "checks": [
+    "10 engine and publishing model tests passed, including distinct template compositions",
+    "19 browser checks passed across comic studio, enhanced EPUB, layout milestone, FontSplat and photo blur",
+    "145 templates in six language settings measured without text overflow",
+    "Character filtering, pose selection, PNG insertion, dimensions, alt description and native save/reopen passed",
+    "Native comic project contains all four Comic Neue faces and its license",
+    "67-destination privacy inventory, registry and built-resource checks passed"
+  ],
+  "readingCredits": "docs/layoutsplat-comic-studio.md",
+  "screenshots": ["assets/layoutsplat-guide/v0.9.0/character-library.png", "assets/layoutsplat-guide/v0.9.0/guided-comic.png"]
+}

@@ -5,7 +5,8 @@
     "Verdana": "DejaVu Sans",
     "LayoutSplat Arabic": "Noto Naskh Arabic",
     "LayoutSplat Indic": "Noto Sans Devanagari",
-    "LayoutSplat CJK": "Noto Sans SC"
+    "LayoutSplat CJK": "Noto Sans SC",
+    "Comic Neue": "Comic Neue"
   },
   "files": [
     "DejaVu-LICENSE.txt",
@@ -25,6 +26,12 @@
     "NotoArabic-LICENSE.txt",
     "NotoCJK-LICENSE.txt",
     "NotoIndic-LICENSE.txt",
-    "fonts.css"
+    "fonts.css",
+    "ComicNeue-Regular.ttf",
+    "ComicNeue-Bold.ttf",
+    "ComicNeue-Italic.ttf",
+    "ComicNeue-BoldItalic.ttf",
+    "ComicNeue-LICENSE.txt",
+    "ComicNeue-SOURCE.json"
   ]
 }

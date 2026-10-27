@@ -86,3 +86,5 @@ and license in `hyphenation/`. `patterns-en-us.mjs` embeds that unchanged dictio
 as a JavaScript string; rebuild with `JSON.stringify` on the UTF-8 dictionary.
 The bounded trie and cache implementation is LayoutSplat GPL-3.0-only source.
 Other languages use browser hyphenation when a local dictionary is available.
+
+Comic Neue: Copyright 2014 The Comic Neue Project Authors. SIL Open Font License 1.1. See fonts/ComicNeue-LICENSE.txt and fonts/ComicNeue-SOURCE.json for the pinned upstream source and checksums.

@@ -1,0 +1,20 @@
+const {test,expect}=require('@playwright/test');
+test('guided comics, workbook and character library are editable and portable',async({page},info)=>{
+ await page.goto('/splatworks/layoutsplat/');await expect.poll(()=>page.evaluate(()=>!!window.LayoutSplat)).toBe(true);page.on('dialog',d=>d.accept());
+ await page.locator('#fileMenu > summary').click();await page.locator('#fileTemplates > summary').click();await page.locator('[data-action=comicTemplates]').click();
+ await expect(page.locator('#libraryGrid .library-card')).toHaveCount(19);
+ await page.locator('[data-catalog-id=comic-character-arc]').click();await expect.poll(()=>page.evaluate(()=>LayoutSplat.getPublication().templateId)).toBe('comic-character-arc');
+ const initial=await page.evaluate(()=>{const d=LayoutSplat.getPublication();return {pages:d.pages.length,assets:Object.values(d.assets),text:Object.values(d.stories).map(s=>s.text).join('\n'),fonts:Object.values(d.stories).map(s=>s.style.font),count:d.pages[0].objects.length};});
+ expect(initial.pages).toBe(2);expect(initial.assets).toHaveLength(6);expect(initial.assets.every(a=>a.src.startsWith('data:image/png'))).toBe(true);expect(initial.fonts.every(f=>f==='Comic Neue')).toBe(true);expect(initial.text).toContain('A turning point');expect(initial.text).toContain('PANEL SCRIPT');
+ if(!await page.locator('#fileMenu').evaluate(e=>e.open))await page.locator('#fileMenu > summary').click();if(!await page.locator('#fileTemplates').evaluate(e=>e.open))await page.locator('#fileTemplates > summary').click();await page.locator('[data-action=comicCharacters]').click();
+ await expect(page.locator('#characterGrid button')).toHaveCount(8);await page.locator('#characterCategory').selectOption('robots');await expect(page.locator('#characterGrid button')).toHaveCount(1);await page.locator('#characterPose').selectOption('think');
+ await page.screenshot({path:info.outputPath('character-library.png'),fullPage:true});
+ await page.locator('#characterGrid button').click();await expect(page.locator('#characterLibraryDialog')).not.toBeVisible();
+ await expect.poll(()=>page.evaluate(()=>LayoutSplat.getPublication().pages[0].objects.length)).toBe(initial.count+1);
+ const inserted=await page.evaluate(()=>{const d=LayoutSplat.getPublication(),o=d.pages[0].objects.at(-1);return {o,a:d.assets[o.assetId]};});expect(inserted.o.w).toBe(96);expect(inserted.a.alt).toContain('thinking');expect(inserted.a.src).toMatch(/^data:image\/png/);
+ const dl=page.waitForEvent('download');await page.locator('.header-actions [data-action=save]').click();const fs=require('node:fs/promises'),buffer=await fs.readFile(await(await dl).path());
+ const fontProof=await page.evaluate(async bytes=>{const z=await JSZip.loadAsync(new Uint8Array(bytes));return Object.keys(z.files).filter(k=>k.includes('ComicNeue'));},[...buffer]);expect(fontProof).toHaveLength(5);
+ await page.locator('#projectInput').setInputFiles({name:'comic.layoutsplat',mimeType:'application/zip',buffer});await expect.poll(()=>page.evaluate(()=>LayoutSplat.getPublication().pages[0].objects.length)).toBe(initial.count+1);
+ await page.screenshot({path:info.outputPath('guided-comic.png'),fullPage:true});
+ const proof=await page.evaluate(async()=>{const {comicPublication}=await import('/splatworks/layoutsplat/comic-templates.mjs');const d=comicPublication('comic-writing-workbook');return {pages:d.pages.length,text:Object.values(d.stories).map(s=>s.text).join('\n')};});expect(proof.pages).toBe(5);expect(proof.text).toContain('CREDITS AND PERMISSIONS');expect(proof.text).toContain('FRESH EYES');
+});

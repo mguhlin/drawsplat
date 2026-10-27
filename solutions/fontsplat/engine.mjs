@@ -11,6 +11,7 @@ export const PRESETS = [
 ].map(([id,name,primary,secondary,effect])=>({id,name,primary,secondary,effect}));
 export const FONTS = [
  {id:'sans',name:'Liberation Sans',file:'LiberationSans-Regular.ttf'},
+ {id:'comic',name:'Comic Neue',file:'ComicNeue-Regular.ttf'},
  {id:'serif',name:'Liberation Serif',file:'LiberationSerif-Regular.ttf'},
  {id:'display',name:'DejaVu Sans',file:'DejaVuSans.ttf'},
  {id:'arabic',name:'Arabic · Noto',file:'LayoutSplatArabic.woff'},

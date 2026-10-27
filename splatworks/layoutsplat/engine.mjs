@@ -173,7 +173,7 @@ export function validatePublication(input) {
   }
   const used = new Set();
   if(d.customFonts!==undefined){if(!d.customFonts||Array.isArray(d.customFonts)||typeof d.customFonts!=='object'||Object.keys(d.customFonts).length>16)fail();let bytes=0;for(const[id,f]of Object.entries(d.customFonts)){if(!/^LayoutSplatFont-[0-9a-f-]{36}$/i.test(id)||!f||typeof f.name!=='string'||f.name.length>200||typeof f.family!=='string'||f.family.length>200||!['serif','sans-serif'].includes(f.category)||!['ttf','otf','woff','woff2'].includes(f.format)||!number(f.weight,100,900)||typeof f.italic!=='boolean'||typeof f.src!=='string'||f.src.length>22000000||!new RegExp(`^data:font/${f.format};base64,[A-Za-z0-9+/=]+$`).test(f.src))fail();bytes+=f.src.length;}if(bytes>88000000)fail();}
-  const validFont=name=>['Arial','Georgia','Verdana'].includes(name)||Object.hasOwn(d.customFonts||{},name);
+  const validFont=name=>['Arial','Georgia','Verdana','Comic Neue'].includes(name)||Object.hasOwn(d.customFonts||{},name);
   if (Object.keys(d.stories).length > 50000 || Object.keys(d.assets).length > 500) fail();
   for (const [id, story] of Object.entries(d.stories)) {
     const s = story.style;

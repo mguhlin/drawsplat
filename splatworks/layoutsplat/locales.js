@@ -1,9 +1,10 @@
 /* LayoutSplat shares the original DrawSplat language picker and preference. */
 (() => {
   const rows = `
-exportEpub|EPUB audio|Audio|Audio|Âm thanh|صوت|音频|ऑडियो
+exportEpub|EPUB ebook|Libro EPUB|Sách EPUB|كتاب EPUB|EPUB 电子书|EPUB ईबुक
+audio|Audio|Audio|Âm thanh|صوت|音频|ऑडियो
+comicCharacters|Comic character library|Biblioteca de personajes|Thư viện nhân vật|مكتبة شخصيات القصص المصورة|漫画角色库|कॉमिक पात्र संग्रह
 comic|Comics & panel layouts|Cómics y viñetas|Truyện tranh và bố cục khung|قصص مصورة وتخطيطات لوحات|漫画与分格模板|कॉमिक्स और पैनल लेआउट
-ebook|Libro EPUB|Sách EPUB|كتاب EPUB|EPUB 电子书|EPUB ईबुक
 importEpub|EPUB — ebook text and pictures|EPUB — texto e imágenes|EPUB — văn bản và ảnh|EPUB — نص وصور|EPUB — 文字和图片|EPUB — पाठ और चित्र
 ebookTools|Ebook tools|Herramientas de libros|Công cụ sách|أدوات الكتب|电子书工具|ईबुक उपकरण
 ebook|Ebook|Libro electrónico|Sách điện tử|كتاب إلكتروني|电子书|ईबुक
