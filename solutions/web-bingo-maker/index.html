@@ -144,7 +144,7 @@ button{font-family:inherit;font-weight:600;border:none;border-radius:8px;padding
         <button class="btn-outline" onclick="loadBank()" data-i18n="load">Load</button>
       </div>
     </div>
-    <div class="hint" style="margin-bottom:14px">Curated vocabulary aligned to TEKS content areas — not verbatim standards. Loading replaces the box below; edit freely afterward.</div>
+    <div class="hint" data-i18n="bankHint">Starter banks use English vocabulary. Loading replaces your list; edit or replace any terms.</div>
     <label for="content" data-i18n="terms">Terms — one per line, or CSV (first column is used)</label>
     <textarea id="content" placeholder="Machine Learning
 Neural Network
@@ -159,7 +159,7 @@ Hallucination
       <input type="file" id="fileInput" accept=".csv,.txt,.md,.markdown,.tsv" style="display:none">
       <button class="btn-outline" onclick="document.getElementById('content').value='';document.getElementById('content').dispatchEvent(new Event('input'))" data-i18n="clear">Clear</button>
     </div>
-    <div class="hint">Markdown bullets (<code>- term</code>, <code>* term</code>) and CSV are cleaned automatically. You need at least enough terms to fill the grid.</div>
+    <div class="hint" data-i18n="formatHint">Markdown bullets and CSV are cleaned automatically. Add enough terms to fill your grid.</div>
   </div>
 
   <div class="card">
@@ -209,18 +209,18 @@ Hallucination
         <input type="text" id="shareUrl" data-i18n-aria-label="share" aria-label="1. Share this link with students" readonly>
         <button class="btn-primary" onclick="copyLink('shareUrl',this)" data-i18n="copy">Copy</button>
       </div>
-      <div class="hint">Every student who opens the link gets the <strong>same terms</strong> but a <strong>different randomized card</strong>. No accounts, no server — the game lives inside the link.</div>
+      <div class="hint" data-i18n="shareHint">Same terms, randomized cards. No accounts are needed; the game content travels in the link.</div>
 
       <label style="margin-top:18px" data-i18n="embed">2. Embed in Google Sites (Insert → Embed → Embed code)</label>
       <div class="share-row">
         <input data-i18n-aria-label="embed" aria-label="2. Embed in Google Sites (Insert → Embed → Embed code)" type="text" id="hostUrl" placeholder="Where you uploaded this file, e.g. https://yoursite.github.io/bingo-maker.html">
       </div>
-      <div class="hint" style="margin-bottom:8px">Paste the address where <strong>this HTML file is hosted</strong> (GitHub Pages, your school server, etc.), then copy the embed code below. Google Sites runs it in a sandboxed iframe, so JavaScript stays intact.</div>
+      <div class="hint" data-i18n="hostHint">Leave this blank to use this page, or enter the hosted game address. Copy the embed code below.</div>
       <div class="share-row">
         <textarea id="embedCode" readonly style="min-height:96px;font-size:.78rem"></textarea>
         <button class="btn-primary" onclick="copyLink('embedCode',this)" style="align-self:flex-start" data-i18n="copy">Copy</button>
       </div>
-      <div class="hint">In Google Sites: <strong>Insert → Embed → Embed code</strong>, paste, then Insert. Students get the same game inside your page.</div>
+      <div class="hint" data-i18n="embedHint">In Google Sites, choose Insert → Embed → Embed code, paste the code, and insert.</div>
     </div>
   </div>
 </div>

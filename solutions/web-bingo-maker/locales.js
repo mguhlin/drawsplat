@@ -62,7 +62,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X (both diagonals)",
     "goal.plus": "Plus / cross (center row + column)",
     "goal.blackout": "Blackout (cover all)",
-    "need": "You need at least {need} terms. You have {n}."
+    "need": "You need at least {need} terms. You have {n}.",
+    "bankHint": "Starter banks use English vocabulary. Loading replaces your list; edit or replace any terms.",
+    "formatHint": "Markdown bullets and CSV are cleaned automatically. Add enough terms to fill your grid.",
+    "shareHint": "Same terms, randomized cards. No accounts are needed; the game content travels in the link.",
+    "hostHint": "Leave this blank to use this page, or enter the hosted game address. Copy the embed code below.",
+    "embedHint": "In Google Sites, choose Insert → Embed → Embed code, paste the code, and insert."
   },
   "es": {
     "nav.tools": "Herramientas y widgets",
@@ -126,7 +131,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X (ambas diagonales)",
     "goal.plus": "Cruz (fila y columna centrales)",
     "goal.blackout": "Cartón lleno (todas las casillas)",
-    "need": "Necesitas al menos {need} términos. Tienes {n}."
+    "need": "Necesitas al menos {need} términos. Tienes {n}.",
+    "bankHint": "Las listas iniciales están en inglés. Al cargar se reemplaza tu lista; puedes editarla.",
+    "formatHint": "Las viñetas Markdown y el CSV se limpian automáticamente. Añade suficientes términos para llenar la cuadrícula.",
+    "shareHint": "Mismos términos, tarjetas aleatorias. No se necesitan cuentas; el contenido viaja en el enlace.",
+    "hostHint": "Déjalo vacío para usar esta página o introduce la dirección del juego. Copia el código de inserción.",
+    "embedHint": "En Google Sites, elige Insertar → Insertar código, pega el código e insértalo."
   },
   "vi": {
     "nav.tools": "Công cụ và tiện ích",
@@ -190,7 +200,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X (hai đường chéo)",
     "goal.plus": "Dấu cộng (hàng và cột giữa)",
     "goal.blackout": "Phủ kín toàn bộ thẻ",
-    "need": "Cần ít nhất {need} từ. Bạn có {n}."
+    "need": "Cần ít nhất {need} từ. Bạn có {n}.",
+    "bankHint": "Bộ từ mẫu dùng tiếng Anh. Tải sẽ thay danh sách hiện tại; bạn có thể sửa mọi từ.",
+    "formatHint": "Dấu đầu dòng Markdown và CSV được làm sạch tự động. Thêm đủ từ để điền bảng.",
+    "shareHint": "Cùng từ vựng, thẻ ngẫu nhiên. Không cần tài khoản; nội dung nằm trong liên kết.",
+    "hostHint": "Để trống để dùng trang này hoặc nhập địa chỉ trò chơi. Sao chép mã nhúng bên dưới.",
+    "embedHint": "Trong Google Sites, chọn Chèn → Nhúng → Mã nhúng, dán mã rồi chèn."
   },
   "ar": {
     "nav.tools": "الأدوات والتطبيقات",
@@ -254,7 +269,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X (القطران)",
     "goal.plus": "علامة زائد (الصف والعمود الأوسطان)",
     "goal.blackout": "تغطية البطاقة كاملة",
-    "need": "تحتاج إلى {need} مصطلحًا على الأقل. لديك {n}."
+    "need": "تحتاج إلى {need} مصطلحًا على الأقل. لديك {n}.",
+    "bankHint": "القوائم الجاهزة باللغة الإنجليزية. التحميل يستبدل قائمتك، ويمكنك تعديلها.",
+    "formatHint": "تُنظف قوائم Markdown وCSV تلقائيًا. أضف مصطلحات كافية لملء الشبكة.",
+    "shareHint": "المصطلحات نفسها وبطاقات عشوائية. لا حاجة لحساب، فالمحتوى داخل الرابط.",
+    "hostHint": "اتركه فارغًا لاستخدام هذه الصفحة أو أدخل عنوان اللعبة. انسخ رمز التضمين أدناه.",
+    "embedHint": "في Google Sites، اختر إدراج ثم تضمين ثم رمز التضمين، والصق الرمز وأدرجه."
   },
   "zh": {
     "nav.tools": "工具与组件",
@@ -318,7 +338,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X（两条对角线）",
     "goal.plus": "十字（中心行与列）",
     "goal.blackout": "全卡（标记所有格子）",
-    "need": "至少需要 {need} 个词语。你目前有 {n} 个。"
+    "need": "至少需要 {need} 个词语。你目前有 {n} 个。",
+    "bankHint": "示例词库使用英语。加载会替换当前列表，你可修改任意词语。",
+    "formatHint": "自动清理 Markdown 项目符号和 CSV。请添加足够的词语以填满卡片。",
+    "shareHint": "相同词语，随机卡片。无需账户，游戏内容保存在链接中。",
+    "hostHint": "留空以使用此页面，或输入游戏网址，然后复制下方嵌入代码。",
+    "embedHint": "在 Google Sites 中选择插入 → 嵌入 → 嵌入代码，粘贴后插入。"
   },
   "uh": {
     "nav.tools": "उपकरण और विजेट",
@@ -382,7 +407,12 @@ WidgetI18n.register('webbingomaker',{
     "goal.x": "X (दोनों विकर्ण)",
     "goal.plus": "जोड़ का चिह्न (बीच की पंक्ति और कॉलम)",
     "goal.blackout": "पूरा कार्ड भरें",
-    "need": "कम से कम {need} शब्द चाहिए। आपके पास {n} हैं।"
+    "need": "कम से कम {need} शब्द चाहिए। आपके पास {n} हैं।",
+    "bankHint": "उदाहरण शब्द सूचियाँ अंग्रेज़ी में हैं। लोड करने से सूची बदलती है; कोई भी शब्द संपादित करें।",
+    "formatHint": "Markdown और CSV अपने आप साफ़ होते हैं। ग्रिड भरने के लिए पर्याप्त शब्द जोड़ें।",
+    "shareHint": "एक जैसे शब्द, अलग यादृच्छिक कार्ड। खाते की आवश्यकता नहीं; सामग्री लिंक में रहती है।",
+    "hostHint": "इसी पेज के लिए खाली छोड़ें या खेल का पता डालें। नीचे दिया एम्बेड कोड कॉपी करें।",
+    "embedHint": "Google Sites में Insert → Embed → Embed code चुनें, कोड पेस्ट करें और जोड़ें।"
   }
 });
 function syncBingoLanguage(){
