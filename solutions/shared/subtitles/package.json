@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",
-    "mediabunny": "1.56.2"
+    "mediabunny": "1.62.1"
   },
   "peerDependencies": {
     "react": ">=19"
