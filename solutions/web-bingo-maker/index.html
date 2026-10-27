@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebBingoMaker</title>
+<link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/css/privacy-controls.css">
+<script src="../../assets/js/privacy-controls.js"></script>
+<style>
+:root{
+  --navy:#7c3aed; --navy-dark:#4c1d95; --navy-mid:#6d28d9;
+  --gold:#f59e0b; --gold-light:#fbbf24; --gold-pale:#fffbeb;
+  --pale-navy:#ede9fe; --white:#ffffff; --off-white:#f7f8fc;
+  --text:#1a1a2e; --text-muted:#5a6680; --border:#e2e7f5; --teal:#0f766e;
+  /* WebBingoMaker splash palette (from banner image) */
+  --ib-blue:#7c3aed; --ib-blue-deep:#4c1d95; --ib-teal:#0f766e;
+  --ib-yellow:#f59e0b; --ib-green:#0f766e; --ib-purple:#7c3aed; --ib-red:#f59e0b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--off-white);line-height:1.5}
+h1,h2,h3{font-family:'DM Serif Display',serif;color:var(--navy);margin:0}
+.hero{background:var(--navy-dark);color:var(--white);padding:28px 20px;text-align:center;
+  background-image:radial-gradient(circle at 30% 20%, rgba(252,176,64,.12), transparent 60%)}
+.hero h1{color:var(--white);font-size:2rem}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero p{color:var(--pale-navy);margin:6px 0 0;font-size:.95rem}
+/* WebBingoMaker splash banner on teacher page */
+.splash{max-width:920px;margin:0 auto;padding:20px 20px 0}
+.splash img{width:100%;height:auto;display:block;border-radius:14px;box-shadow:0 10px 30px rgba(13,58,158,.25)}
+.feature-strip{max-width:920px;margin:14px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.feature{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.feature .dot{width:30px;height:30px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.feature b{display:block;color:var(--navy);font-size:.85rem}
+.feature span{font-size:.74rem;color:var(--text-muted)}
+@media(max-width:640px){.feature-strip{grid-template-columns:repeat(2,1fr)}}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card h2{font-size:1.3rem;border-left:4px solid var(--gold);padding-left:10px;margin-bottom:14px}
+label{display:block;font-weight:600;color:var(--navy);margin:14px 0 6px;font-size:.9rem}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:inherit;font-size:.95rem;color:var(--text);background:var(--white)}
+textarea{min-height:160px;resize:vertical;font-family:'Courier New',monospace;font-size:.88rem}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:160px}
+select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem;background:var(--white);color:var(--text)}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px}
+.check input{width:18px;height:18px}
+.check label{margin:0;font-weight:500}
+button{font-family:inherit;font-weight:600;border:none;border-radius:8px;padding:11px 20px;cursor:pointer;font-size:.95rem}
+.btn-primary{background:var(--gold);color:var(--navy)}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-outline{background:var(--white);color:var(--navy);border:1.5px solid var(--navy)}
+.btn-outline:hover{background:var(--off-white)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.hint{font-size:.82rem;color:var(--text-muted);margin-top:4px}
+.count{font-size:.82rem;color:var(--text-muted);margin-top:6px}
+.share-box{display:none;margin-top:16px;padding:16px;background:var(--gold-pale);border-radius:8px}
+.share-box.show{display:block}
+.share-box label{margin-top:0}
+.share-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.share-row input{flex:1;min-width:200px;font-family:'Courier New',monospace;font-size:.82rem}
+.err{display:none;background:#fdeaea;color:#9b2222;border:1.5px solid #f3c0c0;padding:10px 14px;border-radius:8px;margin-top:12px;font-size:.9rem}
+.err.show{display:block}
+
+/* ---- Bingo card ---- */
+.bingo-head{text-align:center;margin-bottom:14px}
+.ibingo-logo{display:block;margin:0 auto 6px;max-width:260px;width:60%;height:auto}
+.bingo-head h2{font-size:1.6rem}
+.bingo-head .free-note{font-size:.85rem;color:var(--text-muted)}
+.grid{display:grid;gap:8px;max-width:560px;margin:0 auto}
+.cell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:6px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);
+  font-size:clamp(.6rem,2.2vw,.92rem);font-weight:500;cursor:pointer;user-select:none;
+  transition:background .12s,color .12s,transform .08s;word-break:break-word;line-height:1.15}
+.cell:hover{border-color:var(--navy)}
+.cell:active{transform:scale(.97)}
+.cell.marked{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.cell.free{background:var(--gold);color:var(--navy);border-color:var(--gold);font-family:'DM Serif Display',serif;cursor:default}
+.cell.free.marked{background:var(--gold)}
+.win-banner{display:none;text-align:center;background:var(--gold);color:var(--navy);
+  font-family:'DM Serif Display',serif;font-size:1.4rem;padding:14px;border-radius:10px;margin:0 auto 16px;max-width:560px}
+.win-banner.show{display:block}
+.pattern-note{display:inline-block;background:var(--pale-navy);color:var(--navy);font-size:.8rem;font-weight:600;padding:4px 12px;border-radius:100px;margin-top:8px}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:90;display:none}
+#confetti.show{display:block}
+.popup-overlay{position:fixed;inset:0;background:rgba(7,31,74,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.popup-overlay.show{display:flex}
+.popup{background:var(--white);border-radius:16px;padding:32px 28px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(7,31,74,.4);border-top:6px solid var(--gold)}
+.popup h2{font-size:2rem;color:var(--navy);margin-bottom:6px}
+.popup .big{font-size:3rem;line-height:1;margin-bottom:8px}
+.popup p{color:var(--text-muted);margin:0 0 20px}
+.popup .btn-row{justify-content:center;margin-top:0}
+.toolbar{text-align:center;margin-top:18px}
+.print-only{display:none}
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff}
+  .cell{border:1.5px solid #000!important;color:#000!important;background:#fff!important}
+  .cell.free{background:#eee!important}
+  .cell.marked{background:#fff!important}
+}
+</style>
+</head>
+<body>
+
+<div id="splashHero" class="no-print">
+  <div class="splash">
+    <img src="webbingomaker-header.png" alt="WebBingoMaker — paste your terms, generate a card, and share one link with your whole class.">
+  </div>
+  <div class="feature-strip">
+    <div class="feature"><div class="dot" style="background:var(--ib-teal);color:#fff">⏱</div><b>Fast &amp; Easy</b><span>Create in seconds</span></div>
+    <div class="feature"><div class="dot" style="background:var(--ib-purple);color:#fff">👥</div><b>Classroom Ready</b><span>Engage every learner</span></div>
+    <div class="feature"><div class="dot" style="background:var(--ib-green);color:#fff">🔗</div><b>One Link to Share</b><span>Simple for everyone</span></div>
+    <div class="feature"><div class="dot" style="background:var(--ib-yellow);color:#fff">🏆</div><b>Play, Learn, Win!</b><span>Let the fun begin</span></div>
+  </div>
+  <p style="text-align:center;margin:12px 20px 0"><a href="https://mglearn.github.io/tcea/webdecks/ibingo/#1" target="_blank" rel="noopener" style="display:inline-block;background:var(--ib-blue);color:#fff;font-weight:600;font-size:.85rem;text-decoration:none;padding:9px 18px;border-radius:100px">▶ Watch the bingo walkthrough</a></p>
+</div>
+
+<!-- ============ BUILDER (teacher) ============ -->
+<div id="builder" class="wrap">
+  <div class="card">
+    <h2>1. Add your content</h2>
+    <label for="bankSubject">Load a starter term bank (TEKS-aligned vocabulary, Grades 3–12)</label>
+    <div class="row" style="margin-bottom:0">
+      <div>
+        <select id="bankSubject">
+          <option value="">Choose a subject…</option>
+          <option value="reading">Reading / ELA</option>
+          <option value="math">Mathematics</option>
+          <option value="science">Science</option>
+          <option value="social">Social Studies</option>
+        </select>
+      </div>
+      <div>
+        <select id="bankBand">
+          <option value="3-5">Grades 3–5</option>
+          <option value="6-8">Grades 6–8</option>
+          <option value="9-12">Grades 9–12</option>
+        </select>
+      </div>
+      <div style="flex:0 0 auto">
+        <button class="btn-outline" onclick="loadBank()">Load</button>
+      </div>
+    </div>
+    <div class="hint" style="margin-bottom:14px">Curated vocabulary aligned to TEKS content areas — not verbatim standards. Loading replaces the box below; edit freely afterward.</div>
+    <label for="content">Terms — one per line, or CSV (first column is used)</label>
+    <textarea id="content" placeholder="Machine Learning
+Neural Network
+Large Language Model
+Token
+Prompt
+Hallucination
+..."></textarea>
+    <div class="count" id="termCount">0 terms</div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn-outline" onclick="document.getElementById('fileInput').click()">Import File (.csv, .txt, .md)</button>
+      <input type="file" id="fileInput" accept=".csv,.txt,.md,.markdown,.tsv" style="display:none">
+      <button class="btn-outline" onclick="document.getElementById('content').value='';document.getElementById('content').dispatchEvent(new Event('input'))">Clear</button>
+    </div>
+    <div class="hint">Markdown bullets (<code>- term</code>, <code>* term</code>) and CSV are cleaned automatically. You need at least enough terms to fill the grid.</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Game options</h2>
+    <div class="row">
+      <div>
+        <label for="size">Grid size</label>
+        <select id="size">
+          <option value="3">3 × 3 (9 cells)</option>
+          <option value="4">4 × 4 (16 cells)</option>
+          <option value="5" selected>5 × 5 (25 cells)</option>
+        </select>
+      </div>
+      <div>
+        <label for="pattern">Win pattern</label>
+        <select id="pattern">
+          <option value="line">Line (any row, column, or diagonal)</option>
+          <option value="corners">Four corners</option>
+          <option value="diagonal">Either diagonal</option>
+          <option value="row">Any full row</option>
+          <option value="column">Any full column</option>
+          <option value="x">X (both diagonals)</option>
+          <option value="plus">Plus / cross (center row + column)</option>
+          <option value="blackout">Blackout (cover all)</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="title">Game title (optional)</label>
+        <input type="text" id="title" aria-label="Bingo title" placeholder="AI Terminology Bingo">
+      </div>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="freeSpace" checked>
+      <label for="freeSpace">Include a FREE center space (5×5 only)</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="generate()">Generate &amp; Get Share Link</button>
+      <button class="btn-outline" onclick="previewCard()">Preview a Card</button>
+    </div>
+    <div class="err" id="builderErr"></div>
+
+    <div class="share-box" id="shareBox">
+      <label>1. Share this link with students</label>
+      <div class="share-row">
+        <input type="text" id="shareUrl" aria-label="1. Share this link with students" readonly>
+        <button class="btn-primary" onclick="copyLink('shareUrl',this)">Copy</button>
+      </div>
+      <div class="hint">Every student who opens the link gets the <strong>same terms</strong> but a <strong>different randomized card</strong>. No accounts, no server — the game lives inside the link.</div>
+
+      <label style="margin-top:18px">2. Embed in Google Sites (Insert → Embed → Embed code)</label>
+      <div class="share-row">
+        <input aria-label="2. Embed in Google Sites (Insert → Embed → Embed code)" type="text" id="hostUrl" placeholder="Where you uploaded this file, e.g. https://yoursite.github.io/bingo-maker.html">
+      </div>
+      <div class="hint" style="margin-bottom:8px">Paste the address where <strong>this HTML file is hosted</strong> (GitHub Pages, your school server, etc.), then copy the embed code below. Google Sites runs it in a sandboxed iframe, so JavaScript stays intact.</div>
+      <div class="share-row">
+        <textarea id="embedCode" readonly style="min-height:96px;font-size:.78rem"></textarea>
+        <button class="btn-primary" onclick="copyLink('embedCode',this)" style="align-self:flex-start">Copy</button>
+      </div>
+      <div class="hint">In Google Sites: <strong>Insert → Embed → Embed code</strong>, paste, then Insert. Students get the same game inside your page.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PLAYER (student) ============ -->
+<div id="player" class="wrap" style="display:none">
+  <div class="bingo-head">
+    <p class="game-brand" style="font-size:1.5rem;font-weight:800;color:var(--navy)">WebBingoMaker</p>
+    <h2 id="playTitle">BINGO</h2>
+    <p class="free-note" id="patternInstruction">Click squares as they're called.</p>
+    <span class="pattern-note" id="patternNote"></span>
+  </div>
+  <div class="win-banner" id="winBanner">🎉 BINGO! 🎉</div>
+  <div class="grid" id="grid"></div>
+  <div class="toolbar no-print">
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn-primary" onclick="newCard()">New Random Card</button>
+      <button class="btn-outline" onclick="window.print()">Print</button>
+      <button class="btn-outline" onclick="goBuilder()">Make My Own</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti" class="no-print"></canvas>
+
+<div class="popup-overlay no-print" id="popup">
+  <div class="popup">
+    <div class="big">🎉</div>
+    <h2>BINGO!</h2>
+    <p id="popupMsg">Congratulations — you got it!</p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="closePopup()">Keep Playing</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- TEKS-aligned starter vocabulary banks ----------
+// Curated key terms by subject + grade band, drawn from TEKS content areas.
+// These are vocabulary terms (bingo-friendly), NOT verbatim standard statements.
+const BANKS={
+  reading:{
+    "3-5":["noun","verb","adjective","adverb","pronoun","subject","predicate","prefix","suffix","root word","synonym","antonym","homophone","syllable","main idea","supporting detail","character","setting","plot","theme","fiction","nonfiction","fable","summary","sequence","cause and effect","compare and contrast","point of view","context clue","alliteration","simile","metaphor"],
+    "6-8":["theme","tone","mood","plot","conflict","climax","resolution","protagonist","antagonist","figurative language","metaphor","simile","personification","hyperbole","imagery","symbolism","foreshadowing","flashback","point of view","first person","third person","inference","central idea","text structure","argument","claim","evidence","counterargument","connotation","denotation","allusion","dramatic irony"],
+    "9-12":["theme","motif","tone","diction","syntax","rhetoric","ethos","pathos","logos","allusion","irony","satire","paradox","ambiguity","juxtaposition","anaphora","soliloquy","sonnet","iambic pentameter","allegory","archetype","characterization","narrative voice","rhetorical question","thesis","synthesis","primary source","secondary source","bias","credibility","analogy","euphemism"]
+  },
+  math:{
+    "3-5":["sum","difference","product","quotient","factor","multiple","numerator","denominator","fraction","decimal","place value","rounding","perimeter","area","array","equation","expression","remainder","equivalent","number line","fact family","odd","even","prime number","composite number","polygon","quadrilateral","vertex","angle","line of symmetry","mean","data"],
+    "6-8":["integer","ratio","rate","unit rate","proportion","percent","coefficient","variable","expression","equation","inequality","exponent","absolute value","coordinate plane","ordered pair","slope","linear","scale factor","volume","surface area","circumference","Pythagorean theorem","probability","mean","median","mode","range","outlier","scatterplot","function","domain","range"],
+    "9-12":["function","domain","range","slope","intercept","linear","quadratic","exponential","polynomial","factor","root","vertex","parabola","system of equations","inequality","coefficient","binomial","trinomial","radical","rational","logarithm","sequence","series","matrix","vector","sine","cosine","tangent","theorem","correlation","standard deviation","probability"]
+  },
+  science:{
+    "3-5":["matter","mass","volume","density","solid","liquid","gas","mixture","solution","force","motion","gravity","friction","energy","heat","light","sound","conductor","insulator","ecosystem","habitat","producer","consumer","decomposer","food chain","food web","adaptation","life cycle","photosynthesis","orbit","erosion","weathering"],
+    "6-8":["atom","molecule","element","compound","mixture","density","chemical change","physical change","kinetic energy","potential energy","force","velocity","acceleration","Newton's laws","cell","organism","tissue","organ","photosynthesis","respiration","ecosystem","biome","food web","genetics","heredity","trait","plate tectonics","weathering","erosion","climate","wavelength","circuit"],
+    "9-12":["atom","ion","isotope","molecule","compound","covalent bond","ionic bond","periodic table","chemical reaction","reactant","product","mole","catalyst","kinetic energy","momentum","velocity","acceleration","force","cell","mitosis","meiosis","DNA","RNA","gene","allele","protein","ecosystem","energy pyramid","natural selection","evolution","entropy","equilibrium"]
+  },
+  social:{
+    "3-5":["community","citizen","government","democracy","law","rights","responsibility","mayor","governor","president","goods","services","producer","consumer","economy","trade","map","compass rose","continent","region","landform","climate","culture","tradition","history","timeline","artifact","primary source","explorer","colony","pioneer","frontier"],
+    "6-8":["citizen","constitution","democracy","republic","federalism","branches of government","legislative","executive","judicial","amendment","Bill of Rights","economy","supply and demand","import","export","tariff","migration","immigration","colonization","revolution","civilization","empire","culture","region","latitude","longitude","resource","urbanization","compromise","ratify","sovereignty","nationalism"],
+    "9-12":["constitution","federalism","separation of powers","checks and balances","amendment","civil rights","civil liberties","due process","capitalism","socialism","supply and demand","GDP","inflation","tariff","monopoly","imperialism","nationalism","revolution","democracy","totalitarianism","ideology","diplomacy","sovereignty","sanction","ratify","veto","judicial review","suffrage","mercantilism","industrialization","globalization","propaganda"]
+  }
+};
+
+function loadBank(){
+  const subj=document.getElementById('bankSubject').value;
+  const band=document.getElementById('bankBand').value;
+  if(!subj){ alert('Pick a subject first.'); return; }
+  const terms=(BANKS[subj]&&BANKS[subj][band])||[];
+  contentEl.value=terms.join('\n');
+  contentEl.dispatchEvent(new Event('input'));
+}
+
+// ---------- parsing ----------
+function parseContent(raw){
+  return raw.split(/\r?\n/)
+    .map(l=>l.trim())
+    .filter(Boolean)
+    .map(l=>{
+      // strip markdown bullets / numbering
+      l=l.replace(/^[-*+]\s+/,'').replace(/^\d+[.)]\s+/,'');
+      // CSV: take first column, strip wrapping quotes
+      if(l.includes(',')) l=l.split(',')[0].trim();
+      return l.replace(/^["']|["']$/g,'').trim();
+    })
+    .filter(Boolean);
+}
+
+// ---------- encoding (data lives in URL hash, never sent to a server) ----------
+function encodeGame(g){
+  const json=JSON.stringify(g);
+  return encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+}
+function decodeGame(s){
+  try{ return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(s))))); }
+  catch(e){ return null; }
+}
+
+// ---------- builder ----------
+const contentEl=document.getElementById('content');
+contentEl.addEventListener('input',()=>{
+  const n=parseContent(contentEl.value).length;
+  document.getElementById('termCount').textContent=n+(n===1?' term':' terms');
+});
+
+document.getElementById('fileInput').addEventListener('change',function(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    contentEl.value=ev.target.result;
+    contentEl.dispatchEvent(new Event('input'));
+  };
+  reader.readAsText(file);
+  e.target.value=''; // allow re-importing the same file
+});
+
+document.getElementById('hostUrl').addEventListener('input',buildEmbed);
+
+function readForm(){
+  const terms=parseContent(contentEl.value);
+  const size=parseInt(document.getElementById('size').value,10);
+  const free=size===5 && document.getElementById('freeSpace').checked;
+  const title=document.getElementById('title').value.trim()||'BINGO';
+  const pattern=document.getElementById('pattern').value;
+  return {terms,size,free,title,pattern};
+}
+
+function validate(g){
+  const need=g.size*g.size-(g.free?1:0);
+  if(g.terms.length<need){
+    return `You need at least ${need} terms for a ${g.size}×${g.size} card${g.free?' with a free space':''}. You have ${g.terms.length}.`;
+  }
+  return null;
+}
+
+let lastFragment='';
+function generate(){
+  const err=document.getElementById('builderErr');
+  const g=readForm();
+  const problem=validate(g);
+  if(problem){ err.textContent=problem; err.classList.add('show'); document.getElementById('shareBox').classList.remove('show'); return; }
+  err.classList.remove('show');
+  lastFragment='#'+encodeGame({t:g.terms,s:g.size,f:g.free,n:g.title,p:g.pattern});
+  const url=location.origin+location.pathname+lastFragment;
+  document.getElementById('shareUrl').value=url;
+  buildEmbed();
+  document.getElementById('shareBox').classList.add('show');
+}
+
+function buildEmbed(){
+  let base=document.getElementById('hostUrl').value.trim();
+  if(!base){
+    // fall back to current location if it looks hosted (not a local file)
+    base=(location.protocol==='file:')?'':(location.origin+location.pathname);
+  }
+  const codeEl=document.getElementById('embedCode');
+  if(!base){
+    codeEl.value='Enter the hosted URL above first, then this embed code will appear.';
+    return;
+  }
+  base=base.split('#')[0]; // drop any existing fragment
+  const src=base+lastFragment;
+  codeEl.value=
+`<iframe
+  src="${src}"
+  width="100%"
+  height="780"
+  style="border:0;max-width:680px;display:block;margin:0 auto;"
+  loading="lazy"
+  title="WebBingoMaker card">
+</iframe>`;
+}
+
+function previewCard(){
+  const err=document.getElementById('builderErr');
+  const g=readForm();
+  const problem=validate(g);
+  if(problem){ err.textContent=problem; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  game={t:g.terms,s:g.size,f:g.free,n:g.title,p:g.pattern};
+  showPlayer();
+}
+
+function copyLink(id,btn){
+  const inp=document.getElementById(id);
+  inp.select(); inp.setSelectionRange(0,99999);
+  const done=()=>{ const o=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=o,1500); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(inp.value).then(done).catch(()=>{document.execCommand('copy');done();});
+  } else { document.execCommand('copy'); done(); }
+}
+
+// ---------- player ----------
+let game=null;
+let hasWon=false;
+
+function shuffle(a){
+  a=a.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function buildCard(){
+  const size=game.s, free=game.f;
+  const slots=size*size;
+  const pick=shuffle(game.t).slice(0,free?slots-1:slots);
+  const cells=[];
+  const center=Math.floor(slots/2);
+  let pi=0;
+  for(let i=0;i<slots;i++){
+    if(free && i===center) cells.push({free:true,text:'FREE'});
+    else cells.push({free:false,text:pick[pi++]});
+  }
+  return cells;
+}
+
+function renderCard(cells){
+  const size=game.s;
+  const grid=document.getElementById('grid');
+  grid.style.gridTemplateColumns=`repeat(${size},1fr)`;
+  grid.innerHTML='';
+  cells.forEach((c,idx)=>{
+    const d=document.createElement('div');
+    d.className='cell'+(c.free?' free marked':'');
+    d.textContent=c.text;
+    d.dataset.idx=idx;
+    if(!c.free) d.onclick=()=>{ d.classList.toggle('marked'); checkWin(); };
+    grid.appendChild(d);
+  });
+  document.getElementById('winBanner').classList.remove('show');
+}
+
+// pattern label shown to students
+const PATTERN_LABELS={
+  line:"Get any full row, column, or diagonal",
+  corners:"Cover all four corners",
+  diagonal:"Cover either full diagonal",
+  row:"Cover any full row",
+  column:"Cover any full column",
+  x:"Cover both diagonals (an X)",
+  plus:"Cover the center row and center column (a plus)",
+  blackout:"Cover the entire card (blackout)"
+};
+
+// returns array of winning index-sets for the active pattern + size
+function winningSets(size){
+  const idx=(r,c)=>r*size+c;
+  const rows=[],cols=[],diags=[];
+  for(let r=0;r<size;r++) rows.push([...Array(size)].map((_,c)=>idx(r,c)));
+  for(let c=0;c<size;c++) cols.push([...Array(size)].map((_,r)=>idx(r,c)));
+  const d1=[...Array(size)].map((_,i)=>idx(i,i));
+  const d2=[...Array(size)].map((_,i)=>idx(i,size-1-i));
+  diags.push(d1,d2);
+  const all=[...Array(size*size)].map((_,i)=>i);
+  const corners=[idx(0,0),idx(0,size-1),idx(size-1,0),idx(size-1,size-1)];
+  const mid=Math.floor(size/2);
+  const plus=[...rows[mid],...cols[mid]];
+  switch(game.p){
+    case "corners": return [corners];
+    case "diagonal": return diags;
+    case "row": return rows;
+    case "column": return cols;
+    case "x": return [[...new Set([...d1,...d2])]];
+    case "plus": return [[...new Set(plus)]];
+    case "blackout": return [all];
+    case "line":
+    default: return [...rows,...cols,...diags];
+  }
+}
+
+function checkWin(){
+  const size=game.s;
+  const cells=[...document.querySelectorAll('.cell')];
+  const m=cells.map(c=>c.classList.contains('marked'));
+  const win=winningSets(size).some(set=>set.every(i=>m[i]));
+  document.getElementById('winBanner').classList.toggle('show',win);
+  if(win && !hasWon){ hasWon=true; celebrate(); }
+  if(!win) hasWon=false;
+  return win;
+}
+
+function showPlayer(){
+  document.getElementById('builder').style.display='none';
+  const sp=document.getElementById('splashHero'); if(sp) sp.style.display='none';
+  document.getElementById('player').style.display='block';
+  document.getElementById('playTitle').textContent=game.n||'BINGO';
+  document.title=(game.n||'BINGO');
+  const label=PATTERN_LABELS[game.p]||PATTERN_LABELS.line;
+  document.getElementById('patternNote').textContent='Goal: '+label;
+  hasWon=false;
+  renderCard(buildCard());
+  window.scrollTo(0,0);
+}
+
+function newCard(){ hasWon=false; renderCard(buildCard()); closePopup(); window.scrollTo(0,0); }
+
+function goBuilder(){
+  history.replaceState(null,'',location.pathname);
+  document.getElementById('player').style.display='none';
+  const sp=document.getElementById('splashHero'); if(sp) sp.style.display='block';
+  document.getElementById('builder').style.display='block';
+}
+
+// ---------- win celebration: popup + confetti ----------
+function celebrate(){
+  const msgs=["Congratulations — you got BINGO!","Way to go! That's a BINGO!","You did it — BINGO!","Nice work! BINGO!"];
+  document.getElementById('popupMsg').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('popup').classList.add('show');
+  launchConfetti();
+}
+function closePopup(){
+  document.getElementById('popup').classList.remove('show');
+}
+
+let confettiTimer=null;
+function launchConfetti(){
+  const canvas=document.getElementById('confetti');
+  const ctx=canvas.getContext('2d');
+  canvas.classList.add('show');
+  const dpr=window.devicePixelRatio||1;
+  function resize(){ canvas.width=innerWidth*dpr; canvas.height=innerHeight*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  resize();
+  const colors=['#FCB040','#0A3476','#17a7b5','#5aa832','#7b2fb0','#e8401f','#f5b81e'];
+  const pieces=[];
+  for(let i=0;i<160;i++){
+    pieces.push({
+      x:Math.random()*innerWidth,
+      y:-20-Math.random()*innerHeight*0.5,
+      w:6+Math.random()*6, h:8+Math.random()*8,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3,
+      vy:2+Math.random()*3.5, vx:(Math.random()-0.5)*2,
+      sway:Math.random()*Math.PI
+    });
+  }
+  const start=performance.now();
+  const DURATION=2600;
+  function frame(now){
+    const elapsed=now-start;
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    pieces.forEach(p=>{
+      p.sway+=0.05; p.x+=p.vx+Math.sin(p.sway)*0.6; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    if(elapsed<DURATION){ confettiTimer=requestAnimationFrame(frame); }
+    else { ctx.clearRect(0,0,innerWidth,innerHeight); canvas.classList.remove('show'); }
+  }
+  if(confettiTimer) cancelAnimationFrame(confettiTimer);
+  confettiTimer=requestAnimationFrame(frame);
+}
+
+// ---------- boot: if a game is in the URL, show the player ----------
+(function init(){
+  if(location.hash.length>1){
+    const g=decodeGame(location.hash.slice(1));
+    if(g && g.t && g.t.length){
+      if(!g.p) g.p='line';
+      game=g;
+      showPlayer();
+      return;
+    }
+  }
+})();
+</script>
+<script src="/tcea/licensing-footer.js" defer></script>
+</body>
+</html>

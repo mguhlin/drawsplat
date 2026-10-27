@@ -597,10 +597,10 @@
     },
     {
       "id": "ibingo",
-      "name": "iBINGO Game Maker",
+      "name": "WebBingoMaker",
       "description": "Create virtual bingo games and share a link so each participant gets a randomized card.",
-      "url": "https://mglearn.github.io/tcea/ibingo/",
-      "icon": "/assets/icons/tools/adv-play.svg",
+      "url": "/solutions/web-bingo-maker/",
+      "icon": "/solutions/web-bingo-maker/webbingomaker-header.png",
       "type": "tool",
       "categories": [
         "assessment",
@@ -617,7 +617,9 @@
       "aliases": [
         "ibingo",
         "virtual bingo",
-        "online bingo maker"
+        "online bingo maker",
+        "Web Bingo Maker",
+        "WebBingoMaker"
       ],
       "featured": false,
       "standalone": true,
