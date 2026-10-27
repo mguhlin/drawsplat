@@ -82,7 +82,10 @@ async function localSave(page, app) {
     await page.locator('#fileMenu > summary').click();
     await page.locator('#fileMenu [data-action="save"]').click();
   } else if (app === 'showsplat') await page.locator('.quick-actions [data-action="save-deck"]').click();
-  else await page.locator(app === 'writesplat' ? '.toolbar [data-action="save-json"]' : '.quick-actions [data-action="save-json"]').click();
+  else if (app === 'listsplat') {
+    await page.locator('.menu-bar > .menu > summary').filter({ hasText: /^File$/ }).click();
+    await page.locator('.menu-bar [data-action="save-json"]').click();
+  } else await page.locator('.toolbar [data-action="save-json"]').click();
   return fs.readFileSync(await (await pending).path());
 }
 
