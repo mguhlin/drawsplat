@@ -97,10 +97,10 @@ test('Wiki brand returns readers to the main DrawSplat site',async({page})=>{
 test('SplatWorks has dedicated searchable guides and stays inside its article column',async({page})=>{
  await page.goto('/wiki/');
  const group=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'SplatWorks',exact:true})});
- await expect(group.getByRole('link')).toHaveCount(14);
+ await expect(group.getByRole('link')).toHaveCount(9);
  await expect(group.locator('a[href$="backdropsplat.html"]')).toHaveCount(1);
- await expect(group.locator('a[href$="layoutsplat-verification.html"]')).toHaveCount(1);
- await expect(group.locator('a[href$="layoutsplat-ebooks.html"]')).toHaveCount(1);
+ await expect(group.locator('a[href*="layoutsplat"]')).toHaveCount(1);
+ await expect(group.locator('a[href$="layoutsplat.html"]')).toHaveCount(1);
  await expect(group.locator('a[href$="writesplat.html"]')).toHaveCount(2);
  for(const name of ['BackdropSplat','LayoutSplat','PlanSplat','WriteSplat','ListSplat','ShowSplat','GridSplat']){
   await page.goto('/wiki/?q='+name);await expect(page.locator('.wiki-results a').filter({hasText:name}).first()).toBeVisible();
@@ -112,6 +112,26 @@ test('SplatWorks has dedicated searchable guides and stays inside its article co
    return ['.splatworks-hero h1','.splatworks-hero-image'].every(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return r.right<=main.right+1 && r.left>=main.left-1}) && document.documentElement.scrollWidth<=innerWidth;
   });expect(bounds).toBeTruthy();
   if(width===1636)await page.screenshot({path:'/tmp/drawsplat-splatworks-wiki.png',fullPage:true});
+ }
+});
+test('one LayoutSplat entry leads to all detailed guides while existing URLs remain searchable',async({page})=>{
+ for(const url of ['/wiki/','/pages/support.html','/guides/index.html']){
+  await page.goto(url);
+  await expect(page.locator('.wiki-directory a[href*="layoutsplat"]')).toHaveCount(1);
+ }
+ await page.goto('/wiki/layoutsplat.html');
+ const guides=page.locator('main table a[href^="layoutsplat-"]');
+ await expect(guides).toHaveCount(7);
+ const targets=await guides.evaluateAll(nodes=>nodes.map(a=>a.getAttribute('href')));
+ for(const target of targets){
+  await page.goto('/wiki/'+target);
+  await expect(page.getByRole('navigation',{name:'Wiki topics'}).locator('a[href*="layoutsplat"]')).toHaveCount(1);
+  await expect(page.locator('.wiki-sidebar a[href="layoutsplat.html"]')).toHaveAttribute('aria-current','page');
+  await expect(page.locator('main h1')).toContainText(/LayoutSplat|Avery/);
+ }
+ await page.goto('/wiki/?q=LayoutSplat');
+ for(const target of ['layoutsplat.html',...targets]){
+  await expect(page.locator('.wiki-results a[href$="/'+target+'"]')).toHaveCount(1);
  }
 });
 test('audience guides keep teaching concise and route school and family setup correctly',async({page})=>{

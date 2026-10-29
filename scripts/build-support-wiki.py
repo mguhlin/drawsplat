@@ -29,17 +29,21 @@ POLICY_ALIASES={row['path'] for row in json.loads((ROOT/'data/policy-legacy-link
 GROUPS['Privacy and district review']=[row for row in GROUPS['Privacy and district review'] if row[0] not in POLICY_ALIASES]
 GROUPS['Privacy and district review']=[('legal/terms-privacy.html','Security, privacy and terms','One policy: terms of service, security, retention, rights, providers, PROTECT report cards and district review.')]+[row for row in GROUPS['Privacy and district review'] if row[0]!='legal/terms-privacy.html']
 def menu_rows(group, rows):
- return [row for row in rows if row[0]=='legal/terms-privacy.html'] if group=='Privacy and district review' else rows
+ if group=='Privacy and district review':return [row for row in rows if row[0]=='legal/terms-privacy.html']
+ # Detailed LayoutSplat guides stay searchable, beneath one publication entry.
+ if group=='SplatWorks':return [row for row in rows if not row[0].startswith('wiki/layoutsplat-')]
+ return rows
 # Keep the search index complete while presenting a short audience-based sidebar.
 GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/plansplat.html','PlanSplat · Student planner','Assignments, exams, courses, study blocks, routines, focus sessions and Google Drive autoload/autosave.'))
 GROUPS['SplatWorks'].append(('wiki/backdropsplat.html','BackdropSplat · Background removal','Local photo cutouts, white/color background removal, comparison, and PNG/JPEG/ZIP export.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/writesplat.html','WriteSplat · Document editing and import','Word/LibreOffice formatting, source numbering and spacing, local saving and current compatibility.'))
-GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','126 distinct compositions, Avery labels, native Publisher/Pages import, precise pages, rich text, masters, mail merge, media, and file exchange.'))
+GROUPS['SplatWorks'].insert(1, ('wiki/layoutsplat.html','LayoutSplat · Publications','Templates, books, comics, ebooks, Avery labels, typography, file exchange, and compatibility guides.'))
 GROUPS['SplatWorks'].insert(2, ('wiki/layoutsplat-verification.html','LayoutSplat · Verification and limits','Source EPUB round trips, composition, desktop interoperability, performance and print evidence.'))
 GROUPS['SplatWorks'].insert(2, ('wiki/layoutsplat-ebooks.html','LayoutSplat · Ebooks and EPUB','EPUB import/export, ebook starters, metadata, heading navigation, visual editing and reading preview.'))
 GROUPS['SplatWorks'].insert(2, ('wiki/layoutsplat-features.html','LayoutSplat · Illustrated feature guide','Twenty-two sections with production screenshots: templates, workspace, typography, imports, labels, masters, merge and print limits.'))
 GROUPS['SplatWorks'].extend([('wiki/layoutsplat-labels.html','LayoutSplat · Avery labels & name badges','All 29 Avery sheet layouts and 127 compatible product codes; physical dimensions and printer alignment.'),('wiki/layoutsplat-import-accuracy.html','LayoutSplat · Import accuracy','Private sample findings, source font differences, supported formats, and remaining compatibility work.')])
+GROUPS['SplatWorks'].extend([('wiki/layoutsplat-books.html','LayoutSplat · Book templates','Ready-to-edit fiction and nonfiction books, covers, contents, and chapters.'),('wiki/layoutsplat-comic-studio.html','LayoutSplat · Comic studio','Guided storytelling, comic designs, characters, poses, and writing exercises.')])
 GROUPS['Technical and updates'].insert(2, ('wiki/splatworks-domain.html','SplatWorks.org domain setup','Serve the same deployment on both domains and preserve access to existing browser drafts.'))
 GROUPS['Start here']=[row for row in GROUPS['Start here'] if row[0] not in ['docs/district-selfhost.html','guides/teacher-options-quick-start.html']]
 GROUPS['For educators'].insert(1,('guides/teacher-options-quick-start.html','Teacher Quick Start','Open a board, sign in at school, and save your lesson.'))
@@ -157,7 +161,7 @@ for group,items in GROUPS.items():
     if category=='For educators':rows=[row for row in rows if row[0] in EDUCATOR_MENU or row[0]==path]
     links=''
     for target,label,_ in rows:
-     active=target==path or (target=='wiki/index.html' and path in ['guides/index.html','pages/support.html'])
+     active=target==path or (target=='wiki/index.html' and path in ['guides/index.html','pages/support.html']) or (target=='wiki/layoutsplat.html' and path.startswith('wiki/layoutsplat-'))
      item='<li><a '+('aria-current="page" ' if active else '')+'href="'+relative(target,path)+'">'+html.escape(label)+'</a>'
      links+=item+'</li>'
     nav.append('<section><h2>'+html.escape(category)+'</h2><ul>'+links+'</ul></section>')

@@ -6,12 +6,24 @@ Create precise publications locally in your browser. The original six-language
 picker and shared Apps launcher remain available. DrawSplat remains the whiteboard
 and its existing tools; SplatWorks is the ecosystem brand.
 
-## Illustrated feature guide
+## LayoutSplat guides
 
-[Read the 20-section feature inventory with production screenshots](layoutsplat-features.md).
-It covers the workspace, all 20 template types, text, graphics, masters, labels,
-mail merge, imports, suite exchange, digital output and current print limits.
-The guide covers v0.7.0, with dated workspace screenshots and an updated export screenshot. Publisher compatibility is limited to the tested subset.
+Start here for LayoutSplat documentation. Choose a detailed guide below, or keep
+reading for templates, editing, saving, file exchange, and current limits.
+
+| Guide | What it covers |
+| --- | --- |
+| [Illustrated feature guide](layoutsplat-features.md) | Workspace screenshots, templates, typography, graphics, masters, mail merge, imports, and print preparation. |
+| [Ebooks and EPUB](layoutsplat-ebooks.md) | Ebook starters, metadata, navigation, reading preview, source editing, and EPUB import/export. |
+| [Book templates](layoutsplat-books.md) | Ready-to-edit fiction and nonfiction books, covers, contents, and chapters. |
+| [Comic studio](layoutsplat-comic-studio.md) | Guided storytelling, comic designs, characters, poses, and writing exercises. |
+| [Avery labels and name badges](layoutsplat-labels.md) | Sheet layouts, compatible product codes, physical dimensions, and printer alignment. |
+| [Import accuracy](layoutsplat-import-accuracy.md) | Original fonts, supported source formats, tested examples, and fidelity limits. |
+| [Verification and remaining limits](layoutsplat-verification.md) | Reproducible checks, desktop interoperability, performance, print evidence, and outstanding acceptance checks. |
+
+The illustrated guide covers v0.7.0, with dated workspace screenshots and an
+updated export screenshot. Check each guide's version and compatibility limits
+when working with imported publications.
 
 ## Templates
 

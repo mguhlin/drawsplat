@@ -11,6 +11,7 @@ The [SplatWorks Wiki](https://drawsplat.org/wiki/) is the public current documen
 - Former policy URLs, including the combined packet, are generated compatibility copies of that article, with production redirects to the canonical URL. Do not edit those copies. `data/policy-legacy-links.json` preserves old fragments; keep those aliases when changing headings.
 - Specialized agreement templates, the DPA Register, Google OAuth disclosure, accessibility statement, local notice builder and district review worksheet remain optional references. Do not concatenate them back into a second policy packet.
 - Update the title, description, and category registry in `scripts/build-support-wiki.py` when adding a public reference. Historical release notes and development roadmaps retain their context; they are not current setup instructions.
+- Keep one LayoutSplat entry in the sidebar and wiki directory. Link detailed guides from `docs/layoutsplat.md`; register them for full-text search and the shared wiki shell, with LayoutSplat active in their sidebar.
 
 Install the build dependency with `python3 -m pip install markdown-it-py` in a development virtual environment. Run:
 

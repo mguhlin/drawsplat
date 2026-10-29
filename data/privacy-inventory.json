@@ -1761,7 +1761,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "2464d65d36867798508ac2b2baf57f3d0a3b3f05563aeb3f11149a07a6543042"
+      "entrySha256": "14dc3784aa2706e4d83a5e7cc31a5e3f9f312db85314414a37cadf5f4d593fec"
     },
     {
       "id": "templates",
@@ -1791,7 +1791,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "c07da5c113efdc99f56ed2c7836686c8ef1de02af25778f0721c3f4b0fc9675a"
+      "entrySha256": "2443727d889b35d357764f5847d11b17ba607b65f561b8c7f7ede38464eba88e"
     },
     {
       "id": "guides",
@@ -1858,7 +1858,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "a58a7bee1d0e9e566bc6a932fc0471649501e9d248877dbc517ec8962c106ec6"
+      "entrySha256": "b3abc52d3ecda9801f4bde3edd0053993816121f76b7696f12f2db16a4f7ac37"
     },
     {
       "id": "support",
@@ -1925,7 +1925,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-16",
-      "entrySha256": "c2350d769c2373851d73d24b23d0e5c479a3a8f6a152667ea1829bddd1b7dfd3"
+      "entrySha256": "b3cc270d2ceff99f3748847157f25b4c72c25aec71a86aba18c32853b7f8052c"
     }
   ]
 }
