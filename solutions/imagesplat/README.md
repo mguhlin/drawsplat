@@ -3,13 +3,15 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.45**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).
+ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.46**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).
 
 Select one image layer, then choose **Adjust photo…**. Brightness, contrast, saturation, and warmth controls include presets and a before/after preview. Apply updates only that image; Undo restores the original. Cancel leaves it unchanged. Photo adjustments run on local pixels and do not upload the image.
 
-Common actions use icons with visible labels. Existing layer editing, crop, PNG/selection/clipboard export, and animation controls keep their behavior. The legacy SplatImage URL redirects to this tool.
+Common actions use icons with visible labels. Layer editing, crop, and animation controls remain available alongside artwork-sized PNG export. The legacy SplatImage URL redirects to this tool.
 
-**Export PNG**, **Copy PNG**, and **Export selection** fit the output to the visible artwork, including images, multiline text, shapes, strokes, and arrowheads. The white editing canvas and selection handles are excluded. Gaps stay transparent; white pixels within an imported image are preserved. Hidden layers do not enlarge the export. Cropping still uses the editing canvas coordinates.
+**Export PNG**, **Copy PNG**, and **Export selection** fit the output to the visible artwork, including images, multiline text, shapes, strokes, and arrowheads. The white editing canvas and selection handles are excluded. Gaps stay transparent; white pixels within an imported image are preserved. Hidden layers do not enlarge the export. Cropping still uses the editing canvas coordinates. To export only part of a composition, select those layers and choose **File → Export selection**. The main Export PNG and Copy PNG actions include all visible artwork regardless of the current selection. Hide unwanted layers before using them. This removes workspace margins; it does not remove white borders already embedded in an imported image.
+
+The PNG fix ships in the v3.1.46 full DrawSplat, Tools, and complete district-suite ZIPs. Use the included local launcher for offline editing. Verification: 12 Chrome/Firefox checks plus six production Chrome checks covered image dimensions, preserved white pixels, transparent gaps, multiline italic/underlined text, strokes, arrowheads, hidden layers, negative coordinates, selection export, and canvas cropping. WebKit was unavailable in the verification environment.
 
 [October 9 release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). Verification: the ImageSplat photo-adjustment and labelled-action checks in the root Playwright icons configuration.
 

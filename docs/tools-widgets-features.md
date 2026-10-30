@@ -183,7 +183,9 @@ Category: **Create** · 21 components
 - Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
 - Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images
-- Export PNG, selections, GIFs, or image frames
+- Export PNG or Copy PNG fits all visible images, multiline text, shapes, strokes, and arrowheads; the white editing canvas and selection handles are excluded
+- PNG gaps stay transparent; white pixels inside imported images are preserved. Hide unwanted layers, or select layers and use File → Export selection for just those items
+- Export selected images as GIFs or individual image frames; the separate background-removal and Green Screen studios keep their own output dimensions
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
 - Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 
@@ -557,7 +559,9 @@ Category: **Media** · 9 components
 - Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
 - Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images
-- Export PNG, selections, GIFs, or image frames
+- Export PNG or Copy PNG fits all visible images, multiline text, shapes, strokes, and arrowheads; the white editing canvas and selection handles are excluded
+- PNG gaps stay transparent; white pixels inside imported images are preserved. Hide unwanted layers, or select layers and use File → Export selection for just those items
+- Export selected images as GIFs or individual image frames; the separate background-removal and Green Screen studios keep their own output dimensions
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
 - Whole-photo or selected-area blur with rectangle/freehand lasso, marching ants, adjustable strength, original comparison and baked PNG pixels
 

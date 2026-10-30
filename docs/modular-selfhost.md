@@ -175,3 +175,9 @@ processing isolation can be preserved. Apply the included `_headers` rules (or
 your server’s equivalents) to both the editor and `/splatworks/shared/google-drive-auth`
 with or without `.html`. Follow the
 [format table and district setup](../pages/splatworks.html#save-to-google-drive).
+
+## ImageSplat PNG exports · v3.1.46
+
+The v3.1.46 full DrawSplat, Tools, and complete district-suite downloads include the ImageSplat PNG border fix. **Export PNG** and **Copy PNG** include all visible images and annotations, regardless of selection, and fit the output to their bounds. **File → Export selection** includes only the selected visible layers. Multiline text, underlines, strokes, and arrowheads are included without the white editing canvas or selection handles. Gaps remain transparent; white pixels already inside an imported image remain part of that image. Hide layers you do not want to include.
+
+Back up projects and server configuration before replacing files. Extract the entire matching full, Tools, or district ZIP and retain its shared folders; use the included launcher for local editing. Earlier v3.1.45 packages remain available and predate this fix. Office, media, Widgets, Games, PlanSplat, and ListSplat downloads keep their separately listed versions. Verify the three refreshed ZIPs using `SHA256SUMS-v3.1.46.txt`; the district archive also has an individual `.zip.sha256` file. [Downloads](../pages/download.html#imagesplat-png-export) · [Release notes](release-notes/RELEASE_NOTES_v3.1.46.md).
