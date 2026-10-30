@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Standalone package: **pdfsplat-selfhost-v3.1.31.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.47.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -11,6 +11,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 
 - Scan paper with a camera or import photos, adjust four page corners with pointer or keyboard controls, correct perspective, rotate and clean up scans, reorder pages, and create a local PDF.
 - Open or drop a local PDF.
+- Recognize printed English/Spanish text in scanned pages and images locally; review, correct, and apply it as editable text boxes. [OCR guide](../../docs/pdfsplat-ocr.md).
 - Add another PDF and reorder pages across documents.
 - Rotate, duplicate, delete, and extract pages.
 - Separate page ranges or create one PDF per page in a ZIP.
@@ -32,7 +33,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Run a guide-based accessibility preflight for tagged structure, extractable text/OCR needs, document title and language, added-image descriptions, annotation contrast, and form-review needs.
 - Export a semantic HTML alternative with a document language, descriptive title, skip link, one H1, page sections, readable text, and descriptions supplied for added images.
 
-For offline use, extract the entire standalone ZIP and open `solutions/pdfsplat/index.html` in desktop Chrome or Firefox. Keep the sibling vendor and assets folders. The included `START-HERE.html` explains the local-server alternative for browsers that restrict file access: Windows, macOS, and Linux launchers require Python 3, but no internet connection. Core PDF editing, saving, and encryption are tested with networking disabled; capture/camera permissions depend on the browser.
+For offline use, extract the entire standalone ZIP and open `solutions/pdfsplat/index.html` in desktop Chrome or Firefox. Keep the sibling vendor and assets folders. The included `START-HERE.html` explains the local-server alternative for browsers that restrict file access: Windows, macOS, and Linux launchers require Python 3, but no internet connection. OCR requires the included local HTTP launcher or an HTTPS site; its worker cannot run from a direct-file page. All OCR assets are included for offline use. Core PDF editing, saving, and encryption are tested with networking disabled; capture/camera permissions depend on the browser.
 
 Developers: `npm install` and `npm run build` in this directory regenerate the bundled classic script. The bundle builder also performs this build. Hosted pages retain a PDF worker; file pages load the bundled PDF.js worker implementation on the main thread.
 
@@ -63,7 +64,7 @@ Up to 20 photos, 40 MB each; decoded photos are reduced to a 2,200-pixel longest
 edge for predictable browser memory use. JPEG, PNG, and WebP are supported; other
 phone formats depend on the browser decoder. Perspective correction uses the
 manually chosen corners, not automatic document detection. The result is an
-image-only PDF, with no OCR or searchable text layer. Cleanup does not restore
+image-only PDF initially. After adding scans to the editor, choose **Recognize text (OCR)** to create reviewed editable text. Cleanup does not restore
 blurred or missing detail. Desktop Chrome and Firefox are tested; native mobile
 camera/file-picker behavior still requires device-specific verification.
 
@@ -80,7 +81,7 @@ camera/file-picker behavior still requires device-specific verification.
 - CipherSplat™ protection uses its CS4 chunked format: Argon2id v1.3 (64 MiB, three passes, one lane) and AES-256-GCM with authenticated metadata and records.
 - Unlock accepts current CS4 packages containing exactly one PDF. Password fields are cleared after every attempt and passwords are never stored.
 
-The production headers for `/solutions/pdfsplat/*` allow only same-origin connections for bundled application data and deny cross-origin connections and unnecessary browser permissions. `wasm-unsafe-eval` is limited to the locally bundled Argon2id WebAssembly engine.
+The production headers for `/solutions/pdfsplat/*` allow only same-origin connections for bundled application data and deny cross-origin connections and unnecessary browser permissions. `wasm-unsafe-eval` permits the locally bundled Argon2id and Tesseract OCR WebAssembly engines. OCR workers, cores, and English/Spanish models load from the same origin without a CDN or document upload.
 
 ## Honest limitations
 
@@ -88,8 +89,8 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 - Password-protected source PDFs are not opened in this release.
 - Added objects are flattened during export and are no longer editable after reopening.
 - Existing PDF text is not edited semantically.
-- Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages, outlined text, missing character maps, and complex font/layout runs require manual text boxes or future OCR support.
-- Secure content-removing redaction, OCR, forms, search, compression, and accessibility certification are not claimed.
+- Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages can use **Recognize text (OCR)**; outlined text, missing character maps, and complex font/layout runs may need OCR or manual boxes and review.
+- Secure content-removing redaction, form authoring, search, compression, and accessibility certification are not claimed. OCR recognizes printed English/Spanish with approximate fonts and covers; it does not reconstruct handwriting, equations, or complex layouts.
 - EPUB conversion works best with searchable, single-column PDFs. Scans require OCR first, and complex columns, tables, equations, vector artwork, and fixed layouts may be simplified or omitted. Reflowable EPUB now includes embedded raster images alongside selectable text.
 - Remove area is visual removal only. It does not delete underlying PDF content and must not be treated as secure redaction.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
@@ -107,6 +108,7 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 | Mozilla PDF.js | Rendering and parsing | Apache-2.0 | `/vendor/pdf.min.js`, `/vendor/pdf.worker.min.js` |
 | pdf-lib 1.17.1 | Page manipulation and export | MIT | `vendor/pdf-lib.min.js` |
 | JSZip | Multi-part ZIP export | MIT/GPL-3.0 | `/vendor/jszip.min.js` |
+| Tesseract.js / core 7.0.0; eng/spa data 1.0.0 | Local printed-text OCR | Apache-2.0 | `vendor/ocr/` (licenses, provenance, SHA-256 manifest) |
 | hash-wasm Argon2id | CipherSplat™ key derivation | MIT | `vendor/hash-wasm/argon2.umd.min.js` |
 
 The pdf-lib and hash-wasm license files are bundled with their assets. No AGPL PDF engine or separately licensed PDF WASM engine is introduced.
@@ -123,7 +125,7 @@ The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, 
 
 ## Capture an open tab or window
 
-Choose **Capture to PDF**, then **Choose tab or window** in a desktop browser that supports screen sharing. Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text becomes an image without OCR.
+Choose **Capture to PDF**, then **Choose tab or window** in a desktop browser that supports screen sharing. Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text starts as an image. After adding captures to the editor, use **Recognize text (OCR)** to make reviewed text editable.
 
 Review/remove captures, download a PDF, or append it to the editor. Each capture becomes one PDF page, with a limit of 20 captures and a 2,200-pixel longest edge. No audio is requested. Stop sharing, closing the dialog, adding or downloading the PDF, and leaving the page stop the shared stream. Closing the dialog discards captures.
 
@@ -250,3 +252,9 @@ PowerPoint import accepts both relative and archive-root slide, layout, and
 image relationships (for example `/ppt/slides/slide1.xml`). External resources
 remain excluded. Slides still become visual PDF pages, with the existing limits
 on complex PowerPoint styling and layouts.
+
+## Recognize text (OCR) · v3.1.47
+
+Choose the top-toolbar OCR button after opening a PDF or image. Recognize the current, selected, or all pages in English, Spanish, or both; review and correct lines before Apply. Text boxes remain editable and movable, with anchored covers over original lettering. Save as PDF retains selectable text; one Undo removes a complete batch. Stop cancels engine loading and recognition. Existing selectable text is skipped.
+
+Up to 20 pages and 2,000 new lines per batch; 8 MP and a 3,200-pixel edge per rendered page. Rotate upright before OCR; fine rotation must be 0°. Page rotation is blocked after OCR until that batch is undone. Covers are visual replacement, not secure redaction. [Complete workflow, offline setup, limits, and dependencies](../../docs/pdfsplat-ocr.md).

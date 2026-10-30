@@ -17,6 +17,10 @@ test('opens, edits, saves, and protects PDF bytes directly from disk without net
   await page.locator('#fileInput').setInputFiles({name:'offline.pdf',mimeType:'application/pdf',buffer:Buffer.from(await doc.save())});
   await expect(page.locator('#status')).toContainText('1 pages');
   await expect(page.locator('#pdfCanvas')).toBeVisible();
+  await page.locator('#ocrButton').click();
+  await expect(page.locator('#ocrRun')).toBeDisabled();
+  await expect(page.locator('#ocrStatus')).toContainText('local HTTP launcher');
+  await page.locator('#ocrClose').click();
   await page.getByRole('button',{name:'Add text',exact:true}).click();
   await page.locator('#annotationLayer').press('Enter');
   await page.locator('#textValue').fill('Saved offline');

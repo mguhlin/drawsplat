@@ -21,6 +21,7 @@ for (const corner of ['nw', 'ne', 'se', 'sw']) {
   test(`image ${corner} handle resizes proportionally and supports undo`, async ({ page }) => {
     await openImage(page);
     const image = page.locator('.image-object');
+    await image.locator(`.${corner}`).scrollIntoViewIfNeeded();
     const before = await image.boundingBox();
     const handle = await image.locator(`.${corner}`).boundingBox();
     await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);

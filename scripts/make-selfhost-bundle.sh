@@ -620,7 +620,7 @@ copy_tree vendor "$TOOLS_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/tools.html "$TOOLS_ROOT/pages/tools.html"
 # Keep the new tools' help and short links usable in an extracted Tools bundle.
 copy_tree wiki "$TOOLS_ROOT/wiki" "${MODULE_EXCLUDES[@]}"
-for guide in backdropsplat imagesplat-remove-color; do
+for guide in backdropsplat imagesplat-remove-color pdfsplat-ocr pdfsplat-save-as; do
   copy_file "docs/$guide.md" "$TOOLS_ROOT/docs/$guide.md"
 done
 for shortcut in backdropsplat imagesplat; do
@@ -848,6 +848,7 @@ copy_file assets/js/pdf-ui-strings.js "$PDFSPLAT_ROOT/assets/js/pdf-ui-strings.j
 copy_file LICENSE "$PDFSPLAT_ROOT/LICENSE"
 copy_file NOTICE.md "$PDFSPLAT_ROOT/NOTICE.md"
 copy_file docs/pdfsplat-save-as.md "$PDFSPLAT_ROOT/docs/pdfsplat-save-as.md"
+copy_file docs/pdfsplat-ocr.md "$PDFSPLAT_ROOT/docs/pdfsplat-ocr.md"
 cat > "$PDFSPLAT_ROOT/PDFSPLAT-SELFHOST-README.txt" <<EOF
 PDFSplat Self-Hosted Solution
 ===========================
@@ -857,7 +858,9 @@ Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 Source:  $SHORT_SHA
 
 Includes the PDF editor, touch signing, scan/capture tools, local encryption,
-source, tests, and bundled PDF.js, PDF-Lib, JSZip, and Argon2 dependencies.
+source, tests, and bundled PDF.js, PDF-Lib, JSZip, Argon2, and Tesseract OCR dependencies.
+Printed English/Spanish OCR includes local models; use the included HTTP launcher
+or HTTPS for OCR. Direct-file PDF editing remains available.
 The shared app launcher, menus, and language controls are included.
 
 Upload all included folders together, keeping their names unchanged.

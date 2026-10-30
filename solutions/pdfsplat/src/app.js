@@ -1,3 +1,4 @@
+import {setupOcr, OCR_LIMITS} from './ocr.js';
 import { collectEpubImages } from "./epub-images.js";
 import { setupPresentation } from "./presentation.js";
 import { saveToGoogleDrive } from "../../../splatworks/shared/google-drive.js";
@@ -19,6 +20,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 const $ = (id) => document.getElementById(id);
 const ids = ["saveDriveButton", "openButton", "presentButton", "fullscreenButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 ids.push("textSaveLayout", "textSaveLayoutRow", "epubLayout", "textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
+ids.push("ocrButton");
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -41,6 +43,7 @@ const state = {
 };
 
 let imageRequest = 0;
+let ocr;
 const placement = setupPlacement({
   layer: els.annotationLayer, bar: $('placementTools'), message: $('placementMessage'),
   cancelButton: $('placementCancel'), currentPage, scale: () => state.renderScale,
@@ -115,7 +118,7 @@ function restore(value) {
 }
 function setEnabled(on) {
   if (els.saveDriveButton) els.saveDriveButton.disabled = !on;
-  ["presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["ocrButton", "presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -167,6 +170,7 @@ els.fileInput.accept = importAccept;
 async function openFile(input) {
   const files = input instanceof File ? [input] : [...(input || [])];
   if (!files.length) return false;
+  ocr?.reset();
   const token = ++importToken;
   try {
     const prepared = await prepareFiles(files, name => { if (token === importToken) announce(`Opening ${name}…`); });
@@ -538,6 +542,7 @@ function submitMovePages(event) {
 }
 function rotate(delta) {
   const indexes = selectedPageIndexes();
+  if (indexes.some(index => state.pages[index].annotations.some(o => o.ocr))) return announce("Rotate pages before OCR. Undo the OCR batch before changing page orientation, then recognize the rotated page again.");
   mutate("Rotate pages", () => indexes.forEach((index) => (state.pages[index].rotation = (state.pages[index].rotation + delta + 360) % 360)));
   renderAll();
   announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} rotated.`);
@@ -582,6 +587,7 @@ function applyCrop(event, reset = false) {
 function applyCustomRotation(event) {
   event.preventDefault();
   const angle = Number(els.customRotation.value), indexes = selectedPageIndexes();
+  if (indexes.some(index => state.pages[index].annotations.some(o => o.ocr))) { els.customRotateDialog.close(); return announce("Set page orientation before OCR. Undo the OCR batch before changing fine rotation."); }
   if (!Number.isFinite(angle) || Math.abs(angle) > 45) return announce("Enter an angle from -45 to 45 degrees.");
   mutate("Deskew pages", () => indexes.forEach((index) => (state.pages[index].fineRotation = angle)));
   els.customRotateDialog.close();
@@ -748,8 +754,13 @@ function renderAnnotations() {
       els.annotationLayer.append(svg);
       continue;
     }
+    if (object.coverBox) {
+      const cover = document.createElement('div'); cover.className = 'ocr-cover'; cover.setAttribute('aria-hidden','true');
+      Object.assign(cover.style,{left:`${object.coverBox.x*100}%`,top:`${object.coverBox.y*100}%`,width:`${object.coverBox.w*100}%`,height:`${object.coverBox.h*100}%`,background:object.coverColor||'#ffffff'});
+      els.annotationLayer.append(cover);
+    }
     const node = document.createElement("div");
-    node.className = `editable-object ${object.type}-object${object.cover ? " replacement-object" : ""}${state.selectedId === object.id ? " selected" : ""}`;
+    node.className = `editable-object ${object.type}-object${object.ocr ? " ocr-text" : ""}${object.cover ? " replacement-object" : ""}${state.selectedId === object.id ? " selected" : ""}`;
     node.dataset.id = object.id;
     node.tabIndex = 0;
     node.setAttribute("aria-label", `${object.type} annotation`);
@@ -761,17 +772,18 @@ function renderAnnotations() {
       applyTextStyles(node, object);
       node.style.color = object.color;
       if (object.cover) {
-        node.style.background = object.coverColor || "#ffffff";
+        node.style.background = object.coverBox ? "transparent" : object.coverColor || "#ffffff";
         node.contentEditable = "true";
         node.setAttribute("role", "textbox");
         node.setAttribute("aria-label", "Edit replacement text in place");
-        node.onfocus = () => (node.dataset.before = snapshot());
+        node.onfocus = () => { if(object.ocr) selectObject(object.id); node.dataset.before = snapshot(); };
         node.oninput = () => {
           object.text = node.textContent || "";
           els.textValue.value = object.text;
         };
         node.onblur = () => {
           object.text = node.textContent || "";
+          for (const handle of node.ocrHandles || []) if (!node.contains(handle)) node.append(handle);
           syncSize(node, object);
           commit(node.dataset.before || snapshot(), "Edit replacement text");
         };
@@ -799,6 +811,12 @@ function renderAnnotations() {
       handle.setAttribute("aria-label", `Resize ${object.type}`);
       handle.onpointerdown = (event) => startResize(event, node, object);
       node.append(handle);
+      if (object.ocr) node.ocrHandles = [handle];
+    }
+    if (object.ocr) {
+      const move = document.createElement('button');move.type='button';move.contentEditable='false';move.className='ocr-move-handle';move.setAttribute('aria-label','Move recognized text');move.title='Drag to move recognized text';
+      move.onpointerdown=event=>{event.stopPropagation();startDrag(event,node,object);};node.append(move);
+      node.ocrHandles.push(move);
     }
     if (object.type === "image") {
       for (const [corner, label] of [["nw", "top left"], ["ne", "top right"], ["se", "bottom right"], ["sw", "bottom left"]]) {
@@ -1310,14 +1328,16 @@ async function buildPdf(items) {
     };
     for (const o of item.annotations) {
       if (o.type === "text") {
-        if (o.cover)
+        if (o.cover) {
+          const box = o.coverBox || o;
           page.drawRectangle({
-            ...point(o.x, o.y + o.h),
+            ...point(box.x, box.y + box.h),
             rotate: degrees(angle),
-            width: o.w * width,
-            height: Math.max(o.h * height, o.fontSize * 1.25),
+            width: box.w * width,
+            height: o.coverBox ? box.h * height : Math.max(o.h * height, o.fontSize * 1.25),
             color: hexColor(o.coverColor || "#ffffff"),
           });
+        }
         const name = StandardFonts[standardTextFont(o)];
         if (!textFonts.has(name)) textFonts.set(name, await output.embedFont(name));
         const textFont = textFonts.get(name), boxWidth = o.w * width;
@@ -1972,7 +1992,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key === 'Escape' && placement.active && !modalOpen) {
     e.preventDefault(); setMode('select'); announce('Placement cancelled.'); return;
   }
-  if (document.getElementById("scanDialog").open) return;
+  if (document.getElementById("scanDialog").open || document.getElementById("ocrDialog")?.open) return;
   if (mod && key === "o") {
     e.preventDefault();
     els.fileInput.click();
@@ -2018,6 +2038,70 @@ setupWebsitePdf({ addPdf: async file => {
   const added = await (state.pages.length ? mergeFile(file) : openFile(file));
   if (!added) throw new Error("Could not add captures. Download the PDF to keep a copy.");
 } });
+
+// Render the visible composition without final crop/fine-rotation transforms.
+// OCR uses normalized coordinates in the same page model as editable annotations.
+async function renderOcrPage(target, control) {
+  const item = target.model;
+  const bytes = await buildPdf([{...item, crop:null, fineRotation:0}]);
+  if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+  const pdf = await pdfjs.getDocument({data:bytes}).promise;
+  let canvas;
+  try {
+    const page = await pdf.getPage(1), base = page.getViewport({scale:1});
+    if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+    const scale = Math.min(3, OCR_LIMITS.edge/Math.max(base.width,base.height), Math.sqrt(OCR_LIMITS.pixels/(base.width*base.height)));
+    const viewport = page.getViewport({scale});
+    canvas = document.createElement('canvas');canvas.width=Math.max(1,Math.floor(viewport.width));canvas.height=Math.max(1,Math.floor(viewport.height));
+    const task = page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport,background:'#ffffff'});
+    control.cancel(()=>task.cancel());await task.promise;
+    if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+    const content = await page.getTextContent();
+    const existing = content.items.filter(run=>run.str?.trim()).map(run=>{
+      const m=pdfjs.Util.transform(base.transform,run.transform),h=Math.hypot(m[2],m[3])||Math.hypot(m[0],m[1]);
+      return {x:m[4]/base.width,y:(m[5]-h)/base.height,w:Math.max(1,run.width)/base.width,h:Math.max(1,h)/base.height};
+    });
+    const preview = document.createElement('canvas'), factor=Math.min(1,620/canvas.width,780/canvas.height);
+    preview.width=Math.max(1,Math.round(canvas.width*factor));preview.height=Math.max(1,Math.round(canvas.height*factor));
+    preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
+    preview.setAttribute('role','img');preview.setAttribute('aria-label',`Original page ${target.number} with detected text regions`);
+    const crop=item.crop||{top:0,right:0,bottom:0,left:0};
+    return {canvas,preview,width:base.width,height:base.height,existing,
+      visible:box=>box.x>=crop.left-.001&&box.y>=crop.top-.001&&box.x+box.w<=1-crop.right+.001&&box.y+box.h<=1-crop.bottom+.001,
+      appearance:box=>textInkAppearance(canvas,{left:box.x*base.width,top:box.y*base.height,width:box.w*base.width,height:box.h*base.height},base),
+      dispose:()=>{canvas.width=canvas.height=0;void pdf.destroy();}
+    };
+  } catch(error) {if(canvas)canvas.width=canvas.height=0;await pdf.destroy();throw error;}
+}
+ocr = setupOcr({
+  button:els.ocrButton,announce,stamp:snapshot,
+  targets:scope=>{
+    const indexes=scope==='all'?state.pages.map((_,i)=>i):scope==='selected'?selectedPageIndexes():[state.current];
+    const pages=indexes.filter(i=>state.pages[i]).map(i=>({id:state.pages[i].id,number:i+1,model:structuredClone(state.pages[i])}));
+    if(pages.some(p=>p.model.fineRotation))throw Error('Set fine rotation to 0° before OCR. Use a straightened image or rotate pages by 90° before recognition.');
+    finishInlineTextEditing();return pages;
+  },
+  renderPage:renderOcrPage,
+  apply:async(chosen,active)=>{
+    const document=await PDFDocument.create(),font=await document.embedFont(StandardFonts.Helvetica),prepared=[];
+    for(const {result,line}of chosen){
+      const item=state.pages.find(p=>p.id===result.target.id);
+      if(!item||item.sourceId!==result.target.model.sourceId)throw Error('The document changed. Recognize text again.');
+      const text=line.text.trim().replace(/\r\n?/g,'\n');
+      let naturalWidth;
+      try { naturalWidth=Math.max(...text.split('\n').map(line=>font.widthOfTextAtSize(line,1))); }
+      catch { throw Error(`Page ${result.number}: a line contains a symbol this PDF font cannot save. Correct it or uncheck that line before Apply.`); }
+      const {box}=line;
+      const fontSize=Math.max(6,Math.min(120,box.h*result.height*1.15,(box.w*result.width-1)/Math.max(1,naturalWidth)));
+      if(naturalWidth*fontSize>box.w*result.width+1)throw Error(`Page ${result.number}: a corrected line is too long for its box. Shorten it or uncheck it before Apply.`);
+      prepared.push({item,object:{id:uid(),type:'text',text,x:box.x,y:Math.max(0,box.y-fontSize*.15/result.height),w:box.w,h:Math.max(box.h,fontSize*1.4*text.split('\n').length/result.height),fontSize,color:line.color||'#172033',coverColor:line.coverColor||'#ffffff',fontFamily:'Arial, sans-serif',pdfFontFamily:'Helvetica',opacity:1,cover:true,coverBox:{...box},ocr:true}});
+    }
+    if(!active())throw Error('The document changed. Recognize text again before applying.');
+    mutate('Apply OCR text',()=>prepared.forEach(({item,object})=>item.annotations.push(object)));
+    state.selectedId=prepared.find(p=>p.item.id===currentPage()?.id)?.object.id||null;
+    setMode('select');await renderAll();
+  }
+});
 
 setupToolSearch();
 

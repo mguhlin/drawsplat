@@ -14,14 +14,14 @@ const emptyText = 'No selectable text on this page. Scanned images require OCR.'
 // replacements in that PDF still have the original text underneath them.
 export async function collectTextDocument({ pages, sources, title, language, sourceName, onProgress = () => {} }) {
   const result = { schemaVersion: 1, title, language, sourceName, pages: [], warnings: [
-    'Formatting is reconstructed from PDF font and position information. Review headings, paragraphs, columns, and tables. Image handling depends on the export format; Keep page appearance preserves the full visual layout. No OCR is performed.',
+    'Formatting is reconstructed from PDF font and position information. Review headings, paragraphs, columns, and tables. Image handling depends on the export format; Keep page appearance preserves the full visual layout. Text export does not run OCR automatically. Use Recognize text (OCR) first for text embedded in images.',
   ] };
   for (const [index, item] of pages.entries()) {
     onProgress(index + 1, pages.length);
     const page = await sources.get(item.sourceId).pdf.getPage(item.sourceIndex + 1);
     const [left, bottom, right, top] = page.view, width = right - left, height = top - bottom;
     const crop = item.crop || { left: 0, right: 0, top: 0, bottom: 0 };
-    const covers = item.annotations.filter(o => o.type === 'mask' || (o.type === 'text' && o.cover));
+    const covers = item.annotations.filter(o => o.type === 'mask' || (o.type === 'text' && o.cover)).map(o=>o.coverBox?{...o,...o.coverBox}:o);
     const visible = box => {
       if (box.x < crop.left || box.x + box.w > 1 - crop.right + .001 || box.y < crop.top || box.y + box.h > 1 - crop.bottom + .001) return false;
       return !covers.some(o => box.x < o.x + o.w && box.x + box.w > o.x && box.y < o.y + Math.max(o.h, (o.fontSize || 0) * 1.25 / height) && box.y + box.h > o.y);

@@ -55,6 +55,8 @@ for(const combined of [false,true]) test(`EPUB retains selectable text and embed
 test('EPUB images retain visual removal instead of revealing the original image',async({page})=>{
   await fixture(page);
   await page.locator('#removeAreaButton').evaluate(button=>button.click());
+  // Bring the picture into view before sending raw pointer coordinates.
+  await page.locator('#documentView').evaluate(node=>node.scrollTop=220);
   const box=await page.locator('#annotationLayer').boundingBox();
   // Cover the middle of the embedded red picture with PDFSplat’s visual mask.
   await page.mouse.move(box.x+box.width*.2,box.y+box.height*.34);

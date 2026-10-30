@@ -440,6 +440,7 @@ Category: **Organize** · 12 components
 
 - Open, combine, split, reorder, and rotate PDF pages
 - Add text, highlights, drawings, images, and signatures
+- Recognize printed English/Spanish text in scans and images locally; review and correct lines, then apply editable text boxes with anchored visual covers and one-step batch Undo. Saves selectable PDF text; up to 20 pages/2,000 lines per batch. OCR needs HTTPS or the included local launcher; rotate before recognition and keep fine rotation at 0°. Fonts/backgrounds are approximate and covers are not secure redaction.
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
 - Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review
@@ -751,6 +752,7 @@ Category: **Writing** · 22 components
 
 - Open, combine, split, reorder, and rotate PDF pages
 - Add text, highlights, drawings, images, and signatures
+- Recognize printed English/Spanish text in scans and images locally; review and correct lines, then apply editable text boxes with anchored visual covers and one-step batch Undo. Saves selectable PDF text; up to 20 pages/2,000 lines per batch. OCR needs HTTPS or the included local launcher; rotate before recognition and keep fine rotation at 0°. Fonts/backgrounds are approximate and covers are not secure redaction.
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
 - Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review

@@ -191,3 +191,11 @@ Back up projects and server configuration before replacing files. Extract the en
 3. Ask for a downloadable JSON file using the matching profile. Open it with that tool’s documented import action, then inspect the content and layout and save a native copy.
 
 Importers have different behavior: QuizSplat appends questions, GridSplat reads the first sheet, PlanSplat merges stamped records, and media projects may require real assets. ImageSplat has no JSON project importer. The reference distinguishes importable files from share-link payloads, internal state, and tools that need other formats. It describes valid generation rules; it does not make every chatbot output automatically correct. The online reference is a separate download and does not alter previously released v3.1.46 ZIPs.
+
+## PDFSplat OCR · v3.1.47
+
+The PDFSplat, full DrawSplat, Tools, and complete district-suite ZIPs include local printed English/Spanish OCR. Open a PDF or image, choose **Recognize text (OCR)**, review/correct detected lines, and Apply to create editable boxes. PDF output retains selectable text. Recognition skips existing selectable text, and one Undo restores a batch. [OCR workflow and limits](pdfsplat-ocr.md).
+
+Use the included local HTTP launcher (Python 3) or HTTPS for OCR workers. The engine, all core builds, and both language models are included; no internet connection or document upload is needed for recognition. Direct-file PDF editing remains supported separately. Rotate upright before OCR and set fine rotation to 0°. Fonts/covers are approximate and require review; covers are not secure redaction. Batches are limited to 20 pages/2,000 lines.
+
+Back up projects and server configuration before replacing files; keep the entire extracted folder structure. Other app/collection ZIPs retain their separately listed versions. Verify these four refreshed packages with `SHA256SUMS-v3.1.47.txt`. [Downloads](../pages/download.html#pdfsplat-ocr) · [Release notes](release-notes/RELEASE_NOTES_v3.1.47.md).

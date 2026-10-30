@@ -23,8 +23,7 @@ conversion infers headings and paragraphs from PDF font sizes and positions,
 and retains detectable bold/italic styles, font family and size (where the
 format supports them), list structure, alignment, and safe web/email links.
 Complex tables, drawings, and exact layout are not reconstructed as editable
-content. Check reading order, especially for columns and rotated text. No OCR is performed;
-pages without selectable text produce a warning. JSON is a text interchange
+content. Check reading order, especially for columns and rotated text. Exports do not run OCR automatically. Use **Recognize text (OCR)** first for scans; applied OCR text is included in text exports. Pages without selectable text produce a warning. [OCR workflow](pdfsplat-ocr.md). JSON is a text interchange
 format, not a restorable editor project.
 
 For Word, ODT, and EPUB, choose **Formatting → Keep page appearance** to keep
