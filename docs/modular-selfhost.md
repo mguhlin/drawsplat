@@ -181,3 +181,13 @@ with or without `.html`. Follow the
 The v3.1.46 full DrawSplat, Tools, and complete district-suite downloads include the ImageSplat PNG border fix. **Export PNG** and **Copy PNG** include all visible images and annotations, regardless of selection, and fit the output to their bounds. **File → Export selection** includes only the selected visible layers. Multiline text, underlines, strokes, and arrowheads are included without the white editing canvas or selection handles. Gaps remain transparent; white pixels already inside an imported image remain part of that image. Hide layers you do not want to include.
 
 Back up projects and server configuration before replacing files. Extract the entire matching full, Tools, or district ZIP and retain its shared folders; use the included launcher for local editing. Earlier v3.1.45 packages remain available and predate this fix. Office, media, Widgets, Games, PlanSplat, and ListSplat downloads keep their separately listed versions. Verify the three refreshed ZIPs using `SHA256SUMS-v3.1.46.txt`; the district archive also has an individual `.zip.sha256` file. [Downloads](../pages/download.html#imagesplat-png-export) · [Release notes](release-notes/RELEASE_NOTES_v3.1.46.md).
+
+## Generate import files with an AI chatbot
+
+[Download the single-file SplatWorks and DrawSplat JSON specifications](ai-json-file-specifications.md). The same reference is linked from [Downloads → AI JSON file specifications](../pages/download.html#ai-json-specifications). It contains eighteen import profiles across seventeen tools, complete examples, exact markers, field types, units, cross-reference rules, format limits, and a prompt you can reuse. Revision 1.0 was verified against the October 30, 2026 application source.
+
+1. Download the Markdown reference and upload that one file to your preferred chatbot.
+2. Provide your content and name the target tool, audience, and requested output filename. Use the prompt included at the beginning of the reference.
+3. Ask for a downloadable JSON file using the matching profile. Open it with that tool’s documented import action, then inspect the content and layout and save a native copy.
+
+Importers have different behavior: QuizSplat appends questions, GridSplat reads the first sheet, PlanSplat merges stamped records, and media projects may require real assets. ImageSplat has no JSON project importer. The reference distinguishes importable files from share-link payloads, internal state, and tools that need other formats. It describes valid generation rules; it does not make every chatbot output automatically correct. The online reference is a separate download and does not alter previously released v3.1.46 ZIPs.

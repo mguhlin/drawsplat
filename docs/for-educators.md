@@ -26,6 +26,10 @@ The [Teacher Quick Start](../guides/teacher-options-quick-start.html) walks thro
 | Create and practice | Try [scratch art](../guides/scratchart.html) or [classroom games](../games/index.html), including typing practice. |
 | Write or present | Use [WriteSplat](../pages/writesplat.html) for writing, [ShowSplat](../pages/showsplat.html) for slides, or [ListSplat](../pages/listsplat.html) for organized records. |
 
+## Generate a file from your content with AI
+
+[Download the single-file JSON specifications](ai-json-file-specifications.md) and upload it with your lesson content to your preferred chatbot. Name the target SplatWorks or DrawSplat tool and use the included prompt. The reference covers eighteen import profiles across seventeen tools, with complete examples, exact field rules, opening steps, and supported-format limits. [Find it on the download page](../pages/download.html#ai-json-specifications). Open the generated file in its matching tool and review the content and layout before using it with learners.
+
 ## Keep a Google Drive copy
 
 The office apps and creative tools can save a file copy to your Google account after you authorize it. Follow the [Google Drive guide](../wiki/google-drive.html) for the correct action and format in each app, including PDFs, videos, media outputs, Markdown and diagram source. Local saving remains available.
