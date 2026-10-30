@@ -380,12 +380,54 @@
   function zoomTo(z){state.zoom=z;shell.style.transform='scale('+z+')';$('zoomLabel').textContent=Math.round(z*100)+'%'}
   function selectedObjects(){const ids=new Set(state.selected);state.selected.forEach(id=>{const g=state.objects.find(o=>o.id===id&&o.type==='group');if(g)state.objects.forEach(o=>{if(o.group===g.id)ids.add(o.id)})});return state.objects.filter(o=>ids.has(o.id)&&!o.hidden&&o.type!=='group')}
   function renderFullCanvas(){const out=document.createElement('canvas');out.width=canvas.width;out.height=canvas.height;const octx=out.getContext('2d');octx.fillStyle='#fff';octx.fillRect(0,0,out.width,out.height);state.objects.filter(o=>!o.hidden).forEach(o=>drawObjOffset(o,octx,0,0));return out}
-  function renderToCanvas(objs,pad=20){const bs=objs.map(bounds);const x=Math.min(...bs.map(b=>b.x))-pad,y=Math.min(...bs.map(b=>b.y))-pad,r=Math.max(...bs.map(b=>b.x+b.w))+pad,b=Math.max(...bs.map(b=>b.y+b.h))+pad;const out=document.createElement('canvas');out.width=Math.max(1,Math.ceil(r-x));out.height=Math.max(1,Math.ceil(b-y));const octx=out.getContext('2d');objs.forEach(o=>drawObjOffset(o,octx,-x,-y));return out}
+  // Export artwork bounds, independently of the white editing canvas and its
+  // selection handles. Keep image pixels (including white) and transparent gaps.
+  function exportBounds(o){
+    let b=norm(bounds(o));
+    if(o.type==='text'){
+      ctx.save();ctx.font=textFont(o);ctx.textBaseline='top';ctx.textAlign='left';
+      const size=o.font||34,lines=textLines(ctx,o.text,o.w),boxes=[];
+      lines.forEach((line,i)=>{
+        const words=line.split(/\s+/),justify=o.align==='justify'&&i<lines.length-1&&words.length>1;
+        const runs=justify?words:[line],total=justify?words.reduce((sum,word)=>sum+ctx.measureText(word).width,0):0;
+        const gap=justify?(o.w-total)/(words.length-1):0;
+        let x=o.x;
+        runs.forEach(run=>{
+          const m=ctx.measureText(run),w=m.width;
+          const left=justify?x:o.align==='center'?o.x+(o.w-w)/2:o.align==='right'?o.x+o.w-w:o.x;
+          const top=o.y+i*size*1.2;
+          if(run)boxes.push({x:left-m.actualBoundingBoxLeft,y:top-m.actualBoundingBoxAscent,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,h:m.actualBoundingBoxAscent+m.actualBoundingBoxDescent});
+          if(o.underline&&run){const half=Math.max(1,size/16)/2;boxes.push({x:left-half,y:top+size*1.08-half,w:w+half*2,h:half*2})}
+          x+=w+gap;
+        });
+      });
+      ctx.restore();
+      if(boxes.length){const x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y));return {x,y,w:Math.max(...boxes.map(b=>b.x+b.w))-x,h:Math.max(...boxes.map(b=>b.y+b.h))-y}}
+      return {x:o.x,y:o.y,w:0,h:0};
+    }
+    if(o.type==='arrow'){
+      const a=Math.atan2(o.y2-o.y,o.x2-o.x),s=arrowHeadSize(o);
+      const xs=[o.x,o.x2,o.x2-Math.cos(a-Math.PI/6)*s,o.x2-Math.cos(a+Math.PI/6)*s];
+      const ys=[o.y,o.y2,o.y2-Math.sin(a-Math.PI/6)*s,o.y2-Math.sin(a+Math.PI/6)*s];
+      b={x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)};
+    }
+    const half=['rect','line','arrow','path'].includes(o.type)?(o.width||4)/2:0;
+    return {x:b.x-half,y:b.y-half,w:b.w+half*2,h:b.h+half*2};
+  }
+  function renderToCanvas(objs){
+    const bs=objs.map(exportBounds),out=document.createElement('canvas');
+    if(!bs.length){out.width=out.height=1;return out}
+    const x=Math.floor(Math.min(...bs.map(b=>b.x))),y=Math.floor(Math.min(...bs.map(b=>b.y)));
+    const r=Math.ceil(Math.max(...bs.map(b=>b.x+b.w))),b=Math.ceil(Math.max(...bs.map(b=>b.y+b.h)));
+    out.width=Math.max(1,r-x);out.height=Math.max(1,b-y);
+    const octx=out.getContext('2d');objs.forEach(o=>drawObjOffset(o,octx,-x,-y));return out;
+  }
+  function renderArtwork(){return renderToCanvas(state.objects.filter(o=>!o.hidden&&o.type!=='group'&&(o.opacity??1)>0))}
   function drawObjOffset(o,c,dx,dy){c.save();c.globalAlpha=o.opacity??1;c.lineCap='round';c.lineJoin='round';c.lineWidth=o.width||4;c.strokeStyle=o.stroke||'#eb9705';c.fillStyle=o.fill==='transparent'?'rgba(0,0,0,0)':(o.fill||'transparent');if(o.filter)c.filter=o.filter;if(o.type==='image'&&o.img)c.drawImage(o.img,o.x+dx,o.y+dy,o.w,o.h);if(o.type==='rect'){c.beginPath();c.rect(o.x+dx,o.y+dy,o.w,o.h);if(o.fill!=='transparent')c.fill();c.stroke()}if(o.type==='line'||o.type==='arrow'){c.beginPath();c.moveTo(o.x+dx,o.y+dy);c.lineTo(o.x2+dx,o.y2+dy);c.stroke();if(o.type==='arrow')drawArrowHeadOn(c,o,dx,dy)}if(o.type==='path'){c.beginPath();o.points.forEach((p,i)=>i?c.lineTo(p.x+dx,p.y+dy):c.moveTo(p.x+dx,p.y+dy));c.stroke()}if(o.type==='text'){c.font=textFont(o);c.fillStyle=o.stroke||'#111827';c.textBaseline='top';wrapText(c,o.text,o.x+dx,o.y+dy,o.w,o.font||34,o.align||'left',o.underline)}c.restore()}
   function downloadCanvas(c,name){c.toBlob(b=>downloadBlob(b,name),'image/png')}
-  function exportCanvas(){downloadCanvas(renderFullCanvas(),'splatimage-studio.png');setStatus('status.exported')}
+  function exportCanvas(){downloadCanvas(renderArtwork(),'splatimage-studio.png');setStatus('status.exported')}
   function exportSelection(){const objs=selectedObjects();if(!objs.length)return setStatus('status.needSelection');downloadCanvas(renderToCanvas(objs),'splatimage-selection.png')}
-  function copyCanvas(){const out=renderFullCanvas();out.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('status.copied')}catch(_){downloadBlob(b,'imagesplat.png')}},'image/png')}
+  function copyCanvas(){const out=renderArtwork();out.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('status.copied')}catch(_){downloadBlob(b,'imagesplat.png')}},'image/png')}
   function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
   function imageFrames(){return selectedObjects().filter(o=>o.type==='image'&&o.img)}
   async function exportGif(){const imgs=imageFrames();if(!imgs.length)return setStatus('status.needImages');const maxW=Math.max(...imgs.map(o=>o.w)),maxH=Math.max(...imgs.map(o=>o.h));const frames=imgs.map(o=>{const c=document.createElement('canvas');c.width=maxW;c.height=maxH;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(o.img,(maxW-o.w)/2,(maxH-o.h)/2,o.w,o.h);return c});const blob=window.DrawSplatGifEncoder.encode(frames,{delayMs:+$('delayInput').value||500,loopCount:0,mode:'best',dither:true});downloadBlob(blob,'splatimage-frames.gif');setStatus('status.gif',{n:frames.length})}

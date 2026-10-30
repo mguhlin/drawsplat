@@ -9,6 +9,8 @@ Select one image layer, then choose **Adjust photo…**. Brightness, contrast, s
 
 Common actions use icons with visible labels. Existing layer editing, crop, PNG/selection/clipboard export, and animation controls keep their behavior. The legacy SplatImage URL redirects to this tool.
 
+**Export PNG**, **Copy PNG**, and **Export selection** fit the output to the visible artwork, including images, multiline text, shapes, strokes, and arrowheads. The white editing canvas and selection handles are excluded. Gaps stay transparent; white pixels within an imported image are preserved. Hidden layers do not enlarge the export. Cropping still uses the editing canvas coordinates.
+
 [October 9 release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). Verification: the ImageSplat photo-adjustment and labelled-action checks in the root Playwright icons configuration.
 
 New text boxes start empty; paste or type only the text you want. To change an existing text layer, double-click its text on the canvas or its name in Layers, choose **Edit → Edit selected text**, or press Enter with one text layer selected. The dialog restores its wording and formatting; **Save changes** updates the same layer, Cancel leaves it unchanged, and Undo restores the prior text and styles.
