@@ -1,3 +1,4 @@
+const {clickToolbar,selectLanguage}=require('./toolbar-helper.cjs');
 const {test,expect}=require('@playwright/test');
 const {PDFDocument,StandardFonts,degrees}=require('../vendor/pdf-lib.min.js');
 const fs=require('fs/promises');
@@ -32,16 +33,15 @@ for(const rotation of [0,90,180,270]) test(`formatted text exports at indicated 
 });
 test('language switching translates changing UI without translating document text',async({page})=>{
  await open(page);await add(page);await page.locator('.inline-text-editor').fill('Draw');await page.locator('#finishInlineText').click();
- const picker=page.locator('[data-pdf-language]');
  for(const [code,draw,bold,done] of [['es','Dibujar','Negrita','Terminar dibujo'],['vi','Vẽ','Đậm','Vẽ xong'],['ar','رسم','عريض','إنهاء الرسم'],['zh','绘图','粗体','完成绘图'],['uh','चित्र / رسم','मोटा / جلی','चित्र पूरा / رسم مکمل']]){
-  await picker.selectOption(code);await expect(page.locator('#drawButton')).toHaveText(draw);await expect(page.locator('[data-text-format="bold"] span')).toHaveText(bold);await expect(page.locator('.text-object')).toHaveText('Draw');
+  await selectLanguage(page,code);await expect(page.locator('#drawButton')).toHaveText(draw);await expect(page.locator('[data-text-format="bold"] span')).toHaveText(bold);await expect(page.locator('.text-object')).toHaveText('Draw');
   await page.locator('#drawButton').click();await expect(page.locator('#inkDone')).toHaveText(done);await expect(page.locator('#inkTools')).not.toContainText('Pen color');await page.locator('#inkDone').click();
  }
- await picker.selectOption('es');await page.locator('#drawButton').click();
+ await selectLanguage(page,'es');await page.locator('#drawButton').click();
  await page.locator('#annotationLayer').evaluate(n=>{const v=document.querySelector('#documentView');v.scrollTop=0;});const r=await page.locator('#annotationLayer').boundingBox();await page.mouse.move(r.x+40,r.y+40);await page.mouse.down();await page.mouse.move(r.x+70,r.y+70);await page.mouse.up();
  await expect(page.locator('#undoButton')).toHaveText('Deshacer Dibujar');await expect(page.locator('#status')).toContainText('Trazo añadido');
- await page.locator('#inkDone').click();await page.locator('#toolSearchButton').click();await page.locator('#toolSearchInput').fill('firma');await expect(page.locator('#toolSearchResults')).toContainText('Añadir firma');await page.keyboard.press('Escape');
- await picker.selectOption('en');await expect(page.locator('#undoButton')).toHaveText('Undo Draw');await expect(page.locator('#inkDone')).toHaveText('Done drawing');await expect(page.locator('.text-object')).toHaveText('Draw');
+ await page.locator('#inkDone').click();await clickToolbar(page,'toolSearchButton');await page.locator('#toolSearchInput').fill('firma');await expect(page.locator('#toolSearchResults')).toContainText('Añadir firma');await page.keyboard.press('Escape');
+ await selectLanguage(page,'en');await expect(page.locator('#undoButton')).toHaveText('Undo Draw');await expect(page.locator('#inkDone')).toHaveText('Done drawing');await expect(page.locator('.text-object')).toHaveText('Draw');
 });
 test('phone places and edits text using its on-page editor',async({page},info)=>{
  test.skip(info.project.name!=='iphone','touch interaction');await open(page);await add(page);await page.locator('.inline-text-editor').fill('Mobile text');await page.locator('[data-text-format="bold"]').tap();await page.locator('[data-text-align="center"]').tap();await page.locator('#finishInlineText').tap();await expect(page.locator('.text-object')).toContainText('Mobile text');await expect(page.locator('.text-object')).toHaveCSS('text-align','center');await page.screenshot({path:'/tmp/pdfsplat-inline-phone.png'});

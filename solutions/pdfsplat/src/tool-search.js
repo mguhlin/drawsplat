@@ -15,13 +15,13 @@ export function setupToolSearch() {
     const query = input.value.trim().toLowerCase();
     const controls = [...document.querySelectorAll('.tool-grid button[id], .topbar .actions button[id]')]
       .filter(button => button !== trigger && !button.hidden && button.id !== 'pagesButton');
-    const matching = controls.filter(button => button.textContent.toLowerCase().includes(query));
+    const matching = controls.filter(button => (button.dataset.toolLabel||button.textContent).toLowerCase().includes(query));
     results.replaceChildren();
     for (const control of matching) {
       const button = document.createElement('button');
       button.type = 'button'; button.disabled = control.disabled;
       const group = control.closest('.tool-group')?.querySelector('summary')?.textContent || 'Document';
-      const name = document.createElement('strong'); name.textContent = control.textContent;
+      const name = document.createElement('strong'); name.textContent = control.dataset.toolLabel||control.textContent;
       const context = document.createElement('span'); context.textContent = control.disabled ? `${group} · Open a PDF to use this tool` : group;
       button.append(name, context);
       button.onclick = () => {
@@ -40,9 +40,10 @@ export function setupToolSearch() {
   }
   trigger.onclick = open;
   dialog.querySelector('[data-close]').onclick = () => dialog.close();
-  dialog.addEventListener('close', () => { if (!executed) trigger.focus(); });
+  dialog.addEventListener('close', () => { if (!executed) (trigger.closest('.pdf-toolbar-menu')?.querySelector('summary')||trigger).focus(); });
   input.addEventListener('input', update);
   dialog.addEventListener('keydown', event => {
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dialog.close();return;}
     const buttons = [...results.querySelectorAll('button:not(:disabled)')];
     if (event.key === 'Enter' && event.target === input) {
       event.preventDefault(); buttons[0]?.click();

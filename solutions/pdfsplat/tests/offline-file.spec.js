@@ -1,3 +1,4 @@
+const {clickToolbar}=require('./toolbar-helper.cjs');
 const { test, expect } = require('@playwright/test');
 const { PDFDocument, StandardFonts } = require('../vendor/pdf-lib.min.js');
 const { pathToFileURL } = require('node:url');
@@ -31,18 +32,21 @@ test('opens, edits, saves, and protects PDF bytes directly from disk without net
   await page.reload();
   await page.locator('#fileInput').setInputFiles({name:copy.suggestedFilename(),mimeType:'application/pdf',buffer:await readFile(await copy.path())});
   await expect(page.locator('#status')).toContainText('1 pages');
-  await page.getByRole('button',{name:'Protect / Unprotect'}).click();
+  await clickToolbar(page,'protectButton');
   await page.getByRole('button',{name:'Protect this PDF'}).click();
   await page.locator('#vaultPassword').fill('offline-password-test');
   await page.locator('#vaultConfirm').fill('offline-password-test');
   const encrypted = page.waitForEvent('download');
   await page.getByRole('button',{name:'Protect and download'}).click();
   const vault = await encrypted;
-  await page.getByRole('button',{name:'Protect / Unprotect'}).click();
+  await clickToolbar(page,'protectButton');
   await page.getByRole('button',{name:'Unprotect a PDF'}).click();
   await page.locator('#vaultInput').setInputFiles(await vault.path());
   await page.locator('#vaultPassword').fill('offline-password-test');
   await page.getByRole('button',{name:'Unprotect and open'}).click();
   await expect(page.locator('#status')).toContainText('authenticated, decrypted, and opened locally', {timeout:60000});
+  await page.locator('#fileInput').setInputFiles({name:'offline.odt',mimeType:'application/vnd.oasis.opendocument.text',buffer:await readFile(resolve(__dirname,'fixtures/libreoffice-classroom.odt'))});
+  await expect(page.locator('#status')).toContainText('converted to PDF');
+  await expect(page.locator('#pdfCanvas')).toBeVisible();
   expect(errors).toEqual([]);
 });

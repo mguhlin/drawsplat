@@ -1,3 +1,4 @@
+const {clickToolbar}=require('./toolbar-helper.cjs');
 const { test, expect } = require("@playwright/test");
 const { PDFDocument } = require("../vendor/pdf-lib.min.js");
 
@@ -22,7 +23,7 @@ async function photo(page, color = "white") {
 }
 async function scan(page) {
   await page.goto("/solutions/pdfsplat/");
-  await page.getByRole("button", { name: "Scan to PDF", exact: true }).click();
+  await clickToolbar(page,'scanButton');
 }
 
 test("corrects a trapezoid into a rectangular page and rejects crossed corners", async ({
@@ -128,7 +129,7 @@ test("creates, reorders and downloads two scans, then opens them in the editor",
   await expect(page.locator("#scanDialog")).not.toBeVisible();
   await expect(page.locator("#pageCount")).toHaveText("2");
   expect(requests).toEqual([]);
-  await page.getByRole("button", { name: "Scan to PDF", exact: true }).click();
+  await clickToolbar(page,'scanButton');
   await expect(page.locator("#scanPages li")).toHaveCount(0);
   await page.locator("#scanFiles").setInputFiles(await photo(page));
   await page.locator("#scanSave").click();

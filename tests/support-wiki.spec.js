@@ -178,6 +178,8 @@ test('FAQ is in Start here, searchable, linkable, and readable without JavaScrip
  await page.goto('/wiki/faq.html');await page.emulateMedia({media:'print'});await expect(page.locator('main h3').last()).toBeVisible();
 });
 test('developer page is last in Wiki topics and addresses project contact correctly',async({page})=>{
+ // Intercept the native mail-app boundary while exercising the complete form.
+ await page.route('**/assets/js/contact.js*',async route=>{const response=await route.fetch(),source=await response.text();if(!source.includes('location.href=draftUrl;')){await route.abort();throw Error('Contact navigation boundary changed; keep native mail apps blocked.');}await route.fulfill({response,body:source.replace('location.href=draftUrl;','window.__interceptedEmailDraft=draftUrl;')});});
  await page.addInitScript(()=>localStorage.setItem('drawsplat.googleScriptUrl','https://script.google.com/macros/s/school-example/exec'));
  let posts=0;await page.route('https://script.google.com/**',route=>{posts++;route.abort()});
  await page.goto('/wiki/');
@@ -191,6 +193,7 @@ test('developer page is last in Wiki topics and addresses project contact correc
  await page.getByRole('button',{name:'Open email draft'}).click();
  await expect(page.locator('#contactStatus')).toContainText('drawsplat@gmail.com');
  const draft=await page.getByRole('link',{name:'Open the prepared email'}).getAttribute('href');
+ expect(await page.evaluate(()=>window.__interceptedEmailDraft)).toBe(draft);
  const address=new URL(draft);expect(address.pathname).toBe('drawsplat@gmail.com');
  expect(address.searchParams.get('body')).toContain('A question about classroom tools & language support.');
  expect(address.searchParams.get('body')).toContain('visitor@example.com');expect(posts).toBe(0);

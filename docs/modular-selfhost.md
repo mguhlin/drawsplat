@@ -199,3 +199,9 @@ The PDFSplat, full DrawSplat, Tools, and complete district-suite ZIPs include lo
 Use the included local HTTP launcher (Python 3) or HTTPS for OCR workers. The engine, all core builds, and both language models are included; no internet connection or document upload is needed for recognition. Direct-file PDF editing remains supported separately. Rotate upright before OCR and set fine rotation to 0°. Fonts/covers are approximate and require review; covers are not secure redaction. Batches are limited to 20 pages/2,000 lines.
 
 Back up projects and server configuration before replacing files; keep the entire extracted folder structure. Other app/collection ZIPs retain their separately listed versions. Verify these four refreshed packages with `SHA256SUMS-v3.1.47.txt`. [Downloads](../pages/download.html#pdfsplat-ocr) · [Release notes](release-notes/RELEASE_NOTES_v3.1.47.md).
+
+## PDFSplat ODT, toolbar, and previews · v3.1.48
+
+PDFSplat, full DrawSplat, Tools, and complete district-suite v3.1.48 packages add local ODT opening/import alongside existing ODT export. Basic styled text, headings, lists, table-cell text, page breaks, and embedded pictures reflow to PDF; complex layouts require review. Open, Save as, OCR and icon history controls stay visible; Tools/View menus group other actions and language. Thumbnails show current edits and Undo/Redo. OCR surrounding-color sampling improves light lettering on dark backgrounds. [Guide and limits](pdfsplat-odt-toolbar.md).
+
+Keep the whole extracted folder structure. OCR continues to need HTTPS or the included local HTTP launcher (Python 3); ordinary PDF/ODT conversion can run directly from disk in tested Chrome/Firefox. The four refreshed ZIPs use `SHA256SUMS-v3.1.48.txt`; other packages retain their listed versions. [Downloads](../pages/download.html#pdfsplat-odt-toolbar) · [Release notes](release-notes/RELEASE_NOTES_v3.1.48.md).

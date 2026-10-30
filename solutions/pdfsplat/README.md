@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Standalone package: **pdfsplat-selfhost-v3.1.47.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.48.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -46,7 +46,7 @@ On narrow screens the same controls appear below the document instead of being h
 
 ## Scan to PDF
 
-Choose **Scan to PDF** in the toolbar or **Scan paper or photos** on the opening
+Choose **Tools → Scan to PDF** in the toolbar or **Scan paper or photos** on the opening
 screen. Choose/drop photos, use **Take a photo** on a supported phone, or explicitly
 open the live camera. Camera access is requested only when you press Open camera;
 no microphone is requested. Close, Stop camera, PDF creation, and leaving the page
@@ -125,7 +125,7 @@ The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, 
 
 ## Capture an open tab or window
 
-Choose **Capture to PDF**, then **Choose tab or window** in a desktop browser that supports screen sharing. Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text starts as an image. After adding captures to the editor, use **Recognize text (OCR)** to make reviewed text editable.
+Choose **Tools → Capture to PDF**, then **Choose tab or window** in a desktop browser that supports screen sharing. Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text starts as an image. After adding captures to the editor, use **Recognize text (OCR)** to make reviewed text editable.
 
 Review/remove captures, download a PDF, or append it to the editor. Each capture becomes one PDF page, with a limit of 20 captures and a 2,200-pixel longest edge. No audio is requested. Stop sharing, closing the dialog, adding or downloading the PDF, and leaving the page stop the shared stream. Closing the dialog discards captures.
 
@@ -210,9 +210,9 @@ undo remain available.
 
 ### Open documents and images as PDFs
 
-Drop or choose PDF, DOCX, PPTX, EPUB, Markdown (.md/.markdown), TXT, or images. Multiple files combine into one PDF in the supplied order. Processing stays on the device; conversion does not fetch remote images or run embedded scripts. A failed conversion leaves the existing PDF open.
+Drop or choose PDF, DOCX, ODT, PPTX, EPUB, Markdown (.md/.markdown), TXT, or images. Multiple files combine into one PDF in the supplied order. Processing stays on the device; conversion does not fetch remote images or run embedded scripts. A failed conversion leaves the existing PDF open.
 
-DOCX and EPUB text and embedded images are reflowed onto A4 pages. Markdown supports headings, paragraphs, basic lists, bold, italics, and fenced code. Latin text stays searchable; characters unavailable in the PDF standard fonts use rendered image tokens. PPTX slides become page images at their original page size, with basic positioned text, fills, and pictures. Complex Office layouts, themes, charts, tables, and ebook styling may differ; review the result before sharing. This is a lightweight local importer rather than an Office rendering engine.
+DOCX, ODT, and EPUB text and embedded images are reflowed onto A4 pages. Markdown supports headings, paragraphs, basic lists, bold, italics, and fenced code. Latin text stays searchable; characters unavailable in the PDF standard fonts use rendered image tokens. PPTX slides become page images at their original page size, with basic positioned text, fills, and pictures. Complex Office layouts, themes, charts, tables, and ebook styling may differ; review the result before sharing. This is a lightweight local importer rather than an Office rendering engine.
 
 Images use their original aspect ratio: PNG, JPEG, WebP, GIF, BMP, SVG, AVIF and ICO depend on browser decoding support. Animated images use the first frame. Large images are downsampled to a 4096-pixel maximum edge. Older DOC/PPT files, encrypted ebooks, and image formats the browser cannot decode need conversion elsewhere first. Converted inputs are limited to 50 MB each; multi-file imports accept up to 20 files totaling 100 MB. Single existing PDFs retain their original opening behavior.
 
@@ -222,8 +222,8 @@ Save as **WebDeck v5 (.html)** creates an offline presentation from the edited p
 
 ## Presentation and full screen
 
-Choose **Present PDF** for a read-only presentation of the current edited pages,
-or **Full screen** to request browser full screen. The editor's page, annotations,
+Choose **View → Present PDF** for a read-only presentation of the current edited pages,
+or **View → Full screen** to request browser full screen. The editor's page, annotations,
 and undo history stay intact. Arrows/Page Up/Page Down navigate, Home/End jump,
 B/W blank the screen, F requests full screen, H toggles controls, and Escape exits.
 Ctrl+L / Command+L starts presenting when the browser allows that shortcut.
@@ -258,3 +258,11 @@ on complex PowerPoint styling and layouts.
 Choose the top-toolbar OCR button after opening a PDF or image. Recognize the current, selected, or all pages in English, Spanish, or both; review and correct lines before Apply. Text boxes remain editable and movable, with anchored covers over original lettering. Save as PDF retains selectable text; one Undo removes a complete batch. Stop cancels engine loading and recognition. Existing selectable text is skipped.
 
 Up to 20 pages and 2,000 new lines per batch; 8 MP and a 3,200-pixel edge per rendered page. Rotate upright before OCR; fine rotation must be 0°. Page rotation is blocked after OCR until that batch is undone. Covers are visual replacement, not secure redaction. [Complete workflow, offline setup, limits, and dependencies](../../docs/pdfsplat-ocr.md).
+
+## ODT, compact toolbar, and current thumbnails · v3.1.48
+
+Open or drop `.odt` files, including text saved by LibreOffice and PDFSplat. Headings, inherited basic text styles, lists, table-cell text, page breaks, and embedded pictures reflow to PDF locally. External assets and scripts are not loaded. Encrypted or malformed documents leave the current PDF open. Save as → ODT remains available; this is conversion rather than native ODT editing, and complex page layouts, floating frames, tables, fields, and tracked changes require review.
+
+The top toolbar keeps Open file, Save as, OCR, Undo/Redo, and Apps directly available. **Tools** contains capture, scan, Add PDF, protection, Drive saving, and tool search. **View** contains presentation, full screen, and interface language. Menus support keyboard navigation, Escape, and outside-click closing. History icons retain descriptive accessible names and tooltips.
+
+Page thumbnails render current annotations and crop/rotation edits, refresh after typing or committed changes, and follow Undo/Redo. Unfinished inline edits stay focused and are not committed by preview rendering. OCR now samples around a detected line to avoid mistaking solid white lettering for the background of a dark/gradient cover. Matching remains approximate. Reopen the original scan and recognize again to use the new sampling; previously applied covers are not automatically recolored. [Workflow and limits](../../docs/pdfsplat-odt-toolbar.md).

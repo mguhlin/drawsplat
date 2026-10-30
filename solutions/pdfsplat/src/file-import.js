@@ -1,8 +1,9 @@
 // Local document import. No remote resources, scripts, or conversion service.
+import {odtBlocks} from './odt-import.js';
 import {standardTextFont} from './text-appearance.js';
 const LIMIT = 50 * 1024 * 1024, ZIP_LIMIT = 100 * 1024 * 1024;
 const IMAGE_TYPES = {png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif',bmp:'image/bmp',svg:'image/svg+xml',avif:'image/avif',ico:'image/x-icon'};
-export const importAccept = '.pdf,.docx,.pptx,.epub,.md,.markdown,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,.avif,.ico,application/pdf,image/*';
+export const importAccept = '.pdf,.docx,.odt,application/vnd.oasis.opendocument.text,.pptx,.epub,.md,.markdown,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,.avif,.ico,application/pdf,image/*';
 const all = (node,name) => node ? [...node.getElementsByTagNameNS('*',name)] : [];
 const first = (node,name) => all(node,name)[0];
 const attribute = (node,name) => [...(node?.attributes||[])].find(a=>a.localName===name)?.value;
@@ -94,7 +95,7 @@ async function flowPdf(blocks){
  async function measure(text,run,size){const font=await fontFor(run);try{return {width:font.widthOfTextAtSize(text,size),font};}catch{const c=document.createElement('canvas'),ctx=c.getContext('2d');ctx.font=`${run.italic?'italic ':''}${run.bold?'bold ':''}${size*2}px ${run.pdfFontFamily==='Times'?'serif':run.pdfFontFamily==='Courier'?'monospace':'sans-serif'}`;return {width:ctx.measureText(text).width/2,ctx,canvas:c};}}
  for(const block of blocks){
   if(block.break){if(y<790)newPage();continue;}
-  if(block.image){const image=await doc.embedPng(block.image.bytes),scale=Math.min(499/image.width,650/image.height,1),w=image.width*scale,h=image.height*scale;if(y-h<48)newPage();page.drawImage(image,{x:48,y:y-h,width:w,height:h});y-=h+12;continue;}
+  if(block.image){const image=await doc.embedPng(block.image.bytes),targetWidth=block.width||image.width,targetHeight=block.height||image.height*targetWidth/image.width,scale=Math.min(499/targetWidth,650/targetHeight,1),w=targetWidth*scale,h=targetHeight*scale;if(y-h<48)newPage();page.drawImage(image,{x:48,y:y-h,width:w,height:h});y-=h+12;continue;}
   const lines=[[]],max=499-(block.indent||0);let width=0;
   for(const run of block.runs||[]){const size=Math.max(6,Math.min(72,run.size||block.size||12));for(const word of run.text.replace(/\t/g,'    ').split(/(\s+)/).filter(Boolean)){
    if(word.includes('\n')){lines.push([]);width=0;continue;}
@@ -134,8 +135,8 @@ export async function convertToPdf(file){
  let doc,notice='';const {PDFDocument}=globalThis.PDFLib;
  if(IMAGE_TYPES[ext]||file.type.startsWith('image/')){const image=await imageData(new Blob([file],{type:IMAGE_TYPES[ext]||file.type})),pdf=await PDFDocument.create(),embedded=await pdf.embedPng(image.bytes),scale=Math.min(1,14400/Math.max(image.width,image.height));pdf.addPage([image.width*scale,image.height*scale]).drawImage(embedded,{x:0,y:0,width:image.width*scale,height:image.height*scale});doc=pdf;notice='Images become PDF pages. Animated images use their first frame.';}
  else if(['md','markdown','txt'].includes(ext)){doc=await flowPdf(markdownBlocks(await file.text(),ext==='txt'));notice='Text is laid out for PDF. Linked images are not fetched.';}
- else if(['docx','epub','pptx'].includes(ext)){const zip=await archive(file);doc=ext==='pptx'?await pptxPdf(zip):await flowPdf(await(ext==='docx'?docxBlocks(zip):epubBlocks(zip)));notice=ext==='pptx'?'Slides become page images. Complex layouts, themes, charts, and animations may differ.':'Document text and embedded images are reflowed. Complex layouts and styling may differ.';}
- else throw Error('Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.');
+ else if((['docx','odt','epub','pptx'].includes(ext)||file.type==='application/vnd.oasis.opendocument.text')){const zip=await archive(file);doc=ext==='pptx'?await pptxPdf(zip):await flowPdf(await(ext==='docx'?docxBlocks(zip):(ext==='odt'||file.type==='application/vnd.oasis.opendocument.text')?odtBlocks(zip,{readXml,zipImage,pathFrom,fontFamily}):epubBlocks(zip)));notice=ext==='pptx'?'Slides become page images. Complex layouts, themes, charts, and animations may differ.':'Document text and embedded images are reflowed. Complex layouts and styling may differ.';}
+ else throw Error('Unsupported format. Choose PDF, DOCX, ODT, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.');
  return {file:new File([await doc.save()],file.name.replace(/\.[^.]+$/, '')+'.pdf',{type:'application/pdf'}),converted:true,notice};
 }
 export async function prepareFiles(files,onProgress=()=>{}){

@@ -620,7 +620,7 @@ copy_tree vendor "$TOOLS_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/tools.html "$TOOLS_ROOT/pages/tools.html"
 # Keep the new tools' help and short links usable in an extracted Tools bundle.
 copy_tree wiki "$TOOLS_ROOT/wiki" "${MODULE_EXCLUDES[@]}"
-for guide in backdropsplat imagesplat-remove-color pdfsplat-ocr pdfsplat-save-as; do
+for guide in backdropsplat imagesplat-remove-color pdfsplat-ocr pdfsplat-save-as pdfsplat-odt-toolbar; do
   copy_file "docs/$guide.md" "$TOOLS_ROOT/docs/$guide.md"
 done
 for shortcut in backdropsplat imagesplat; do
@@ -849,6 +849,7 @@ copy_file LICENSE "$PDFSPLAT_ROOT/LICENSE"
 copy_file NOTICE.md "$PDFSPLAT_ROOT/NOTICE.md"
 copy_file docs/pdfsplat-save-as.md "$PDFSPLAT_ROOT/docs/pdfsplat-save-as.md"
 copy_file docs/pdfsplat-ocr.md "$PDFSPLAT_ROOT/docs/pdfsplat-ocr.md"
+copy_file docs/pdfsplat-odt-toolbar.md "$PDFSPLAT_ROOT/docs/pdfsplat-odt-toolbar.md"
 cat > "$PDFSPLAT_ROOT/PDFSPLAT-SELFHOST-README.txt" <<EOF
 PDFSplat Self-Hosted Solution
 ===========================

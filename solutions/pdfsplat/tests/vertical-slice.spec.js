@@ -1,3 +1,4 @@
+const {clickToolbar}=require('./toolbar-helper.cjs');
 const { test, expect } = require('@playwright/test');
 const { PDFDocument, StandardFonts } = require('../vendor/pdf-lib.min.js');
 const JSZip = require('../../../vendor/jszip.min.js');
@@ -355,7 +356,7 @@ test('protects an edited PDF with CipherSplat and unlocks it back into the edito
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'private.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Private')) });
   await expect(page.locator('#status')).toContainText('1 pages');
-  await page.getByRole('button', { name:'Protect / Unprotect' }).click();
+  await clickToolbar(page,'protectButton');
   await expect(page.locator('#vaultIntro')).toContainText('AES-256-GCM');
   await page.getByRole('button', { name:'Protect this PDF' }).click();
   const generatorLink = page.getByRole('link', { name:'Generate a secure password with CipherSplat' });
@@ -373,7 +374,7 @@ test('protects an edited PDF with CipherSplat and unlocks it back into the edito
   const encrypted = await encryptedDownload;
   expect(encrypted.suggestedFilename()).toBe('private-edited.pdf.csplat');
 
-  await page.getByRole('button', { name:'Protect / Unprotect' }).click();
+  await clickToolbar(page,'protectButton');
   await page.getByRole('button', { name:'Unprotect a PDF' }).click();
   await page.locator('#vaultInput').setInputFiles(await encrypted.path());
   await page.locator('#vaultPassword').fill('classroom-safe-password');

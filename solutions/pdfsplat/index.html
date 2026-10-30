@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="../../assets/css/app-language.css">
 <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.2" />
 <script src="../../assets/js/action-cards.js?v=1.3" defer></script>
-<link rel="stylesheet" href="./src/ocr.css?v=20261030"></head>
+<link rel="stylesheet" href="./src/ocr.css?v=20261030-v3148"><link rel="stylesheet" href="./src/toolbar.css?v=20261030">
+</head>
 <body>
   <a class="skip-link" href="#workspace">Skip to document</a>
   <header class="topbar">
@@ -37,23 +38,28 @@
         <option value="epub">EPUB (.epub)</option>
         <option value="json">JSON (.json)</option>
       </select>
-      <button id="saveDriveButton" type="button" disabled>Save PDF to Google Drive</button>
-      <button id="presentButton" type="button" disabled aria-keyshortcuts="Control+L Meta+L"><span>Present PDF</span></button>
-      <button id="fullscreenButton" type="button" disabled>⛶ <span>Full screen</span></button>
+      <button id="ocrButton" type="button" disabled aria-label="Recognize text (OCR)" title="Recognize text in scanned pages and images" data-tool-label="Recognize text (OCR)"><svg class="pdf-ocr-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5M8 8h8m-4 0v9"/></svg>OCR</button>
+<details class="pdf-toolbar-menu" name="pdf-toolbar"><summary aria-expanded="false">Tools</summary><div class="pdf-toolbar-popover">
       <button id="websiteButton" type="button">Capture to PDF</button>
       <button id="scanButton" type="button">Scan to PDF</button>
-      <button id="ocrButton" type="button" disabled>Recognize text (OCR)</button>
-      <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
       <button id="protectButton" type="button">Protect / Unprotect</button>
-      <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
+      <button id="saveDriveButton" type="button" disabled>Save PDF to Google Drive</button>
       <button id="toolSearchButton" type="button" aria-keyshortcuts="Control+K Meta+K">Find a tool</button>
-      <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
-      <button id="redoButton" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
+</div></details>
+<details class="pdf-toolbar-menu" name="pdf-toolbar"><summary aria-expanded="false">View</summary><div class="pdf-toolbar-popover">
+      <button id="presentButton" type="button" disabled aria-keyshortcuts="Control+L Meta+L"><span>Present PDF</span></button>
+      <button id="fullscreenButton" type="button" disabled>⛶ <span>Full screen</span></button>
       <label class="ds-language-control ds-language-inline"><span>🌐 Language</span><select data-pdf-language aria-label="Language"><option value="en">English</option><option value="es">Español</option><option value="vi">Tiếng Việt</option><option value="ar">العربية</option><option value="zh">中文</option><option value="uh">हिन्दी / اردو</option></select></label>
-      <button class="ds-apps-link" type="button" data-ds-app-launcher aria-label="Open DrawSplat apps">Apps ▦</button>
+
+</div></details>
+      <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
+      <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
+      <button id="undoButton" class="pdf-history-icon" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
+      <button id="redoButton" class="pdf-history-icon" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
+      <button class="ds-apps-link" type="button" data-ds-app-launcher aria-label="Open DrawSplat apps" title="Apps">Apps ▦</button>
     </div>
-    <input id="fileInput" type="file" accept=".pdf,.docx,.pptx,.epub,.md,.markdown,.txt,image/*" multiple hidden>
+    <input id="fileInput" type="file" accept=".pdf,.docx,.odt,application/vnd.oasis.opendocument.text,.pptx,.epub,.md,.markdown,.txt,image/*" multiple hidden>
     <input id="mergeInput" type="file" accept="application/pdf,.pdf" hidden>
     <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
     <input id="imagePagesInput" type="file" accept="image/png,image/jpeg" multiple hidden>
@@ -72,7 +78,7 @@
         <div class="drop-card">
           <img class="drop-logo" src="./pdfsplat.png" alt="PDFsplat logo">
           <h1>Open a file. Make it a PDF.</h1>
-          <p>Drop PDF, DOCX, PPTX, EPUB, Markdown, text, or images here. Conversion happens on this device.</p>
+          <p>Drop PDF, DOCX, ODT, PPTX, EPUB, Markdown, text, or images here. Conversion happens on this device.</p>
           <button id="websiteStartButton" type="button">Capture an open tab or window</button>
           <button id="scanStartButton" type="button">Scan paper or photos</button>
           <button id="chooseButton" class="primary" type="button">Choose files</button>
@@ -419,8 +425,8 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=20261027-about"></script>
-  <script src="../../assets/js/pdf-ui-strings.js?v=20261009-presentation"></script>
+  <script src="./src/boot.js?v=20261030-odt"></script>
+  <script src="../../assets/js/pdf-ui-strings.js?v=20261030-odt"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>
 </html>

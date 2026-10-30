@@ -1,10 +1,11 @@
+const {clickToolbar}=require('./toolbar-helper.cjs');
 const { test, expect } = require('@playwright/test');
 const { PDFDocument } = require('../vendor/pdf-lib.min.js');
 
 test('unsupported browsers explain capture availability without a URL or print workflow', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { configurable: true, value: undefined }));
   await page.goto('/solutions/pdfsplat/');
-  await page.getByRole('button', { name: 'Capture to PDF', exact: true }).click();
+  await clickToolbar(page,'websiteButton');
   await expect(page.getByRole('heading', { name: 'Capture an open tab or window', exact: true })).toBeVisible();
   await expect(page.locator('#websiteShare')).toBeDisabled();
   await expect(page.locator('#websiteStatus')).toContainText('desktop browser');
@@ -33,7 +34,7 @@ async function fakeSharing(page) {
     } });
   });
   await page.goto('/solutions/pdfsplat/');
-  await page.locator('#websiteButton').click();
+  await clickToolbar(page,'websiteButton');
   await page.locator('#websiteShare').click();
   await expect(page.locator('#websiteStatus')).toContainText('Sharing is ready');
 }
@@ -63,14 +64,14 @@ test('adds captures into editor and clears the closed session', async ({ page })
   await expect(page.locator('#websiteDialog')).not.toBeVisible();
   await expect(page.locator('#pageCount')).toHaveText('1');
   expect(await page.evaluate(() => window.sharingStopped)).toBe(true);
-  await page.locator('#websiteButton').click();
+  await clickToolbar(page,'websiteButton');
   await expect(page.locator('#websitePages li')).toHaveCount(0);
 });
 
 test('canceling sharing leaves a usable retry', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { value: async () => { throw new DOMException('Denied', 'NotAllowedError'); } }));
   await page.goto('/solutions/pdfsplat/');
-  await page.locator('#websiteButton').click();
+  await clickToolbar(page,'websiteButton');
   await page.locator('#websiteShare').click();
   await expect(page.locator('#websiteStatus')).toContainText('canceled or denied');
   await expect(page.locator('#websiteShare')).toBeEnabled();
@@ -80,11 +81,11 @@ test('canceling sharing leaves a usable retry', async ({ page }) => {
 test('closing during the screen picker stops a late-arriving stream', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { value: () => new Promise(resolve => { window.finishPicker = () => resolve({ getTracks: () => [{ stop: () => { window.lateStreamStopped = true; } }] }); }) }));
   await page.goto('/solutions/pdfsplat/');
-  await page.locator('#websiteButton').click();
+  await clickToolbar(page,'websiteButton');
   await page.locator('#websiteShare').click();
   await page.locator('#websiteClose').click();
   await page.evaluate(() => window.finishPicker());
   await expect.poll(() => page.evaluate(() => window.lateStreamStopped)).toBe(true);
-  await page.locator('#websiteButton').click();
+  await clickToolbar(page,'websiteButton');
   await expect(page.locator('#websiteShare')).toBeEnabled();
 });

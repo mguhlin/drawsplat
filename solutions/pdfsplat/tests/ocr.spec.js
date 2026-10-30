@@ -3,13 +3,13 @@ const fs=require('node:fs/promises');
 const {PDFDocument,StandardFonts,rgb}=require('../vendor/pdf-lib.min.js');
 test.setTimeout(120000);
 const csp="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self' https://www.googleapis.com; object-src 'none'; worker-src 'self'; base-uri 'none'";
-async function fixture(page,{mixed=false,spanish=false,blank=false,pages=1}={}){
- const png=Buffer.from(await page.evaluate(({spanish,blank})=>{
-  const c=document.createElement('canvas');c.width=1400;c.height=900;const cx=c.getContext('2d');cx.fillStyle='white';cx.fillRect(0,0,1400,900);
+async function fixture(page,{mixed=false,spanish=false,blank=false,pages=1,dark=false}={}){
+ const png=Buffer.from(await page.evaluate(({spanish,blank,dark})=>{
+  const c=document.createElement('canvas');c.width=1400;c.height=900;const cx=c.getContext('2d');const gradient=cx.createLinearGradient(0,0,0,900);gradient.addColorStop(0,'#38104f');gradient.addColorStop(1,'#653582');cx.fillStyle=dark?gradient:'white';cx.fillRect(0,0,1400,900);
   cx.fillStyle='#16a34a';cx.fillRect(1150,650,150,150);
-  if(!blank){cx.fillStyle='#111111';cx.font='bold 65px Arial';cx.fillText(spanish?'EL CICLO DEL AGUA':'THE WATER CYCLE',80,160);cx.font='48px Arial';cx.fillText(spanish?'La evaporación cambia el agua.':'Evaporation changes water into vapor.',80,320);cx.fillText(spanish?'Este texto se puede editar.':'Read this scanned sentence.',80,450);}
+  if(!blank){cx.fillStyle=dark?'#ffffff':'#111111';cx.font=dark?'bold 120px Arial':'bold 65px Arial';cx.fillText(spanish?'EL CICLO DEL AGUA':'THE WATER CYCLE',80,160);cx.font='48px Arial';cx.fillText(spanish?'La evaporación cambia el agua.':'Evaporation changes water into vapor.',80,320);cx.fillText(spanish?'Este texto se puede editar.':'Read this scanned sentence.',80,450);}
   return c.toDataURL('image/png').split(',')[1];
- },{spanish,blank}),'base64');
+ },{spanish,blank,dark}),'base64');
  const pdf=await PDFDocument.create(),image=await pdf.embedPng(png),font=await pdf.embedFont(StandardFonts.Helvetica);
  for(let i=0;i<pages;i++){const p=pdf.addPage([700,500]);p.drawImage(image,{x:0,y:0,width:700,height:450});if(mixed)p.drawText('Existing selectable text stays editable.',{x:40,y:475,font,size:16,color:rgb(0,0,0)});}
  await page.locator('#fileInput').setInputFiles({name:'scan.pdf',mimeType:'application/pdf',buffer:Buffer.from(await pdf.save())});await expect(page.locator('#status')).toContainText('opened.');await expect(page.locator('#ocrButton')).toBeEnabled();
@@ -71,4 +71,11 @@ test('phone review fits the viewport and page limits reject large batches before
 test('OCR honors cropping and protects text placement from later page rotation',async({page})=>{
  await fixture(page);await page.locator('#toolGroup-pages').evaluate(n=>n.open=true);await page.locator('#cropButton').click();await page.locator('#cropTop').fill('35');await page.locator('#cropForm button[type=submit]').click();await recognize(page);const text=(await page.locator('#ocrResults textarea').evaluateAll(ns=>ns.map(n=>n.value))).join('\n');expect(text).not.toContain('THE WATER CYCLE');expect(text).toContain('Read this scanned sentence');await page.locator('#ocrApply').click();await page.locator('#rotateRightButton').click();await expect(page.locator('#status')).toContainText('Rotate pages before OCR');
  await page.locator('#undoButton').click();await expect(page.locator('.ocr-text')).toHaveCount(0);await page.locator('#customRotateButton').click();await page.locator('#customRotation').fill('2');await page.locator('#customRotateForm button[type=submit]').click();await page.locator('#ocrButton').click();await page.locator('#ocrRun').click();await expect(page.locator('#ocrStatus')).toContainText('fine rotation to 0°');await expect(page.locator('#ocrApply')).toBeDisabled();
+});
+test('large white lettering on a purple gradient keeps light ink and a purple cover; thumbnails reflect corrected OCR and export',async({page})=>{
+ await fixture(page,{dark:true});await recognize(page);await page.locator('#ocrApply').click();const box=page.locator('.ocr-text').first();
+ const colors=await box.evaluate(n=>({ink:getComputedStyle(n).color,background:getComputedStyle(n.previousElementSibling).backgroundColor}));const ink=colors.ink.match(/\d+/g).map(Number),background=colors.background.match(/\d+/g).map(Number);expect(Math.min(...ink.slice(0,3))).toBeGreaterThan(200);expect(background[0]).toBeLessThan(140);expect(background[1]).toBeLessThan(100);expect(background[2]).toBeLessThan(180);
+ await box.fill('LIFE TREASURES');await page.locator('#status').click();const bytes=await downloadPdf(page);
+ const expected=await page.evaluate(async bytes=>{const d=await pdfjsLib.getDocument({data:Uint8Array.from(bytes)}).promise,p=await d.getPage(1),v=p.getViewport({scale:.2}),c=document.createElement('canvas');c.width=Math.ceil(v.width);c.height=Math.ceil(v.height);await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;const data=c.toDataURL();await d.destroy();return data;},[...bytes]);
+ await expect.poll(()=>page.locator('.thumbnail canvas').first().evaluate(c=>c.toDataURL()),{timeout:15000}).toBe(expected);await page.screenshot({path:'/tmp/pdfsplat-purple-ocr-'+test.info().project.name+'.png',fullPage:true});
 });

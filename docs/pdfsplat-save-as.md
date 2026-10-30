@@ -55,3 +55,7 @@ notes, **V** for presenter view, and **P** to print. ShowSplat can import the
 HTML for further slide and notes work. Conversion runs locally.
 
 Use **Present PDF** for immediate presentation without an export, or **Full screen** for browser full screen. Presentation navigation does not modify the editor. Automatic playback has configurable timing and optional looping; B/W blank the screen and Escape returns to editing.
+
+## Open OpenDocument Text files
+
+PDFSplat v3.1.48 also opens `.odt` documents through Open file or drag-and-drop. Text, headings, basic inherited styles, lists, table-cell text, page breaks, and embedded pictures reflow into PDF pages locally. Save as → ODT remains available for text or page-appearance output. This is conversion, not a native ODT layout editor; review complex layouts, tables, frames, fields, and tracked changes. External assets/scripts are not loaded, and encrypted ODT requires an unencrypted copy. [ODT and toolbar workflow](pdfsplat-odt-toolbar.md).

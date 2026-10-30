@@ -11,7 +11,7 @@ or model download is required.
    choose **Scan to PDF**, correct the corners, and **Add scans to editor**.
 2. Rotate pages upright before recognition. Set fine rotation to **0°**; use a
    straightened source image or the scanner's perspective correction if needed.
-3. Choose **Recognize text (OCR)** in the top toolbar. Select the current page,
+3. Choose **OCR** (Recognize text) in the top toolbar. Select the current page,
    selected pages, or all pages, then English, Spanish, or both languages.
 4. Choose **Recognize text**. Review the original-page previews and every detected
    line. Correct spelling, accents, punctuation, and reading order; uncheck anything
@@ -33,7 +33,7 @@ Running OCR again skips text already applied.
 
 ## Offline and self-hosted use
 
-Use the v3.1.47 PDFSplat, Tools, full DrawSplat, or complete district-suite ZIP from
+Use the v3.1.48 (or later) PDFSplat, Tools, full DrawSplat, or complete district-suite ZIP from
 [Downloads](../pages/download.html#pdfsplat-ocr). Extract the whole ZIP and retain
 `solutions/pdfsplat/vendor/ocr/` plus the shared vendor/assets folders. Open
 **START-HERE.html** and use the included local launcher (Python 3), or serve the
@@ -79,3 +79,5 @@ text and scans, saved selectable text, corrected/excluded lines, atomic Apply,
 Undo/Redo, duplicate detection, cancellation, missing-model recovery, movement
 with anchored covers, and phone review. No external recognition requests are
 made. Physical phone performance and complex layouts still require review.
+
+In v3.1.48, thumbnails reflect applied text edits and Undo/Redo. OCR estimates background color from around a detected line, improving light text on dark covers. Complex backgrounds remain approximate. To use this sampling on an earlier result, reopen the original PDF and recognize it again. [Toolbar and ODT guide](pdfsplat-odt-toolbar.md).

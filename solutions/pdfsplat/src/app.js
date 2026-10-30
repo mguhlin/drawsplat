@@ -1,3 +1,4 @@
+import {setupToolbar} from './toolbar.js';
 import {setupOcr, OCR_LIMITS} from './ocr.js';
 import { collectEpubImages } from "./epub-images.js";
 import { setupPresentation } from "./presentation.js";
@@ -93,6 +94,7 @@ function commit(before, label) {
   if (state.history.length > 100) state.history.shift();
   state.future = [];
   syncHistory();
+  queueThumbnailRefresh();
 }
 function mutate(label, fn) {
   const before = snapshot();
@@ -105,6 +107,7 @@ function syncHistory() {
   els.redoButton.disabled = !state.future.length;
   els.undoButton.textContent = state.history.length ? `Undo ${state.history.at(-1).label}` : 'Undo';
   els.redoButton.textContent = state.future.length ? `Redo ${state.future.at(-1).label}` : 'Redo';
+  for(const button of [els.undoButton,els.redoButton]){button.setAttribute('aria-label',button.textContent);button.title=button.textContent;}
 }
 function restore(value) {
   const data = JSON.parse(value);
@@ -352,7 +355,7 @@ async function renderTextHits(page, viewport, token) {
         h: height / viewport.height,
         fontSize,
         ...textAppearanceForLine(line),
-        ...textInkAppearance(els.pdfCanvas, {left, top, width, height}, viewport),
+        ...textInkAppearance(els.pdfCanvas, {left, top, width, height}, viewport, {surroundingBackground:true}),
       });
     };
     els.textHitLayer.append(hit);
@@ -363,21 +366,37 @@ function textAppearanceForLine(line) {
   const run = line.runs.reduce((a,b)=>a.text.length >= b.text.length ? a : b);
   return {fontFamily:run.fontFamily,pdfFontFamily:run.pdfFontFamily,bold:run.bold,italic:run.italic,sourceBold:run.sourceBold,sourceItalic:run.sourceItalic,exactFont:run.exactFont,fallbackFontFamily:run.fallbackFontFamily};
 }
+let thumbnailTimer;
+function queueThumbnailRefresh() {
+  clearTimeout(thumbnailTimer);
+  thumbnailTimer = setTimeout(() => {
+    for (const li of els.thumbnails.children) {
+      const item=state.pages[Number(li.dataset.index)];
+      if (item && li.renderedKey !== JSON.stringify(item)) state.thumbnailObserver?.observe(li);
+    }
+  },180);
+}
 async function renderThumbnail(li) {
-  if (li.dataset.rendered === "true") return;
-  li.dataset.rendered = "true";
-  const index = Number(li.dataset.index),
-    item = state.pages[index];
-  if (!item) return;
-  const canvas = li.querySelector("canvas"),
-    page = await sourcePage(item),
-    vp = page.getViewport({
-      scale: 0.2,
-      rotation: (page.rotate + item.rotation + (item.fineRotation || 0)) % 360,
-    });
-  canvas.width = vp.width;
-  canvas.height = vp.height;
-  await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+  const index=Number(li.dataset.index), original=state.pages[index];
+  if(!original)return;
+  const item=structuredClone(original),key=JSON.stringify(item);
+  if(li.renderedKey===key||li.pendingThumbnailKey===key)return;
+  const token=(li.thumbnailToken||0)+1;li.thumbnailToken=token;li.pendingThumbnailKey=key;
+  const canvas=document.createElement('canvas');let edited;
+  li.setAttribute('aria-busy','true');
+  try {
+    let page,viewport;
+    if(item.annotations.length||item.crop||item.fineRotation){
+      const bytes=await buildPdf([item],{finishEditing:false});
+      edited=await pdfjs.getDocument({data:bytes}).promise;page=await edited.getPage(1);viewport=page.getViewport({scale:.2});
+    } else {page=await sourcePage(item);viewport=page.getViewport({scale:.2,rotation:(page.rotate+item.rotation)%360});}
+    canvas.width=Math.max(1,Math.ceil(viewport.width));canvas.height=Math.max(1,Math.ceil(viewport.height));
+    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    if(token!==li.thumbnailToken||!li.isConnected||JSON.stringify(state.pages[index])!==key)return;
+    const target=li.querySelector('canvas');target.width=canvas.width;target.height=canvas.height;target.getContext('2d').drawImage(canvas,0,0);
+    li.renderedKey=key;delete li.dataset.previewError;
+  } catch(error) {if(li.isConnected&&state.pages[index]?.id===item.id){li.dataset.previewError=error.message;console.warn('Page preview could not refresh',error);}}
+  finally {canvas.width=canvas.height=0;if(edited)await edited.destroy();if(token===li.thumbnailToken){li.pendingThumbnailKey=null;li.removeAttribute('aria-busy');}}
 }
 async function renderThumbnails() {
   state.thumbnailObserver?.disconnect();
@@ -780,11 +799,12 @@ function renderAnnotations() {
         node.oninput = () => {
           object.text = node.textContent || "";
           els.textValue.value = object.text;
+          queueThumbnailRefresh();
         };
         node.onblur = () => {
           object.text = node.textContent || "";
           for (const handle of node.ocrHandles || []) if (!node.contains(handle)) node.append(handle);
-          syncSize(node, object);
+          syncSize(node, object, {record:false});
           commit(node.dataset.before || snapshot(), "Edit replacement text");
         };
       }
@@ -888,7 +908,7 @@ function startInlineTextEditing(object = selectedObject(), selectAll = false) {
   node.classList.add('inline-editing');
   node.append(editor);
   editor.addEventListener('input', () => {
-    object.text = editor.value; els.textValue.value = object.text;
+    object.text = editor.value; els.textValue.value = object.text; queueThumbnailRefresh();
   });
   editor.addEventListener('blur', finishInlineTextEditing);
   editor.addEventListener('keydown', event => {
@@ -1094,14 +1114,14 @@ function clampObject(o) {
   o.x = Math.min(1 - o.w, Math.max(0, o.x));
   o.y = Math.min(1 - o.h, Math.max(0, o.y));
 }
-function syncSize(node, o) {
+function syncSize(node, o, {record=true}={}) {
   const before = snapshot(),
     rect = node.getBoundingClientRect(),
     parent = els.annotationLayer.getBoundingClientRect();
   o.w = rect.width / parent.width;
   o.h = rect.height / parent.height;
   clampObject(o);
-  commit(before, "Resize object");
+  if(record) commit(before, "Resize object");
 }
 function resizeImage(object, initial, corner, scale) {
   const west = corner.includes("w"), north = corner.includes("n");
@@ -1157,7 +1177,7 @@ function startResize(event, node, object) {
   };
   const up = () => {
     handle.removeEventListener("pointermove", move);
-    commit(before, "Resize object");
+    if(record) commit(before, "Resize object");
     renderAnnotations();
     announce(`${object.type === "text" ? "Text box" : "Object"} resized.`);
   };
@@ -1303,8 +1323,8 @@ function hexColor(hex) {
   const n = parseInt(hex.slice(1), 16);
   return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
-async function buildPdf(items) {
-  finishInlineTextEditing();
+async function buildPdf(items, {finishEditing=true} = {}) {
+  if(finishEditing) finishInlineTextEditing();
   const output = await PDFDocument.create(),
     font = await output.embedFont(StandardFonts.Helvetica),
     docs = new Map(),
@@ -1923,7 +1943,10 @@ els.textValue.oninput = () => {
   if (!o) return;
   o.text = els.textValue.value;
   const node = els.annotationLayer.querySelector(`[data-id="${o.id}"]`);
-  if (node) node.textContent = o.text;
+  if (node) {
+    const handles=[...(node.ocrHandles||[])];node.textContent=o.text;for(const handle of handles)node.append(handle);
+  }
+  queueThumbnailRefresh();
 };
 els.textValue.onchange = () => {
   commit(els.textValue.dataset.before || snapshot(), "Edit text");
@@ -2068,7 +2091,7 @@ async function renderOcrPage(target, control) {
     const crop=item.crop||{top:0,right:0,bottom:0,left:0};
     return {canvas,preview,width:base.width,height:base.height,existing,
       visible:box=>box.x>=crop.left-.001&&box.y>=crop.top-.001&&box.x+box.w<=1-crop.right+.001&&box.y+box.h<=1-crop.bottom+.001,
-      appearance:box=>textInkAppearance(canvas,{left:box.x*base.width,top:box.y*base.height,width:box.w*base.width,height:box.h*base.height},base),
+      appearance:box=>textInkAppearance(canvas,{left:box.x*base.width,top:box.y*base.height,width:box.w*base.width,height:box.h*base.height},base,{surroundingBackground:true}),
       dispose:()=>{canvas.width=canvas.height=0;void pdf.destroy();}
     };
   } catch(error) {if(canvas)canvas.width=canvas.height=0;await pdf.destroy();throw error;}
@@ -2092,7 +2115,7 @@ ocr = setupOcr({
       try { naturalWidth=Math.max(...text.split('\n').map(line=>font.widthOfTextAtSize(line,1))); }
       catch { throw Error(`Page ${result.number}: a line contains a symbol this PDF font cannot save. Correct it or uncheck that line before Apply.`); }
       const {box}=line;
-      const fontSize=Math.max(6,Math.min(120,box.h*result.height*1.15,(box.w*result.width-1)/Math.max(1,naturalWidth)));
+      const fontSize=Math.floor(Math.max(6,Math.min(120,box.h*result.height*1.15,(box.w*result.width-1)/Math.max(1,naturalWidth)))*100)/100;
       if(naturalWidth*fontSize>box.w*result.width+1)throw Error(`Page ${result.number}: a corrected line is too long for its box. Shorten it or uncheck it before Apply.`);
       prepared.push({item,object:{id:uid(),type:'text',text,x:box.x,y:Math.max(0,box.y-fontSize*.15/result.height),w:box.w,h:Math.max(box.h,fontSize*1.4*text.split('\n').length/result.height),fontSize,color:line.color||'#172033',coverColor:line.coverColor||'#ffffff',fontFamily:'Arial, sans-serif',pdfFontFamily:'Helvetica',opacity:1,cover:true,coverBox:{...box},ocr:true}});
     }
@@ -2103,6 +2126,7 @@ ocr = setupOcr({
   }
 });
 
+setupToolbar();
 setupToolSearch();
 
 setupPresentation({ pdfjs, buildPdf: () => buildPdf(state.pages), state, announce });

@@ -1,3 +1,4 @@
+const {clickToolbar}=require('./toolbar-helper.cjs');
 const {test,expect}=require('@playwright/test');
 const {PDFDocument,StandardFonts,degrees}=require('../vendor/pdf-lib.min.js');
 const fs=require('fs/promises');
@@ -93,7 +94,7 @@ test('tool search discovers and invokes existing tools, with disabled and empty 
  await open(page);await page.keyboard.press('Control+k');await page.locator('#toolSearchInput').fill('Add text');await page.keyboard.press('Enter');
  await expect(page.locator('#toolSearchDialog')).toBeHidden();await expect(page.locator('#placementTools')).toBeVisible();
  await page.screenshot({path:'/tmp/pdfsplat-placement-preview.png'});await page.keyboard.press('Escape');
- await page.locator('#toolSearchButton').click();await page.locator('#toolSearchInput').fill('Rotate right');await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
+ await clickToolbar(page,'toolSearchButton');await page.locator('#toolSearchInput').fill('Rotate right');await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
  await expect(page.locator('#undoButton')).toHaveText('Undo Rotate pages');
 });
 
