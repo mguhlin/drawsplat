@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+const {clickToolbar}=require('../solutions/pdfsplat/tests/toolbar-helper.cjs');
 const fs=require('node:fs');
 const {PDFDocument,StandardFonts}=require('../solutions/pdfsplat/vendor/pdf-lib.min.js');
 const JSZip=require('../vendor/jszip.min.js');
@@ -47,7 +48,7 @@ async function ready(page,app){
 }
 async function openDrive(page,app){
  if(app==='videosplat'){await page.getByRole('menuitem',{name:'File',exact:true}).click();await page.getByRole('menuitem',{name:'Save project to Google Drive',exact:true}).click();}
- else if(app==='pdfsplat')await page.locator('#saveDriveButton').click();
+ else if(app==='pdfsplat')await clickToolbar(page,'saveDriveButton');
  else if(app==='markdown-studio')await page.locator('#btn-save-drive').click();
  else if(app==='mediasplat')await page.getByRole('region',{name:'Output files'}).getByRole('button',{name:'Save to Google Drive',exact:true}).click();
  else if(app==='concept-map'){await page.locator('#quickSaveAsMenu > summary').click();await page.locator('#quickSaveAsMenu [data-click-target=saveDriveBtn]').click();}
