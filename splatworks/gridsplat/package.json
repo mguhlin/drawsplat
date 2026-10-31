@@ -17,7 +17,7 @@
     "@dnd-kit/core": "6.3.1",
     "chart.js": "4.5.1",
     "exceljs": "^4.4.0",
-    "hyperformula": "3.3.0",
+    "hyperformula": "3.5.0",
     "jszip": "^3.10.1",
     "lucide-react": "1.17.0",
     "papaparse": "5.5.3",
