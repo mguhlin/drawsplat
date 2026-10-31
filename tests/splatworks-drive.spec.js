@@ -44,6 +44,7 @@ async function openApp(page, app) {
   } else if (app === 'showsplat') {
     await page.locator('#deckTitle').fill('Synthetic classroom project');
     await page.locator('#deckTitle').dispatchEvent('input');
+    await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('showsplat.deck.v1')||'null')?.title)).toBe('Synthetic classroom project');
   } else if (app === 'listsplat') {
     await page.locator('[data-project-title]').fill('Synthetic classroom project');
     await page.locator('[data-project-title]').dispatchEvent('change');
@@ -134,12 +135,12 @@ for (const app of apps) {
 
   test(app + ': cancelling Drive keeps saved work and sends no project', async ({ page }) => {
     const seen = await google(page); await openApp(page, app);
-    const before = await page.evaluate(() => JSON.stringify({ ...localStorage }));
+    const before = await page.evaluate(() => ({ ...localStorage }));
     const dialog = await driveMenu(page, app);
     await expect(dialog.getByRole('button', { name: 'Save to Google Drive', exact: true })).toBeEnabled();
     await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0);
     expect(seen.uploads).toHaveLength(0); expect(await page.evaluate(() => window.driveAuthCount || 0)).toBe(0);
-    expect(await page.evaluate(() => JSON.stringify({ ...localStorage }))).toBe(before);
+    expect(await page.evaluate(() => ({ ...localStorage }))).toEqual(before);
   });
 
   test(app + ': connection opt-out prevents even loading Google sign-in', async ({ page }) => {

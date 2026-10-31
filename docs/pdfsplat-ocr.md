@@ -7,7 +7,7 @@ or model download is required.
 
 ## Sensitive records and real redaction
 
-**OCR covers are visual replacements, not secure redaction. Original text and images remain in the PDF and may be recovered. Do not use covers to hide FERPA-protected or other sensitive records before sharing.** This warning appears prominently in the OCR dialog and above documents containing visual covers.
+**OCR covers are visual replacements, not secure redaction. Original text and images remain in the PDF and may be recovered. Do not use covers to hide FERPA-protected or other sensitive records before sharing.** This warning appears prominently in the OCR dialog and above the document when visual covers are present in the current editing session. Reopening an exported PDF does not restore the annotation history or reliably identify earlier covers.
 
 Use your district's approved redaction workflow:
 
