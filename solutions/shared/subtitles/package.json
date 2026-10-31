@@ -12,7 +12,7 @@
     "./local-model": "./local-model.ts"
   },
   "dependencies": {
-    "@huggingface/transformers": "3.8.1",
+    "@huggingface/transformers": "4.3.1",
     "mediabunny": "1.56.2"
   },
   "peerDependencies": {
