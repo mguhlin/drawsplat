@@ -68,7 +68,7 @@ for tool in registry['tools']:
  # Scan first-party runtime scripts, exclude vendor/minified libraries and sources not shipped.
  for p in folder.rglob('*'):
   if p.suffix not in ['.js','.mjs','.html'] or p==entry:continue
-  if any(v in p.parts for v in ['vendor','node_modules','tests','test','src','webdeck','.tmp','.git','.codex','.agents','test-results','playwright-report']):continue
+  if any(v in p.relative_to(folder).parts for v in ['dist','vendor','node_modules','tests','test','src','webdeck','.tmp','.git','.codex','.agents','test-results','playwright-report']):continue
   if p.stat().st_size>2500000:continue
   files.append(p)
  text='\n'.join(p.read_text(errors='replace') for p in files)
@@ -82,8 +82,8 @@ for tool in registry['tools']:
  'retention':'Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.',
  'rights':'/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.',
  'security':'Device/profile protections apply to browser storage; this is not application-level encryption at rest.',
- 'reviewed':'2026-10-16','entrySha256':hashlib.sha256((ROOT/entry).read_bytes()).hexdigest()})
-inventory={'version':1,'reviewed':'2026-10-16','scope':'All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.',
+ 'reviewed':'2026-10-31','entrySha256':hashlib.sha256((ROOT/entry).read_bytes()).hexdigest()})
+inventory={'version':1,'reviewed':'2026-10-31','scope':'All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.',
  'method':'Reproducible static source inventory plus runtime privacy-control tests. Storage literals and constants are evidence, not an exhaustive dynamic-key guarantee.',
  'publicHost':{'provider':'Cloudflare, Inc.','companyCountry':'United States','processingLocation':'Global edge network; no country-only residency commitment. Content editing remains local unless a connection is used.','data':'IP address, user agent, request URL and operational request metadata; no project-upload backend is supplied by the public site.'},
  'components':components}

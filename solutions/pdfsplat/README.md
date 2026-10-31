@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Standalone package: **pdfsplat-selfhost-v3.1.48.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.49.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -266,3 +266,7 @@ Open or drop `.odt` files, including text saved by LibreOffice and PDFSplat. Hea
 The top toolbar keeps Open file, Save as, OCR, Undo/Redo, and Apps directly available. **Tools** contains capture, scan, Add PDF, protection, Drive saving, and tool search. **View** contains presentation, full screen, and interface language. Menus support keyboard navigation, Escape, and outside-click closing. History icons retain descriptive accessible names and tooltips.
 
 Page thumbnails render current annotations and crop/rotation edits, refresh after typing or committed changes, and follow Undo/Redo. Unfinished inline edits stay focused and are not committed by preview rendering. OCR now samples around a detected line to avoid mistaking solid white lettering for the background of a dark/gradient cover. Matching remains approximate. Reopen the original scan and recognize again to use the new sampling; previously applied covers are not automatically recolored. [Workflow and limits](../../docs/pdfsplat-odt-toolbar.md).
+
+## OCR safety and lower-memory mode · v3.1.49
+
+**Visual covers are not secure redaction: original content can remain recoverable.** For sensitive/FERPA-protected records, use the [real redaction workflow](../../docs/pdfsplat-ocr.md#sensitive-records-and-real-redaction), then independently verify the saved copy. Review OCR spelling, accents, layout and reading order. Lower memory use caps recognition at 5 pages / 500 lines / 2 MP per page, with a quality tradeoff. Physical Chromebook/ChromeVox and constrained-device testing remains [tracked](https://github.com/mguhlin/drawsplat/issues/66).

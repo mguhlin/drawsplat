@@ -56,7 +56,7 @@ test('EPUB images retain visual removal instead of revealing the original image'
   await fixture(page);
   await page.locator('#removeAreaButton').evaluate(button=>button.click());
   // Bring the picture into view before sending raw pointer coordinates.
-  await page.locator('#documentView').evaluate(node=>node.scrollTop=220);
+  await page.locator('#documentView').evaluate(node=>{const layer=document.querySelector('#annotationLayer').getBoundingClientRect(),view=node.getBoundingClientRect();node.scrollTop+=layer.top+layer.height*.41-(Math.max(0,view.top)+Math.min(innerHeight,view.bottom))/2;});
   const box=await page.locator('#annotationLayer').boundingBox();
   // Cover the middle of the embedded red picture with PDFSplat’s visual mask.
   await page.mouse.move(box.x+box.width*.2,box.y+box.height*.34);

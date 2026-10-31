@@ -1,0 +1,430 @@
+{
+  "date": "2026-10-31",
+  "syntheticRecordsOnly": true,
+  "environment": {
+    "os": "Linux-6.12.111+deb13-amd64-x86_64-with-glibc2.41",
+    "orca": "Orca version 48.1, AT-SPI2 version: 2.56.2, Session: x11 XFCE",
+    "chrome": "Google Chrome 156.0.8078.47",
+    "node": "v20.19.2"
+  },
+  "orca": {
+    "setup": "Private Xvfb display and session bus; actual installed Orca frontend with silent speech-server capture. No audible pronunciation assessment. Browser focus/keyboard events exercise real AT-SPI announcements.",
+    "actualOrca": true,
+    "silentSpeechCapture": true,
+    "speech": [
+      {
+        "text": "Screen reader on.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "PDFsplat™ | DrawSplat™ - Google Chrome frame",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Address and search bar autocomplete 127.0.0.1:4194/solutions/pdfsplat/",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Finished loading PDFsplat™ | DrawSplat™.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Page has 5 landmarks, 2 headings, 1 unvisited link.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Opening screen-reader-test.pdf…",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Recognize text (OCR) Visual covers are not secure redaction OCR covers leave the original content underneath. Text and images can remain recoverable in saved PDFs. Do not use covers to hide FERPA-protected or other sensitive records before sharing. Use a district-approved redaction tool to permanently remove sensitive text, images and hidden information, then verify the final copy.Read printed text in scanned pages and images, review it, then make selected lines editable. Recognition stays on this device. English and Spanish models are included; no upload or external connection is needed. OCR spelling, accents, layout and reading order are approximate. Fonts and background colors can differ. Review every selected line and its order before applying. Existing selectable text is skipped. Rotate pages before OCR; fine rotation must be 0°. Up to 20 pages and 2,000 new lines per batch. PagesRecognition languageFor constrained devices: up to 5 pages/500 lines, 2 million pixels and a 2,200-pixel edge per page. Lower resolution can reduce accuracy. Automatically selected when the browser reports 4 GB RAM or less, or two CPU cores or fewer; it is not a device certification. Choose pages and recognize text. The document stays unchanged until Apply. Apply does not redact. It adds editable text and visual covers while preserving original content. Review spelling, accents and reading order. One Undo restores the batch.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Close button.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "1 / 1",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Choose pages and recognize text. The document stays unchanged until Apply.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Visual covers are not secure redaction comment",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Real redaction workflow for sensitive records toggle button collapsed.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Focus mode",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "expanded",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Example: Acrobat Redact, Apply and remove hidden information link.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Browse mode",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Recognition language combo box English.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "opens menu",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Focus mode",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Lower memory use check box checked.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "For constrained devices: up to 5 pages/500 lines, 2 million pixels and a 2,200-pixel edge per page. Lower resolution can reduce accuracy. Automatically selected when the browser reports 4 GB RAM or less, or two CPU cores or fewer; it is not a device certification.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Browse mode",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Stop button.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Loading the local OCR engine…",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Preparing page 1 of 1…",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Recognizing page 1 of 1 · 0%",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Recognized text, page 1, line 1 entry La evaporación cambia el agua.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Line 1 · 96% confidence.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "Focus mode",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      },
+      {
+        "text": "1 new line recognized. Correct the text, choose lines and Apply. No document changes yet.",
+        "voice": {
+          "established": false,
+          "family": {
+            "name": null,
+            "gender": null,
+            "lang": null,
+            "dialect": null,
+            "variant": null
+          }
+        }
+      }
+    ],
+    "warningAnnounced": true,
+    "languageControlAnnounced": true,
+    "spanishLineAnnounced": true
+  },
+  "memory": {
+    "cgroupMemoryMaxBytes": 1073741824,
+    "cgroupMemoryPeakBytes": 731795456,
+    "cgroupMemoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "elapsedMs": 2367,
+    "lines": [
+      "EL CICLO DEL AGUA",
+      "La evaporación cambia el agua.",
+      "El río vuelve al océano."
+    ],
+    "outsideRequests": [],
+    "physicalHardware": false
+  },
+  "pending": [
+    "Physical 2 GB/4 GB Chromebooks and ChromeVox with classroom tab load",
+    "NVDA/JAWS and VoiceOver combinations",
+    "Audible Spanish pronunciation and braille",
+    "Complex multi-column reading order and tagged-PDF remediation"
+  ],
+  "issue": "https://github.com/mguhlin/drawsplat/issues/66"
+}

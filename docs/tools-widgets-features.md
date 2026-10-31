@@ -440,6 +440,7 @@ Category: **Organize** · 12 components
 
 - Open, combine, split, reorder, and rotate PDF pages
 - Open OpenDocument Text (.odt) files locally with headings, inherited basic styles, lists, table-cell text, page breaks and embedded pictures reflowed into PDF; Save as ODT remains available. Review complex layouts; encrypted ODT needs an unencrypted copy.
+- OCR safety: visual covers preserve underlying content and are not secure redaction. Review spelling, accents, layout and reading order; use an approved apply-redaction and hidden-information removal workflow for sensitive records. Lower-memory mode caps batches at 5 pages / 500 lines / 2 MP per page; physical Chromebook/assistive-technology verification remains tracked.
 - Add text, highlights, drawings, images, and signatures
 - Recognize printed English/Spanish text in scans and images locally; review and correct lines, then apply editable text boxes with anchored visual covers and one-step batch Undo. Saves selectable PDF text; up to 20 pages/2,000 lines per batch. OCR needs HTTPS or the included local launcher; rotate before recognition and keep fine rotation at 0°. Fonts/backgrounds are approximate and covers are not secure redaction.
 - Compact toolbar with visible Open, Save as and OCR, icon Undo/Redo, Tools/View menus and keyboard navigation. Current-page thumbnails follow edits, crops and Undo/Redo; surrounding-color sampling improves OCR covers on dark backgrounds.
@@ -754,6 +755,7 @@ Category: **Writing** · 22 components
 
 - Open, combine, split, reorder, and rotate PDF pages
 - Open OpenDocument Text (.odt) files locally with headings, inherited basic styles, lists, table-cell text, page breaks and embedded pictures reflowed into PDF; Save as ODT remains available. Review complex layouts; encrypted ODT needs an unencrypted copy.
+- OCR safety: visual covers preserve underlying content and are not secure redaction. Review spelling, accents, layout and reading order; use an approved apply-redaction and hidden-information removal workflow for sensitive records. Lower-memory mode caps batches at 5 pages / 500 lines / 2 MP per page; physical Chromebook/assistive-technology verification remains tracked.
 - Add text, highlights, drawings, images, and signatures
 - Recognize printed English/Spanish text in scans and images locally; review and correct lines, then apply editable text boxes with anchored visual covers and one-step batch Undo. Saves selectable PDF text; up to 20 pages/2,000 lines per batch. OCR needs HTTPS or the included local launcher; rotate before recognition and keep fine rotation at 0°. Fonts/backgrounds are approximate and covers are not secure redaction.
 - Compact toolbar with visible Open, Save as and OCR, icon Undo/Redo, Tools/View menus and keyboard navigation. Current-page thumbnails follow edits, crops and Undo/Redo; surrounding-color sampling improves OCR covers on dark backgrounds.

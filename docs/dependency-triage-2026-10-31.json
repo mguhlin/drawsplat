@@ -1,0 +1,1163 @@
+{
+  "reviewDate": "2026-10-31",
+  "initialCount": 47,
+  "pullRequests": [
+    {
+      "number": 1,
+      "title": "Add Cloudflare Workers configuration",
+      "head": "1eee347a46e55b38b2d227cc378c09d97a2630bb",
+      "base": "07a760edb072a6856b7f0c1513beb6439a577814",
+      "files": [
+        ".gitignore",
+        "package-lock.json",
+        "package.json",
+        "wrangler.jsonc"
+      ],
+      "changes": [
+        {
+          "file": "package.json",
+          "kind": "devDependencies",
+          "name": "wrangler",
+          "old": null,
+          "new": "^4.112.0",
+          "current": null
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Review hosting target, routes, build commands, secrets and rollback separately; do not change production hosting to clear the unrelated Workers check.",
+      "reviewedHead": "1eee347a46e55b38b2d227cc378c09d97a2630bb",
+      "url": "https://github.com/mguhlin/drawsplat/pull/1"
+    },
+    {
+      "number": 15,
+      "title": "Bump brace-expansion in /splatworks/gridsplat",
+      "head": "d9de3a783df565a9223e53eed015b16241f12823",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/gridsplat/package-lock.json"
+      ],
+      "changes": [],
+      "risk": "low",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "d9de3a783df565a9223e53eed015b16241f12823",
+      "url": "https://github.com/mguhlin/drawsplat/pull/15"
+    },
+    {
+      "number": 16,
+      "title": "Bump vite from 8.0.16 to 8.3.5 in /splatworks/gridsplat",
+      "head": "eced471396a22ceca285d004a400c720745adfc1",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "vite",
+          "old": "8.0.16",
+          "new": "8.3.5",
+          "current": "8.3.5"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "eced471396a22ceca285d004a400c720745adfc1",
+      "url": "https://github.com/mguhlin/drawsplat/pull/16"
+    },
+    {
+      "number": 17,
+      "title": "Bump undici from 7.27.2 to 7.30.1 in /splatworks/gridsplat",
+      "head": "12570311950dc9a696ff22f6d84a17a6c68b674a",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/gridsplat/package-lock.json"
+      ],
+      "changes": [],
+      "risk": "low",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "12570311950dc9a696ff22f6d84a17a6c68b674a",
+      "url": "https://github.com/mguhlin/drawsplat/pull/17"
+    },
+    {
+      "number": 18,
+      "title": "Bump postcss from 8.5.16 to 8.5.32 in /splatworks/listsplat",
+      "head": "6b29e8f0be00bee7d3b73d8820063eea93335865",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/listsplat/package-lock.json"
+      ],
+      "changes": [],
+      "risk": "low",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "6b29e8f0be00bee7d3b73d8820063eea93335865",
+      "url": "https://github.com/mguhlin/drawsplat/pull/18"
+    },
+    {
+      "number": 19,
+      "title": "Bump source-map-js from 1.2.1 to 1.2.2 in /splatworks/gridsplat",
+      "head": "76fdc625be648486e9daf43e601522ed7e33d578",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/gridsplat/package-lock.json"
+      ],
+      "changes": [],
+      "risk": "low",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "76fdc625be648486e9daf43e601522ed7e33d578",
+      "url": "https://github.com/mguhlin/drawsplat/pull/19"
+    },
+    {
+      "number": 20,
+      "title": "Bump @vitest/mocker and vitest in /splatworks/gridsplat",
+      "head": "f41faa4a70b1468bd72b8541607d983009d6a460",
+      "base": "b3e402584764a93045baff160e793451b7b41add",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.8",
+          "new": "4.1.12",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "closed-superseded",
+      "validationGate": "Requested manifest and all changed lockfile package versions already match main; close as superseded rather than merge stale changes.",
+      "reviewedHead": "f41faa4a70b1468bd72b8541607d983009d6a460",
+      "url": "https://github.com/mguhlin/drawsplat/pull/20"
+    },
+    {
+      "number": 21,
+      "title": "Bump actions/setup-node from 4.4.0 to 7.1.0",
+      "head": "ebf0d66a0734641f408d7f3a565b0aef147cc939",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        ".github/workflows/backdropsplat.yml",
+        ".github/workflows/district-database.yml",
+        ".github/workflows/gridsplat-ci.yml",
+        ".github/workflows/layoutsplat.yml",
+        ".github/workflows/plansplat.yml",
+        ".github/workflows/scheduled-blog.yml",
+        ".github/workflows/security-audit.yml",
+        ".github/workflows/splatworks-interop.yml",
+        ".github/workflows/support-wiki.yml"
+      ],
+      "changes": [],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Review action release/migration notes, runner requirements, SHA provenance, permissions and artifact behavior; update one action family at a time.",
+      "reviewedHead": "ebf0d66a0734641f408d7f3a565b0aef147cc939",
+      "url": "https://github.com/mguhlin/drawsplat/pull/21"
+    },
+    {
+      "number": 22,
+      "title": "Bump actions/checkout from 4.4.0 to 7.0.1",
+      "head": "81bf3b46a706d6f81074d45a15b424bde4e3d3c7",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        ".github/workflows/backdropsplat.yml",
+        ".github/workflows/district-database.yml",
+        ".github/workflows/gridsplat-ci.yml",
+        ".github/workflows/layoutsplat.yml",
+        ".github/workflows/plansplat.yml",
+        ".github/workflows/refresh-blog-rss.yml",
+        ".github/workflows/scheduled-blog.yml",
+        ".github/workflows/security-audit.yml",
+        ".github/workflows/splatworks-interop.yml",
+        ".github/workflows/support-wiki.yml"
+      ],
+      "changes": [],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Review action release/migration notes, runner requirements, SHA provenance, permissions and artifact behavior; update one action family at a time.",
+      "reviewedHead": "81bf3b46a706d6f81074d45a15b424bde4e3d3c7",
+      "url": "https://github.com/mguhlin/drawsplat/pull/22"
+    },
+    {
+      "number": 23,
+      "title": "Bump actions/setup-python from 5.6.0 to 7.1.0",
+      "head": "4bc8c8759ea1761d830054dd96adb200e9d8cd4a",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        ".github/workflows/refresh-blog-rss.yml",
+        ".github/workflows/scheduled-blog.yml",
+        ".github/workflows/support-wiki.yml"
+      ],
+      "changes": [],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Review action release/migration notes, runner requirements, SHA provenance, permissions and artifact behavior; update one action family at a time.",
+      "reviewedHead": "4bc8c8759ea1761d830054dd96adb200e9d8cd4a",
+      "url": "https://github.com/mguhlin/drawsplat/pull/23"
+    },
+    {
+      "number": 24,
+      "title": "Bump actions/upload-artifact from 4.6.2 to 7.0.2",
+      "head": "846653d5ec32a7d312723f2945cda76c768f2fb3",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        ".github/workflows/backdropsplat.yml",
+        ".github/workflows/layoutsplat.yml",
+        ".github/workflows/plansplat.yml"
+      ],
+      "changes": [],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Review action release/migration notes, runner requirements, SHA provenance, permissions and artifact behavior; update one action family at a time.",
+      "reviewedHead": "846653d5ec32a7d312723f2945cda76c768f2fb3",
+      "url": "https://github.com/mguhlin/drawsplat/pull/24"
+    },
+    {
+      "number": 25,
+      "title": "Bump @playwright/test from 1.60.0 to 1.64.1",
+      "head": "9980c2d04ab345658647b9c0dae62eef8dbd4347",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "package-lock.json",
+        "package.json"
+      ],
+      "changes": [
+        {
+          "file": "package.json",
+          "kind": "devDependencies",
+          "name": "@playwright/test",
+          "old": "^1.60.0",
+          "new": "^1.64.1",
+          "current": "^1.60.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Coordinated test-runner/browser alignment with representative root, editor, audio/video browser suites; keep out of runtime-library groups.",
+      "reviewedHead": "9980c2d04ab345658647b9c0dae62eef8dbd4347",
+      "url": "https://github.com/mguhlin/drawsplat/pull/25"
+    },
+    {
+      "number": 26,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /solutions/audiosplat",
+      "head": "748681799bf0825805db597849b5cb4d586197da",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "solutions/audiosplat/package-lock.json",
+        "solutions/audiosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/audiosplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "748681799bf0825805db597849b5cb4d586197da",
+      "url": "https://github.com/mguhlin/drawsplat/pull/26"
+    },
+    {
+      "number": 27,
+      "title": "Bump typescript from 6.0.3 to 7.0.2 in /solutions/audiosplat",
+      "head": "92ed5835577cfd39de6d315bbacdf16c67e6811a",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "solutions/audiosplat/package-lock.json",
+        "solutions/audiosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/audiosplat/package.json",
+          "kind": "devDependencies",
+          "name": "typescript",
+          "old": "6.0.3",
+          "new": "7.0.2",
+          "current": "6.0.3"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "92ed5835577cfd39de6d315bbacdf16c67e6811a",
+      "url": "https://github.com/mguhlin/drawsplat/pull/27"
+    },
+    {
+      "number": 28,
+      "title": "Bump jsdom from 29.1.1 to 30.1.3 in /solutions/audiosplat",
+      "head": "0f06834ffb64b52afb78c68e2a82b55318374bed",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "solutions/audiosplat/package-lock.json",
+        "solutions/audiosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/audiosplat/package.json",
+          "kind": "devDependencies",
+          "name": "jsdom",
+          "old": "29.1.1",
+          "new": "30.1.3",
+          "current": "29.1.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "0f06834ffb64b52afb78c68e2a82b55318374bed",
+      "url": "https://github.com/mguhlin/drawsplat/pull/28"
+    },
+    {
+      "number": 29,
+      "title": "Bump vite from 7.3.7 to 8.3.5 in /solutions/clipsplat",
+      "head": "a0fa7a2633a25c1c8acbe5ca9eaf6ebf3f4b36b7",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "solutions/clipsplat/package-lock.json",
+        "solutions/clipsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/clipsplat/package.json",
+          "kind": "devDependencies",
+          "name": "vite",
+          "old": "7.3.7",
+          "new": "8.3.5",
+          "current": "7.3.7"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "a0fa7a2633a25c1c8acbe5ca9eaf6ebf3f4b36b7",
+      "url": "https://github.com/mguhlin/drawsplat/pull/29"
+    },
+    {
+      "number": 30,
+      "title": "Bump @playwright/test from 1.60.0 to 1.64.1 in /solutions/audiosplat",
+      "head": "5d4309d716d41109c9dd8f7d003955b15ce6825d",
+      "base": "46c7a2cd3b25103ee5254a802eece36c4deaae84",
+      "files": [
+        "solutions/audiosplat/package-lock.json",
+        "solutions/audiosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/audiosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@playwright/test",
+          "old": "1.60.0",
+          "new": "1.64.1",
+          "current": "1.60.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Coordinated test-runner/browser alignment with representative root, editor, audio/video browser suites; keep out of runtime-library groups.",
+      "reviewedHead": "5d4309d716d41109c9dd8f7d003955b15ce6825d",
+      "url": "https://github.com/mguhlin/drawsplat/pull/30"
+    },
+    {
+      "number": 31,
+      "title": "Bump @types/node from 24.10.1 to 26.6.5 in /solutions/audiosplat",
+      "head": "deb034990021e808d8eaa9688cb60674b883b2ea",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/audiosplat/package-lock.json",
+        "solutions/audiosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/audiosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@types/node",
+          "old": "24.10.1",
+          "new": "26.6.5",
+          "current": "24.10.1"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Align Node types with supported runtime instead of importing unsupported Node 26 API types; compile and run on declared Node versions.",
+      "reviewedHead": "deb034990021e808d8eaa9688cb60674b883b2ea",
+      "url": "https://github.com/mguhlin/drawsplat/pull/31"
+    },
+    {
+      "number": 32,
+      "title": "Bump dotenv from 16.6.1 to 18.0.9 in /server/mysql-backend",
+      "head": "431c3d45d2aa62084c3087eb5fe4480487a6a888",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "server/mysql-backend/package-lock.json",
+        "server/mysql-backend/package.json"
+      ],
+      "changes": [
+        {
+          "file": "server/mysql-backend/package.json",
+          "kind": "dependencies",
+          "name": "dotenv",
+          "old": "^16.4.7",
+          "new": "^18.0.9",
+          "current": "^16.4.7"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Dedicated environment-loading migration: precedence, startup configuration, secret handling and Docker/native launcher checks.",
+      "reviewedHead": "431c3d45d2aa62084c3087eb5fe4480487a6a888",
+      "url": "https://github.com/mguhlin/drawsplat/pull/32"
+    },
+    {
+      "number": 33,
+      "title": "Bump mysql2 from 3.24.4 to 3.24.6 in /server/mysql-backend",
+      "head": "6818bc658e6a32b4d7fa9f1b3fa0b5c29ba7753e",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "server/mysql-backend/package-lock.json",
+        "server/mysql-backend/package.json"
+      ],
+      "changes": [
+        {
+          "file": "server/mysql-backend/package.json",
+          "kind": "dependencies",
+          "name": "mysql2",
+          "old": "^3.11.5",
+          "new": "^3.24.6",
+          "current": "^3.11.5"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Database path: hold for backend unit/privacy/roster tests plus real MariaDB and MySQL integration on this driver. Existing head checks cover audit/hosting only; do not infer database coverage.",
+      "reviewedHead": "6818bc658e6a32b4d7fa9f1b3fa0b5c29ba7753e",
+      "url": "https://github.com/mguhlin/drawsplat/pull/33"
+    },
+    {
+      "number": 34,
+      "title": "Bump express from 4.22.3 to 5.3.0 in /server/mysql-backend",
+      "head": "e46ce3cdbf9ae9a636972af3e629c94001b2c34f",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "server/mysql-backend/package-lock.json",
+        "server/mysql-backend/package.json"
+      ],
+      "changes": [
+        {
+          "file": "server/mysql-backend/package.json",
+          "kind": "dependencies",
+          "name": "express",
+          "old": "^4.18.3",
+          "new": "^5.3.0",
+          "current": "^4.18.3"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Dedicated Express 5 migration with route, async-error, authentication/classroom authorization and real MariaDB/MySQL integration tests.",
+      "reviewedHead": "e46ce3cdbf9ae9a636972af3e629c94001b2c34f",
+      "url": "https://github.com/mguhlin/drawsplat/pull/34"
+    },
+    {
+      "number": 35,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /solutions/mediasplat",
+      "head": "f82dd507b89dc83acc7c9922305fb2a089670792",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/mediasplat/package-lock.json",
+        "solutions/mediasplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "f82dd507b89dc83acc7c9922305fb2a089670792",
+      "url": "https://github.com/mguhlin/drawsplat/pull/35"
+    },
+    {
+      "number": 36,
+      "title": "Bump @vitejs/plugin-react from 6.1.0 to 6.1.2 in /solutions/mediasplat",
+      "head": "865b47a3248a9e7f5773c02f98ff1432178adcaa",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/mediasplat/package-lock.json",
+        "solutions/mediasplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "devDependencies",
+          "name": "@vitejs/plugin-react",
+          "old": "6.1.0",
+          "new": "6.1.2",
+          "current": "6.1.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "865b47a3248a9e7f5773c02f98ff1432178adcaa",
+      "url": "https://github.com/mguhlin/drawsplat/pull/36"
+    },
+    {
+      "number": 37,
+      "title": "Bump react-dom and @types/react-dom in /solutions/mediasplat",
+      "head": "285743bc2975eb967dbb44d878e340d6e8d7473b",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/mediasplat/package-lock.json",
+        "solutions/mediasplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "dependencies",
+          "name": "react-dom",
+          "old": "19.1.1",
+          "new": "19.3.1",
+          "current": "19.1.1"
+        },
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "devDependencies",
+          "name": "@types/react-dom",
+          "old": "19.1.7",
+          "new": "19.3.0",
+          "current": "19.1.7"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "React/React DOM versions would differ. Require a coordinated per-app pair upgrade, production build and browser tests before merge.",
+      "reviewedHead": "285743bc2975eb967dbb44d878e340d6e8d7473b",
+      "url": "https://github.com/mguhlin/drawsplat/pull/37"
+    },
+    {
+      "number": 38,
+      "title": "Bump jsdom from 26.1.0 to 30.1.3 in /solutions/mediasplat",
+      "head": "35cd28819d22de006eaba7032ff3e08d5ac3b503",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/mediasplat/package-lock.json",
+        "solutions/mediasplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "devDependencies",
+          "name": "jsdom",
+          "old": "26.1.0",
+          "new": "30.1.3",
+          "current": "26.1.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "35cd28819d22de006eaba7032ff3e08d5ac3b503",
+      "url": "https://github.com/mguhlin/drawsplat/pull/38"
+    },
+    {
+      "number": 39,
+      "title": "Bump @testing-library/jest-dom from 6.9.1 to 7.0.1 in /solutions/mediasplat",
+      "head": "0b7345f1d5015ad934e49df8c2cc0a6872be81b8",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/mediasplat/package-lock.json",
+        "solutions/mediasplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/mediasplat/package.json",
+          "kind": "devDependencies",
+          "name": "@testing-library/jest-dom",
+          "old": "6.9.1",
+          "new": "7.0.1",
+          "current": "6.9.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "0b7345f1d5015ad934e49df8c2cc0a6872be81b8",
+      "url": "https://github.com/mguhlin/drawsplat/pull/39"
+    },
+    {
+      "number": 40,
+      "title": "Bump rolldown from 1.2.4 to 1.2.15 in /solutions/pdfsplat",
+      "head": "e4cdc2f50bf1c14217c0e7755f9771414abc68e1",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/pdfsplat/package-lock.json",
+        "solutions/pdfsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/pdfsplat/package.json",
+          "kind": "devDependencies",
+          "name": "rolldown",
+          "old": "1.2.4",
+          "new": "1.2.15",
+          "current": "1.2.4"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Build tool: hold for an isolated compiler rebuild and PDF/OCR/offline/export regressions before publishing changed generated assets.",
+      "reviewedHead": "e4cdc2f50bf1c14217c0e7755f9771414abc68e1",
+      "url": "https://github.com/mguhlin/drawsplat/pull/40"
+    },
+    {
+      "number": 41,
+      "title": "Bump prosemirror-commands from 1.7.1 to 1.7.2 in /splatworks/writesplat",
+      "head": "ebf877aab058b86dc390d0f313769eac9793ef30",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "splatworks/writesplat/package-lock.json",
+        "splatworks/writesplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/writesplat/package.json",
+          "kind": "dependencies",
+          "name": "prosemirror-commands",
+          "old": "^1.7.1",
+          "new": "^1.7.2",
+          "current": "^1.7.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "merged-tested",
+      "validationGate": "One editor patch at a time: WriteSplat unit tests, production build, editing/formatting/Undo/Redo and document round trips.",
+      "reviewedHead": "08dd2a5e5f087851f5a0da4a03c3ea25abc17927",
+      "url": "https://github.com/mguhlin/drawsplat/pull/41",
+      "mergeCommit": "db5d46937de9969d8427cf0a73a84aa8ad4bf5a5",
+      "validation": "Rebased head retested: 51 unit tests, production build, 4 Chromium/Firefox editing checks; paragraph/selection/formatting commands."
+    },
+    {
+      "number": 42,
+      "title": "Bump @testing-library/jest-dom from 6.9.1 to 7.0.1 in /solutions/videosplat",
+      "head": "db7fcb9dfc23122da1f8e27f7f3256a217c7df75",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/videosplat/package-lock.json",
+        "solutions/videosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@testing-library/jest-dom",
+          "old": "6.9.1",
+          "new": "7.0.1",
+          "current": "6.9.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "d00cbbc3a1ec71644a5738319cd9d551d6a8af9d",
+      "url": "https://github.com/mguhlin/drawsplat/pull/42"
+    },
+    {
+      "number": 43,
+      "title": "Bump eslint from 10.4.1 to 10.13.0 in /splatworks/gridsplat",
+      "head": "b2149aeabcde57f74cc67efb529f35bff46d4a07",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "eslint",
+          "old": "10.4.1",
+          "new": "10.13.0",
+          "current": "10.4.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "b2149aeabcde57f74cc67efb529f35bff46d4a07",
+      "url": "https://github.com/mguhlin/drawsplat/pull/43"
+    },
+    {
+      "number": 44,
+      "title": "Bump @testing-library/react from 16.3.2 to 16.3.3 in /solutions/videosplat",
+      "head": "253620041479ca7602d243430f3cc684981cc34e",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "solutions/videosplat/package-lock.json",
+        "solutions/videosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@testing-library/react",
+          "old": "16.3.2",
+          "new": "16.3.3",
+          "current": "16.3.2"
+        }
+      ],
+      "risk": "low",
+      "disposition": "merged-tested",
+      "validationGate": "Dev-only testing-library patch: media unit tests and unchanged runtime dependency graph.",
+      "reviewedHead": "253620041479ca7602d243430f3cc684981cc34e",
+      "url": "https://github.com/mguhlin/drawsplat/pull/44",
+      "mergeCommit": "60cbc465ecd5b63d7f4651833184f2209bcae771",
+      "validation": "134 VideoSplat unit tests; development test-library patch only; audit found no vulnerabilities."
+    },
+    {
+      "number": 45,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /splatworks/writesplat",
+      "head": "6b753f3ee408c2c1bbc6456e0c281a9822f4f86a",
+      "base": "d3cba4d40485f96d34d8f9de54de54ccabcfab17",
+      "files": [
+        "splatworks/writesplat/package-lock.json",
+        "splatworks/writesplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/writesplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "6b753f3ee408c2c1bbc6456e0c281a9822f4f86a",
+      "url": "https://github.com/mguhlin/drawsplat/pull/45"
+    },
+    {
+      "number": 46,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /solutions/videosplat",
+      "head": "6b77cdd813d942ecab599961090147342275f282",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "solutions/videosplat/package-lock.json",
+        "solutions/videosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "6b77cdd813d942ecab599961090147342275f282",
+      "url": "https://github.com/mguhlin/drawsplat/pull/46"
+    },
+    {
+      "number": 47,
+      "title": "Bump react and @types/react in /splatworks/gridsplat",
+      "head": "fcd81f478d7f5b90f93bb479c7328745b02fff72",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "dependencies",
+          "name": "react",
+          "old": "19.2.7",
+          "new": "19.3.1",
+          "current": "19.2.7"
+        },
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "@types/react",
+          "old": "19.2.17",
+          "new": "19.3.0",
+          "current": "19.2.17"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "React/React DOM versions would differ. Require a coordinated per-app pair upgrade, production build and browser tests before merge.",
+      "reviewedHead": "fcd81f478d7f5b90f93bb479c7328745b02fff72",
+      "url": "https://github.com/mguhlin/drawsplat/pull/47"
+    },
+    {
+      "number": 48,
+      "title": "Bump @playwright/test from 1.60.0 to 1.64.1 in /splatworks/writesplat",
+      "head": "0e2457713f1fdc519c455d133cf718a502c332d9",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/writesplat/package-lock.json",
+        "splatworks/writesplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/writesplat/package.json",
+          "kind": "devDependencies",
+          "name": "@playwright/test",
+          "old": "1.60.0",
+          "new": "1.64.1",
+          "current": "1.60.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Coordinated test-runner/browser alignment with representative root, editor, audio/video browser suites; keep out of runtime-library groups.",
+      "reviewedHead": "0e2457713f1fdc519c455d133cf718a502c332d9",
+      "url": "https://github.com/mguhlin/drawsplat/pull/48"
+    },
+    {
+      "number": 49,
+      "title": "Bump react and @types/react in /solutions/videosplat",
+      "head": "9bab2d67f53a4fd0eba7df1b2c0bb1a2eab94404",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "solutions/videosplat/package-lock.json",
+        "solutions/videosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "dependencies",
+          "name": "react",
+          "old": "19.2.8",
+          "new": "19.3.1",
+          "current": "19.2.8"
+        },
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@types/react",
+          "old": "19.2.18",
+          "new": "19.3.0",
+          "current": "19.2.18"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "React/React DOM versions would differ. Require a coordinated per-app pair upgrade, production build and browser tests before merge.",
+      "reviewedHead": "d8ac3d28494aecfdfa8732c30213ec63922d7300",
+      "url": "https://github.com/mguhlin/drawsplat/pull/49"
+    },
+    {
+      "number": 50,
+      "title": "Bump eslint-plugin-react-refresh from 0.5.2 to 0.5.7 in /splatworks/gridsplat",
+      "head": "bc9e6029ed9d5fdaffdb3ce07c477e8af971f7eb",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "eslint-plugin-react-refresh",
+          "old": "0.5.2",
+          "new": "0.5.7",
+          "current": "0.5.2"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "merged-tested",
+      "validationGate": "Lint plugin patch alone: GridSplat lint, unit tests and production build; preserve current React pair.",
+      "reviewedHead": "bc9e6029ed9d5fdaffdb3ce07c477e8af971f7eb",
+      "url": "https://github.com/mguhlin/drawsplat/pull/50",
+      "mergeCommit": "2a8144071dcbb0f6e956ea1b7c05aa25819f77fb",
+      "validation": "GridSplat lint, 46 unit tests (1 skipped), production build; development lint-plugin patch only."
+    },
+    {
+      "number": 51,
+      "title": "Bump prosemirror-history from 1.5.0 to 1.5.1 in /splatworks/writesplat",
+      "head": "914a603740a48c66a09f0f6a69d215a4f221732d",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/writesplat/package-lock.json",
+        "splatworks/writesplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/writesplat/package.json",
+          "kind": "dependencies",
+          "name": "prosemirror-history",
+          "old": "^1.5.0",
+          "new": "^1.5.1",
+          "current": "^1.5.0"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "merged-tested",
+      "validationGate": "One editor patch at a time: WriteSplat unit tests, production build, editing/formatting/Undo/Redo and document round trips.",
+      "mergeCommit": "b5da28923a20df4ccdafc83ab9aae74011035c5a",
+      "validation": "51 unit tests, production build, 4 Chromium/Firefox editing checks; history/Undo/Redo patch.",
+      "reviewedHead": "914a603740a48c66a09f0f6a69d215a4f221732d",
+      "url": "https://github.com/mguhlin/drawsplat/pull/51"
+    },
+    {
+      "number": 52,
+      "title": "Bump @playwright/test from 1.62.1 to 1.64.1 in /solutions/videosplat",
+      "head": "e1e001d880460d89ac520ecf101bdffae71ce212",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "solutions/videosplat/package-lock.json",
+        "solutions/videosplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/videosplat/package.json",
+          "kind": "devDependencies",
+          "name": "@playwright/test",
+          "old": "1.62.1",
+          "new": "1.64.1",
+          "current": "1.62.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Coordinated test-runner/browser alignment with representative root, editor, audio/video browser suites; keep out of runtime-library groups.",
+      "reviewedHead": "e1e001d880460d89ac520ecf101bdffae71ce212",
+      "url": "https://github.com/mguhlin/drawsplat/pull/52"
+    },
+    {
+      "number": 53,
+      "title": "Bump typescript from 6.0.3 to 7.0.2 in /splatworks/writesplat",
+      "head": "3f72e6abf78b862448e2ed893aa35c2b4f238dad",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/writesplat/package-lock.json",
+        "splatworks/writesplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/writesplat/package.json",
+          "kind": "devDependencies",
+          "name": "typescript",
+          "old": "6.0.3",
+          "new": "7.0.2",
+          "current": "6.0.3"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "3f72e6abf78b862448e2ed893aa35c2b4f238dad",
+      "url": "https://github.com/mguhlin/drawsplat/pull/53"
+    },
+    {
+      "number": 54,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /splatworks/gridsplat",
+      "head": "75f000f5e7a234ceee7c7e634f8b7ff22ad38d3c",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "75f000f5e7a234ceee7c7e634f8b7ff22ad38d3c",
+      "url": "https://github.com/mguhlin/drawsplat/pull/54"
+    },
+    {
+      "number": 55,
+      "title": "Bump vitest from 4.1.12 to 5.0.5 in /splatworks/listsplat",
+      "head": "eb29144a5a49c06f74765a0ac68d57b8476859f1",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/listsplat/package-lock.json",
+        "splatworks/listsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/listsplat/package.json",
+          "kind": "devDependencies",
+          "name": "vitest",
+          "old": "4.1.12",
+          "new": "5.0.5",
+          "current": "4.1.12"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "eb29144a5a49c06f74765a0ac68d57b8476859f1",
+      "url": "https://github.com/mguhlin/drawsplat/pull/55"
+    },
+    {
+      "number": 56,
+      "title": "Bump @huggingface/transformers from 3.8.1 to 4.3.1 in /solutions/shared/subtitles",
+      "head": "94a1f2ec96b0577c1c2c34964100b3e2b7bb449d",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "solutions/shared/subtitles/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/shared/subtitles/package.json",
+          "kind": "dependencies",
+          "name": "@huggingface/transformers",
+          "old": "3.8.1",
+          "new": "4.3.1",
+          "current": "3.8.1"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Isolated media/model migration: update linked consumers and lockfiles, preserve local processing, validate codec/transcription outputs and offline/network behavior.",
+      "reviewedHead": "94a1f2ec96b0577c1c2c34964100b3e2b7bb449d",
+      "url": "https://github.com/mguhlin/drawsplat/pull/56"
+    },
+    {
+      "number": 57,
+      "title": "Bump hyperformula from 3.3.0 to 3.5.0 in /splatworks/gridsplat",
+      "head": "cc0f8b26476a8e07e30e4e089fd4b0b439a48e85",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/gridsplat/package-lock.json",
+        "splatworks/gridsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/gridsplat/package.json",
+          "kind": "dependencies",
+          "name": "hyperformula",
+          "old": "3.3.0",
+          "new": "3.5.0",
+          "current": "3.3.0"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Isolated formula-engine upgrade: calculation fixtures, workbook import/save/reopen, browser and production-build regression checks.",
+      "reviewedHead": "cc0f8b26476a8e07e30e4e089fd4b0b439a48e85",
+      "url": "https://github.com/mguhlin/drawsplat/pull/57"
+    },
+    {
+      "number": 58,
+      "title": "Bump typescript from 6.0.3 to 7.0.2 in /splatworks/listsplat",
+      "head": "664b3480fa7756c092a9daae4d04a905c26391f0",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/listsplat/package-lock.json",
+        "splatworks/listsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/listsplat/package.json",
+          "kind": "devDependencies",
+          "name": "typescript",
+          "old": "6.0.3",
+          "new": "7.0.2",
+          "current": "6.0.3"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "664b3480fa7756c092a9daae4d04a905c26391f0",
+      "url": "https://github.com/mguhlin/drawsplat/pull/58"
+    },
+    {
+      "number": 59,
+      "title": "Bump mediabunny from 1.56.2 to 1.62.1 in /solutions/shared/subtitles",
+      "head": "fd403283d96d5799ab95922fefca18d8a2634162",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "solutions/shared/subtitles/package.json"
+      ],
+      "changes": [
+        {
+          "file": "solutions/shared/subtitles/package.json",
+          "kind": "dependencies",
+          "name": "mediabunny",
+          "old": "1.56.2",
+          "new": "1.62.1",
+          "current": "1.56.2"
+        }
+      ],
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "Isolated media/model migration: update linked consumers and lockfiles, preserve local processing, validate codec/transcription outputs and offline/network behavior.",
+      "reviewedHead": "fd403283d96d5799ab95922fefca18d8a2634162",
+      "url": "https://github.com/mguhlin/drawsplat/pull/59"
+    },
+    {
+      "number": 60,
+      "title": "Bump jsdom from 29.1.1 to 30.1.3 in /splatworks/listsplat",
+      "head": "1c3f247d2713e0f6338668b6ad4d9aafc65ecfd0",
+      "base": "2d666bad3990da1a4cd3cdfd6c47494a3bee71cd",
+      "files": [
+        "splatworks/listsplat/package-lock.json",
+        "splatworks/listsplat/package.json"
+      ],
+      "changes": [
+        {
+          "file": "splatworks/listsplat/package.json",
+          "kind": "devDependencies",
+          "name": "jsdom",
+          "old": "29.1.1",
+          "new": "30.1.3",
+          "current": "29.1.1"
+        }
+      ],
+      "risk": "medium",
+      "disposition": "hold",
+      "validationGate": "Major or broad build/test-tool change: review migration and engine/peer requirements, test the affected app separately and inspect production artifacts before merge.",
+      "reviewedHead": "1c3f247d2713e0f6338668b6ad4d9aafc65ecfd0",
+      "url": "https://github.com/mguhlin/drawsplat/pull/60"
+    },
+    {
+      "number": 67,
+      "title": "Bump qs from 6.16.0 to 6.16.2 in /server/mysql-backend",
+      "reviewedHead": "5a7d5546faf310fe7b6c52b384bde06bfc0552af",
+      "url": "https://github.com/mguhlin/drawsplat/pull/67",
+      "risk": "high",
+      "disposition": "hold",
+      "validationGate": "New arrival after original 47: backend query parser lock update; validate malformed/duplicate/nested query handling, auth routes and backend integration independently of Express/database changes."
+    }
+  ]
+}

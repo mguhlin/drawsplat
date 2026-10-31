@@ -751,6 +751,7 @@ function extractPages() {
 }
 
 function renderAnnotations() {
+  if($("visualCoverWarning")) $("visualCoverWarning").hidden=!state.pages.some(page=>page.annotations.some(object=>object.cover||object.type==="mask"));
   finishInlineTextEditing();
   els.annotationLayer.replaceChildren();
   const page = currentPage();
@@ -785,6 +786,7 @@ function renderAnnotations() {
     node.setAttribute("aria-label", `${object.type} annotation`);
     if (object.type === "text") {
       node.textContent = object.text;
+      if(object.lang)node.lang=object.lang;
       node.style.fontSize = `${object.fontSize * state.renderScale}px`;
       node.style.fontFamily = object.fontFamily || "Arial, sans-serif";
       node.style.lineHeight = "1.2";
@@ -2065,7 +2067,7 @@ setupWebsitePdf({ addPdf: async file => {
 // Render the visible composition without final crop/fine-rotation transforms.
 // OCR uses normalized coordinates in the same page model as editable annotations.
 async function renderOcrPage(target, control) {
-  const item = target.model;
+  const item = target.model, limits=control.limits||OCR_LIMITS;
   const bytes = await buildPdf([{...item, crop:null, fineRotation:0}]);
   if (!control.active()) throw new DOMException('OCR stopped','AbortError');
   const pdf = await pdfjs.getDocument({data:bytes}).promise;
@@ -2073,7 +2075,7 @@ async function renderOcrPage(target, control) {
   try {
     const page = await pdf.getPage(1), base = page.getViewport({scale:1});
     if (!control.active()) throw new DOMException('OCR stopped','AbortError');
-    const scale = Math.min(3, OCR_LIMITS.edge/Math.max(base.width,base.height), Math.sqrt(OCR_LIMITS.pixels/(base.width*base.height)));
+    const scale = Math.min(3, limits.edge/Math.max(base.width,base.height), Math.sqrt(limits.pixels/(base.width*base.height)));
     const viewport = page.getViewport({scale});
     canvas = document.createElement('canvas');canvas.width=Math.max(1,Math.floor(viewport.width));canvas.height=Math.max(1,Math.floor(viewport.height));
     const task = page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport,background:'#ffffff'});
@@ -2084,7 +2086,7 @@ async function renderOcrPage(target, control) {
       const m=pdfjs.Util.transform(base.transform,run.transform),h=Math.hypot(m[2],m[3])||Math.hypot(m[0],m[1]);
       return {x:m[4]/base.width,y:(m[5]-h)/base.height,w:Math.max(1,run.width)/base.width,h:Math.max(1,h)/base.height};
     });
-    const preview = document.createElement('canvas'), factor=Math.min(1,620/canvas.width,780/canvas.height);
+    const preview = document.createElement('canvas'), factor=Math.min(1,(limits.previewWidth||620)/canvas.width,(limits.previewHeight||780)/canvas.height);
     preview.width=Math.max(1,Math.round(canvas.width*factor));preview.height=Math.max(1,Math.round(canvas.height*factor));
     preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
     preview.setAttribute('role','img');preview.setAttribute('aria-label',`Original page ${target.number} with detected text regions`);
@@ -2117,7 +2119,7 @@ ocr = setupOcr({
       const {box}=line;
       const fontSize=Math.floor(Math.max(6,Math.min(120,box.h*result.height*1.15,(box.w*result.width-1)/Math.max(1,naturalWidth)))*100)/100;
       if(naturalWidth*fontSize>box.w*result.width+1)throw Error(`Page ${result.number}: a corrected line is too long for its box. Shorten it or uncheck it before Apply.`);
-      prepared.push({item,object:{id:uid(),type:'text',text,x:box.x,y:Math.max(0,box.y-fontSize*.15/result.height),w:box.w,h:Math.max(box.h,fontSize*1.4*text.split('\n').length/result.height),fontSize,color:line.color||'#172033',coverColor:line.coverColor||'#ffffff',fontFamily:'Arial, sans-serif',pdfFontFamily:'Helvetica',opacity:1,cover:true,coverBox:{...box},ocr:true}});
+      prepared.push({item,object:{id:uid(),type:'text',text,x:box.x,y:Math.max(0,box.y-fontSize*.15/result.height),w:box.w,h:Math.max(box.h,fontSize*1.4*text.split('\n').length/result.height),fontSize,lang:result.language==='spa'?'es':result.language==='eng'?'en':undefined,color:line.color||'#172033',coverColor:line.coverColor||'#ffffff',fontFamily:'Arial, sans-serif',pdfFontFamily:'Helvetica',opacity:1,cover:true,coverBox:{...box},ocr:true}});
     }
     if(!active())throw Error('The document changed. Recognize text again before applying.');
     mutate('Apply OCR text',()=>prepared.forEach(({item,object})=>item.annotations.push(object)));

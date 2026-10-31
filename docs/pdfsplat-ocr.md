@@ -5,10 +5,23 @@ photos, screenshots, and image regions. Recognition runs on your device with
 bundled Tesseract.js 7 and language models. No document upload, API key, account,
 or model download is required.
 
+## Sensitive records and real redaction
+
+**OCR covers are visual replacements, not secure redaction. Original text and images remain in the PDF and may be recovered. Do not use covers to hide FERPA-protected or other sensitive records before sharing.** This warning appears prominently in the OCR dialog and above documents containing visual covers.
+
+Use your district's approved redaction workflow:
+
+1. Keep the original in approved restricted storage; work on a copy.
+2. In a real redaction tool, mark sensitive text **and images**, then **apply** the redactions. A colored rectangle or an un-applied mark is not removal.
+3. Remove hidden information, including metadata, comments, attachments, hidden layers and embedded originals as supported by the tool.
+4. Save a new copy, reopen it in an independent viewer, and check searching/copying text, image content and hidden information. Follow district review and release procedures before sharing.
+
+[Adobe's apply-and-sanitize workflow](https://helpx.adobe.com/acrobat/desktop/protect-documents/redact-pdfs/redact.html) is an example; use the tool approved by your organization. [U.S. Department of Education de-identification guidance](https://studentprivacy.ed.gov/resources/data-de-identification-overview-basic-terms) provides context for education records. OCR, visual covers, PDF passwords and PDFSplat's rasterized sanitize option are not certified redaction or a guarantee of FERPA compliance. Rasterizing may leave sensitive information visibly present. OCR does not automatically produce a tagged, accessible PDF.
+
 ## Recognize, review, and apply
 
 1. Open a PDF or image in [PDFSplat](../solutions/pdfsplat/). For camera scans,
-   choose **Scan to PDF**, correct the corners, and **Add scans to editor**.
+   choose **Tools → Scan to PDF**, correct the corners, and **Add scans to editor**.
 2. Rotate pages upright before recognition. Set fine rotation to **0°**; use a
    straightened source image or the scanner's perspective correction if needed.
 3. Choose **OCR** (Recognize text) in the top toolbar. Select the current page,
@@ -33,7 +46,7 @@ Running OCR again skips text already applied.
 
 ## Offline and self-hosted use
 
-Use the v3.1.48 (or later) PDFSplat, Tools, full DrawSplat, or complete district-suite ZIP from
+Use the v3.1.49 (or later) PDFSplat, Tools, full DrawSplat, or complete district-suite ZIP from
 [Downloads](../pages/download.html#pdfsplat-ocr). Extract the whole ZIP and retain
 `solutions/pdfsplat/vendor/ocr/` plus the shared vendor/assets folders. Open
 **START-HERE.html** and use the included local launcher (Python 3), or serve the
@@ -66,6 +79,16 @@ Drive saving remains a separate, explicitly authorized action.
 - Saving PDF writes text into the output. Reopening it uses PDFSplat's existing
   click-to-edit replacement workflow; the in-memory annotation history is not
   saved as a restorable project. Sanitized image-only export removes selectability.
+
+## Lower-memory mode and accessibility testing
+
+Select **Lower memory use** before recognizing. It caps batches at **5 pages / 500 lines**, page rendering at **2 million pixels / 2,200-pixel longest edge**, and smaller review previews. It is initially selected when the browser reports at most 4 GB memory or at most two CPU cores; browsers may omit or approximate these hints. Users can change the setting. These hints are not saved or sent as telemetry. Lower resolution can reduce recognition quality; try one page and review carefully.
+
+The dialog exposes its safety and accuracy descriptions, review confidence, busy state and language to assistive technology. Spanish review/edit boxes declare `lang="es"`. Stop returns focus to the retry button; recognition progress announcements are limited to useful increments. Automated checks cover keyboard navigation, cancellation, narrow screens, real Spanish OCR/accented exports, offline requests and the actual lower-resolution worker input. Mocked 2 GB/two-core browser hints are **not** a physical low-memory test. They do not demonstrate ChromeOS performance or spoken Spanish pronunciation.
+
+Actual Linux Orca/Chrome testing on a private virtual display and session bus announced the redaction warning, workflow, language controls, Stop, a recognized Spanish line and its confidence. Speech was captured silently from Orca; audible pronunciation and braille were not assessed. A separate process group capped at **1 GiB RAM, zero swap and one CPU** completed a synthetic Spanish page with accents and no external requests; peak memory was **731,795,456 bytes**. This is a real process limit, not physical Chromebook testing. [Recorded environment and observations](../data/pdfsplat-ocr-validation-2026-10-31.json).
+
+The physical Chromebook/ChromeVox, NVDA/Firefox, VoiceOver/Safari and low-memory-device matrix remains open in [issue #66](https://github.com/mguhlin/drawsplat/issues/66). Complete those checks with representative district documents before claiming assistive-technology or device coverage; use synthetic records for testing. Reading order, headings, tables, columns and exported PDF tags require separate review.
 
 ## Dependencies and verification
 

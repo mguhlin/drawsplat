@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "reviewed": "2026-10-16",
+  "reviewed": "2026-10-31",
   "scope": "All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.",
   "method": "Reproducible static source inventory plus runtime privacy-control tests. Storage literals and constants are evidence, not an exhaustive dynamic-key guarantee.",
   "publicHost": {
@@ -30,7 +30,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "cdd72fc5ee60085a525417e8cf9072bb076b9c59d9fb5f21eeb6f27eacfcf8ca"
     },
     {
@@ -55,7 +55,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "42499ba3f54c048b0e2212e062dacbedc249e86d51886f572df7a92f12bdf9c4"
     },
     {
@@ -85,7 +85,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5f46e2ef0048b716776ebe7db047c688164c1c61ed4d6392419f111d7b704a66"
     },
     {
@@ -111,7 +111,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5678c78b07137cab95a966a3a7bd9ba5cdc0eaf5c2c874ccf5ec46022bfee3bc"
     },
     {
@@ -146,7 +146,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "6094b6e688b821d87288ae12079f6877c8bc8047e4e941ffbd083461177872f8"
     },
     {
@@ -190,7 +190,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "3578a81ad6124b158c60e518fa4919d29ecb2a201d570a81655fbcc34ee86cd2"
     },
     {
@@ -224,8 +224,8 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
-      "entrySha256": "46ada175d37cbb07771cb5dcfd8041600ed08ac8a55b695c87d08727f65801c9"
+      "reviewed": "2026-10-31",
+      "entrySha256": "858171bd4d612a34dfdc3c5e4889fabf603378ca057dd018aba1e833e54a5bc8"
     },
     {
       "id": "layoutsplat",
@@ -266,7 +266,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "af6e56d19817d08bec3ecbeaa690e6bb2c215ad1c55ba88718af63673e5b349c"
     },
     {
@@ -296,7 +296,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "4dfaa73a034c4210e108148e5e91fc33a71c05c5d9ce2e93a3a1fde72efceded"
     },
     {
@@ -321,7 +321,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "cce74db7b0f3f9aaca96bcf7adcf3032cb31ac433c112ff7d8b6f1dec4077e08"
     },
     {
@@ -344,7 +344,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "f3abcf346792c0070113c4dfd35a864217cfb458cee8e8b0466abf2dfe0546ca"
     },
     {
@@ -394,7 +394,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "c8f90e40922cdb4dcc359d2e5181279a2dc928b5d09a20b3634a7b32a7f9bfd6"
     },
     {
@@ -417,7 +417,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "4a611d7e275ef3acdf31891eaa7157a06936067c25eae80aaad98f5748798192"
     },
     {
@@ -438,7 +438,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "418149155270305e5a78a70c4001c8e9096a0705ebbb833b96dbc6d7ba242969"
     },
     {
@@ -459,7 +459,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "a2e10a4073baba633f25491ecd2cbf25037ec4e6cd5e9e313575fb41a73f0074"
     },
     {
@@ -484,7 +484,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "7261b34b79f1958fb827008c8e3899cbd02aba13ebb3f3db0e9964bdc9b6306e"
     },
     {
@@ -513,7 +513,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "ac945748dd718ab641073522e4fb2c9fecfbb32c7337688b7e09e1ce7576f8b8"
     },
     {
@@ -537,7 +537,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "40f436c0d32b042013f53670069546c2d058ff0830aa83df658ee1cdf46dc0fc"
     },
     {
@@ -566,7 +566,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "6d3de48ceb047be43ad8444eda54405ceb23c878d7b766bebe8d127a42031085"
     },
     {
@@ -591,7 +591,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "789f2d15ece853276f0c99ea5d194981e7eb60559f7a75a34e78a19c3c117535"
     },
     {
@@ -614,7 +614,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "0809095def47aede6f9fb05e464c0e16db08418d4a838377ece3bb4de5343722"
     },
     {
@@ -638,7 +638,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "90c0fd75d2326e6afd7b2f1372c27fd23e01051813f2ad30487c7edd2a5b18ad"
     },
     {
@@ -659,7 +659,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "f694d6e47f046b2bb165284ae779f346aa70d5d262d969d4ca169c82bbf0fab6"
     },
     {
@@ -691,7 +691,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "03011e78d3b1ec8fb08076d2de519e482847fa22489ca5f03705a41c9a5948fa"
     },
     {
@@ -714,7 +714,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "ca353f3e01a6efc7e999fea3d90ff1164d84c0e4e3bdb2c688e792c7e12bffc5"
     },
     {
@@ -735,7 +735,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "8bcbd274bda623b2d093c6f643afb7624b4b68d182e66625e5b655ee9e34368b"
     },
     {
@@ -756,7 +756,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "dd5d6d8628c4a6a0a585efebb353337dd0801d3220184ab1c3d38fbebda67e8b"
     },
     {
@@ -780,7 +780,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "9e4815bbdea6d8672b207459a56138690211826fefdd9568f070f5a3222656a0"
     },
     {
@@ -812,7 +812,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "486903840d3c9480ad9c1b442f7d091ef61e6c426289a0ef257f46e313527a02"
     },
     {
@@ -849,7 +849,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "691be5ea4a96f599ee9be83d90338ba18b24f483169a751c839894bdc0786353"
     },
     {
@@ -878,7 +878,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "09bc6dc48914dab38668d4c3d547fc38e90f6577315b7aae5e10a3a8a11cc2a7"
     },
     {
@@ -899,7 +899,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "d6f9f07e640a4300b889350a177d74f52bd6cb8132a296d4b1cfddfe4de5fd0e"
     },
     {
@@ -927,7 +927,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "c15417ceee205b1de9eb74072318c4a017d6ffba0848ef4e3f8a287a63858278"
     },
     {
@@ -952,6 +952,7 @@
         "accounts.google.com",
         "drawsplat.org",
         "drive.google.com",
+        "helpx.adobe.com",
         "mguhlin.github.io",
         "purl.org",
         "schema.org",
@@ -966,8 +967,8 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
-      "entrySha256": "080ab797675dd75f63af25ece1fe70c7784a4aac0ddb04364502e5750b672a9d"
+      "reviewed": "2026-10-31",
+      "entrySha256": "142ddeddaf97d867db8d7fbbc933f0ac0d81ade88a6ab2ae4af254968f49cac9"
     },
     {
       "id": "qrsplat",
@@ -1002,7 +1003,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "f15eaa6ddabb2718da9060cf573480791ebbae485160d0af6053f223b9507243"
     },
     {
@@ -1027,7 +1028,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "dc5a5df17d9e91e13239ada1fdeb8ca93a264e898a5ff93cc90f568b29c34241"
     },
     {
@@ -1048,7 +1049,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5b9ebf0b1218eec859730d7036dff65ef09c1934e6438b8ca9bc23fddca1f4d5"
     },
     {
@@ -1077,7 +1078,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5b55c0d876a56abe1e3368f814da226484af448654521238efd9afdf6174236b"
     },
     {
@@ -1107,7 +1108,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "afd934b104b90b4edd995a484867c8b3ac17400ae0efa93705bdf2e4bafebbc1"
     },
     {
@@ -1132,7 +1133,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "f76b4d1f9cbc5eaf25e5b915324f88957e87017a1f0a933faf4fe74444792f0c"
     },
     {
@@ -1161,7 +1162,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5ba5bc6a9a58dd653467e0a37a7c60b6368a77826e405f5ee8dde2487a5fd3d7"
     },
     {
@@ -1182,7 +1183,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "cd985ccdffe8490a2b4408ee29b8fb53ef0e9778f132c211d73886907c0772cd"
     },
     {
@@ -1211,7 +1212,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5d008e896310d37f56d0f58228880d5688035bb084cff84e3f96f2a3e9556572"
     },
     {
@@ -1240,7 +1241,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "6d13d88704a40f73b9aba7776c110813b28560f5b480cba0d3eba78494e6607c"
     },
     {
@@ -1289,7 +1290,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "32c09d292b1c19bff49ece58d1b2d05153001889c6d60b02463f5ef4516d3bc6"
     },
     {
@@ -1310,7 +1311,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "ee730cb7df2d64f229034476ccc9d4848f503ebebfadf1a7526215d727612869"
     },
     {
@@ -1331,7 +1332,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "0eea145bc736c55809d52b0ea059677483d5df66aa50f5a58f8bd448b5ea9283"
     },
     {
@@ -1352,7 +1353,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "044f27d179620ad4d7f60e8d7df3be9ceadfc37b63f7127a67683644c6c2c285"
     },
     {
@@ -1373,7 +1374,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "0e2e92fff81e6146bd22bd1983e94d86a5f3e9e122dba13011858afbab4394ee"
     },
     {
@@ -1399,7 +1400,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "1533d16a527212286fc662f94ee640c59852ef47357f35cf3c492720aa569c1a"
     },
     {
@@ -1424,7 +1425,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "e290c228eb47047fe2f8085c407e307ec6119cab72c7a1793164ec5495bb4656"
     },
     {
@@ -1448,7 +1449,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "89d175e02395e5183aaddbcf16f795fe3fa115673ff4a735b76460f417232594"
     },
     {
@@ -1469,7 +1470,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "261af9ccfe92209549d02100aff47753b5257975c6dea3b633dc68cdde8799a7"
     },
     {
@@ -1490,7 +1491,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "13e5df4ba003b0887a04c9387d33289b14a210efd112c4ecd382b0e65cfc6326"
     },
     {
@@ -1520,7 +1521,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "23462d9173c7bb67abfff0dac3c2b9f4baa1185bfc8929a8900d0843922d1198"
     },
     {
@@ -1541,7 +1542,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "59a28619e32067c8731910c93254ebc1e2bbfa3ab6787b3eb6379ecdc708a3e8"
     },
     {
@@ -1562,7 +1563,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "e0038aedbdf7f03b8a9d6e004acf220cdab70ffc581548162f937f5028fd70d2"
     },
     {
@@ -1590,7 +1591,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "132f4f0fde7fea7551145ad408f07d531cd5c61d3d3fb0d83ea7373519603b4e"
     },
     {
@@ -1613,7 +1614,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "7b10c80d264c1bf6795295b9bbe95a175660179312e893640dde4a1e98d00b4f"
     },
     {
@@ -1636,7 +1637,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "8f19f246038684ea71564dc5d7638c78401a9900d91f88be3d45b5157637cde3"
     },
     {
@@ -1661,7 +1662,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "3d81cba9400d1edc16846de6016e68d2a1fa8ab4bfbcb4b5a94f04c43531a925"
     },
     {
@@ -1684,7 +1685,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "0e857ed6de6db2e8f7e7bdb916ae3c894b44c173fba8cd663839d765537b7183"
     },
     {
@@ -1705,7 +1706,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "5e88228b8731b8da4891a1988cd7d32897ff4302c3f84f3e33b347ec3294a5b0"
     },
     {
@@ -1733,7 +1734,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "29862849778acf64efd2c3d207e296c7db73fa1a93549fdbcd3f55722dff8860"
     },
     {
@@ -1760,7 +1761,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "14dc3784aa2706e4d83a5e7cc31a5e3f9f312db85314414a37cadf5f4d593fec"
     },
     {
@@ -1790,7 +1791,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "2443727d889b35d357764f5847d11b17ba607b65f561b8c7f7ede38464eba88e"
     },
     {
@@ -1857,8 +1858,8 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
-      "entrySha256": "9521e088a0fd66bec6605d0113c1e2d26cfafb9c94485176275b7529e1daa28b"
+      "reviewed": "2026-10-31",
+      "entrySha256": "89a76e4bd6a2a35b755cc31f50811aa85e770ca248afdecb593e3dc57505779b"
     },
     {
       "id": "support",
@@ -1924,7 +1925,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "reviewed": "2026-10-16",
+      "reviewed": "2026-10-31",
       "entrySha256": "b3cc270d2ceff99f3748847157f25b4c72c25aec71a86aba18c32853b7f8052c"
     }
   ]

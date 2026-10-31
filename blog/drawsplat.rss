@@ -6,6 +6,14 @@
     <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
     <language>en-US</language>
     <item>
+      <title>PDFSplat OCR: review the text, protect the original</title>
+      <link>https://splatworks.org/blog/pdfsplat-ocr-safety.html</link>
+      <guid>https://splatworks.org/blog/pdfsplat-ocr-safety.html</guid>
+      <description>Local English/Spanish OCR, prominent visual-cover warnings, real-redaction guidance, lower-memory mode and tested dependency maintenance.</description>
+      <pubDate>Sat, 31 Oct 2026 15:00:00 GMT</pubDate>
+      <source>SplatWorks Updates</source>
+    </item>
+    <item>
       <title>What Happens When a Food Web Changes: A Classroom Lesson with RubricSplat</title>
       <link>https://mguhlin.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/</link>
       <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/</guid>

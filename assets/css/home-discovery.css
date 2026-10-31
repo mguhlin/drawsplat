@@ -2,3 +2,5 @@
 
 .home-header nav>a.home-blog-link{display:inline-flex;align-items:center;flex-shrink:0}
 @media(max-width:600px){.home-header{flex-wrap:wrap}.home-header nav{margin-left:auto}}
+
+.home-last-updated{font-size:.85rem;color:#526079;margin:.6rem auto 1rem}.home-last-updated a{color:#5730b9;text-underline-offset:.18em}
