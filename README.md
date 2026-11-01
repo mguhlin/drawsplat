@@ -1,1422 +1,209 @@
-# DrawSplatTM
+<p align="center">
+  <a href="https://splatworks.org"><img src="assets/brand/SplatWorks_logo.png" width="150" alt="SplatWorks"></a>
+</p>
 
-**Current maintenance release · October 31, 2026 · v3.1.49:** PDFSplat adds prominent warnings that OCR covers preserve original content and are **not secure redaction**, plus a lower-memory mode. Review spelling, Spanish accents, layout and reading order. ODT import, compact menus and current thumbnails remain available. Four independently tested dependency patches are merged; major and sensitive upgrades remain held. [OCR workflow and real redaction](docs/pdfsplat-ocr.md) · [Dependency review](docs/dependency-triage-2026-10-31.md) · [Downloads](pages/download.html#maintenance-v3149) · [Wiki](wiki/modular-selfhost.html#current-maintenance-v3-1-49).
+# SplatWorks
 
+**Create, teach, organize, and play in your browser.**
 
-**Generate JSON import files with AI:** [Download the single-file specifications](docs/ai-json-file-specifications.md) and upload it with your content to a chatbot. Eighteen format profiles across seventeen tools include exact fields, complete examples, opening instructions, a reusable prompt, and supported-format/media limits. [Download page](pages/download.html#ai-json-specifications) · [Wiki instructions](wiki/modular-selfhost.html#generate-import-files-with-an-ai-chatbot).
+SplatWorks is the ecosystem behind the **DrawSplat whiteboard**, office applications, media editors, creation tools, classroom widgets, and games. Built for K–16 learning and everyday productivity, the tools offer multilingual interfaces and local file workflows, with optional connected services where supported.
 
-**ImageSplat PNG export fix — October 30, 2026 (v3.1.46):** Export PNG and Copy PNG now fit all visible artwork, including images, multiline text, shapes, strokes, and arrowheads, without the white editing-canvas border. Export selection uses the same tight bounds. Gaps stay transparent; white pixels inside imported images stay intact. The full DrawSplat, Tools, and complete district-suite downloads are refreshed. Homepage search and function categories now appear above the suite illustration, with its three main links below. [Wiki feature reference](wiki/tools-widgets-features.html) · [Downloads](pages/download.html#imagesplat-png-export) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.46.md).
+This repository keeps its original **`mguhlin/drawsplat`** name. Existing DrawSplat links and file formats remain valid.
 
-**ListSplat v0.2.0 — October 26, 2026:** [Open the classroom database](https://splatworks.org/listsplat/) · [Classroom walkthrough](https://splatworks.org/blog/listsplat-classroom-databases.html) · [Templates and key relationships](splatworks/listsplat/README.md) · [Download the refreshed ListSplat module](https://splatworks.org/pages/download.html#office-downloads). Fifteen classroom starters contain 12 records per table, including linked library loans and science investigations. Includes PK/FK diagrams, validated one-to-many/one-to-one links, name/ID pickers, Markdown paste/file import, nine views, close/reopen tabs and a simpler header. The separate ListSplat v0.2.0 ZIP updates this app independently of the v3.1.45 suite packages.
+<p align="center">
+  <a href="https://splatworks.org">Open SplatWorks</a> ·
+  <a href="https://splatworks.org/studio/">Browse all apps</a> ·
+  <a href="https://splatworks.org/wiki/">Read the wiki</a> ·
+  <a href="https://splatworks.org/pages/download.html">Downloads</a> ·
+  <a href="https://splatworks.org/docs/district-selfhost.html">District setup</a>
+</p>
 
-**BackdropSplat — October 22, 2026:** Remove photo, white, or colored backgrounds locally, in the standalone tool or directly in ImageSplat through Effects → Background removal… (selected-layer previews, batch Apply, and one-step Undo). Includes edge/all-matching color removal, six built-in replacement scenes, background upload or direct image URL, Fill/Fit placement, original/result comparison, zoom, cancellable batches, and full-size composited PNG/JPEG/ZIP export. Photo models download only on request; pictures stay on the device. [Open BackdropSplat](https://splatworks.org/backdropsplat/) · [Guide](wiki/backdropsplat.html) · [Limits and verification](docs/backdropsplat.md).
+![SplatWorks office apps: writing, spreadsheets, presentations, databases, and page layout](splatworks_hero_image.png)
 
-**PlanSplat v1.2.1 — October 16, 2026:** One Google sign-in now connects Drive and Calendar together, with no settings detour. Includes a Calendar date-mode update fix, six interface language choices, suite-matching Purple plus Ocean/Forest/High contrast themes, JSON backup/reload, inline course creation and one-way Calendar updates for deadlines and study blocks. A student planner for assignments, exams, courses, weekly class/study schedules, routines and focus sessions. Google sign-in loads your planner and automatically saves changes to Drive while authorization is active; reconnect after expiry. Local account drafts and browser recovery files protect pending edits. [Open PlanSplat](https://splatworks.org/plansplat/) · [Planner guide](docs/plansplat.md) · [Development plan](splatworks/plansplat/IMPLEMENTATION_PLAN.md).
+## Start here
 
-**LayoutSplat v0.7.0 — October 16, 2026:** XHTML/CSS and visual ebook source editing, retained footnotes and navigation, source EPUB export, local English hyphenation, alpha-contour picture wrapping, linked-frame ordering, and richer WriteSplat font/tab/list exchange. Independent Sigil, PageEdit and Scribus round trips accompany the update. [Ebook guide](docs/layoutsplat-ebooks.md) · [Verification and limits](docs/layoutsplat-verification.md) · [PUB export limits](docs/layoutsplat.md#publisher-pub-export).
+Choose the task or role that brought you here, just as you would in the [SplatWorks Wiki](https://splatworks.org/wiki/).
 
-**Google Drive and the new starter newsletter — October 15, 2026 (v3.1.41):** PDFSplat, VideoSplat, MediaSplat, MarkdownSplat, ConceptSplat and MermaidSplat now offer optional Drive saving. VideoSplat saves timeline manifests or rendered videos; keep source media with manifests. MediaSplat saves outputs, ZIPs, subtitles and transcripts. MermaidSplat also saves/reopens editable `.mmd` source locally. LayoutSplat opens the first two pages of SplatWorks News – October 2026 in fresh workspaces and preserves existing saved publications. Its current draft saves before an optional recovery copy, so large illustrated files can keep autosaving within browser quotas. Local workflows remain available, isolated editors retain their processing headers, and the separate authorization window receives no project content. [Google Drive guide: steps, formats and district setup](https://splatworks.org/wiki/google-drive.html).
+| I want to… | Start with… |
+| --- | --- |
+| Explain an idea or build a classroom activity | [DrawSplat Whiteboard](https://splatworks.org/app/whiteboard.html) · [Teacher Quick Start](https://splatworks.org/guides/teacher-options-quick-start.html) |
+| Find a tool by what it does | [Studio directory](https://splatworks.org/studio/) · [Ecosystem feature guide](https://splatworks.org/wiki/tools-widgets-features.html) |
+| Write, present, organize records, or work with data | [SplatWorks office apps](#office-apps-and-planning) |
+| Edit images, audio, or video | [Media and creation tools](#media-and-creation) |
+| Practice typing or choose a classroom game | [Typing and games](#typing-and-games) |
+| Set up a school or district installation | [Complete-suite Quick Start](https://splatworks.org/docs/district-selfhost.html) · [Technology admin guide](https://splatworks.org/wiki/for-technology-admins.html) |
+| Help a student save work or get started | [Parents and students guide](https://splatworks.org/wiki/for-parents-and-students.html) |
 
-**Drive upgrade fix — October 15, 2026 (v3.1.40):** ShowSplat loads the updated Drive action even when an older offline cache is present. Existing decks stay in place. Refreshed downloads also include the current document privacy headers and dated public startup observations. All five office apps retain their native-file Google Drive saving and local workflows; see [Drive setup](https://splatworks.org/pages/splatworks#save-to-google-drive).
+**On this page:** [Explore](#explore-the-ecosystem) · [Office apps](#office-apps-and-planning) · [Media and creation](#media-and-creation) · [Teaching tools](#teaching-and-assessment) · [Games](#typing-and-games) · [Saving](#save-and-reopen-your-work) · [Installation](#run-or-self-host) · [Updates](#updates-and-release-history) · [Licensing](#licensing-and-user-content)
 
-**Drive saving and privacy hardening — October 15, 2026 (v3.1.39):** All five SplatWorks office apps can save new native project copies to Google Drive after explicit authorization, without enabling sharing or storing tokens. Local saving and autosave remain available. [Drive saving and district setup](https://splatworks.org/pages/splatworks#save-to-google-drive). AI approvals are specific to each destination and revoke across tabs when connections are disabled. The privacy center adds a local deletion receipt, an option to turn expiry off without deleting work, and stronger credential redaction in exports. AudioSplat loads Google sign-in only after Drive saving is selected; MarkdownSplat and MemePuzzle use same-origin sample images. Existing drafts and native saves are preserved. [Security, privacy and terms](https://splatworks.org/legal/terms-privacy) remains the single policy reference. Browser autosave is not application-encrypted; device/profile protections still apply.
+## Explore the ecosystem
 
-**Privacy controls — October 15, 2026 (v3.1.38):** [Your privacy](https://splatworks.org/privacy/) adds origin-local export/clear, explicit retention choices, connection preferences, and tab-only AI keys with approval before transmission. [PROTECT deployment review](https://splatworks.org/legal/protect-review) and the [provider register](https://splatworks.org/legal/service-providers) document evidence and operator responsibilities. Existing projects are preserved; browser and district database cleanup require explicit configuration. Student database export/erasure now covers account-linked boards, submissions/feedback, memberships and usage. See server/mysql-backend/README.md for the upgrade and legacy-record boundaries. A 13–14/14 deployment score requires verified operational evidence; the software does not automatically certify every installation.
+| Area | What you can do | Open the guide |
+| --- | --- | --- |
+| **DrawSplat Whiteboard** | Draw, write, annotate, arrange panels, model thinking, and create classroom activities. | [Whiteboard feature reference](https://splatworks.org/guides/project-reference.html) |
+| **Office apps and planner** | Create documents, slides, spreadsheets, databases, publications, and a study plan. | [SplatWorks overview](https://splatworks.org/pages/splatworks.html) |
+| **Media and creation** | Record, edit, illustrate, caption, and export visual or audio explanations. | [Tools and widgets](https://splatworks.org/pages/tools.html) |
+| **Teaching and assessment** | Build quizzes, flashcards, rubrics, diagrams, vocabulary activities, and classroom routines. | [Tools, widgets, and features](https://splatworks.org/wiki/tools-widgets-features.html) |
+| **Typing and games** | Practice keys and passages, explore words, solve puzzles, and explain strategies. | [Game collection](https://splatworks.org/games/) |
+| **School connections** | Configure supported accounts, storage, classrooms, assignments, turn-ins, and family access. | [District classrooms and rosters](https://splatworks.org/wiki/district-classrooms.html) |
 
-**Current naming:** SplatWorks is the ecosystem; DrawSplat is the whiteboard. Main creative tools include ConceptSplat (formerly Concept Map Studio), MarkdownSplat, DiagramSplat, QuizSplat, RubricSplat, and SketchSplat VR. Existing URLs, file formats, and older release names remain valid. See the [current wiki](https://splatworks.org/wiki/) and [component features](https://splatworks.org/wiki/tools-widgets-features.html). Dated release entries below retain their historical terminology.
+The [Studio directory](https://splatworks.org/studio/) is the complete searchable catalog. Search by a task such as **“make slides,” “picture graph,” “edit video,”** or **“random picker.”**
 
+## Office apps and planning
 
-**LayoutSplat v0.7.0:** [Open the publication editor](https://splatworks.org/layoutsplat/) · [Illustrated feature list](https://splatworks.org/wiki/layoutsplat-features.html) · [Technical reference](https://splatworks.org/wiki/layoutsplat.html) · [Roadmap and progress](splatworks/layoutsplat/PROGRESS.md). Includes richer WriteSplat paragraph/list exchange, updating page/total folios, editable HTML reading order with omission controls and retained rich text, browser-native legacy QuarkXPress 3.1–4.1 import, original-font/style matching for Publisher and Office imports, expanded independent printer preflight and a verified 100-page linked-story PDF proof, browser-native binary DOC and formatted DOCX/ODT insertion and append, plus 126 distinct editable compositions, bifold/trifold brochures, tear-off flyers, resumes, collages and documents, 96 shared whiteboard backgrounds/images, a draggable rich story editor, cached large-document text flow, native GridSplat/ListSplat merge data, 29 Avery sheet layouts covering 127 product codes, name badges, descriptive business cards and distinct menus, the official SplatWorks logo, organized File/Templates/Import/Export menus, contextual text-box linking, embedded local fonts and kerning/spacing controls, improved native browser Publisher import, legacy Pages, PDF-compatible Illustrator and EPS artwork. Native INDD, newer QXP and modern Pages IWA remain unsupported. The v3.1.37 package refresh introduced these capabilities; see the download page for current package versions. DrawSplat whiteboard/tools keep their names; database/service identifiers and existing school rosters are unchanged.
+Five office applications work alongside the PlanSplat student planner.
 
-**WriteSplat canvas update:** Blank new documents, Letter page outlines, a ruler with inches/centimeters/points, draggable and keyboard-adjustable paragraph indents and left tab stops, and Fit width zoom. Native JSON and DOCX preserve the supported tab/indent settings. [Writing guide](docs/writesplat.md).
+| Application | Use it for | Help |
+| --- | --- | --- |
+| [**WriteSplat**](https://splatworks.org/splatworks/writesplat/) | Writing, formatting, classroom documents, readability, and document exchange. | [Writing guide](https://splatworks.org/wiki/writesplat.html) |
+| [**ShowSplat**](https://splatworks.org/splatworks/showsplat/) | Slides, media, speaker notes, presentations, and portable WebDecks. | [Presentation guide](https://splatworks.org/pages/showsplat.html) |
+| [**GridSplat**](https://splatworks.org/splatworks/gridsplat/) | Spreadsheets, formulas, classroom data, charts, and picture graphs. | [Spreadsheet guide](https://splatworks.org/pages/gridsplat.html) |
+| [**ListSplat**](https://splatworks.org/splatworks/listsplat/) | Records, linked tables, forms, cards, reports, and classroom database projects. | [Database guide](https://splatworks.org/pages/listsplat.html) |
+| [**LayoutSplat**](https://splatworks.org/splatworks/layoutsplat/) | Publications, newsletters, brochures, comics, labels, books, and ebooks. | [Layout and file guide](https://splatworks.org/wiki/layoutsplat.html) |
+| [**PlanSplat**](https://splatworks.org/splatworks/plansplat/) | Assignments, exams, courses, study blocks, routines, and focus sessions. | [Planner guide](https://splatworks.org/wiki/plansplat.html) |
 
-**LayoutSplat refresh:** An existing whiteboard offline cache now checks LayoutSplat modules for updates. The editor updates that worker and offers a reload button without deleting saved projects. To erase a draft and recovery copy, use File → Clear saved browser data on each domain you used.
+Keep original files when exchanging formats with other office software, and inspect the converted result. The [format comparison and limits](https://splatworks.org/wiki/faq.html#can-i-exchange-files-with-other-office-apps) explain what to expect.
 
-**Short app links:** `/layoutsplat`, `/writesplat`, `/showsplat`, `/gridsplat`, and `/listsplat` work on both splatworks.org and drawsplat.org. These redirect to the existing app paths and preserve old bookmarks. The [terms and privacy policy](https://splatworks.org/legal/terms-privacy) names both SplatWorks™ and DrawSplat™ and explains component-specific storage and controls.
+## Media and creation
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review. Guide illustrations display in full, and 23 previously text-only wiki guides now include a classroom ecosystem hero.
+Choose a focused tool or combine a few tools around a project.
 
-**Suite artwork — October 14, 2026:** The [SplatWorks overview](https://drawsplat.org/pages/splatworks.html) now shows all five office apps, including LayoutSplat's publication editor. [Artwork source and edit prompt](docs/splatworks-artwork.md).
+| Task | Tools to explore |
+| --- | --- |
+| Record a short video with illustrated panels | [ClipSplat](https://splatworks.org/solutions/clipsplat/) · [ClipSplat tutorial](https://splatworks.org/solutions/clipsplat/tutorial/) |
+| Edit a video timeline and work with captions | [VideoSplat](https://splatworks.org/solutions/videosplat/) |
+| Split, trim, or join audio and video | [MediaSplat](https://splatworks.org/solutions/mediasplat/) |
+| Record and edit multitrack audio | [AudioSplat](https://splatworks.org/solutions/audiosplat/) |
+| Edit, annotate, or adjust an image | [ImageSplat](https://splatworks.org/solutions/imagesplat/) |
+| Remove or replace an image background | [BackdropSplat](https://splatworks.org/solutions/backdropsplat/) · [Background-removal guide](https://splatworks.org/wiki/backdropsplat.html) |
+| Create lettering, image compositions, or animations | [FontSplat](https://splatworks.org/solutions/fontsplat/) · [GIFsplat](https://splatworks.org/solutions/gifsplat/) · [MemeSplat](https://splatworks.org/solutions/memesplat/) |
+| Organize, annotate, or present a PDF | [PDFSplat](https://splatworks.org/solutions/pdfsplat/) |
+| Write structured text or make a diagram | [MarkdownSplat](https://splatworks.org/solutions/markdown-studio/) · [ConceptSplat](https://splatworks.org/solutions/concept-map/) · [DiagramSplat](https://splatworks.org/solutions/mermaid/) |
 
-**SplatWorks homepage — October 14, 2026:** The shared homepage leads with SplatWorks™ and all five office apps, with the DrawSplat whiteboard and existing tools still available. SplatWorks.org now serves the same Cloudflare deployment; DrawSplat.org continues to work. [Domain setup and verification](docs/splatworks-domain.md).
+**Generate import files with a chatbot:** the [AI JSON specifications](docs/ai-json-file-specifications.md) include exact fields, examples, reusable prompts, and media limits for supported tools. [How to use the specifications](https://splatworks.org/wiki/modular-selfhost.html#generate-import-files-with-an-ai-chatbot).
 
+## Teaching and assessment
 
-**District installation:** Download the [complete DrawSplat + SplatWorks suite](https://drawsplat.org/pages/download#district-suite), extract it, and open **start-here.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).
+- **Make thinking visible:** use [DrawSplat](https://splatworks.org/app/whiteboard.html), [ConceptSplat](https://splatworks.org/solutions/concept-map/), and [DiagramSplat](https://splatworks.org/solutions/mermaid/) for models, explanations, and relationships.
+- **Collect and respond to learning:** build [QuizSplat](https://splatworks.org/solutions/quiz-flashcard-studio/) quizzes and flashcards or a [RubricSplat](https://splatworks.org/solutions/rubric-builder/) scoring guide.
+- **Explore mathematical evidence:** use [GraphSplat](https://splatworks.org/solutions/graphsplat/) for charts, picture graphs, coordinate plots, and function graphs, or GridSplat for a spreadsheet workflow.
+- **Support classroom routines:** choose a timer, wheel, dice, bingo activity, or other utility from the [classroom tools guide](https://splatworks.org/guides/classroom-widgets-tools.html).
+- **Start with a scaffold:** browse [background templates](https://splatworks.org/pages/background-templates.html), then adapt the prompt and response format for your learners.
 
+For a complete classroom workflow, read [For educators](https://splatworks.org/wiki/for-educators.html) and [Collaboration and turn-ins](https://splatworks.org/guides/collaboration-turn-ins.html). Connected classroom features depend on the selected school setup.
 
-DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website and works in the browser. Google Apps Script optionally provides Drive/Sheets saves, classroom rooms, templates, and turn-ins. The complete district suite provides private Save/Open, roster-linked classrooms, assignments, student submissions, and teacher feedback using MariaDB or MySQL, with Docker and native launchers.
+### Professional learning with SplatLMS
 
-**Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://buymeacoffee.com/drawsplat).
+[**SplatLMS**](https://github.com/mguhlin/splatlms) is a separate, PHP-based LMS product with **SplatWorks Educator** as its first course. The course combines ecosystem exploration with instructional strategies, practice, feedback, and classroom transfer. Its synthetic narrated slide overviews are optional and include captions and transcripts.
 
-- **Official site:** [https://drawsplat.org](https://drawsplat.org)
-- **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
-- **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** the district suite supports MariaDB/MySQL accounts, CSV rosters, classrooms, assignments, turn-ins and feedback. SplatWorks exchanges DOCX/ODT, PPTX/ODP, XLSX/ODS and CSV records, with documented conversion limits. See the [Wiki](https://drawsplat.org/wiki/), [downloads](https://drawsplat.org/pages/download) and [release notes](https://drawsplat.org/pages/release-notes) for current behavior. School OAuth and district operational controls require local validation before rollout.
-- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
+[SplatLMS introduction](https://mguhlin.github.io/splatlms/) · [Installer and releases](https://github.com/mguhlin/splatlms/releases/latest)
 
-## Current district setup and support
+## Typing and games
 
-The [SplatWorks Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. Install the complete district suite from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
+The [Typing Games menu](https://splatworks.org/games/typing-games/) offers four distinct experiences.
 
-## Getting started
+| Experience | Practice focus |
+| --- | --- |
+| [**Paws & Keys Adventure**](https://splatworks.org/games/paws-and-keys-adventure/) | Gentle key practice and progressive trails, designed for ages 4–9. |
+| [**Story Sprint**](https://splatworks.org/games/story-sprint/) | Passage typing with speed, accuracy, and character feedback; supports local classroom-text import. |
+| [**Wordfall Reactor**](https://splatworks.org/games/wordfall-reactor/) | Word-board play with everyday words and optional subject vocabulary. |
+| [**Cipher Chase**](https://splatworks.org/games/cipher-chase/) | Typing combined with steering and arcade-style vocabulary practice. |
 
-Pick the scenario that fits and skip the others:
+Explore [Tangram Packing](https://splatworks.org/games/tangram/), [Lights Out](https://splatworks.org/games/lightsout/), [Flow Free](https://splatworks.org/games/flowfree/), [Untangle](https://splatworks.org/games/untangle/), and the [full game collection](https://splatworks.org/games/). [SplatBot Studio](https://splatworks.org/solutions/splatbot-studio/) adds sequencing and debugging with robot commands.
 
-| Scenario | Setup doc | Roughly |
-|---|---|---|
-| **Browser-only** — a teacher demo, single user, no accounts, no backend. | [`docs/setup-browser.md`](docs/setup-browser.md) | 1 minute |
-| **Google Apps Script** — cloud saves, classroom rooms, full Compliance Console, parent request center. *The supported production path.* | [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md) | 10–15 minutes |
-| **MySQL backend** — private online Save/Open on Railway, DigitalOcean, or an existing MySQL 8 server. | [`docs/setup-mysql.md`](docs/setup-mysql.md) | Depends on hosting |
+Preview reading demands, controls, timing, and themes for your learners. Pair practice with an explanation or transfer task when the purpose is subject learning. [Typing classroom walkthrough](https://splatworks.org/blog/typing-games.html).
 
-Other docs that pair with setup:
+## Save and reopen your work
 
-- [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) — operator guide for the Compliance Console.
-- [`community/Setup.md`](community/Setup.md) — stand up the `/community/` board with Google + Microsoft sign-in.
-- [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
-- [`docs/HANDOFF-v3.1.0.md`](docs/HANDOFF-v3.1.0.md) — portable handoff for any AI assistant (Codex, Cursor, etc.) picking up the repo; covers what shipped at v3.1.0 and known gaps.
+1. **Keep an editable copy.** Export the app’s native project file so you can revise the work later.
+2. **Check the finished export.** Reopen the image, document, presentation, or media output before sharing it.
+3. **Treat browser drafts as device-specific.** Autosave belongs to the browser and domain where you worked. Clearing browser data can remove it.
+4. **Use a connection deliberately.** Optional Google Drive or school storage follows the relevant app and deployment settings. A whiteboard classroom account does not automatically provide cloud saving for every app.
 
-## Latest live updates — October 9, 2026
+[Saving and exporting](https://splatworks.org/guides/saving-exporting.html) · [Google Drive: app formats and setup](https://splatworks.org/wiki/google-drive.html) · [Privacy controls](https://splatworks.org/privacy/)
 
-- **PDFSplat:** open supported documents and images as PDFs, place text/images/signatures where you click or tap, edit text on the page, match original text appearance, and save PNG, JPG, or WebP. Original page rotation survives export; individual pages rotate independently. Office/ebook layouts may differ after local conversion.
-- **ImageSplat:** reversible photo adjustments with presets and before/after previews.
-- **VideoSplat:** named, colored timeline markers stored with projects.
-- **AudioSplat:** read-only clip and selection analysis.
-- **ShowSplat:** searchable slide navigation and WebDeck v5 import/export, speaker notes, presenter sync, reflow, and print controls.
-- **Action controls:** icons with visible labels across the Splat tools.
+SplatWorks.org and DrawSplat.org serve the same ecosystem. Browser drafts are separate on each domain; export a project to move work between them.
 
-[PDFSplat presentation walkthrough](blog/pdfsplat-presentations.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.31.md)
+## Run or self-host
 
-## Previous live updates — October 8, 2026
+### Try the public apps
 
-[Typing Games](https://drawsplat.org/games/typing-games/) is a menu with original hero artwork and four separate pages, each with instructions and six interface languages.
+Open [SplatWorks.org](https://splatworks.org) or [DrawSplat.org](https://drawsplat.org). Many tools support browser-only work without creating an account. Some optional features need network access, authorization, or a configured school service.
 
-- **[Cipher Chase](https://drawsplat.org/games/cipher-chase/):** Type TEKS vocabulary to clear rival cars, steer around civilians, and learn each word’s definition. Sound starts on and includes a playback test.
-- **[Wordfall Reactor](https://drawsplat.org/games/wordfall-reactor/):** Connect letters on a word board against the computer. Starts with 95 everyday words; TEKS science, math, and social studies vocabulary is optional. Hints give definitions, leaving you to find the word and its placement.
-- **[Story Sprint](https://drawsplat.org/games/story-sprint/):** Type passages with speed, accuracy, and character feedback. Import classroom text locally; paste and drag/drop are blocked in scored practice. Choose Next passage when you finish.
-- **[Paws & Keys Adventure](https://drawsplat.org/games/paws-and-keys-adventure/):** Meet kittens and puppies in a gentle adventure for ages 4–9, with 12 progressive trails, four worlds, finger hints, and saved stars.
+### Serve a local copy
 
-The TEKS practice bank has 72 representative science, math, and social studies/history terms in grade bands 3–5, 6–8, and 9–12, with original definitions and TEA source links. Wordfall defaults to regular English words; the interface language does not translate its word bank. Practice files stay local. Old game URLs redirect until April 8, 2027.
+From the repository root, start a static server:
 
-[Classroom walkthrough](blog/typing-games.html) · [Implementation and vocabulary details](docs/typing-games.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.29.md)
-
-## Previous live updates — September 23, 2026
-
-- **PDFSplat:** sign and mark PDFs with a finger, stylus, or mouse. Continuous strokes, pen color/width, stroke undo, and a phone writing layout keep signing practical; save the result as a PDF. Capture to PDF offers private, permission-based capture of visible sections from an open tab or window.
-- **MediaSplat and VideoSplat captions:** Auto checks for a usable WebGPU adapter and falls back to CPU if GPU processing fails. CPU compatibility mode is available. English transcripts and SRT files stay local; model downloads and device limits still apply.
-- **VideoSplat export:** Auto tries hardware-preferred WebCodecs encoding, then software, with the original compatible exporter as fallback. Supported WebM/MP4 exports can process frames faster than playback; speed depends on the device and browser.
-- **Scope:** MediaSplat trimming, joining, and subtitle burn-in still use its existing FFmpeg path. These updates do not require NVIDIA and do not guarantee GPU acceleration on every device.
-
-[Feature walkthrough](blog/touch-signing-media-acceleration.html) · [Dated release notes](docs/release-notes/2026-09-23-tool-updates.md) · [Acceleration details](docs/media-acceleration.md)
-
-These features are live on drawsplat.org and in the current source. The v3.1.28 ZIPs include these updates and the September 24 VideoSplat recording fixes.
-
-## Latest packaged release
-
-**DrawSplatTM v3.1.45 — background cutouts, replacement scenes, and languages.** BackdropSplat and ImageSplat share uploads, six original backgrounds, HTTPS image URLs, Fill/Fit, and composited PNG/JPEG/ZIP output. ImageSplat keeps atomic selected-layer Apply and Undo; BackdropSplat adds the shared six-language picker. Full DrawSplat and Tools include the local runtime and scenes. Standard self-host packages are refreshed with measured sizes and SHA-256 checksums; district suite v3.1.45 includes the full ecosystem. [Walkthrough](blog/backdropsplat-new-backgrounds.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.45.md) · [Stable release v3.1.45](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.45).
-
-## Latest whiteboard: portable saving and recording recovery
-
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.31 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
-
-- **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
-- **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.
-- **Private copies:** online saving is explicit; revision checks protect newer copies from competing saves. Student links configure the service, not access to the teacher’s board. Student accounts must be school-provisioned.
-- **Recording recovery:** stopped voice/video drafts can be recovered on the same device after refresh, normally for 24 hours. Use **Add** to put a recording into the board before saving or sharing it. Recording controls include Play, Pause, and Stop; student video recording starts off and is enabled by the teacher.
-- **Provider boundaries:** Google collaboration, template galleries, moderation, and turn-in/review are not routed to MySQL. Switching providers does not migrate data or save to both services.
-
-Database credentials stay on the server. Verified database TLS, automatic migrations, backups, and moving hosts are covered in [the MySQL hosting guide](docs/setup-mysql.md). A database service must still be deployed and configured; drawsplat.org does not supply a default MySQL account or database.
-
-## Additional tools included in v3.1.24
-
-- **PDFsplat™.** Added a private browser PDF workspace for merging, separating ranges/pages, reordering, rotating, duplicating, deleting, extracting, annotating, and exporting PDFs.
-- **CipherSplat™ PDF protection.** PDFsplat™ can protect edited output as authenticated CS4 `.csplat` packages and decrypt compatible single-PDF packages locally using Argon2id and AES-256-GCM.
-- **Production safeguards.** Added lazy thumbnail rendering, bounded undo history, mobile page navigation, local-only dependencies, explicit limitations, dependency licensing, route-specific no-network security headers, self-host bundle inclusion, and end-to-end browser coverage.
-
-## Recent improvements (v3.1.20)
-
-- **MediaSplat.** Added private browser media inspection, conversion, trimming, splitting, multi-part ZIP output, and a Cloudflare-deployable split FFmpeg runtime.
-- **VideoSplat.** Added browser video editing, analysis, anonymization, export, private project storage, recovery guidance, and a standalone self-host package.
-- **Markdown Studio documents.** Added DOCX and ODT export alongside existing Markdown, HTML, and WordPress output.
-- **Independent downloads.** Added `mediasplat-selfhost-v3.1.20.zip` and `videosplat-selfhost-v3.1.20.zip`, included both tools in the Tools/full bundles, and refreshed all v3.1.20 packages and checksums.
-
-## Recent improvements (v3.1.19)
-
-- **AudioSplat recorder/editor.** Added private-by-default microphone and supported tab/device recording, automatic tracks for new takes, waveform selection, multitrack clip movement, split/trim/delete/duplicate, zoom, undo/redo, mute/solo/volume/pan, and mixed playback.
-- **Effects and formats.** Added visual selection-based Amplify, Adjustable Fade, Bass/Treble, Echo, Fade In/Out, Noise Gate, Noise Reduction, Normalize, Reverb, Silence, and Truncate Silence, with MP3/WAV export and Ogg/Opus, WebM/Opus, or M4A/AAC when supported.
-- **Google Drive save and sharing.** Added explicit Google authorization using the narrow non-sensitive `drive.file` scope, private Drive upload, optional Anyone-with-the-link permission, and copyable Drive preview embed code. Workspace policy failures preserve a successful private save.
-- **Independent download.** Added `audiosplat-selfhost-v3.1.19.zip`, included AudioSplat in the Tools module, documented HTTPS/OAuth requirements for self-hosters, and refreshed every v3.1.19 bundle and checksum.
-
-## Recent improvements (v3.1.18)
-
-- **Typing Games and Passage Coach.** Added a DrawSplat Typing Games launcher with Road Rally, Block Zap, and Passage Coach. Passage Coach can import word/passage lists from CSV, XLSX, JSON, or paste, supports localized passages, rotates automatically to the next passage after completion, and keeps performance stats for continued practice.
-- **Typing-game polish.** Road Rally now handles jump/obstacle collisions more fairly, vehicles look cleaner, language switching is visible, difficulty levels use longer intermediate/expert words, and typing games include classroom-friendly audio and layout refinements.
-- **Markdown Studio import/export.** Markdown Studio can import `.html`/`.htm` files, paste HTML directly, convert HTML to Markdown, and export WordPress block code. The sample document now uses clean heading and checkbox syntax.
-- **Tools, Widgets, and Games cards.** The Games page, Tools page, and Widgets section now use card previews with titles and descriptions. Repeated generic icons were replaced with actual screenshots for Chart Studio, Dicebreaker Creator, Graph Maker, Bingo Card Generator, Dice Roller, and Quiz & Flashcard Studio.
-- **SplatWorksTM hub refresh.** The SplatWorksTM page now uses the new SplatWorks hero image, a one-line "Classroom office tools that live beside DrawSplat" heading, larger app icons, and launch buttons before the Apps section.
-- **Self-host bundle refresh.** Rebuilt the DrawSplatTM full package, SplatWorksTM suite/app packages, Tools, Widgets, Games modules, and checksums as v3.1.18 artifacts.
-
-## Recent improvements (v3.1.17)
-
-- **DrawSplatTM whiteboard polish.** Tightened the whiteboard shell with CSP/version stamp fixes, responsive layout improvements, onboarding sequencing, offline cache refreshes, and a repaired Concept Map launch path.
-- **Concept Map Studio usability.** Bubble labels can be clicked and edited in place, bubbles can be resized with width handles, the canvas has internal scrolling, and the start screen now offers a template chooser with a cleaner quick toolbar and contextual bubble controls.
-- **Desktop/mobile audit fixes.** Cleaned public pages, language whiteboards, community sign-in preview behavior, Hub/admin OAuth/CSP edges, mobile overflow, SplatWorks development-template fallbacks, games, tools, widgets, and 130 static HTML entry points.
-- **Self-host bundle refresh.** Rebuilt the DrawSplatTM full package, SplatWorksTM suite/app packages, Tools, Widgets, Games modules, and checksums as v3.1.17 artifacts.
-
-## Recent improvements (v3.1.16)
-
-- **ListSplatTM classroom database app.** Added `splatworks/listsplat/`, a SplatWorksTM-styled browser database workspace for student-friendly tables, forms, cards, galleries, labels, reports, CSV import/export, `.listsplat.json` save/open, templates, image fields with upload/paste, language switching, validated primary/foreign-key relationships, Markdown table import, 15 classroom starters with 12 records per table, calculation fields, lookup formulas, teacher notes, project packets, per-layout visibility, and data-quality checks.
-- **SplatWorksTM suite package.** `./scripts/make-selfhost-bundle.sh` creates `splatworks-suite-selfhost-<version>.zip`, a browser-based office suite module containing GridSplatTM, ShowSplatTM, WriteSplatTM, and ListSplatTM.
-- **Drop-in DrawSplatTM modules.** The bundle script now also creates `drawsplat-tools-selfhost-<version>.zip`, `drawsplat-widgets-selfhost-<version>.zip`, and `drawsplat-games-selfhost-<version>.zip`. These modules keep normal `/solutions/`, `/games/`, `/pages/`, and `/assets/` paths so they connect when unzipped into the same web root.
-
-## Recent improvements (v3.1.15)
-
-- **ShowSplatTM import/export menus.** File Import and Export now group WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX options under clear submenus. PDF export uses the browser print/save-as-PDF flow; PDF import creates image-based slide pages.
-- **PowerPoint and ODP first-pass support.** ShowSplatTM can import and export PPTX and ODP files with best-effort text, image, shape, background, and template preservation. Complex masks, grouped transforms, theme fonts, and master-page details are still active improvement areas.
-- **PDF import.** PDFs can be imported as full-slide image pages, including password-protected PDFs after a password prompt. This preserves visual appearance but does not make PDF text editable yet.
-- **Editable slide controls.** Text boxes can toggle bullets on/off, selected boxes have font size decrease/increase buttons, view zoom uses a slider, and deleting the last slide automatically creates a blank title slide.
-- **Presentation polish.** WebDeck presenter controls auto-hide after a few seconds and return on hover; speaker notes can pop out into a movable window for another monitor.
-- **Import behavior cleanup.** Imported WebDeck slides resize text to fit the slide better, keep the grid outside the slide surface, and preserve or omit the ShowSplatTM footer bar based on the source deck.
-- **ShowSplatTM task-focused Help.** The Help menu now opens in-app guidance for deck building, object editing, Markdown Studio, presenting, save/export/import choices, privacy, and keyboard shortcuts while keeping technical docs available for maintainers.
-- **WriteSplatTM classroom writing app.** Added `splatworks/writesplat/`, a SplatWorksTM-styled browser word processor with ProseMirror editing, offline local autosave, native `.writesplat.json`, kid-friendly readability cards, export options, classroom templates, cloze, citations, teacher-only content, read-aloud controls, sentence scrambling, vocabulary highlights, and browser tests.
-- **Separate WriteSplatTM package path.** `./scripts/make-selfhost-bundle.sh` creates `splatworks-writesplat-selfhost-<version>.zip` alongside the DrawSplatTM, GridSplatTM, and ShowSplatTM zips.
-
-## Recent improvements (v3.1.14)
-
-- **SplatWorksTM folder hub.** Moved GridSplatTM and ShowSplatTM under `splatworks/`, added `pages/splatworks.html`, and updated launch/navigation paths.
-- **ShowSplatTM editor polish.** Added purple templates, graph/concept-map layouts, slide and deck audio, JSON save/load labeling, richer thumbnails, no-scroll text boxes, fit/autofit text, four-corner resize handles, rotation, and image crop mode.
-- **Privacy and licensing copy.** Updated SplatWorksTM legal references and added Terms/Privacy and GDPR links from the SplatWorks surfaces.
-
-## Recent improvements (v3.1.13)
-
-- **ShowSplatTM starts.** Added `splatworks/showsplat/`, a browser-native slide deck and WebDeck authoring app with slide thumbnails, a central canvas, dropdown menus, icon toolbar, notes, templates, themes, drag/resize editing, media insertion, Markdown Studio, slideshow preview, and WebDeck export.
-- **ShowSplatTM public page and navigation.** Added `pages/showsplat.html` and linked ShowSplatTM from SplatWorksTM menus across the site.
-- **WebDeck export path.** Exported decks are single HTML files with slide data, notes, navigation, progress, hash links, fullscreen controls, and an optional frontend password prompt backed by a SHA-256 hash.
-- **Separate ShowSplatTM package.** `./scripts/make-selfhost-bundle.sh` now creates `splatworks-showsplat-selfhost-<version>.zip` in addition to DrawSplatTM and GridSplatTM zips.
-
-## Recent improvements (v3.1.12)
-
-- **Separate self-host packages.** `./scripts/make-selfhost-bundle.sh` now creates `drawsplat-selfhost-<version>.zip` and `splatworks-gridsplat-selfhost-<version>.zip`.
-- **Cleaner licensing boundary.** The DrawSplatTM package excludes `splatworks/gridsplat/`; the GridSplatTM package carries the GPL-3.0-only spreadsheet app, source, built static assets, docs, tests, and license files.
-- **Download page refresh.** The self-host download page now shows both packages on the same page with separate sizes, SHA-256 hashes, and guidance about when to download each one.
-- **GridSplat-only update path.** Future GridSplatTM changes can ship as a SplatWorksTM download without requiring schools to redownload the full DrawSplatTM whiteboard/tools/widgets/games package.
-
-## Recent improvements (v3.1.11)
-
-- **GridSplatTM integration.** Added the GridSplatTM spreadsheet as a built static app at `splatworks/gridsplat/`, with a dedicated public page at `pages/gridsplat.html`.
-- **SplatWorksTM app family.** Standardized the GPL-covered suite language around SplatWorksTM, WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM across the site and documentation.
-- **Navigation refresh.** Separated SplatWorksTM into its own menu and grouped Tools, Widgets, and Games under DrawSplatTM, plus dedicated Games and Tools collection pages.
-- **DrawSplatTM classroom tools.** Big Link, Concept Map, Markdown Studio, Rubric Builder, ImageSplat™, and Word Search Maker now stay under DrawSplatTM Tools instead of SplatWorksTM.
-- **Self-host bundle refresh.** Updated README, release notes, download metadata, and the self-host bundle for the integrated DrawSplat Studio build.
-
-## Whiteboard voice-note improvements (September 17, 2026)
-
-- **Recover unfinished recordings.** Reviewed voice/video drafts survive refresh on the same browser, with expiry and lesson/view separation. Video drafts can return to their original page.
-- **One note plays at a time.** Voice and video playback pause one another while keeping their positions.
-
-- **Clear response choices.** Illustrated Draw, Type, Voice, and Video cards respect lesson tools. Voice notes can be named, and unfinished answers can return to their recording page.
-
-- **Review before adding.** Record → Listen → Add, with Try again, Discard, and a Finish voice shortcut for unfinished recordings. No empty board items are created by permission failures.
-- **Short student answers.** A one-minute countdown, microphone cleanup, larger phone controls, and one undo step when a finished answer is added.
-
-## Recent improvements (v3.1.10)
-
-- **Super Star Trek browser edition.** Added `games/super-star-trek/` to DrawSplat Games, the Games dropdown, the Features games grid, Teacher Admin Game Access, and the self-host bundle.
-- **Squirrel Run feedback polish.** Added low-volume movement sounds, a splat sound on life loss, a classroom-friendly sound toggle, squirrel-point-of-view speech bubbles after collisions, and a short congratulatory dance when the squirrel reaches the tree.
-- **Mobile smoke test.** Verified Squirrel Run in a phone-sized Playwright run: start, touch movement, sound toggle, pause/resume, and no browser console/page errors.
-- **Blog RSS refresh.** Checked Raindrop and added the new Squirrel Run and SketchSpace VR posts, kept the newer ImageSplat™ post, and added a local Super Star Trek update item.
-- **Self-host bundle refresh.** Updated README, release notes, blog RSS, download metadata, admin game access, and the self-host bundle for the latest DrawSplat Games build.
-
-## Recent improvements (v3.1.9)
-
-- **SketchSpace VR.** Added `solutions/sketchspace-VR/`, a standalone DrawSplat Tool for printing a flat 4x3 room template, drawing six active panels, photographing the page, uploading it, and exploring the result as a virtual room in the browser.
-- **SketchSpace VR teaching materials.** Added a Teacher Guide, Play examples page, image prompt pattern, curriculum starter guidance, full-screen starter links, corrected process visual, and six image-backed curriculum starters for citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle.
-- **ImageSplat™ text workflow.** Replaced the simple text-label flow with a richer text dialog that supports adjustable font size, bold, italic, underline, alignment, and live preview before insertion.
-- **ImageSplat™ background cutout.** Added Smart background cutout and Remove edge background actions, kept the interface free of AI labeling, and added a visible Working dialog during longer cutout processing.
-- **ImageSplat™ clipboard and export polish.** Improved image paste/import for copied images from tools such as Canva and kept selected-object PNG copy/export focused on the selected object bounds.
-- **Blog RSS refresh.** Updated the bundled blog RSS snapshot with the latest DrawSplat release/update items for self-hosted copies.
-
-## Recent improvements (v3.1.8)
-
-- **ImageSplat™.** Added `solutions/imagesplat/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
-- **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
-- **SplatImage selected-copy fix.** Copy PNG now copies the selected object bounds when one or more objects are selected, instead of bringing along the full white canvas.
-- **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, Google OAuth admin access for approved accounts, the new Hub banner, guided admin setup, teacher folder/config creation in Drive, and an Apps Script instance registry starter.
-- **Teacher setup guides.** Added a Teacher Options quick start and Apps Script Web App URL setup guide, both linked from public support surfaces and Teacher Admin.
-- **Teacher Admin cleanup.** Teacher Admin now starts with Google Apps Script + Sheets/Drive setup, separates the MySQL section, and moves the Compliance Console to `admin/compliance.html` as an unlinked internal operator page.
-- **HTML release notes.** Added `pages/release-notes.html` so public release notes render as a styled site page instead of raw Markdown.
-- **Concept Map Studio Markdown import.** Added Markdown import support for turning heading/bullet outlines into concept-map structures.
-- **Concept Map Studio text controls.** Added text controls and moved selected-node edits into menus for a cleaner workspace.
-- **Concept Map Studio control polish.** Added dropdown menus and improved import collision layout so generated or imported maps land with less overlap.
-- **Quiz & Flashcard Studio science samples.** Added selectable Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets for fast classroom demos.
-- **Blog RSS refresh.** Updated the bundled blog RSS snapshot from Raindrop so self-hosted copies carry the latest included feed item.
-
-## Recent improvements (v3.1.7)
-
-- **MySQL backend security hardening.** Added `server/mysql-backend/security.js` with reusable security headers, CORS allowlist support, lightweight in-memory rate limiting, maintenance-route auth, admin bootstrap controls, email/room-key validation, and safe string helpers.
-- **Safer self-host defaults.** Docker and `.env.example` no longer document wildcard CORS as the default. Public registration creates teacher/parent accounts only unless `ALLOW_ADMIN_SELF_REGISTRATION=true` and `BOOTSTRAP_ADMIN_EMAILS` explicitly allow the first admin bootstrap.
-- **Protected sensitive routes.** `/maintenance/delete-expired` now requires either `MAINTENANCE_TOKEN` or a district/campus admin bearer token. Auth, OAuth, and parent request routes have rate limits. SSE board subscriptions are limited to valid room keys and capped per connection.
-- **Reduced information leakage.** Backend 500 responses no longer echo raw exception messages to clients. OAuth failures return a generic invalid-token response.
-- **Input and payload hardening.** Room keys must be short URL-safe IDs, board/template JSON saves have configurable byte caps, and user-facing string fields are normalized/truncated before storage.
-- **Markdown Studio XSS fix.** Markdown preview now allowlists URL schemes for links/images and escapes generated `href`, `src`, `alt`, and code-language attributes.
-- **Concept Map Studio full-width workspace.** The old left rail has been replaced with template buttons above the canvas and editing/export controls below it, giving the concept-map canvas the full page width and more vertical working room.
-- **Concept Map Studio T-Chart template.** Added a T-Chart organizer with localized template names, column labels, starter points, and relationship text across all supported Studio languages (`en`, `es`, `vi`, `ar`, `zh`, `uh`).
-- **Quiz & Flashcard Studio.** Added a standalone browser-only quiz builder and flashcard maker at `solutions/quiz-flashcard-studio/`. It imports CSV/TSV/TXT/JSON/XLSX/ODS/ODT question banks, exports JSON/CSV/XLSX/report CSV, creates student/team quiz play links, transfers question content into printable flashcards, and includes versioned AI-import templates: `drawsplat-quiz-flashcard_v1.csv` and `drawsplat-quiz-flashcard_v1.json`.
-- **Tool-specific AI assistant reference removed.** The handoff doc now uses generic AI-assistant wording.
-
-## Recent improvements (v3.1.6)
-
-- **GIFsplat™: real LZW compression.** Replaced the previous degenerate LZW (CLEAR every 240 codes, no dictionary) with a proper GIF-spec encoder that builds a (prefix-code, byte) dictionary and grows the code size from 9 to 12 bits as the table fills. Typical content compresses 3–10× smaller. Smoke test: 200×200 single-frame gradient dropped from ~46 KB to 2.7–6.9 KB.
-- **GIFsplat™: palette-size option.** New Best-mode dropdown (256 / 128 / 64 / 32 colors). Smaller palette = smaller per-frame LCT bytes + smaller LZW codes. For most classroom diagrams, 128 or 64 colors comfortably gets you under 100 KB.
-- **GIFsplat™: MP4 / WebM video export.** New "Export as Video" button. Uses native WebCodecs `VideoEncoder` + a hand-rolled MP4 ISO BMFF muxer (assets/js/mp4-muxer.js, ~400 lines) for cross-browser MP4 in Chrome / Edge 94+, Firefox 130+, Safari 16.4+. Falls back to MediaRecorder (WebM/MP4 real-time) on older browsers. Forces AVCC bitstream format (`avc.format: 'avc'`) so the muxer's sample table walks correctly — previously caused dropped final frames.
-- **Concept Map: traditional outline formatter.** Outline view now emits academic-style hierarchy (`# I.` Roman numerals → `## A.` letters → `1.` numbers → `   a.` blank-padded sub-letters) with an always-emitted "Next Steps and Action Items" section sourced from nodes tagged `section: "Action Items"` / `"Next Steps"` / etc.
-- **Blog page: thumbnails from RSS feed.** Each card now shows a real thumbnail extracted from the post's lead `<img>` in the RSS `<description>`. Two-column card layout (thumb | body) on desktop, stacked on mobile. Lazy-loaded, no-referrer. CSP relaxed only on img-src to allow `https:` external image hosts.
-- **Firefox WebM export fix.** Switched the MediaRecorder pipeline from `captureStream(0)` + manual `requestFrame()` to fixed-rate `captureStream(30)` — Firefox couldn't reliably push frames the manual way, ending with zero samples. Chrome / Edge / Safari unaffected.
-
-## Recent improvements (v3.1.5)
-
-- **Concept Map: overlap resolver rewritten as sequential phases.** Previous resolver could cascade nodes thousands of units away on dense maps with overlapping groups. Now runs A→within-group → B→loose-vs-loose → C→rigid group-vs-group (skipping shared-member pairs) → D→loose-out-of-foreign-group → E→final cleanup. Per-axis push clamped to 220 units. Real-world test file (37 nodes / 5 groups) lays out cleanly.
-- **Concept Map: connector-label avoidance.** Connector labels shift along the perpendicular axis when they'd land inside a node, so pills no longer get covered by boxes.
-- **Concept Map: Outline view.** Collapsible markdown mirror of the map's hierarchy under the canvas. Live-updates on every render. "Copy Markdown" + "Open in Markdown Studio →" buttons.
-- **Concept Map: optional `section` field + viewer filter.** Tag nodes with a section string (e.g. "Inputs", "Process", "Outputs"); a pill row above the canvas appears and clicking a section fades the rest. Big maps stop being overwhelming.
-- **Concept Map: backward-compat migration on import.** Loader auto-migrates older / sloppy JSON shapes — missing `type`, v1 nodes-as-object format, v1 `{from, to}` connectors, missing arrays — no more red-bar errors when loading old saves.
-- **Concept Map ⇄ Markdown Studio bidirectional handoff.** localStorage-based (URL-hash transfer kept failing due to caching). Outline → Markdown Studio uses the existing outline; Markdown → Concept Map parses headings + bullets into a level-1/2/3 hierarchy with radial auto-layout.
-- **Concept Map: versioned schema filename.** `drawsplat-concept-map-schema-v2.json` (matches `SAVE_VERSION=2`). Old filename kept as a backward-compat alias. Hint reads "format spec (v2)" so LLMs know which schema they're prompting against.
-- **GDPR Compliance Summary** at `legal/gdpr-compliance.html`. Full plain-language posture: controller/processor roles per deployment, lawful basis, subject rights mapped to features, data residency, localStorage inventory, security, Art. 8, DPIA guidance, breach notification, RoPA, gaps, rollout checklist. Linked in the Privacy & Terms dropdown.
-- **Compliance Gap List** at `legal/compliance-gaps.html`. Honest section-by-section list of what each legal regime (COPPA, FERPA, CIPA, Texas SCOPE, TEC 32.151+, NDPA, GDPR, UK GDPR) requires that DrawSplat does NOT provide out of the box, and why. Linked above the divider in Privacy & Terms so DPOs / procurement reviewers find it without digging.
-- **Site-wide localStorage consent banner.** New `assets/js/consent-banner.js` loaded on every public page. Single dismiss; persisted in localStorage. Links to GDPR doc's storage inventory anchor.
-- **Blog page** now shows a "Loading posts…" status while the RSS fetches.
-
-## Recent improvements (v3.1.4)
-
-- **Admin viewer mode (zero-config).** The admin login page now has a **Preview as Viewer** button next to Unlock Admin. Clicking it enters a read-only tour of the admin layout — every Save / Load / Edit control is disabled (CSS + a capturing event listener for defense in depth) and no backend data is loaded. Safe for anyone to click, including drawsplat.org visitors who don't have the admin password. Self-hosters can remove the button from `admin/admin.html` if they don't want public preview. (Earlier viewer-password design is now retired.)
-- **Whiteboard sidebar gains an Audio On/Off toggle.** Next to Undo/Redo. Persists in `localStorage.drawsplat.audioMuted`. Mutes DrawSplat sound effects (TNT today, future game/UI cues); user-recorded audio notes are intentionally exempt.
-- **Admin Game Access panel.** Per-game checkboxes that hide individual games from the landing and Features pages. Setting is per-browser (localStorage); `assets/js/games-filter.js` runs on those pages and hides the matching cards.
-- **GIFsplat™ standalone widget** at `solutions/gifsplat/`. Multi-frame editor, per-frame delay, loop count, max-width control, preview, download. Six locales. Uses the shared GIF encoder.
-- **CipherSplat™ v1.0.1 private encryption tool** at `solutions/CipherSplat/`. Encrypts files, recursive folders, and text locally with AES-256-GCM, authenticated `.csplat` packages, and no upload or tracking path. Legacy `.ciphersplat` packages remain readable.
-- **Shared GIF encoder with quality upgrades** at `assets/js/gif-encoder.js`. Two modes: *Fast* (256-color fixed cube palette — original behavior) and *Best* (per-frame median-cut palette, optional Floyd-Steinberg dithering). Both the GIFsplat™ and the whiteboard's Create GIF dialog now expose Quality + Dither controls.
-- **Concept Map Studio: JSON Schema spec** at `solutions/concept-map/drawsplat-concept-map-schema.json`. Full JSON Schema (draft 2020-12) documenting every field the Studio reads. A new sidebar hint links it for users prompting an LLM to generate a map. Hand the file to ChatGPT / Claude / Gemini and the resulting JSON loads directly via Load .json.
-- **Concept Map Studio: word-wrap labels + visual hierarchy.** Long labels wrap onto multiple lines via SVG `<tspan>`s; nodes auto-grow vertically. New optional `level` field per node (1 = main idea, 2 = directly connected, 3 = supporting detail) drives box dimensions and font size in three tiers. Defaults from `isRoot` when omitted, so existing maps load unchanged.
-- **Concept Map Studio: Space + drag to pan.** Universal design-tool shortcut. Plus middle-click drag and the existing Pan toggle still work. Hint text in the sidebar and live status line mention all three (six locales).
-- **Concept Map Studio: overlap separator on import.** Three-pass resolver fires after loading a `.drawsplat-cmap.json`: node-vs-node, group-vs-group (translates members of both groups by half the overlap each so the shared seam tears apart while shared nodes hold), and free-node-vs-foreign-group. LLM-generated maps no longer pile nodes on top of each other.
-- **Concept Map Studio: embeddable in Google Sites and WordPress.** New `?embed=1` mode hides the editor chrome and renders pan/zoom/clickable-link viewer; map data rides in the URL hash so no backend is needed. New **Copy Embed Code** and **Copy Embed Link** buttons in the Studio actions row generate the iframe HTML / URL.
-- **Concept Map Studio: readable PNG/SVG exports.** Export mode bumps node labels (15→18pt, root 18→22), group labels (14→18), connector labels (13→16). PNG canvas raised from 1800→3200px minimum, 2×→3× scaling so the rasterized image opens at a useful zoom in any image viewer.
-- **Dicebreakers Creator: canonical header chrome.** Header now matches Mermaid / Storywheel / Concept Map: page wrapper centered at max 1280px, title-block with eyebrow + big purple H1 + subtitle, header-actions with i18n picker, "All Tools" secondary link, and Home primary button. Preview canvas capped at `min(540px, 58vh)` on screen so the dice tiles don't dominate; the underlying canvas stays 1600×1200 so every export still uses the full-resolution bitmap.
-
-## Recent improvements (v3.1.3)
-
-- **Image upload approval queue (Compliance Roadmap Days 1.3 / 1.4).** Student image uploads now land in a new `ImageQueue` Sheet tab as `pending` and stay hidden on the student board until a teacher approves them in the Compliance Console. Apps Script (`Code.gs` v1.9.0) gains `uploadImage_`, `imageQueueResolve_`, `imageQueueList_`, `imageQueueThumbResponse_`, and `setImageStatus_`. The whiteboard inserts a "Pending teacher approval" SVG placeholder + a `pendingImageId` on the board object and polls every 8 seconds; the placeholder swaps in the real bytes (or a rejection placeholder) as soon as the teacher decides. Reject trashes the Drive file. Approve / reject decisions log `IMAGE_APPROVED` / `IMAGE_REJECTED` audit events.
-- **CIPA support statement** added to `legal/texas-compliance.html` (section 11). Explicit "supports CIPA, does not replace district filtering" framing, plus a CIPA entry in "laws this page covers".
-- **NDPA / DPA Review Packet** (`legal/ndpa-packet.html`) flips the image-queue row from "not yet shipped" to a description of the live flow and adds a section 12 "Evidence gallery" with six labelled `<figure>` placeholders for the captures a district reviewer expects.
-- **Operator capture guide** at `docs/CAPTURE.md` — six entries (Compliance Console overview, Image Approval Queue, Family Access Tools queue, Activity Records, District Privacy Packet download, Per-student Export / Delete) describing where to find each screen, what state to put the app in, what file name to use, and where to drop the PNG.
-- **`docs/COMPLIANCE.md`** gains an "Image Approval Queue (Days 1.3 / 1.4)" section explaining the six-step flow plus the four `safety.images.*` config knobs.
-
-## Recent improvements (v3.1.2)
-
-- **Advanced-view icon overhaul.** Every flat SVG in the Advanced view's Insert, Edit (Arrange), and sync rows now renders a colour PNG or cleaner-stroke SVG. Twenty-one new `adv-*.svg` files in `assets/icons/tools/` cover Insert / Arrange targets (image, library, graph, picture graph, mosaic, collage, emoji-as-star, GIF-as-play, mermaid, word cloud, concept, ScratchArt eraser, set/clear background, magic wand, duplicate, ungroup, group, sticker stamp, custom-sticker share, plus a chart variant). Six PNGs (`adv-front.png`, `adv-back.png`, `adv-lock.png`, `adv-unlock.png`, `adv-sync.png`, `adv-cloud-sync.png`, `adv-stop.png`, `adv-cloud-down.png`) cover Edit-menu stacking + selection-toolbar lock state + the four sync-row buttons. Simple-view `simple*` buttons still use their existing `pop_*` PNGs so the popover look is untouched.
-- Eighteen Advanced-view auxiliary buttons that already had a Simple-view PNG (TNT, all delete variants, the Insert-dialog launchers, Concept Map, etc.) were also rewired to reuse those PNGs in commit `7df14a4` so both views share a single colour vocabulary.
-
-## Recent improvements (v3.1.1)
-
-- **Community board polish.** Markdown rendering in posts and replies (`**bold**`, `` `inline code` ``, ```` ```code blocks``` ````, links, lists, blockquotes — escape-first, no third-party deps). Authors edit their own posts/replies directly from the board view (server-enforced via session token); admins continue to edit any item from `Admin.html`. Each post card shows a two-line excerpt with markdown stripped, and posts created since the visitor's previous session display a small `NEW` badge.
-- **Community speed.** Client-side stale-while-revalidate cache paints the board instantly on repeat visits, then revalidates against `/exec` in the background and reconciles. Apps Script `CacheService` caches the public list response for 30 seconds server-side and is explicitly invalidated by every mutation endpoint (createPost, createReply, setStatus, updateItem, deleteItem, setModeration). Preconnect hints (`script.google.com`, `script.googleusercontent.com`, fonts hosts) plus lazy-loaded MSAL trim ~100–300 ms off cold loads and skip the ~70 KB Microsoft auth library entirely for visitors who never click Microsoft sign-in. Apps Script's own runtime overhead is the remaining floor (~1.3 s warm).
-
-## Recent improvements (v3.1.0)
-
-- **Phase 4 MySQL backend closed end-to-end.** New modules in `server/mysql-backend/`: `oauth-routes.js` (Google + Microsoft token verification), `rbac.js` (five-role permission matrix), `safety.js` (shared board safety scan), `realtime.js` (SSE channel for `session-lock` + `board.updated`), `sis-clever.js` (district token + roster sync), `cron-jobs.js` (retention + per-minute time-limit enforcement), `privacy-packet.js` (hand-rolled ZIP generator with zero new dependencies). `server.js` rewires the room/board endpoints with freeze + safety gates and a `board.updated` SSE broadcast. `compliance-routes.js` gains age-band lock, parent-code issuance, freeze/unfreeze, full data delete, student data export, and a parent's own request list.
-- **Self-host bundle.** `scripts/make-selfhost-bundle.sh` produces `dist/drawsplat-selfhost-<label>.zip` (~86 MB) excluding `.git`, `node_modules`, `.env`, and build artifacts. Stamped with a `SELFHOST-README.txt`. New `pages/download.html` walks through the three deployment paths and links the GitHub release.
-- **Apps-Script → MySQL migration CLI** at `server/mysql-backend/migrate-from-apps-script.mjs` reads Sheet-tab CSV exports plus a folder of board JSONs.
-- **Family Access Portal** (`server/mysql-backend/static/parent-portal.html` + `.js`) served at `/parent-portal/` on the self-hosted backend.
-- **Texas plain-language compliance explainer** at `legal/texas-compliance.html` maps SCOPE / FERPA / COPPA / TEC 32.151+ to shipped features. Hero infographic, ten numbered sections, cross-links to terms / district addendum / privacy builder.
-- **Compliance Console operator guide** at `guides/compliance-guide.html` walks through the eight Console sections.
-- **Contact / Information Request form** at `pages/contact.html` replaces every `mailto:` on the site. Posts to a new `ContactRequests` Google Sheet tab via `apps-script/Code.gs` v1.8.0; admin gets an email notification.
-- **Free pricing model.** `pages/pricing.html` is now three cards: Everyone (free), Coffee (optional [Buy Me a Coffee](https://buymeacoffee.com/drawsplat) donation), Support & PD (optional paid). New pricing hero infographic. PayPal links retired.
-- **Navigation overhaul.** Dropdowns for For Teachers, For Families, Technical, Support, Tools, Widgets, and Games. **Download for Self-Hosting** now lives in the Technical dropdown across the top-nav pages.
-- **24 top-nav pages** (index, pages/*, legal/*, guides/*) refreshed with the consistent dropdown nav, accessible `<details name="landing-topnav">` pattern (only one menu open at a time).
-## Version evolution
-
-```mermaid
-timeline
-  title DrawSplatTM change over time
-  v1 : Browser-based whiteboard foundation
-     : Drawing, panels, classroom-oriented board work
-  v2.2 : Panel reliability hotfix
-       : Stable panel IDs and safer panel switching
-  v2.3 : Productivity workspace
-       : Classroom controls can be hidden for adult/small-team use
-  v2.5 : Shared architecture and hardening
-       : Single app.js/app.css, translations, offline shell, safer uploads
-  v2.6 : Classroom UX
-       : Teacher/student modes, assignment layers, background locks
-  v2.7 : Brand and responsive polish
-       : Logo, welcome flow, floating selection toolbar
-  v2.8 : Image editing
-       : Crop, clipboard image paste, background color removal
-  v2.9 : Mermaid diagrams
-       : Local diagram rendering and re-editable inserted diagrams
-  v2.10 : Word clouds
-        : Self-contained word cloud generator and shaped layouts
-  v2.13 : Interface polish
-        : Top menus, icon system, classroom sharing flow
-  v2.14 : Student creation tools
-        : Dot Pictures, Emoji Mixer, GIFs, Graph Creator
-  v2.15 : Tablet and image workflow
-        : Touch multi-select, larger handles, mosaic images
-  v2.16 : High-resolution outputs
-        : Improved mosaics and new collage tool
-  v3.0 : Admin and privacy foundation
-       : Landing page, pricing, PROTECT-aligned policy, MySQL wizard
-  v3.1 : Support, ScratchArt, and self-hosted compliance
-       : Support page + guide hub, ScratchArt guide, eraser sizes, incremental ScratchArt undo, Classroom Widget tool links
-       : Compliance Phases 1–3 closed on the Apps Script path
-  v3.1.0 : Phase 4 MySQL backend + self-host bundle
-         : OAuth (Google + Microsoft), RBAC, SSE, cron, Clever connector, Family Access Portal, server-side Privacy Packet
-         : Texas plain-language compliance explainer, contact form, free pricing model, Download for Self-Hosting page
-  v3.1.1 : Community board polish + speed work
-         : Markdown rendering, author-edit-from-board, post excerpts, NEW-since-last-visit badge
-         : Client SWR cache + Apps Script CacheService + preconnect + lazy MSAL
-  v3.1.2 : Advanced-view icon overhaul
-         : Insert / Arrange / Sync menus swap flat SVGs for colour PNGs and cleaner SVGs
-         : New adv-*.svg + adv-*.png set in assets/icons/tools/
-  v3.1.3 : Image upload approval queue + NDPA / DPA review-packet polish
-         : Compliance Roadmap Days 1.3 / 1.4 closed; ImageQueue sheet + Apps Script endpoints; whiteboard polls + swaps placeholders; Compliance Console review UI
-         : CIPA support statement in Texas page; evidence gallery + docs/CAPTURE.md operator checklist
-  v3.1.4 : Admin viewer preview + Concept Map embed + GIFsplat™
-         : Read-only admin tour, whiteboard audio toggle, game access panel, GIF maker, concept-map schema/embed/export upgrades
-  v3.1.5 : Concept Map layout + compliance docs
-         : Overlap resolver, section filter, Markdown Studio handoff, GDPR summary, compliance gap list, consent banner
-  v3.1.6 : GIF compression + video export
-         : Real GIF LZW, palette-size option, MP4/WebM export, traditional concept-map outline, blog thumbnails
-  v3.1.7 : Self-host security hardening
-         : Backend security headers, rate limits, safer CORS, admin bootstrap guardrails, protected maintenance cleanup
-         : Markdown Studio URL allowlist + attribute escaping; refreshed self-host docs and bundle
-         : Concept Map Studio full-width canvas layout + localized T-Chart template
-         : Quiz & Flashcard Studio standalone widget + versioned CSV/JSON import templates
-  v3.1.8 : Classroom tools self-host bundle
-         : ImageSplat™, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
-  v3.1.9 : Latest classroom tools self-host bundle
-         : SketchSpace VR, SplatImage text/cutout/clipboard upgrades, current blog RSS snapshot
-  v3.1.10: Squirrel Run game polish
-         : Movement/splat sounds, collision speech bubbles, tree-home dance, refreshed self-host bundle
-  v3.1.11: DrawSplat Studio + GridSplat
-         : GridSplat spreadsheet integration, SplatWorks naming, dedicated Games/Tools pages, refreshed self-host bundle
-  v3.1.12: Separate DrawSplat + SplatWorks downloads
-         : DrawSplat self-host zip excludes GridSplat; SplatWorks GridSplat zip ships independently with GPL license boundary
+```bash
+python3 -m http.server 8000
 ```
 
-## Included files
+Visit `http://localhost:8000/` for the ecosystem homepage or `http://localhost:8000/app/whiteboard.html` for DrawSplat. No root npm installation is needed to serve the checked-in static apps. A local server avoids the restrictions that browsers apply to `file://` pages.
 
-- `index.html` — public landing page with the four-dropdown nav (For Teachers, For Families, Privacy & Terms, Support) plus top-level Pricing
-- `app/whiteboard.html` — English whiteboard app
-- `pages/start.html` — backwards-compatible redirect to `index.html`
-- `pages/background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
-- `pages/support.html` — support landing page with featured Compliance Console Guide + Texas Compliance Explainer cards
-- `pages/download.html` — self-host download page (three deployment paths + GitHub release link + SHA-256)
-- `pages/contact.html` — Contact / Information Request form (replaces every mailto on the site)
-- `assets/js/contact.js` — posts contact submissions to the Apps Script `contactRequest` endpoint
-- `guides/` — HTML guide hub: Teacher Options quick start, Apps Script Web App URL setup, ScratchArt, Google Drive + Sheets setup, MySQL setup, Compliance Console guide, project reference, classroom widgets, collaboration, saving/exporting, etc.
-- `guides/teacher-options-quick-start.html` — short teacher guide for Options, Workspace Education Tools, Simple / Advanced views, and temporary Teacher Admin access
-- `guides/apps-script-web-app-url.html` — teacher-facing walkthrough for creating the Apps Script Web App URL and saving it in Teacher Admin
-- `guides/compliance-guide.html` — operator walkthrough of the eight Compliance Console sections
-- `guides/images/` — banner and guide images used by public pages and guides
-- `pages/pricing.html` — free pricing model (Everyone / Coffee / Support & PD)
-- `legal/terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
-- `legal/district-addendum.html` — signature-ready district data privacy addendum template
-- `legal/texas-compliance.html` — plain-language Texas SCOPE / FERPA / COPPA / TEC 32.151+ explainer
-- `legal/privacy-builder.html` — district-local privacy notice generator
-- `parents/` — Family Access Tools (parent request form + endpoint client)
-- `community/` — Community bulletin board (Google + Microsoft SSO, email/pw fallback, multi-language UI, markdown-rendered posts/replies, author-editable from the board, stale-while-revalidate cache)
-- `community/markdown.js` — minimal CommonMark-subset renderer shared by `community/index.html` and `community/Admin.html`. Escapes HTML first; `href` allowlist limits links to `http://`, `https://`, and `mailto:`
-- `admin/admin.html` — Teacher Admin setup surface for Google Apps Script + Sheets/Drive, MySQL, storage mode, backend testing, and classroom links
-- `admin/compliance.html` — unlinked internal Compliance Console surface (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
-- `admin/access.html` — admin-access request page
-- `admin/mysql-setup.html` — MySQL setup wizard for compatible API testing, enabling online saving, teacher account creation, and server configuration templates
-- `languages/` — translated whiteboard entry pages (Spanish, Vietnamese, Arabic, Chinese, Urdu / Hindi)
-- `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
-- `assets/js/admin.js` — admin-page settings, backend ping, link generation, and internal Compliance Console wiring
-- `assets/js/mysql-setup.js` — MySQL wizard behavior
-- `assets/js/mysql-cloud.js` — private MySQL Save/Open, tab-scoped sign-in, and revision conflict handling
-- `assets/js/recording-support.js` — device-local voice/video draft recovery and coordinated playback
-- `assets/js/safety.js` — client-side text + link safety pre-check
-- `assets/js/timelimits.js` — client-side active-time tracker + workspace lock
-- `assets/js/parents.js` — Family Access Tools client
-- `assets/js/i18n.js` — runtime translation applicator
-- `assets/js/locales.js` — single source of truth for every UI translation
-- `assets/js/template-gallery.js` — keeps public template-gallery links aligned with the selected language
-- `assets/js/app.js` — shared application code
-- `assets/css/app.css` — shared stylesheet
-- `assets/brand/` — logo and cover artwork, including the new pricing + Texas Privacy hero infographics + Buy Me a Coffee QR
-- `sw.js` — service worker for offline shell
-- `apps-script/Code.gs` — Google Apps Script backend (v1.8.0): boards, rooms, turn-ins, parent requests, compliance config, audit, retention, contact requests
-- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes portable Railway/Docker/HTTPS deployment configuration, `db-config.js`, `migrate.js`, `cloud-routes.js`, `server.js`, `security.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
-- `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
-- `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller, Quiz & Flashcard Studio)
-- `compliance.config.json` — default safety / retention / privacy configuration (client baseline; server-authoritative copy lives in Apps Script Script Property or the MySQL `compliance_config` table)
-- `scripts/make-selfhost-bundle.sh` — produces `dist/drawsplat-selfhost-<label>.zip` for districts to download
-- `COMPLIANCE-ROADMAP.md` — every compliance day-module with status + commit references
+### Install for a school or district
 
-## Compliance
+Download the [complete district suite](https://splatworks.org/pages/download.html#district-suite), extract it, and open **`start-here.html`**. The Quick Start provides Docker and native installation paths, component choices, administrator setup, classrooms, backup, and recovery guidance.
 
-DrawSplat&trade; ships with a configurable compliance posture aimed at K&ndash;12 districts. See [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) for the implementation status of every item and [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) for the operator guide.
+| Deployment need | Guide |
+| --- | --- |
+| Complete suite with school accounts and classrooms | [District installation](https://splatworks.org/docs/district-selfhost.html) · [District source guide](docs/district-selfhost.md) |
+| Individual static apps or selected component bundles | [Modular self-hosting](https://splatworks.org/wiki/modular-selfhost.html) |
+| Browser-only whiteboard | [Browser setup](https://splatworks.org/wiki/setup-browser.html) |
+| Google Apps Script, Drive, and Sheets | [Apps Script setup](https://splatworks.org/wiki/setup-google-apps-script.html) |
+| Separately hosted MySQL/MariaDB service | [Database setup](https://splatworks.org/wiki/setup-mysql.html) · [Backend source](server/mysql-backend/README.md) |
 
-What is built today (Phases 1&ndash;3 of the roadmap, on the Apps Script backend path):
+Storage and collaboration capabilities differ between deployments. Use the current guide for your chosen setup, preserve `.assetsignore` / `.pagesignore` when deploying static assets, and keep server code, credentials, databases, and local development files outside the public asset upload.
 
-- **Activity Records (audit log)** &mdash; immutable Sheet tab; filterable in Teacher Admin; downloadable as CSV or JSON.
-- **Safety filters** &mdash; text keyword filter, link allowlist (server-enforced on every save), board / room freeze.
-- **Student Age Band Lock** &mdash; SCOPE-aligned: `under_13`, `13_to_17`, `18_plus`, `unknown_minor`. Server-locked, admin-only, reason required, audited.
-- **Family Access Tools** &mdash; parent request form at `/parents/`, teacher-issued one-time verification code, admin Approve / Deny / Done queue.
-- **Student data export** &mdash; one-click ZIP of a student&rsquo;s boards, turn-ins, and user row (sans credentials).
-- **Student data deletion** &mdash; one-click trash + row removal for a student&rsquo;s artifacts; logged.
-- **Retention policy + scheduled cleanup** &mdash; configurable archive / delete / audit-keep windows; daily Apps Script trigger.
-- **Time limits** &mdash; browser timer + Apps Script save gate; daily seconds, session seconds, allowed hours, weekend toggle.
-- **Compliance Console** &mdash; unlinked internal operator surface at `admin/compliance.html` (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
-- **District Privacy Packet** &mdash; one-click ZIP bundling config snapshot, 90 days of Activity Records, parent-request log, and a README pointing at Terms &amp; Privacy + the District Addendum.
+## Documentation by audience
 
-The connected MySQL provider supports private account-owned Save/Open, authenticated access, and revision conflict protection; it has been checked against real MySQL 8.4, including verified TLS and UTC sessions. Separately, these advanced district modules exist in `server/mysql-backend/` and require their own frontend integration and operational validation:
+| Audience or question | Reference |
+| --- | --- |
+| Educators choosing an activity | [For educators](https://splatworks.org/wiki/for-educators.html) |
+| Technology staff installing or maintaining the suite | [For technology admins](https://splatworks.org/wiki/for-technology-admins.html) |
+| Families and students | [Parents and students](https://splatworks.org/wiki/for-parents-and-students.html) |
+| Feature names, file workflows, and compatibility | [Feature directory](https://splatworks.org/wiki/tools-widgets-features.html) · [FAQ](https://splatworks.org/wiki/faq.html) |
+| Student data, providers, retention, and district review | [Security, privacy, and terms](https://splatworks.org/legal/terms-privacy.html) |
+| Accessibility | [Accessibility information](https://splatworks.org/legal/accessibility.html) |
+| Software licensing and optional services | [Licensing](https://splatworks.org/wiki/licensing.html) · [Pricing and services](https://splatworks.org/pages/pricing.html) |
+| Developer background and help | [About the developer](https://splatworks.org/wiki/about-developer.html) · [Contact](https://splatworks.org/pages/contact.html) |
 
-- **OAuth** (Google ID tokens + Microsoft Graph access tokens) issuing the same HMAC bearer session as the email/password path.
-- **RBAC tree** (district / campus / teacher / student / parent) via a permission matrix and `requireRoles` / `requirePermission` middleware applied across compliance, SIS, and realtime routes.
-- **Server-enforced safety scan** on every `PUT /rooms/:roomKey/board` and `POST /turnins`, with the same rules the Apps Script side uses.
-- **Board freeze + write-block** (`rooms.frozen` columns, HTTP 423 on writes to frozen rooms).
-- **Real-time session enforcement and cross-device board sync** via SSE (`/events?boards=...`).
-- **Clever SIS connector** — district token storage + roster sync (`/sis/clever/connect|sync|status`).
-- **In-process retention cron** prunes audit / parent_requests / sessions / rate_limits per the configured `keepDays`.
-- **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
-- **Apps-Script → MySQL migration CLI** for districts switching paths.
+## Updates and release history
 
-For current private online saving, use the current repository and follow [`docs/setup-mysql.md`](docs/setup-mysql.md). The v3.1.25 full bundle includes this connection. Legacy room/template/turn-in/session endpoints require district/campus administrator authentication pending scoped classroom membership. Advanced district integration coverage and multi-instance Redis pub/sub for SSE remain future work.
+The [download page](https://splatworks.org/pages/download.html) is the reference for current full-suite and independent-app packages. The [release notes](https://splatworks.org/pages/release-notes.html) and [blog](https://splatworks.org/blog/) explain recent changes without mixing the entire history into this introduction.
 
-## Core features
+**Maintenance snapshot — October 31, 2026, v3.1.49:** PDFSplat adds clearer warnings that OCR covers are **not secure redaction**, plus a lower-memory mode. Review OCR spelling, accents, layout, and reading order. Four reviewed dependency patches are merged; major and sensitive upgrades remain held. [OCR and real-redaction workflow](docs/pdfsplat-ocr.md) · [Dependency review](docs/dependency-triage-2026-10-31.md).
 
-- Fast icon-tool switching
-  - Icon clicks now use direct event delegation so clicking on the icon or label switches tools immediately.
-- Simple / Advanced interface modes
-  - **Simple** focuses on core classroom tools: select, pen, line, arrow, rectangle, ellipse, text, sticky notes, image upload, duplicate, basic styling, panels, and save/load.
-  - **Advanced** reveals the full toolkit: connectors, additional shapes, comments, audio notes, stickers, templates, fill patterns, restore points, collaboration, assignment mode, answer keys, moderation, and advanced arrangement tools.
-- Organized top menus
-  - **File** contains save/load/import/export actions plus Save Restore Point and Restore Point.
-  - **Insert** is focused on insertable content such as images, graphs, diagrams, word clouds, concept maps, stickers, dot pictures, and ScratchArt.
-  - **Tools** contains workflows such as Create GIF, Classroom Widgets, background tools, built-in layouts, reusable frame templates, and TNT Reset.
-  - **Options** contains view, inspector, keyboard shortcuts, mode, and about controls.
-- Direct shape text editing
-  - Click a text-capable shape and start typing, or double-click rectangles, circles/ellipses, diamonds, triangles, callouts, speech bubbles, text boxes, notes, comments, or audio-note labels to edit text directly on the canvas.
-  - The inline editor appears directly over the selected shape. Type on the canvas, choose **Done** when finished, use **Ctrl/Cmd + Enter** to close, or **Escape** to cancel.
-- Multiple panels/pages for stations, lesson steps, group work, and collaborative activities
-- Pen, line, arrow, connector, rectangle, ellipse, diamond, triangle, callout, speech bubble, text, sticky note, comment pin, and audio note tools
-- Type inside shapes with wrapped text, alignment controls, rotation, auto-scaling, and double-click inline editing
-- Load images, drag them, resize them, crop them, and mask them into classroom-friendly shapes such as circles, triangles, stars, and hearts
-- sticky notes with optional image attachments
-- Adjustable line color, fill color, fill patterns, opacity, and line thickness
-- Background choices: blank, grid, dots, graph, ruled, and isometric
-- Locked per-panel background images (Jamboard-style) — teacher loads a reference image, students see and work on top of it without being able to alter or remove it
-- Paint Bucket can fill editable objects or place a canvas color layer above the panel background image.
-- ScratchArt creates a cover over the current panel so students can use the Eraser to reveal a hidden background image.
-- ScratchArt eraser strokes are committed as incremental undo steps, so Undo removes the latest reveal stroke without losing the background.
-- Eraser thickness controls use three circle-size buttons for fast ScratchArt reveal work.
-- Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
-- Custom sticker / stamp tools, including teacher-uploaded image stickers
-- Graph makers for bar, line, area, pie, and picture graphs, plus canvas-native concept maps
-- Picture Graphs support vertical or horizontal stacks, a built-in sample icon catalog, locally bundled Smithsonian Open Access animal photos, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
-- Concept Maps use draggable editable nodes, live connectors, one-click child nodes, optional node images, visible node links, and Ctrl/Cmd-click link opening on the board
-- Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
-- Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
-- Template insertion with grouped objects for easier moving and resizing
-- Classroom Widgets include embedded board controls such as Poll, Random Pick, Wheel Spinner, Big Link, Work Mode, Traffic Light, Timer, Scoreboard, and Progress Race.
-- Classroom Widgets also open standalone classroom activity tools in new tabs: Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, and Quiz & Flashcard Studio.
-- Teacher mode and student mode
-- Assignment mode with protected teacher layer and editable student layer
-- Answer key tagging and show/hide toggle
-- Audio notes with upload, record, and playback
-- Local collaboration across browser tabs/windows using `BroadcastChannel`
-- Live local collaborator cursors
-- Cloud collaboration through the optional Google Apps Script backend
-- Comment moderation dashboard
-- Student turn-ins saved through Google Drive + Sheets
-- Restore points / checkpoints
-- PNG export and PDF export
-- Local `.drawsplat.json` save/load
-- Playful TNT reset effect to clear the current panel and start over
-- Public Support and Guides pages for setup help, classroom activities, and visual reference articles
+<details>
+<summary><strong>Looking for older release details or implementation notes?</strong></summary>
 
-## Local use
+The former long README is preserved in [README-history.md](README-history.md). It includes dated changes, earlier terminology, legacy setup notes, and version history. Use the current wiki for present-day instructions.
 
-Open `index.html` in a modern browser to see the public DrawSplatTM information page and choose between the Whiteboard and Teacher Admin. Open `app/whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
+- [Versioned release documents](docs/release-notes/)
+- [GitHub release downloads](https://github.com/mguhlin/drawsplat/releases)
+- [Support wiki maintenance](https://splatworks.org/wiki/support-wiki-maintenance.html)
 
-## Hosting
+</details>
 
-You can host DrawSplatTM on:
+## Repository guide
 
-- GitHub Pages
-- Cloudflare Pages
-- a district or campus web server
-- a static website host
-- any simple file server that serves HTML, CSS, and JavaScript
+| Location | Contents |
+| --- | --- |
+| [`app/`](app/) | DrawSplat whiteboard entry point and application files. |
+| [`splatworks/`](splatworks/) | Office apps and the PlanSplat planner. |
+| [`solutions/`](solutions/) | Standalone media, creation, teaching, and productivity tools. |
+| [`games/`](games/) | Typing adventures, puzzles, and other games. |
+| [`wiki/`](wiki/) · [`guides/`](guides/) · [`docs/`](docs/) | Published guidance and technical source documentation. |
+| [`data/drawsplat-tools.json`](data/drawsplat-tools.json) | Studio’s application and tool registry. |
+| [`server/`](server/) | Optional backend implementations and deployment files. |
+| [`scripts/`](scripts/) · [`tests/`](tests/) | Build, packaging, maintenance, and verification tools. |
 
-The public project site is intended to run at [https://drawsplat.org](https://drawsplat.org) from the GitHub repository through Cloudflare Pages. Local testing still works from any static file server, such as `http://localhost:8000/`.
+## Licensing and user content
 
-For Cloudflare Workers/Pages static asset deploys, keep `.assetsignore` in the repository root. The deploy asset directory is the project root, so Git metadata and local-only folders such as `.git/`, `.codex/`, `server/`, and `node_modules/` must be excluded from the asset upload.
+SplatWorks is an umbrella name; component licenses still apply.
 
-## Storage modes
+- The DrawSplat whiteboard, standalone tools/widgets, and backends generally use **AGPL-3.0-or-later**, subject to component notices.
+- **WriteSplat, GridSplat, ListSplat, ShowSplat, and LayoutSplat** use **GPL-3.0-only**. Follow each component’s bundled notices.
+- Software use in schools and districts is free under the applicable open-source terms. Optional implementation, training, support, or custom-development services are separate.
+- User-created boards, documents, student work, uploads, and exports belong to their respective authors or controlling organizations.
 
-Teacher Admin supports four storage choices:
-
-- **Google Apps Script + Drive**: current cross-device classroom option. Save/load, cloud sync, templates, and turn-ins use the Apps Script backend.
-- **Browser-only timed session**: stores work in the browser autosave and refreshes an expiration timer on each save. When the timer expires, the next board load clears the local autosave. This is useful for temporary sessions such as workshops, labs, or shared devices.
-- **MySQL backend**: connected private online Save/Open through a portable HTTPS API on Railway, DigitalOcean, or an existing MySQL 8 server. Boards, including added audio/video notes, belong to the signed-in account. Saving is explicit, with revision conflict checks; Google classroom features remain separate. The browser never connects directly to MySQL.
-- **Standalone server folder**: planned backend mode for self-hosted deployments. Static HTML cannot write into a server sub-folder by itself; this mode needs an API endpoint such as `/api/drawsplat/session` to accept board JSON/media and expire it after 24 hours or another configured TTL.
-
-## Backend setup
-
-Setup instructions live in scenario-specific docs so you only read what's relevant:
-
-- **Browser-only** &mdash; [`docs/setup-browser.md`](docs/setup-browser.md). No backend, no accounts. Boards autosave to `localStorage`.
-- **Google Apps Script** &mdash; [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md). Cloud saves, collaboration rooms, full Compliance Console, Family Access Tools. The supported production path today.
-- **MySQL** &mdash; [`docs/setup-mysql.md`](docs/setup-mysql.md). Private account-owned Save/Open, tested against real MySQL 8.4. Includes hosting, verified TLS, migration, and backup instructions; advanced district features require separate validation.
-
-A side-by-side capability comparison and a quick "which one are you?" router lives in [`docs/setup.md`](docs/setup.md).
-
-The Teacher Admin page (`admin/admin.html`) is the teacher configuration surface once you've finished any of the three setups. It keeps database credentials on the server. MySQL student launch links include only the public API URL and lesson settings; account tokens and database passwords are never included. Compliance operators can use the unlinked internal console at `admin/compliance.html`.
-
-### Shared classroom board workflow (Google Apps Script)
-
-1. Teacher opens DrawSplatTM, switches to **Education Tools**, and enables assignment mode.
-2. Teacher creates the panels needed for table groups, adds backgrounds/templates/prompts, and starts **Cloud Sync** with a unique room name.
-3. Optional but recommended: teacher enters a room password before starting Cloud Sync.
-4. Teacher uses `admin/admin.html` or **Copy Student Link** in the Collaboration section. DrawSplatTM generates the student URL for the current room and copies it to the clipboard.
-5. Students open that link, enter the room password, and join in student mode.
-6. Students can add student-layer work such as images, sticky notes, Mermaid diagrams, word clouds, text, and drawings.
-7. Student saves are merged into the room state in Google Drive. The Apps Script backend preserves teacher panel backgrounds and teacher-layer objects when a student client saves.
-
-This is designed for small-group whiteboards where each shared DrawSplatTM room is a unique whiteboard instance. The generated student link includes `role=student` and the room name so students open directly into the correct shared board.
-
-The Apps Script backend can store:
-
-- saved boards
-- board preview images
-- collaboration room states
-- shared templates
-- student turn-ins
-
-It also logs metadata in Google Sheets tabs for boards, rooms, templates, and turn-ins. Room passwords are stored as salted SHA-256 hashes, not as plain text.
-
-## Collaboration modes
-
-### 1. Local sync
-Uses the browser `BroadcastChannel` API. This works across open tabs or windows on the same host when they join the same room.
-
-### 2. Cloud sync
-Uses the optional Apps Script backend so different devices can share the same room state through Google Drive + Sheets.
-
-## Student turn-ins
-
-Students can enter their name and submit a board. Teachers can review turn-ins from within the app when the Apps Script backend is configured.
-
-## Helpful shortcuts
-
-- `Shift + click` — multi-select
-- `Drag on blank canvas` — marquee select
-- `Ctrl/Cmd + C` — copy selection
-- `Ctrl/Cmd + V` — paste selection
-- `Ctrl/Cmd + D` — duplicate selection
-- `Ctrl/Cmd + G` — group selection
-- `Ctrl/Cmd + Shift + G` — ungroup selection
-- `Ctrl/Cmd + Z` — undo
-- `Ctrl/Cmd + Shift + Z` — redo
-- `Double-click a shape` — edit text directly inside the object
-- `Ctrl/Cmd + Enter` — apply inline text edits
-- `Escape` — cancel inline text edits
-
-## Notes for schools and districts
-
-- Review Apps Script deployment permissions before enabling student saving or turn-ins.
-- Large embedded images create larger board files. Resize images when possible.
-- Cloud sync uses a lightweight polling approach with last-write-wins behavior.
-- Assignment mode is designed for teacher-created prompts with student work completed on a separate layer.
-- The TNT reset asks for confirmation before clearing the current panel.
-
-## Standalone multi-user roadmap
-
-DrawSplatTM is currently a static app with optional Google Apps Script persistence. To make it a true standalone whiteboard where multiple people can add content, move objects, and interact with panels at the same time, the clean next step is to split the product into a front end plus a real application backend.
-
-Recommended architecture:
-
-- **Frontend app**: keep the current SVG/canvas board model, but move from one large `app.js` file toward modules such as `board-state`, `rendering`, `tools`, `collaboration`, `auth`, and `admin`.
-- **Realtime server**: use WebSockets or WebRTC data channels backed by a server authority. Send object-level operations such as `object:create`, `object:update`, `object:delete`, `panel:switch`, and `cursor:update` instead of repeatedly saving the whole board.
-- **Persistence database**: store organizations, users, rooms, boards, panels, objects, templates, submissions, and audit events in PostgreSQL or another durable database. Keep large binary uploads in object storage such as S3-compatible storage, Google Cloud Storage, or district-hosted storage.
-- **Conflict model**: use server-ordered operations first. If offline editing becomes important, graduate to CRDT-style object records with per-object timestamps or vector clocks.
-- **Permissions**: enforce roles on the backend. Front-end hidden controls are useful for clarity, but teacher/admin privileges, student layer locks, board deletion, and Google settings must be checked server-side.
-
-Suggested login and workspace split:
-
-- **Education login**: a split student/teacher SSO screen. Teachers authenticate with district Google/Microsoft SSO and land in a class/admin dashboard. Students authenticate or join through class/room links and land directly on the active board with student permissions.
-- **Adult/small-team login**: a separate single-user or team workspace path with email/password, passkeys, or Google/Microsoft SSO. This path should default to Productivity mode and avoid classroom language unless the user enables it.
-- **Teacher admin page**: move Google setup, class rosters, room passwords, template galleries, turn-ins, moderation, exports, and audit logs into `/admin` or a teacher dashboard that students never load.
-- **Student board page**: keep the board focused on creation. Students should see the canvas, approved tools, panel navigation, submit/status controls, and only the collaboration details needed to work.
-- **Google integration boundary**: treat Google Drive/Sheets as one backend provider behind an integration service. Teachers configure it once in admin; student clients should never see the Script URL or raw provider settings.
-
-Data model to plan for:
-
-- `organizations`: district, school, team, or personal workspace
-- `users`: identity, role, display name, SSO provider
-- `classes`: teacher-owned groups, rosters, join codes
-- `boards`: title, owner, workspace type, permissions, current version
-- `panels`: ordered board pages with background/template metadata
-- `objects`: whiteboard items with type, geometry, layer, lock state, content, and media references
-- `sessions`: active room membership, cursors, presence, and connection state
-- `submissions`: student turn-ins, snapshots, teacher feedback, timestamps
-- `integrations`: Google/Microsoft/storage configuration visible only to admins
-- `audit_events`: room creation, joins, deletes, exports, permission changes, and moderation actions
-
-The first static step toward that split is included in this build: `admin/admin.html` now owns Google setup and classroom link generation, while the board Options dialog links teachers to admin instead of showing the raw Apps Script URL field.
-
-## License
-
-DrawSplatTM uses a dual-license model.
-
-- Free/open source use is covered by **AGPL-3.0-or-later**. See `LICENSE`.
-- Paid school, district, hosted, embedded, closed-source, or site-license use can be covered by a separate commercial license. See `COMMERCIAL-LICENSE.md`.
-- The DrawSplatTM name, logo, splash artwork, and visual identity are project branding. See `NOTICE.md`.
-
-Boards, drawings, and student work created by users belong to their respective authors and are not covered by this license.
-
-## Language entry pages
-
-DrawSplatTM includes multiple entry pages so schools can share the interface in different languages:
-
-- `app/whiteboard.html` — English
-- `languages/index-sp.html` — Spanish
-- `languages/index-vn.html` — Vietnamese
-- `languages/index-ab.html` — Arabic
-- `languages/index-cn.html` — Chinese
-- `languages/index.uh.html` — Urdu / Hindi
-
-## Version notes for this build
-
-This build includes:
-
-- modern inline SVG toolbar icons with consistent visual style
-- traditional File / Edit / Insert / Tools / Options dropdown menus in the top bar
-- a cleaner top navigation bar with bulky action buttons moved into menus
-- more colorful simple-mode tool icons
-- Mermaid Diagram and Word Cloud access from the Simple interface
-- sticky-note color swatches in both Simple and Advanced views
-- tighter selection bounds for generated word clouds and Mermaid diagrams
-- transparent image auto-cropping on insert when the file has unused transparent padding
-- text-inside-shape support
-- grouped template insertion
-- zoom display fix
-- audio notes
-- answer key support
-- fill patterns
-- live local cursors
-- custom image stickers
-- multilingual entry pages
-- Simple / Advanced interface toggle
-- double-click inline shape text editing
-- icon-first toolbars with hover/focus tooltips
-- accessible icon buttons with `aria-label`, `title`, and keyboard-focus tooltip support
-
-## Icon-first interface
-
-This build reduces word-heavy controls by converting the most common toolbar buttons into self-explanatory icons. Hovering over an icon, focusing it with the keyboard, or using a screen reader still exposes the full action name.
-
-The icon pass is applied to:
-
-- drawing tools
-- shape tools
-- undo / redo
-- image load
-- duplicate
-- arrange tools
-- panel tools
-- export tools
-- common selected-object actions
-- zoom controls
-
-Less obvious teacher/admin actions can still show icon + text where clarity matters.
-
-## Panel switching fix
-
-This build updates panel navigation so tabs switch by each panel's stable panel ID rather than by array position. This prevents the issue where adding a new panel and switching to it could make it difficult or impossible to return to Panel 1.
-
-Related behavior:
-
-- panel tab clicks use `data-panel-id`
-- `switchPanel(panelId)` finds the correct panel by ID
-- inline text edits are committed before switching panels
-- selection, connector state, marquee selection, drawing state, and drag state are cleared on panel switch
-- deleting a panel safely reassigns the active panel
-
-## Detailed version history
-
-The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
-
-## Version 3.0.30 changes
-
-v3.0.30 shares Picture Graph presets with concept-map node images.
-
-- Concept-map nodes can now use Picture Graph presets, including animal emojis and Smithsonian photo presets.
-- The Simple-view floating Image button opens a small picker with preset, upload, and clear options.
-- Advanced concept-map node controls now include a Picture Graph preset dropdown plus Use Preset and Clear Image buttons.
-- Service-worker cache key bumped to `drawsplat-v3.0.30`.
-
-## Version 3.0.29 changes
-
-v3.0.29 makes concept-map node images easier to add in Simple view.
-
-- Selecting a concept-map node now shows a floating Image button in the selection toolbar.
-- The Image button attaches an uploaded picture directly to the selected concept-map node.
-- Service-worker cache key bumped to `drawsplat-v3.0.29`.
-
-## Version 3.0.28 changes
-
-v3.0.28 makes concept-map connector labels editable directly on the connector line.
-
-- The Simple-view floating Label button now opens an inline editor on the connector instead of a dialog.
-- Double-clicking a connector, pressing Enter with a connector selected, or typing while it is selected starts direct label editing.
-- Service-worker cache key bumped to `drawsplat-v3.0.28`.
-
-## Version 3.0.27 changes
-
-v3.0.27 makes connector labels available in Simple view.
-
-- Selecting a connector now shows a floating Label button in the selection toolbar.
-- The Label button opens a compact connector-label dialog with label text and position controls.
-- Service-worker cache key bumped to `drawsplat-v3.0.27`.
-
-## Version 3.0.26 changes
-
-v3.0.26 refines concept-map connector labels to match relationship-phrase diagrams.
-
-- Connector labels now render inline with the connector angle using a subtle white backing.
-- Connector labels support short multi-line phrases from the inspector textarea.
-- Service-worker cache key bumped to `drawsplat-v3.0.26`.
-
-## Version 3.0.25 changes
-
-v3.0.25 adds concept-map connector and node-shape controls.
-
-- Selecting a concept-map connector now shows connector label controls in the inspector.
-- Connector labels can be typed and moved along the connector with a position slider.
-- Selected connectors now use the main Stroke color, Stroke width, and Opacity controls.
-- Selecting a concept-map node now shows a Shape selector for rectangle, square, ellipse, circle, diamond, triangle, callout, and speech bubble.
-- Service-worker cache key bumped to `drawsplat-v3.0.25`.
-
-## Version 3.0.24 changes
-
-v3.0.24 fixes group dragging for multi-selected concept-map nodes and other ungrouped objects.
-
-- Pressing an already-selected item no longer collapses a multi-selection before drag starts.
-- Multi-object drag now moves only editable, unlocked, non-connector objects while selected connectors continue to follow linked node endpoints.
-- Service-worker cache key bumped to `drawsplat-v3.0.24`.
-
-## Version 3.0.23 changes
-
-v3.0.23 fixes the public Features page Concept Maps preview.
-
-- Added `assets/feature-concept-map.svg` so Concept Maps no longer reuse the Mermaid Diagrams preview.
-- Service-worker cache key bumped to `drawsplat-v3.0.23`.
-
-## Version 3.0.22 changes
-
-v3.0.22 fixes the website Picture Graph preview image.
-
-- Replaced the emoji-based Picture Graph website illustration with embedded bundled animal photos so systems without color emoji fonts do not show small placeholder boxes.
-- Service-worker cache key bumped to `drawsplat-v3.0.22`.
-
-## Version 3.0.21 changes
-
-v3.0.21 makes concept mapping work directly on the whiteboard canvas.
-
-- The Concept Map button now inserts editable nodes and live connectors instead of requiring typed outline text first.
-- Select a concept node to add a child, set or open a link, or attach an image from the inspector controls.
-- Concept nodes can be dragged, resized, double-clicked for text editing, duplicated, aligned, grouped, and styled like other DrawSplatTM objects.
-- Ctrl/Cmd-click opens a linked concept node in a new tab.
-- Service-worker cache key bumped to `drawsplat-v3.0.21`.
-
-## Version 3.0.20 changes
-
-v3.0.20 added the first concept map / mind map renderer.
-
-- Added a Concept Map renderer for radial mind maps and left-to-right concept maps.
-- Added support for child ideas, optional node images, visible node links, and Ctrl/Cmd-click link opening on the board.
-- Service-worker cache key bumped to `drawsplat-v3.0.20`.
-
-## Version 3.0.19 changes
-
-v3.0.19 adds a local Smithsonian Open Access animal image library for Picture Graphs.
-
-- Added ten classroom-sized Smithsonian Open Access animal photos under `assets/smithsonian-animals/`.
-- Picture Graph preset selectors can now use local image assets as well as emoji symbols.
-- Selected local image presets are embedded into the generated graph so inserted graphs continue to work offline and in exports.
-- Added visible Smithsonian Open Access Animal Images credit inside the Picture Graph dialog.
-- Service-worker cache key bumped to `drawsplat-v3.0.19`.
-
-## Version 3.0.18 changes
-
-v3.0.18 fixes large GIF creation.
-
-- GIF creation no longer pushes large encoded frames into arrays in a single spread operation, which could trigger browser argument-limit errors such as "Too many functions" or similar runtime failures.
-- GIF frames are capped to a practical maximum dimension so large selected images still produce manageable classroom GIFs.
-- Service-worker cache key bumped to `drawsplat-v3.0.18`.
-
-## Version 3.0.17 changes
-
-v3.0.17 improves public feature-page illustration layout.
-
-- Feature preview illustrations now use `object-fit: contain` with internal padding so the full interface illustration stays visible inside each card.
-- Service-worker cache key bumped to `drawsplat-v3.0.17`.
-
-## Version 3.0.15 changes
-
-v3.0.15 adds public website feature illustrations.
-
-- Added a dedicated `features.html` page for DrawSplatTM’s visual creation tools.
-- Added local SVG illustrations for Graph Creator, Picture Graph, Mermaid Diagram, Dot Pictures, Sticker Library, and Collage.
-- The main landing page now includes a tool preview section using those illustrations.
-- Pricing and landing navigation now point to the dedicated features page.
-- Service-worker cache key bumped to `drawsplat-v3.0.15`.
-
-## Version 3.0.14 changes
-
-v3.0.14 expands Crop Image shape masks.
-
-- The Crop Image shape selector now includes grouped silhouette masks for animals, household items, hearts/arrows, and transport.
-- New masks include bird, butterfly, cat, dog, fish, dolphin, shark, turtle, rabbit, frog, horse, dinosaur, house, birdhouse, drop, plug, key, phone, cup, pan, lamp, faucet, wrench, gamepad, heart variants, arrow variants, airplane, car, bike, submarine, and hot air balloon.
-- The new masks are built-in vector silhouettes so DrawSplatTM stays self-contained.
-- Service-worker cache key bumped to `drawsplat-v3.0.14`.
-
-## Version 3.0.13 changes
-
-v3.0.13 improves image masks for classroom photos and graphics.
-
-- Star, heart, diamond, triangle, and pentagon image masks now use a safer centered content fit so important photo content is less likely to be clipped away by sharp or narrow parts of the shape.
-- The Crop Image preview now uses the same safer fit as the whiteboard rendering, so the preview better matches what appears on the board.
-- Service-worker cache key bumped to `drawsplat-v3.0.13`.
-
-## Version 3.0.12 changes
-
-v3.0.12 simplifies Picture Graph for picture-first use.
-
-- The Picture Graph dialog no longer shows the raw data editor or the row-picture list during normal use.
-- The graph preview is now the main workspace, with a much wider visual area.
-- Click the category picture on the bottom or side of the graph to choose a preset icon, upload an image, or remove the custom picture.
-- Drag inside the graph area to increase or decrease the count without typing.
-- Service-worker cache key bumped to `drawsplat-v3.0.12`.
-
-## Version 3.0.11 changes
-
-v3.0.11 makes Picture Graph editing more visual for early readers and picture-first use.
-
-- The Picture Graph preview can now be edited directly: drag up or down in a vertical category, or left and right in a horizontal category, to change the count.
-- Category labels on the rendered graph are now shown as the row picture/icon instead of text words like Pizza or Tacos.
-- Row controls include plus/minus count buttons for precise changes without typing data.
-- The raw data box remains available for keyboard entry and exact edits, but it uses less space in the Picture Graph dialog.
-- The Picture Graph preview area is larger so students can work mainly from pictures.
-- Service-worker cache key bumped to `drawsplat-v3.0.11`.
-
-## Version 3.0.10 changes
-
-v3.0.10 improves the Picture Graph row editor layout.
-
-- Picture Graphs now use a wider builder panel than standard charts.
-- Row picture controls have more vertical room and wider preset dropdowns.
-- On small screens, each row stacks its preset, upload, and remove controls so labels stay readable.
-- Service-worker cache key bumped to `drawsplat-v3.0.10`.
-
-## Version 3.0.9 changes
-
-v3.0.9 makes the Picture Graph preset catalog usable per row.
-
-- Each Picture Graph row now has its own preset icon selector, so categories like Pizza, Tacos, and Salad can each use a different built-in symbol without uploading images.
-- Uploaded per-row images still work and continue to override the fallback image or typed fallback symbol.
-- The row picture controls were widened so the preset selector, upload button, and remove button fit together more clearly.
-- Service-worker cache key bumped to `drawsplat-v3.0.9`.
-
-## Version 3.0.8 changes
-
-v3.0.8 adds classroom image-shape masking and picture graph sample icons.
-
-- The Crop Image dialog can now apply photo masks: circle, oval, triangle, diamond, pentagon, hexagon, octagon, star, and heart.
-- Masked photos stay editable DrawSplatTM image objects, so they can still be moved, resized, duplicated, exported, and re-cropped.
-- Picture Graphs now include a built-in sample icon catalog with food, animals, life science, colored candies, school, and weather symbols.
-- Colored candy presets are generic colored circles without M&M branding or logos.
-- Service-worker cache key bumped to `drawsplat-v3.0.8`.
-
-## Version 3.0.7 changes
-
-v3.0.7 improves multilingual template behavior.
-
-- Public background-template gallery text now follows the selected language from `?lang=`, saved language choice, or browser preference.
-- Template gallery links pass the language into DrawSplatTM when opening a template.
-- Built-in editable templates now insert localized labels for Frayer, KWL, T-chart, storyboard, Venn, brainstorm, and timeline templates.
-- SVG panel backgrounds opened from the gallery now replace common embedded template labels with localized text when possible.
-- Service-worker cache key bumped to `drawsplat-v3.0.7`.
-
-## Version 3.0.5 changes
-
-v3.0.5 improves Picture Graphs for category-specific images.
-
-- Picture Graph rows can now each have their own uploaded image, such as pizza for Pizza, tacos for Tacos, and salad for Salad.
-- The original typed/uploaded fallback symbol remains available for rows that do not have a custom image.
-- Double-click re-editing preserves per-category image assignments.
-- The homepage and README feature lists now describe per-category picture graph images.
-- v3.0.6 translates the dynamic Picture Graph row-image labels across supported interface languages.
-- Service-worker cache key bumped to `drawsplat-v3.0.6`.
-
-## Version 3.0.4 changes
-
-v3.0.4 adds a classroom picture graph maker.
-
-- Added a **Picture Graph** builder that turns label/value rows into a pictograph-style bar graph.
-- Supports vertical or horizontal picture bars, a custom typed symbol or uploaded picture symbol, configurable scale (`each picture =`), and optional number labels.
-- Inserted picture graphs behave like normal DrawSplatTM image objects: move, resize, duplicate, export, and double-click to edit the graph settings later.
-- Added Picture Graph access in the Insert menu, advanced Insert / Arrange panel, and simple-mode extras.
-- Service-worker cache key bumped to `drawsplat-v3.0.4`.
-
-## Version 3.0.3 changes
-
-v3.0.3 improves tool palette clarity.
-
-- Added example-style icons for Dot Pictures, Dot Paint, Mermaid Diagram, and the grouped Shapes/Lines control.
-- Grouped line, arrow, rectangle, ellipse, connector, diamond, triangle, callout, and speech tools behind a Shapes/Lines pop-up.
-- Added visual color grouping around navigation, drawing, dot-picture, shape, and text/comment tools.
-- Clarified Dot Paint status text so users know it works on inserted Dot Picture dots.
-- Service-worker cache key bumped to `drawsplat-v3.0.3`.
-
-## Version 3.0.2 changes
-
-v3.0.2 fixes remaining welcome-dialog translation gaps.
-
-- Added exact split-node translations for the welcome dialog tip body text in Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi.
-- Kept the translation merge scoped to visible DOM text only, avoiding risky prefix matches in runtime status messages.
-- Service-worker cache key bumped to `drawsplat-v3.0.2`.
-
-## Version 3.0.1 changes
-
-v3.0.1 improves multilingual coverage for the whiteboard app.
-
-- Added runtime translation coverage for dynamically created menus, dialogs, option labels, placeholders, status chips, and custom confirmation dialogs.
-- Added supplemental Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi strings for newer v3 tools such as Dot Pictures, Mosaic Images, Collage, Emoji Mixer, GIF creation, object alignment, and import dialogs.
-- Prevented the translation walker from touching user-created board content inside the SVG canvas.
-- Service-worker cache key bumped to `drawsplat-v3.0.1`.
-
-## Version 3.0 changes
-
-v3.0 adds the public site, pricing, teacher/admin separation, student privacy language, and MySQL self-hosting foundation.
-
-- Promoted the product-style front door to `index.html`, moved the English whiteboard app to `app/whiteboard.html`, and kept `pages/start.html` as a redirect.
-- Added `pages/pricing.html`. (Note: the v3.0 build originally listed individual / campus / district paid tiers. From v3.1.0 the model is free software + optional paid Support & Professional Learning services — see `COMMERCIAL-LICENSE.md`.)
-- Added `legal/terms-privacy.html` with student privacy terms, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
-- Added `admin/admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
-- Added `admin/mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.
-- Added `server/mysql-backend/` with an Express/MySQL starter API, schema, `.env.example`, and setup guide.
-- Added `pages/background-templates.html` and original education SVG panel backgrounds that can launch directly in DrawSplatTM with `?bgTemplate=...`.
-- Added standalone architecture documentation for SSO, teacher/student split, realtime collaboration, and provider-backed storage.
-- Service-worker cache key bumped to `drawsplat-v3.0.0`.
-
-## Version 2.16 changes
-
-v2.16 improves image output quality and adds collage creation.
-
-- Updated Mosaic Images to use automatic high-resolution tile sizes by default instead of shrinking images into 320 x 220 tiles.
-- Added manual Mosaic tile size overrides; leaving Tile W and Tile H at `0` keeps auto high-resolution sizing.
-- Added a new Collage tool with preset layouts: Two Column, Feature + Two, Four Grid, and Story Strip.
-- Added Collage to the Insert menu, Insert submenu choices, and simple toolbar.
-- Service-worker cache key bumped to `drawsplat-v2.16.0`.
-
-## Version 2.15 changes
-
-v2.15 improves tablet use and image workflows.
-
-- Added touch-friendly multi-select from the floating selection toolbar.
-- Increased touch target sizes, resize handles, and canvas/touch gesture handling for iPad and Android browser use.
-- Added Mosaic Images to combine selected images into a single collage/mosaic image.
-- Updated multi-image GIF creation to preserve original image resolution instead of shrinking frames through the former size slider.
-- Service-worker cache key bumped to `drawsplat-v2.15.0`.
-
-## Version 2.14 changes
-
-v2.14 adds student-friendly creation tools for visuals, animation, and simple data displays.
-
-- Added Dot Pictures with a side toolbar icon, Insert menu submenu, color palette, reset colors, and click-drag dot painting.
-- Added Emoji Mixer with a small curated classroom emoji set and simple emoji mashups.
-- Added Create GIF from selected board objects/images, with speed and size controls plus a preview/download workflow.
-- Added Graph Creator for bar, line, area, and pie graphs from label/value rows.
-- Added multi-image upload from the main Load Image file picker.
-- Added About dialog version display and PayPal donation link text: "Buy the Developer a Cup of Coffee?"
-- Service-worker cache key bumped to `drawsplat-v2.14.0`.
-
-## Version 2.13 changes
-
-v2.13 is an interface polish release focused on clearer controls and cleaner inserted objects.
-
-- Replaced the older emoji/glyph toolbar icons with a centralized inline SVG icon system in `app.js`.
-- Added traditional File, Edit, Insert, Tools, and Options dropdown menus to the top bar.
-- Moved bulky header action buttons such as Undo, Redo, Shortcuts, Options, About, Export, and TNT into those menus while preserving the existing button IDs and event handlers.
-- Streamlined the Options menu with a View submenu for switching between Simple View and Advanced View.
-- Moved built-in classroom templates into Insert menu submenus and hid the old Templates sidebar section.
-- Kept Google-backed template actions available from Insert as "Save Current Frame as Template" and "Load Saved Template Gallery".
-- Recreated `apps-script/Code.gs` for Google Drive/Sheets saves, templates, turn-ins, password-protected collaboration rooms, and student-safe room merging.
-- Added a classroom sharing flow with room passwords, copied student links, and URL-based student role lock so students cannot edit the Google Web App Script setting or teacher backgrounds.
-- Added per-tool color accents in Simple view while keeping Advanced view more restrained.
-- Added Simple-view buttons for Mermaid Diagram and Word Cloud.
-- Added sticky-note color swatches in Simple view directly beneath the Sticky Note tool and in Advanced view beneath the Sticky color selector.
-- Updated the Simple-view TNT reset button with a red three-stick dynamite icon and a canvas detonation effect before clearing the current panel.
-- Tightened generated word cloud SVGs so inserted clouds use a content-sized transparent viewBox instead of a large white rectangle.
-- Tightened Mermaid diagram SVGs before insertion where the rendered SVG exposes a measurable content box.
-- Added non-destructive transparent-image cropping on insert for PNG/WebP/GIF-style images with unused transparent padding. Regular photos keep their full rectangle.
-- Preserved existing board behavior and object formats; older boards still open normally.
-- Service-worker cache key bumped to `drawsplat-v2.13.0`.
-
-## Version 2.10 changes
-
-v2.10 adds a self-contained word cloud generator. No external library required — algorithm and rendering live in `app.js`.
-
-How it works
-- **Word Cloud** button in the **Insert / Arrange** sidebar section in **Advanced view** (`data-ui="advanced"`).
-- Opens a side-by-side dialog: textarea on the left, live SVG preview on the right, plus a controls row for **Layout** (Rectangle / Circle / Oval) and **Palette** (Vibrant / Pastel / Warm / Cool / Monochrome).
-- Words are sized by frequency: type the same word multiple times to make it bigger, or use explicit `word:weight` syntax (e.g. `learn:5`). Sort happens automatically — heaviest words placed first, others spiral around them.
-- Layout uses Archimedean spiral placement with axis-aligned bounding-box collision tests. Stops when a word can't fit; the rest are dropped silently rather than overlapping. Up to 800 spiral iterations per word.
-- **Insert** rasterizes the SVG to a `data:image/svg+xml;base64,...` URL and adds it to the canvas as a regular `image` object — resizable, draggable, croppable, copyable. Source/layout/palette are stored on the object for re-edit.
-- **Copy PNG** rasterizes via the same path used by Mermaid (white background fill, ≥1600 px target so it's sharp at retina resolution) and writes to the system clipboard via `ClipboardItem`.
-- **Re-edit:** double-click a word cloud on the canvas (or single-click then click again) to reopen the editor with the saved source / shape / palette pre-filled. Apply updates the existing object in place; the previous crop is cleared.
-
-Algorithm details (for tinkering)
-- `parseWordList` accepts newline- or comma-separated input. Lines matching `/^(.+?):\s*(\d+(?:\.\d+)?)$/` are read as explicit `word:weight`; other lines have their occurrences counted as implicit weight.
-- Font size mapping: `minSize + ((weight − minWeight) / range) × (maxSize − minSize)` with `minSize=14`, `maxSize=64`. Approximate word bounding box: `width = fontSize × 0.58 × wordLength + 10`, `height = fontSize × 1.18`.
-- Spiral placement: angular step `0.22` rad, radial step `0.55` px per iteration. Even-indexed words start at θ=0, odd-indexed at θ=π — gives the cloud bilateral spread instead of unrolling from one side.
-- Shape constraint: for `circle` / `oval`, all four corners of the candidate bounding box must satisfy `(dx/rx)² + (dy/ry)² ≤ 1` against the canvas's inscribed ellipse. Words that can't find a valid position within iteration cap are skipped.
-- Output canvas is 720×480 in the dialog preview. The SVG embeds its own `viewBox` so it scales cleanly when resized on the board.
-
-Compatibility
-- No board-data migration. v2.9 boards open verbatim.
-- New optional fields on image objects: `wordCloudSource`, `wordCloudShape`, `wordCloudPalette`. Image objects without them behave exactly like before — the double-click handler only reopens the word cloud editor when those fields are present.
-- Service-worker cache key bumped to `drawsplat-v2.10.0`.
-
-### v2.10.1 follow-ups
-
-- **Random word rotation.** New **Rotation** dropdown in the Word Cloud dialog: `Horizontal` (all words flat), `Mix 0/90°` (~32% of words rotated to vertical), or `Random angles` (each word picks from 0°, ±15°, ±30°, ±45°, ±60°, ±75°, ±90° with a bias toward 0°). Rotation is applied via SVG `transform="rotate(angle cx cy)"` around each word's visual center.
-- **Rotation-aware collision** — for non-axis-aligned angles, the collision rectangle expands to the word's rotated AABB: `w' = |w·cos θ| + |h·sin θ|`, `h' = |w·sin θ| + |h·cos θ|`. So rotated words still get conservative collision avoidance (slight gaps, no overlaps). 0° and ±90° hit fast paths that just swap or keep the original w/h.
-- **3D effects.** New **Effect** dropdown: `Flat`, `Drop Shadow`, `3D Extrude`. Drop Shadow renders one offset shadow `<text>` underneath each word at 28% black. 3D Extrude renders four progressively-darker offset layers underneath the top text plus a 0.6-px outline on the front face — gives an embossed/extruded look. All effects work with rotation; the transform is applied per-text.
-- **`type="button"` on every dialog button.** Defensive fix in case browser dialog/form interaction defaults caused the original "Generate doesn't do anything" report — buttons inside dialogs without explicit type can sometimes be treated as form submits.
-- **Cache key bumped to `drawsplat-v2.10.1`** to force fresh asset load.
-
-### v2.10.2 follow-ups
-
-- **Clipart-style shape masks added.** The Layout dropdown is now grouped into four sections:
-  - **Geometric** — Rectangle, Circle, Oval, Diamond, Pentagon
-  - **Symbols** — Heart, Star, Cloud, Lightning
-  - **Things** — Apple, House, Pumpkin, Tree, Flower, Leaf, Sun, Moon, Globe, Rocket
-  - **Animals** — Dog, Cat, Bird, Fish, Whale, Dolphin, Horse, Pig, Cow, Butterfly, Bear, Mouse, Lion, Tiger, Rabbit, Turtle, Panda, Monkey, Frog, Penguin, Owl, Unicorn, Dragon, Octopus, Snail, Ladybug
-- **How the masks are built.** Two paths:
-  - Geometric / Symbols / Things have hand-authored SVG path data (eight `Path2D` strings on a 100×100 viewBox, scaled into the canvas at 92% to leave a safe margin). Filled black on an offscreen canvas; the alpha channel becomes the mask.
-  - Animals and many of the Things use the system **emoji font** rendered to canvas at ~88% size. The pixel data is alpha-thresholded (any non-near-white pixel becomes "inside the mask"). This gives DrawSplatTM ~30 free silhouettes without shipping more SVG path data — the OS supplies the artwork.
-  - Caveat: emoji rendering varies by OS. Modern macOS, iOS, Windows 10+, Android, and major Linux desktops with Noto Color Emoji all produce recognizable silhouettes. Old Linux installs without an emoji font may show empty boxes — fallback in that case is to choose a geometric or symbol shape instead.
-- **Spiral iteration cap raised to 1500** for shape-masked layouts (vs. 800 for rect) to give odd shapes — narrow/concave like Lightning, Octopus — enough attempts to find valid placements.
-- **Pixel-mask placement test:** for each candidate position, nine sample points are tested against the mask (4 corners + 4 edge midpoints + center). All nine must be inside the opaque region or the position is rejected.
-- Cache key bumped to `drawsplat-v2.10.2`.
-
-### v2.10.3 follow-ups
-
-- **Wordart-style templates.** A new row of one-click templates appears at the top of the Word Cloud dialog. Each template loads a curated word list, shape, palette, rotation, and effect, then auto-generates the preview:
-  - 📚 **Classroom** (apple shape, vibrant), 💖 **Friendship** (heart, warm), 🌳 **Growth Mindset** (tree, cool), 🚀 **Science** (rocket, cool), 🌍 **Earth Day** (globe, cool), 🎃 **Halloween** (pumpkin, warm), ⭐ **Birthday** (star, vibrant), 🦋 **Kindness** (butterfly, pastel), ☁️ **Feelings** (cloud, pastel), 🐳 **Ocean** (whale, cool), 🌙 **Space** (moon, monochrome), ⭐ **Vocab** (star, vibrant).
-  - Templates ship with 25–35 words apiece, with key words repeated to weight them larger. The shape, palette, and effect are tuned per template (e.g. Halloween defaults to 3D-extrude on a pumpkin; Kindness uses pastel butterfly with drop shadow).
-  - Wired through `_WORDCLOUD_TEMPLATES` in `app.js` and a `[data-wctpl]` button group in each HTML file. Click handler calls `_wcApplyTemplate(key)` which sets all five controls and re-runs `generateWordCloudPreview`.
-- **Shape silhouette is rendered as a faint colored background** behind the placed words. Previously the shape was only visible if many words happened to fall along the silhouette edge — for sparser word lists, a "heart" cloud just looked like a blob of words. Now:
-  - Path-based shapes (Heart, Star, Cloud, Apple, House, Diamond, Pentagon, Lightning) render as a soft fill of the palette's primary color at 18% opacity behind the words.
-  - Emoji shapes render the emoji itself at 14% opacity behind the words — preserving the colorful artwork at a level that doesn't drown the text.
-  - Geometric shapes (Circle, Oval) get a 13% opacity tinted background; Rectangle stays plain white.
-- **Emoji mask uses alpha channel, not brightness threshold.** Previously the canvas was filled white before drawing the emoji, then thresholded by RGB brightness. That fragmented light-colored emoji parts (peach skin tones, light pink, gradients). Now the canvas stays transparent, the emoji is drawn directly, and any pixel with alpha > 40 is part of the mask. Cleaner silhouettes for animals and gradient-heavy emoji.
-- Cache key bumped to `drawsplat-v2.10.3`.
-
-### v2.10.4 follow-ups
-
-- **Background controls promoted in Advanced view.** Set Background, Clear Background, and Remove BG Color used to be tucked inside a collapsed `<details>` Patterns section. They are now first-class buttons in the **Insert / Arrange** section so Advanced view has feature parity with Simple view's `simple-only` strip. The Patterns section keeps its background-pattern presets (Blank/Grid/Dots/Graph/Ruled/Isometric); the file inputs (`#bgImageInput`, `#removeBgColorPicker`) stay in Patterns.
-- **Right inspector sidebar is now collapsible on desktop.** The `Inspector` button in the header (`#inspectorToggleBtn`) — which previously only showed up on viewports ≤ 1180 px — is now visible in Advanced view at any width. Clicking it toggles `body.inspector-collapsed`; when collapsed, the inspector is hidden and the canvas grid expands from `290px 1fr 340px` to `290px 1fr`. State is persisted to `localStorage['drawsplat.inspectorOpen']`. Mobile (≤ 1180 px) still uses the slide-in overlay pattern, and Escape still closes that overlay.
-- **Click-outside-to-deselect fixed.** Previously the SVG's `100% × 100%` background rect (drawn at the start of every render to provide the panel pattern fill) intercepted blank-canvas clicks, so `e.target === svg` never matched and the selection outline persisted. Now the deselect check uses `!e.target.closest('.object')` — clicking anywhere not on a real object clears the selection (and starts a marquee). Resize handles still capture their own pointerdown via `stopPropagation`, so they're unaffected.
-- **Kid-friendlier tool icons.** The `toolIcons` map now uses colorful emoji wherever a clear option exists:
-  - Select 👆 (was ↖) · Laser 🔆 (was 🔴) · Line 📏 (was ╱) · Arrow ➡️ (was ➜) · Rectangle 🟦 (was ▭) · Ellipse 🟢 (was ◯) · Text 🅰️ (was T) · Diamond 🔶 (was ◇) · Triangle 🔺 (was △) · Callout 📢 (was ▣) · Comment 📌 (was 📍).
-  - Pen ✏️ · Eraser 🧽 · Sticky 🗒️ · Connector 🔗 · Speech 💬 · Audio 🎙️ stay the same — they were already kid-readable.
-  - Set Background also gets `🌄` (matches Simple view's button) instead of the duplicate `🖼️` shared with Load Image and Add Image.
-- Cache key bumped to `drawsplat-v2.10.4`.
-
-### v2.10.5 follow-ups
-
-- **Eraser tool restored.** Clicking an object with the eraser had been getting consumed by `objectDown`'s `e.stopPropagation()` (which runs before the SVG-level eraser handler can see the event), so the click selected the object instead of erasing it. Fix: `objectDown` now early-returns *without* calling `stopPropagation` when `tool === 'eraser'`, letting the click bubble to the SVG-level handler that filters and removes the object.
-- **Word cloud big-word placement.** With weights like `Diana:50, Peggy:50, Bruce:50, teamwork, amazing, incredible`, the heavy three were silently dropped because their fontSize-64 bounding boxes wouldn't fit inside concave masks like the star or butterfly. Two related changes:
-  - Default `maxSize` is now **54 for masked shapes** (up to 64 only when `shape === 'rect'`). Heavy words start smaller so they have a real chance of fitting.
-  - **Shrink-on-failure retry loop** — if a word can't be placed within the spiral iteration budget, fontSize is multiplied by 0.8 and the placement is retried. Up to 6 retries per word, floor of 8 px. In practice every requested word now gets placed somewhere.
-- **Word cloud double-click-to-edit hardened.** Two changes:
-  - Manual click-counter threshold raised from **400 ms → 500 ms** (the prior value was tight enough that the `render()` + `saveState()` between two clicks could push the second pointerdown past the window).
-  - Added an **SVG-level `dblclick` listener** as a safety net: if a dblclick bubbles up to the `<svg>`, we look up the underlying `.object` and open Word Cloud / Mermaid / inline text editor as appropriate. This catches cases where the per-element listener is lost across a re-render.
-- Cache key bumped to `drawsplat-v2.10.5`.
-
-### v2.10.6 follow-ups
-
-- **Follow Outline** is a new option in the Word Cloud's **Rotation** dropdown (alongside Horizontal / Mix 0/90° / Random angles). When selected, words are placed along the silhouette's perimeter, each rotated to follow the local tangent angle, and the interior is then filled with smaller horizontal copies of the same words to occupy the nooks.
-- **Edge tracing pipeline** (in `_wcEdgeAnchors`):
-  1. Scan the mask's alpha channel: a pixel is an "edge" if it's inside the mask but at least one 4-neighbor is outside.
-  2. Trace the **longest contour** by walking 8-connected unvisited edge pixels. Multi-component shapes (e.g. butterfly wings) keep the dominant contour and skip islands.
-  3. Resample the contour into N evenly-spaced anchors via cumulative arc length. N defaults to `max(28, words.length × 2)` to give each word a few candidate positions.
-  4. Tangent angle per anchor is `atan2(next.y − prev.y, next.x − prev.x)` clamped to **±90°** so text always stays right-reading.
-  5. Anchors are inset 14 px toward the centroid so words don't poke off the silhouette.
-- **Layered placement.** Outline pass uses moderate font sizes (16–38 px) with collision avoidance. Once the outline is laid down, a second pass spirals smaller copies (10–20 px, horizontal) into the interior, checking against the already-placed outline rectangles. This is the "fill the nooks" step.
-- **Helper extraction.** Spiral-with-shrink-on-failure logic moved into `_wcSpiralPlace(wd, fontSize, angle, W, H, mask, placed, maxIters, checkMask, startTheta)` so both the standard layout and the Outline mode's filler pass share the same code path. The bilateral start theta (`(i%2===0)?0:Math.PI`) is preserved.
-- **Behavior on `rect` shape.** Outline mode requires a mask, so picking it with the Rectangle layout falls through to the standard horizontal layout — there's no perimeter to trace. Pick any other shape (Heart, Star, Apple, Whale, etc.) for the outline effect.
-- **Caveats.** The outline is sampled at fixed N anchors, so very short word lists place sparsely along the curve while very long lists may have words bumping into each other (collisions skip an anchor and try the next, so words after a conflict shift down the perimeter). Concave silhouettes — Octopus, Butterfly, Lightning — produce dramatic but uneven results because tentacles/wings have a lot of perimeter relative to interior.
-- Cache key bumped to `drawsplat-v2.10.6`.
-
-What's NOT in this release (deliberate)
-- **Custom shape masking** (heart-shaped, USA-shaped, etc.) — would require canvas pixel testing of an upload mask. Considered for v3.x.
-- **Anti-stop-word filtering / stemming** — the algorithm uses raw input as-is. Users curate their word list before pasting.
-
-## Version 2.9 changes
-
-v2.9 adds [Mermaid](https://mermaid.js.org/) diagram support — flowcharts, sequence diagrams, ER, gantt, mind maps, and the rest of the Mermaid syntax — rendered locally inside DrawSplatTM.
-
-How it works
-- A new **Mermaid Diagram** button appears in the **Insert / Arrange** sidebar section in **Advanced view** (`data-ui="advanced"`, hidden in Simple). Click it to open a side-by-side editor: textarea on the left for Mermaid source, live SVG preview on the right.
-- Edits are debounced and re-rendered every ~300 ms so you can iterate quickly. Bad syntax shows the Mermaid error inline in red instead of crashing the dialog.
-- **Insert** rasterizes the rendered SVG to a `data:image/svg+xml;base64,...` URL and adds it to the canvas as a regular `image` object — so it's resizable, draggable, group-able, croppable, deletable, and exportable like any other image.
-- The **original Mermaid source is stored** on the object as `mermaidSource`. Double-click any inserted diagram to reopen the editor with that source pre-filled, edit, and Insert again — the existing object is updated in place (no duplicate).
-- Re-edits respect the existing object position/size and clear any prior crop so the new render fills the box.
-- Each render gets the natural width/height of the SVG probed and stored, so the existing v2.8 crop tool also works on Mermaid diagrams.
-
-Setup (one-time)
-- DrawSplatTM keeps Mermaid in `vendor/mermaid.min.js` because the library is sizeable (~2.5 MB).
-- The HTML files load it via `<script src="vendor/mermaid.min.js" defer onerror="window.__mermaidMissing=true">`. If it's missing, the dialog still opens but the preview shows: *"Mermaid library not loaded. Add vendor/mermaid.min.js and reload — see README."*
-- The service worker `SHELL` list includes a commented-out reference to `./vendor/mermaid.min.js`. Once you've added the file, uncomment that line so it pre-caches for offline use.
-- Mermaid is initialized lazily with `securityLevel: 'strict'` (no inline JavaScript in diagrams) and `startOnLoad: false` (DrawSplatTM controls when rendering happens).
-
-Compatibility
-- Existing image objects without `mermaidSource` are unaffected — they double-click to nothing, just like before.
-- Boards from v2.8 open identically; no data migration.
-- The CSP is unchanged: `script-src 'self'` covers a locally-hosted `mermaid.min.js`. Mermaid uses inline styles which are already permitted via `style-src 'self' 'unsafe-inline'`.
-- Service-worker cache key bumped to `drawsplat-v2.9.0` for the initial release.
-
-### v2.9.1 follow-ups
-
-- **Copy PNG button** added to the Mermaid dialog footer. One click rasterizes the rendered SVG to PNG via canvas and writes it to the system clipboard via `ClipboardItem`. Paste the result into Slides, Word, email, chat — anywhere that accepts a PNG. No need to insert the diagram first.
-- **Auto-rasterize on copy** — when you Ctrl/Cmd+C with a single image object selected and its `src` is an SVG data URL (Mermaid output, or any other SVG), DrawSplatTM now automatically converts it to PNG before writing to the clipboard. Most consumer apps reject SVG paste; this makes paste "just work" while leaving the original SVG intact on the canvas (no quality loss for the displayed/saved version). Non-SVG images (JPEG/PNG/WebP) still copy as their original blob — no re-encoding.
-- Service-worker cache bumped to `drawsplat-v2.9.1`.
-
-### v2.9.2 follow-ups
-
-- **Higher-resolution Copy PNG** — `svgUrlToPngBlob` now renders at `max(1600 px, naturalWidth × 2)` instead of the SVG's natural pixel size. Mermaid diagrams that came out at ~400 px wide now copy as ~1600 px PNGs, sharp on Retina/4K and clean in Slides/Word/social posts. Aspect ratio preserved; white background filled so transparency-sensitive apps don't show black.
-- **Multi-object selection → PNG** — `smartCopy` (Ctrl/Cmd+C) now has three paths: single image (existing flow), multi-object selection or single non-image (new), empty selection (no-op). The new path renders the selection's union bounding box (with 20 px padding) by piping the existing 2× `exportCanvas()` output through a crop step, then writes the cropped PNG to the system clipboard. So a flowchart drawn from individual rectangles + diamond + arrows can be marquee-selected and pasted into other apps as a single image. Internal in-app paste with Ctrl+V keeps working unchanged because `copySelection()` still runs first.
-- Service-worker cache bumped to `drawsplat-v2.9.2`.
-
-### v2.9.3 follow-ups
-
-- **Mermaid re-edit (double-click) fixed** — clicking twice on a Mermaid diagram now reopens the editor with the saved source pre-filled. Root cause was that every `pointerdown` ends with a `render()` call that replaces the SVG `g.object` element, so the browser saw click 2 as happening on a different DOM node and never fired `dblclick`. Fixed with manual double-click detection in `objectDown` that tracks the **object id** (not the element) plus a 400 ms timestamp. Same path also covers any future image-with-extension behavior.
-- `openMermaidDialog` is now defensive (`if (!dlg || dlg.open) return`) so simultaneous fire from the manual detector + the lingering native `dblclick` listener doesn't throw `InvalidStateError`.
-- Service-worker cache bumped to `drawsplat-v2.9.3`.
-
-### v2.9.4 follow-ups
-
-- **Colored diagrams by default** — after Mermaid renders an SVG, DrawSplatTM post-processes it: locates each `g.node` element and assigns it a fill/stroke/text color from a 6-color rotating palette (blue → pink → green → orange → amber → purple). Lighter pastel fills with darker matching strokes for contrast. Plain `graph TD` syntax now produces colorful flowcharts without any explicit `classDef`. Sequence/gantt/pie/timeline diagrams keep their built-in palettes (no `g.node` elements to recolor).
-- **Custom styling still wins** — if your source contains `classDef` or `:::` the auto-palette is skipped entirely, so hand-authored colored diagrams render as you specified. Same palette is applied across live preview, Insert, and Copy PNG so previews match exports.
-- **Template starter buttons** — a new "Templates:" row above the editor with eight one-click starters: Flowchart, Pie Chart, Sequence, Mind Map, Gantt, Timeline, Class, State. Click a button → the textarea is replaced with a working template that you can tweak before Insert.
-- Service-worker cache bumped to `drawsplat-v2.9.4`.
-
-Note on diagrams.net / drawio import-export
-- Considered but not added: the drawio editor and mxGraph engine are far too large to ship inside DrawSplatTM, and writing a partial XML converter would be lossy. The clipboard paste flow already lets users design diagrams externally and paste a PNG/SVG export onto the board, which is the intended workflow for that use case.
-
-## Version 2.8 changes
-
-v2.8 is an image-editing release. Boards from v2.6 / v2.7 open identically; nothing on disk changes.
-
-Image cropping (lossless)
-- New **Crop Image** button (✂️) appears in the floating selection toolbar whenever a single image object is selected.
-- Opens a styled dialog with four sliders (Top / Right / Bottom / Left) and a live canvas preview of the result.
-- The crop is **lossless**: the original image data stays untouched in the object's `src`. The crop is stored as four fractional bounds (`crop.x / .y / .w / .h`) and applied at render time via SVG `<svg viewBox=...>` with `preserveAspectRatio="xMidYMid meet"`. You can re-open the dialog any time to widen the crop, or reset back to the full image.
-- Each image has its natural width/height probed and cached on first display so crop math doesn't depend on guessing aspect ratio.
-- Goes through `saveState()` so Ctrl/Cmd+Z reverts.
-
-Clipboard interop
-- **Paste image from system clipboard** — Ctrl/Cmd+V (or right-click → Paste) pastes whatever image is on the device clipboard onto the canvas: copy from a webpage, screenshot, file manager, Photos / Visual Look Up "Copy Subject", etc. Validates the blob (size + magic bytes) before adding. Falls back to the internal clipboard when no system image is available.
-- **Copy image to system clipboard** — Ctrl/Cmd+C with a single image object selected writes its blob to the device clipboard via `ClipboardItem`, so you can paste straight into Slides, Word, email, etc. Internal copy still happens too for in-app paste.
-- All paste flows skip when focus is in a text input / textarea / contenteditable so normal text paste isn't disrupted.
-
-Image color removal upgrades
-- **Remove BG Color** is now context-aware: if a single image object is selected, it processes that image; otherwise it processes the panel background.
-- The dialog title and helper text adapt ("Remove Color from Image" vs "Remove Background Color").
-- Replaced the previous hidden `<input type="color">` + click-trigger pattern (which silently failed when the user accepted the pre-sampled corner color, because the `change` event only fires on actual change) with an explicit dialog (color preview + tolerance slider + Apply / Cancel).
-- Tolerance slider (0–100, default 40) lets you dial in how aggressive the matching is.
-
-Eraser polish
-- Cursor switches to a **crosshair** the moment any drawing tool (Eraser, Laser, Pen, shapes) becomes active so it's clear you're "in" that mode.
-- Status hint appears on tool selection: *"Eraser: click any object to delete it. Drag over pen strokes to wipe them."*
-- Click on object → erased, status confirms. Click on locked object → "That item is locked." Click on empty canvas → "Click an object to erase it." (No more silent misses.)
-- **Drag over pen strokes to wipe them** Jamboard-style. Drag-erase is limited to free-hand path strokes so you don't accidentally lose stickies/shapes/text mid-drag.
-
-Migration notes
-- No board-data migration. v2.7 boards open verbatim; image objects without `crop` stay uncropped, and the natural-dimension probe runs on first render.
-- Service-worker cache key bumped to `drawsplat-v2.8.0`.
-
-## Version 2.7 changes
-
-v2.7 is a polish-and-brand release built on top of v2.6.
-
-Brand & visual identity
-- **New logo** (purple slime splat) appears in the top-left of the header, in the Welcome dialog, in About, and in Options.
-- **Color scheme refreshed** to match the logo: deep purple (`#7c3aed`) replaces navy as the primary brand color; the header now uses a purple gradient. Gold accents are kept where they provide best contrast (Save to Google primary button).
-- Service-worker pre-caches the logo so it's served instantly offline.
-
-Polish & UX
-- **Save state indicator chip** in the header (`Saved` / `Saving…` / `Saved 30s ago`) — continuous reassurance instead of disappearing toasts.
-- **Floating selection toolbar** appears at the top of the canvas when an object is selected (Edit / Duplicate / Delete) on phones, tablets, and Simple mode — solves the "hard to delete on responsive" pain.
-- **Contextual color chip** in the Simple-mode bottom toolbar — change pen / sticky / shape color without leaving Simple.
-- **First-run welcome dialog** with four orientation tips and a one-time-dismiss flag.
-- **Styled `confirmDialog`** replaces native `confirm()` calls (Clear Frame, Clear Panel, Restore Point, TNT) and the lone `alert()` for design consistency.
-
-Header & layout
-- Save to Google, Export PNG, Export PDF, and TNT moved out of the header and into the **⋮ More Options** menu — header is dramatically less cluttered.
-- The **⋮ More Options** menu is now visible in both Simple and Advanced views.
-- Frame counter shows the **panel name** along with the position (e.g., `Bell Ringer · 1/3`).
-- Status messages now appear as a **toast at the top of the canvas** with `aria-live="polite"`.
-
-Mobile & responsive fixes
-- Phone breakpoint (≤760 px): header stays on a single row with horizontal scroll instead of wrapping; sidebar in Simple mode becomes a horizontal bottom toolbar; canvas takes the bulk of the viewport.
-- The K-16 badge hides on phones to save space.
-- The `[hidden]` HTML attribute now wins over `display: inline-flex` from the icon-button class so genuinely-hidden buttons stay hidden.
-
-Attribution
-- About dialog credit changed from "Created by" to **"Vibe-coded by DrawSplat Developer(s)"**.
-- New **License** paragraph in the About dialog.
-
-Migration notes
-- No board-data migration required — v2.6 boards open identically.
-- Service-worker cache key bumped to `drawsplat-v2.7.0` for the initial release; subsequent point releases (2.7.1, 2.7.2, …) increment the cache key the same way.
-
-### v2.7.1 follow-ups
-
-- **Remove BG Color** — new tool (🪄) lets a teacher knock out a solid background color from a loaded panel background image. The app samples the top-left pixel as a starting point and opens a color picker so the teacher can fine-tune which color to drop. Pixels within tolerance become transparent and the result is re-encoded as PNG (preserving alpha). Useful for turning a JPG-style classroom poster into a transparent overlay on top of the board's grid/dots/lines pattern. Available in the Simple-mode toolbar and in Advanced's Patterns section. The action goes through `saveState()` so it's undoable.
-- **Bottom toolbar stacking fix** — the Simple-mode bottom block (color chip, Add Image, Set Background, Clear Background, Remove BG Color, Delete Selected, TNT) was rendering side-by-side because `.simple-only` had `display: inline-flex` overriding `.grid`. Added a more specific rule so the block now stacks vertically, matching the rest of the toolbar.
-
-## Version 2.6 changes
-
-v2.6 is a classroom-UX pass. Existing v2.5 boards open without conversion; the migration shim updates `board.version` to `2.6` automatically.
-
-Layout & navigation
-- Header version badge — `DrawSplatTM v2.6` is shown in the title bar so teachers can see at a glance which build is running.
-- Panels controls (current panel, add, rename, delete, clear) moved from the sidebar into the top header.
-- Workspace and View selectors moved into a new **Options** dialog opened from the header.
-- New **About** dialog with creator info and links.
-- Inspector becomes a slide-in drawer below 1180 px; a header **Inspector** button opens it. Backdrop click and `Esc` close it.
-- Patterns / Templates / Restore Points sidebar sections are now collapsible to reclaim vertical space.
-
-Inspector
-- Per-object actions are grouped into collapsible **Audio actions / Sticky actions / Comment actions** blocks that auto-expand when the matching tool is active or that object type is selected, and collapse otherwise.
-- Universal actions (Lock, Unlock, Delete, Select Group, Toggle Answer Key) stay visible.
-
-Locked panel backgrounds
-- Teachers can load an image as a per-panel background from the Patterns section.
-- The image is downscaled client-side (≤1600 px, JPEG 0.85) so it doesn't blow up storage or sync payloads.
-- Students see the background through the existing local/cloud sync but have no UI to change it; the background is a panel attribute, not an object on any layer, so it can't be selected, moved, or deleted.
-
-Bug fixes
-- Title and other text inputs no longer reset the cursor to the start of the line when a render fires during typing.
-- Newly created sticky / comment / audio / text objects start with truly empty content; the visible "Add note…", "Voice note", and similar hints are now CSS placeholders, not real data baked into the object.
-- Existing boards are migrated: legacy placeholder strings stored as content are cleared on load.
-
-Internationalization
-- The DOM walker in `i18n.js` now also translates `aria-label`, `title`, and `data-tooltip` attributes, so iconized buttons (Options, About, Inspector, etc.) and their tooltips localize correctly.
-- Long instruction paragraphs (Tools, Collaboration, Workspace, Simple/Advanced, Setup, Inline editor, Classroom Uses, Student/Assignment/Answer Key/Moderation/Turn-In hints) are now translated across all five non-English locales.
-- Locales for Vietnamese, Arabic, Chinese, and Hindi/Urdu were back-filled with the previously English-only inspector strings (alignment, audio actions, layer names, sync controls, save/load, etc.).
-- New `Options`, `About`, `Inspector`, `Audio actions`, `Sticky actions`, `Comment actions`, `Google integration`, `Load Background`, and `Clear Background` keys translated for all five locales.
-
-Migration notes
-- `panel.bgImage` is added during board load; existing panels get an empty default.
-- Service worker cache key bumped to `drawsplat-v2.6.0`. Returning users get fresh assets automatically.
-
-## Version 2.5 changes
-
-v2.5 is a consolidation and hardening release. The six per-language HTML files no longer each carry their own copy of the application — they share `app.css`, `app.js`, `locales.js`, and `i18n.js`. This cuts the on-disk footprint from ~700 KB across the six entry pages to ~155 KB total.
-
-Architecture
-- **Single source for code.** All application behaviour lives in `app.js`. All styling lives in `app.css`. Every entry page is a thin shell (~17 KB) that loads them.
-- **Single source for translations.** `locales.js` holds every UI string for every language. To add a language, add an entry there and a corresponding entry HTML.
-- **Service worker.** `sw.js` is registered automatically when served over HTTP/HTTPS. The app shell is cached so the whiteboard works offline after the first load.
-- **IndexedDB autosave fallback.** If `localStorage` runs out of room, autosave transparently falls back to IndexedDB so image-heavy boards don't lose work.
-
-Performance
-- Object lookup is now O(1) via a per-render `Map<id, object>`. Earlier versions did a linear scan of every object on every pointer event.
-- `render()` is coalesced through `requestAnimationFrame`. Pointermove during a drag, marquee, or pen stroke no longer triggers a synchronous redraw per event.
-- Undo history is capped at 50 snapshots and only grows on commit boundaries (drag end, edit commit) instead of per micro-change.
-- Live cursor broadcasts are throttled to ~20 Hz.
-
-Security
-- Strict `Content-Security-Policy` meta tag in every entry page (`script-src 'self'`, `object-src 'none'`, etc.). The deployment headers add `frame-ancestors 'none'` for clickjacking protection. No inline scripts remain.
-- Image uploads are sniffed by magic bytes after the MIME header check, so a renamed file cannot bypass the whitelist.
-- Rich-text editor output is now passed through a tag-allowlist scrubber that strips `on*` attributes, `style`, `href`, `src`, `<script>`, and `<style>`.
-- The Apps Script backend uses `LockService` on every write path, hard-caps incoming payload size, validates board JSON and PNG sizes, and applies a soft per-instance rate limit via `CacheService`.
-
-Accessibility & UX
-- Visible `:focus-visible` ring on every focusable element.
-- Touch targets are now at least 44×44 px on toolbar/icon buttons.
-- All form controls have an `aria-label` (auto-derived from their visible label when not set explicitly).
-- New keyboard shortcut: press `?` to open the shortcuts help dialog. The header has a dedicated keyboard-shortcuts button as well.
-- `prefers-reduced-motion` users get a static TNT effect and minimal transitions.
-
-Migration notes
-- Existing v2.4 autosaves load cleanly; the migration shim updates `board.version` to `2.5` automatically.
-- The Apps Script web app must be re-deployed if you want the v2.5 backend hardening (lock, payload caps, rate limit). The wire format is unchanged.
-
-## Version 2.2 panel hotfix
-
-This hotfix strengthens panel behavior for both new boards and boards restored from older browser autosaves.
-
-Updated panel behavior:
-
-- Every panel is guaranteed to have a stable internal panel ID during migration.
-- Older autosaved boards with missing panel IDs are automatically repaired on load.
-- The top `+` tab for adding a panel uses delegated tab-click handling instead of a fragile direct handler.
-- Panel tabs support both `data-panel-id` and a fallback `data-panel-index`.
-- Clicking Panel 1 after creating or switching to another panel should now work reliably.
-
-## Version 2.3 productivity workspace update
-
-This build adds a **Workspace** selector so DrawSplatTM can be used as a general-purpose visual productivity board without showing classroom-specific tools by default.
-
-Workspace options:
-
-- **Productivity** — default mode. Hides education-only controls and keeps DrawSplatTM focused on visual work, planning, brainstorming, diagrams, notes, panels, export, and save/load.
-- **Education Tools** — reveals classroom features such as class/student fields, teacher/student mode, assignment mode, answer keys, moderation, student turn-ins, and classroom-use guidance.
-
-The Workspace setting is separate from the existing **Simple / Advanced** interface setting. This gives four practical combinations:
-
-- Productivity + Simple
-- Productivity + Advanced
-- Education Tools + Simple
-- Education Tools + Advanced
-
-## Security and Internet-Facing Deployment Warning
-
-DrawSplatTM can be hosted as a static web app, but a public internet-facing deployment should be treated as a user-generated-content application, not just a simple HTML page.
-
-Before using DrawSplatTM on a public server, review these risks:
-
-- **Do not store secrets in the front-end.** Public HTML, JavaScript, Apps Script URLs, and client-side settings can be viewed by users.
-- **Rich text and imported board files can carry unsafe content.** DrawSplatTM includes basic cleanup, but public deployments should add stronger server-side validation and a strict Content Security Policy.
-- **Uploads can be abused.** This build blocks SVG uploads, limits common image/audio types, and adds file-size checks, but public deployments should also enforce server-side limits.
-- **Google Apps Script endpoints can be misused if deployed to “anyone.”** Use the narrowest permissions possible, keep Drive data in a dedicated folder, and do not expose administrative actions without additional protection.
-- **Front-end hiding is not security.** Productivity/Education mode, Teacher/Student mode, and hidden buttons are convenience controls only. Anything sensitive must be enforced by the backend.
-- **Avoid confidential student records.** Do not use public DrawSplatTM boards for protected student data unless your hosting, authentication, retention, and access controls have been reviewed.
-
-Recommended public-hosting protections:
-
-- Serve only over HTTPS.
-- Add security headers, especially `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, and `frame-ancestors 'none'`.
-- Keep uploads small and limited to safe file types.
-- Use long, unguessable room or board IDs if cloud sharing is enabled.
-- Review Apps Script permissions and logs regularly.
-- Provide a way to clear local browser data on shared devices.
-
-## ClipSplat™
-
-[Open ClipSplat](https://drawsplat.org/solutions/clipsplat/) · [Tutorial](https://drawsplat.org/solutions/clipsplat/tutorial/) · [Introduction](blog/clipsplat.html) · [Self-host download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.2.0)
-
-Record or import video, add opening and closing panels, insert full-image cards, cut unwanted sections, and export H.264/AAC MP4. Illustrated frames, draggable text, font controls, bold/italic/alignment icons, and six interface languages are included. Reel/Story use 9:16; Feed uses 4:5 and supports up to 60 minutes including panels. Practical limits depend on the device. Media stays on your device; no account is required. ClipSplat is listed under Media and Create.
-
-The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. The v3.1.29 full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.2.0`.
+[License](LICENSE) · [Project notice and branding](NOTICE.md) · [Commercial terms](COMMERCIAL-LICENSE.md) · [Security reporting](SECURITY.md) · [Full licensing guide](https://splatworks.org/wiki/licensing.html)
