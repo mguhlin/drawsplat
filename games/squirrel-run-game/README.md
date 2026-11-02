@@ -1,6 +1,6 @@
 # Squirrel Run — DrawSplat Games Starter
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 A standalone HTML5 canvas game draft for DrawSplat Games.

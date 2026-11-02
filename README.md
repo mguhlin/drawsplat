@@ -164,7 +164,7 @@ Storage and collaboration capabilities differ between deployments. Use the curre
 | Feature names, file workflows, and compatibility | [Feature directory](https://splatworks.org/wiki/tools-widgets-features.html) · [FAQ](https://splatworks.org/wiki/faq.html) |
 | Student data, providers, retention, and district review | [Security, privacy, and terms](https://splatworks.org/legal/terms-privacy.html) |
 | Accessibility | [Accessibility information](https://splatworks.org/legal/accessibility.html) |
-| Software licensing and optional services | [Licensing](https://splatworks.org/wiki/licensing.html) · [Pricing and services](https://splatworks.org/pages/pricing.html) |
+| Software licensing and free resources | [Licensing](https://splatworks.org/wiki/licensing.html) · [Free apps and resources](https://splatworks.org/pages/pricing.html) |
 | Developer background and help | [About the developer](https://splatworks.org/wiki/about-developer.html) · [Contact](https://splatworks.org/pages/contact.html) |
 
 ## Updates and release history

@@ -48,7 +48,7 @@
     [/community/, 'adv-group','Share ideas and explore the community board.'],
     [/background-templates/, 'adv-bg','Choose a ready-made background for your board.'],
     [/features/, 'imagegroup','Explore what you can create with DrawSplat.'],
-    [/pricing/, 'adv-library','Compare plans and included features.'],
+    [/pricing/, 'adv-library','Explore free apps and resources.'],
     [/download/, 'adv-save','Get DrawSplat for your own hosting.'],
     [/contact|access\.html/, 'text','Send a question or request access.'],
     [/legal|compliance/, 'adv-lock','Read privacy, accessibility, and school policies.'],

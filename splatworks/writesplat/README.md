@@ -2,7 +2,7 @@
 
 **Office import:** [Browser-native DOC and Word/LibreOffice formatting and limits](https://splatworks.org/wiki/writesplat.html). Source numbering, paragraph spacing, style inheritance and supported fonts/marks are retained locally.
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 Get current packages from [Downloads](https://drawsplat.org/pages/download) and read [release notes](https://drawsplat.org/pages/release-notes). App versions remain independent of the suite release.

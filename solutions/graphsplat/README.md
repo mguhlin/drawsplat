@@ -1,6 +1,6 @@
 # GraphSplat
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 GraphSplat consolidates DrawSplat's Graph Maker and Picture Graph Maker into one privacy-first browser application.

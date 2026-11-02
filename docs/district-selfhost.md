@@ -3,7 +3,7 @@
 **Learning management:** [SplatLMS](../wiki/splatlms.html) is part of SplatWorks and has its own PHP/Docker installer, learner accounts and database. Get its separate installer from [SplatWorks Downloads](../pages/download.html#splatlms-download). The existing district and static office ZIPs keep their listed contents.
 
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 [View HTML](district-selfhost.html) · [Download Markdown](district-selfhost.md)

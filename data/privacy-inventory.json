@@ -46,7 +46,6 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
-        "buymeacoffee.com",
         "docs.google.com",
         "drawsplat.org",
         "github.com",
@@ -61,7 +60,7 @@
       "rights": "/privacy/ handles origin-local browser data only. Contact the LMS operator for learner-record access, export or deletion.",
       "security": "The static product page does not run the PHP LMS. Configure HTTPS, account access, database protection and recovery on the separate LMS host.",
       "reviewed": "2026-10-31",
-      "entrySha256": "c3338b4e32f657ba9312d45bf478112d5f33e8742442a4f0b5c2d076fcdc0599"
+      "entrySha256": "475627f0d4974745e06c3d793089b7cccf370c2927f6e62a782a5141257e8e37"
     },
     {
       "id": "backdropsplat",
@@ -142,7 +141,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-31",
-      "entrySha256": "375a6a36d2f1eb047dcdaad6375fe29be923551ee3d907ffdc025f22a2fce86b"
+      "entrySha256": "6450d3daadaf070c6f8a45673efae427f98c0c9572d687d84093bc496650f613"
     },
     {
       "id": "gridsplat",
@@ -1792,7 +1791,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-31",
-      "entrySha256": "59e0592c8e5ea742c437b183a1d6ff9255da803511e513af8ee394fa8922ab91"
+      "entrySha256": "d1834f37dfddc1f2d7fffb991619efffe05e7853deda708693e1e93a60ed3f44"
     },
     {
       "id": "templates",
@@ -1807,7 +1806,6 @@
         "namedConstants": []
       },
       "literalRemoteHosts": [
-        "buymeacoffee.com",
         "docs.google.com",
         "drawsplat.org",
         "github.com",
@@ -1822,7 +1820,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-31",
-      "entrySha256": "808c3083af5b8156f6274decad3c61ec31496c2775236f264fca48cf22054b50"
+      "entrySha256": "a4837f8ad7f1306bfcecb0f4323255fe6f242a45c99d676cba62d96d2ed7df8a"
     },
     {
       "id": "guides",
@@ -1889,7 +1887,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-31",
-      "entrySha256": "64c00190f825c03fb88cf2e990e6129d4090b067ef3d4fc31002500b7cd507c4"
+      "entrySha256": "bfe498dde5da112da1cd44dde19c37a507be5ac291409aca748382e7246d7436"
     },
     {
       "id": "support",
@@ -1956,7 +1954,7 @@
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
       "reviewed": "2026-10-31",
-      "entrySha256": "4010ca4ef0d54b4c2f5f9d2a1c1862a345ae31102e11109d983bed166b2de446"
+      "entrySha256": "4464b9df8b22c268258428032cb1c28992ab08b9f6a888493b883b40bbf10a0e"
     }
   ]
 }

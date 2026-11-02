@@ -1,6 +1,6 @@
 # Green Screen Studio
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 Open **Effects → Green Screen Studio…** (also under File and Capture). If exactly one image is selected, it becomes the initial subject. Otherwise choose a photo, use the native phone photo picker, or start a live camera.

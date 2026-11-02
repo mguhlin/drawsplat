@@ -1,6 +1,6 @@
 # Smithsonian Open Access Animal Images
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 These classroom-sized images are local copies from the Smithsonian Open Access Animal Images collection:

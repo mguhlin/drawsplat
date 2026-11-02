@@ -1,6 +1,6 @@
 # SplatWorks typing games
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 `/games/typing-games/` is a menu with original generated hero and cover artwork. Each experience has its own URL and translated instructions:

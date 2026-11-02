@@ -1,6 +1,6 @@
 # ImageSplat photo adjustments
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 Select one visible image layer, then choose **Adjust photo…** in the canvas toolbar.

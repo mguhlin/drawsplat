@@ -14,7 +14,7 @@ DrawSplat is a browser-based whiteboard for teaching and creating. Draw, write, 
 
 ### Is DrawSplat free?
 
-Yes. The software has no per-student or per-seat charge. Running a school server may have costs, and paid setup or training is optional. See [pricing](../pages/pricing.html). To support DrawSplat development, you can [buy the developer a coffee](https://buymeacoffee.com/drawsplat). This is optional.
+Yes. SplatWorks and DrawSplat.org are completely free for teachers, students, classrooms, campuses, and districts. All apps, tools, games, and district software are freely available. See [Free for everyone](../pages/pricing.html).
 
 ### Do I need an account?
 

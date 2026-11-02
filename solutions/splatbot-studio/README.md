@@ -1,6 +1,6 @@
 # SplatBot Studio
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
 SplatBot Studio is a DrawSplat widget for students who need the learning value of classroom robots without the cost, storage, maintenance, or device-management burden of physical kits.
