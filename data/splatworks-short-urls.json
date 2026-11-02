@@ -162,6 +162,12 @@
     "target": "/solutions/splatbot-studio/"
   },
   {
+    "id": "splatlms",
+    "name": "SplatLMS",
+    "path": "/splatlms",
+    "target": "/pages/splatlms.html"
+  },
+  {
     "id": "step-splat",
     "name": "Step-Splat",
     "path": "/step-splat",

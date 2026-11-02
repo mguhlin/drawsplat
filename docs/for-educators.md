@@ -34,6 +34,12 @@ The [Teacher Quick Start](../guides/teacher-options-quick-start.html) walks thro
 
 The office apps and creative tools can save a file copy to your Google account after you authorize it. Follow the [Google Drive guide](../wiki/google-drive.html) for the correct action and format in each app, including PDFs, videos, media outputs, Markdown and diagram source. Local saving remains available.
 
+## Teach courses with SplatLMS
+
+[SplatLMS](../pages/splatlms.html) is the SplatWorks Learning Management System for courses, enrollment, quizzes, assignments, rubrics, forums and learner progress. Start with its bundled **SplatWorks Educator** course to explore the ecosystem. Use your school’s installed LMS address to sign in.
+
+Link a tool from a lesson, have learners export their work, then collect a supported file through an assignment you create in SplatLMS. Standalone tools keep their own saving; opening a tool does not submit work or sync its data to the LMS. See the [SplatLMS guide](splatlms.md) for the full workflow and setup.
+
 ## Collect work and give feedback
 
 On a configured district setup, teachers can use [classrooms and assignments](../wiki/district-classrooms.html) to collect student turn-ins and give feedback. Your school must set up accounts and rosters first.

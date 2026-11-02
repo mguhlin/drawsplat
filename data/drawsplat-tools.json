@@ -100,6 +100,53 @@
       ]
     },
     {
+      "id": "splatlms",
+      "name": "SplatLMS",
+      "description": "The SplatWorks Learning Management System: organize courses, enroll learners, collect assignments, assess learning and track progress. Download and self-host with PHP.",
+      "url": "/pages/splatlms.html",
+      "icon": "/assets/splatlms/logo.png",
+      "type": "workspace",
+      "categories": [
+        "classroom",
+        "assessment",
+        "organize"
+      ],
+      "keywords": [
+        "learning management system",
+        "lms",
+        "courses",
+        "enrollment",
+        "learner",
+        "teacher",
+        "assignments",
+        "quizzes",
+        "rubrics",
+        "badges",
+        "certificates",
+        "professional learning",
+        "splatworks educator",
+        "self hosted",
+        "php"
+      ],
+      "aliases": [
+        "learning management system",
+        "course management",
+        "online courses",
+        "teacher training"
+      ],
+      "featured": true,
+      "standalone": true,
+      "availableInWhiteboard": false,
+      "related": [
+        "whiteboard",
+        "plansplat",
+        "quiz-flashcards",
+        "rubric-builder",
+        "writesplat",
+        "showsplat"
+      ]
+    },
+    {
       "id": "backdropsplat",
       "name": "BackdropSplat",
       "description": "Remove photo, white, or colored backgrounds locally; compare cutouts and export PNG, JPEG, or a batch ZIP.",

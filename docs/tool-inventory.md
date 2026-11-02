@@ -3,17 +3,22 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-The registry currently has 64 destinations. Group rows below describe overlapping route/type views and should not be summed. This inventory is the source audit behind `data/drawsplat-tools.json`. It records discovery destinations, not every internal route or alternate build file. Existing URLs remain unchanged.
+The registry currently has 69 destinations. Group rows below describe overlapping route/type views and should not be summed. This inventory is the source audit behind `data/drawsplat-tools.json`. It records discovery destinations, not every internal route or alternate build file. Existing URLs remain unchanged.
 
 ## Inventory summary
 
 | Group | Registry coverage | Notes |
 | --- | ---: | --- |
 | Main workspace | 1 | DrawSplat Whiteboard |
+| Learning management | 1 | SplatLMS product, installer and course guide; PHP runtime installed separately |
 | Office workspaces | 5 | GridSplat, ShowSplat, WriteSplat, ListSplat, LayoutSplat |
 | Standalone solutions | 37 | Public `/solutions/` destinations, including PDFsplat, QRSplat, and CipherSplat; legacy graph URLs route to GraphSplat |
 | Games and puzzles | 18 | Registry game records; Dots and Boxes is hosted under `/solutions/` and counted in both destination views |
 | Educator/family/support destinations | 5 | Teacher Admin, Family Access, templates, guides, and support |
+
+## Learning management
+
+[SplatLMS](../pages/splatlms.html) is the ecosystem’s Learning Management System. Its registry destination introduces the product and links its installer and [operating guide](splatlms.md). The public static site does not host learner records; a school installs the PHP LMS with its own database. Course links and exported assignment files connect the teaching workflow to the other tools.
 
 ## Classification decisions
 

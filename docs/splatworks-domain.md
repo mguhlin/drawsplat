@@ -86,6 +86,7 @@ registry and updates the rules, static fallbacks and shortcut manifest.
 | SketchSplat VR | [/sketchsplat](../sketchsplat/) | `/solutions/sketchspace-VR/` |
 | Splatball | [/splatball](../splatball/) | `/games/splatball/` |
 | SplatBot Studio | [/splatbot](../splatbot/) | `/solutions/splatbot-studio/` |
+| SplatLMS | [/splatlms](../splatlms/) | `/pages/splatlms.html` |
 | Step-Splat | [/step-splat](../step-splat/) | `/solutions/step-splat/` |
 | VideoSplat | [/videosplat](../videosplat/) | `/solutions/videosplat/` |
 | WriteSplat | [/writesplat](../writesplat/) | `/splatworks/writesplat/` |

@@ -207,3 +207,7 @@ SplatWorks is an umbrella name; component licenses still apply.
 - User-created boards, documents, student work, uploads, and exports belong to their respective authors or controlling organizations.
 
 [License](LICENSE) · [Project notice and branding](NOTICE.md) · [Commercial terms](COMMERCIAL-LICENSE.md) · [Security reporting](SECURITY.md) · [Full licensing guide](https://splatworks.org/wiki/licensing.html)
+
+## SplatLMS · Learning Management System
+
+[SplatLMS](https://splatworks.org/splatlms) is the SplatWorks Learning Management System for courses, learner enrollment, assessments, assignments, progress and reports. The released installer includes **SplatWorks Educator**. Use the [SplatWorks download page](https://splatworks.org/pages/download.html#splatlms-download), [wiki guide](https://splatworks.org/wiki/splatlms.html), and [SplatLMS source](https://github.com/mguhlin/splatlms). It runs as a separate PHP service with its own database; standalone tool accounts and saving are not automatically synchronized.

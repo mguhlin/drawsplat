@@ -8,10 +8,11 @@ Set up SplatWorks for your school, connect accounts, and keep saved work safe. C
 | --- | --- | --- |
 | Browser only | Whiteboard tools and files saved on a device. No server or accounts are needed. | [Browser-only setup](../wiki/setup-browser.html) |
 | Complete district suite | School-hosted apps, database-backed whiteboard saving, and classroom workflows. Choose Docker or a native install. | [District installation and Quick Start](../docs/district-selfhost.html) |
+| SplatLMS | Courses, learner accounts, assessments, assignments, progress and reports, with its own PHP application and database. | [SplatLMS installation](splatlms.md) |
 | Individual apps | Selected apps served from your own website. | [Modular self-hosting](../wiki/modular-selfhost.html) |
 | Apps Script connection | Optional Google Drive and Sheets workflows. This is separate from district database hosting. | [Apps Script setup](../guides/google-setup.html) |
 
-Get current packages from [Downloads](../pages/download.html). The complete SplatWorks suite includes DrawSplat, office apps, creative tools, widgets, and games; choose the components your school needs.
+Get current packages from [Downloads](../pages/download.html). The complete SplatWorks suite includes DrawSplat, office apps, creative tools, widgets, and games; choose the components your school needs. SplatLMS is part of the ecosystem and is downloaded and installed separately from the static tools suite. Its learner accounts and database are separate from whiteboard school accounts.
 
 ## Connect saving and school accounts
 

@@ -521,5 +521,12 @@
     "Share one link with the class; each participant gets a randomized card without an account",
     "Mark squares with a tap or keyboard, print cards, or embed a game in Google Sites",
     "Use the DrawSplat interface in English, Spanish, Vietnamese, Arabic, Chinese, or Hindi; teacher vocabulary stays unchanged"
+  ],
+  "splatlms": [
+    "Build and publish courses, enroll learners and organize groups",
+    "Use quizzes, assignments, rubrics and forums; track progress, reports, badges and certificates",
+    "Start with SplatWorks Educator: five modules, twenty lesson sections and five knowledge checks",
+    "Link SplatWorks tools from lessons and collect supported exported files through instructor-created assignments; accounts and saving remain separate",
+    "Self-host the released PHP application with SQLite or MariaDB/MySQL; install separately from the static office-app ZIPs"
   ]
 }

@@ -1,8 +1,8 @@
 # SplatWorks ecosystem: tools, widgets, and features
 
-SplatWorks is the ecosystem of creative tools, classroom widgets, games, and office applications. DrawSplat is its whiteboard. Open any linked component directly, or browse [Studio](../studio/index.html).
+SplatWorks is the ecosystem of creative tools, classroom widgets, games, office applications, and the SplatLMS Learning Management System. DrawSplat is its whiteboard. Open any linked component directly, or browse [Studio](../studio/index.html).
 
-This reference follows the same categories as Studio. Components appear in every category they support. Each entry links to the application and lists its main features. The complete suite installation includes these components; selected tools keep their own saving and integration behavior.
+This reference follows the same categories as Studio. Components appear in every category they support. Each entry links to the application and lists its main features. Static tools are available through the district and component packages. SplatLMS has its own PHP installer and database; download it separately from the same downloads page. Each component keeps its own saving and integration behavior.
 
 [Install the complete ecosystem](district-selfhost.html) · [Download packages](../pages/download.html) · [Whiteboard classroom guide](../guides/project-reference.html)
 
@@ -346,7 +346,7 @@ Category: **Data** · 3 components
 
 ## Think & Organize
 
-Category: **Organize** · 12 components
+Category: **Organize** · 13 components
 
 ### Brain Sort
 
@@ -459,6 +459,16 @@ Category: **Organize** · 12 components
 - Today, upcoming and weekly views combine deadlines, class times and study blocks; recurring tasks, routine check-ins and an adjustable focus timer.
 - Google Drive autoload and autosave during authorization; reconnect after expiry, account-separated device drafts and per-browser recovery files.
 - One Google sign-in connects Drive and optional one-way Calendar updates for deadlines/study blocks in an app-created calendar; header connection/retry without visiting settings. Six interface languages with Arabic RTL; Purple, Ocean, Forest and High contrast themes saved on the device. Local offline drafts, native JSON backup/reload/merge, CSV task import/export, calendar export and printable agendas.
+
+### SplatLMS
+
+**Workspace** · [Open SplatLMS](../pages/splatlms.html)
+
+- Build and publish courses, enroll learners and organize groups
+- Use quizzes, assignments, rubrics and forums; track progress, reports, badges and certificates
+- Start with SplatWorks Educator: five modules, twenty lesson sections and five knowledge checks
+- Link SplatWorks tools from lessons and collect supported exported files through instructor-created assignments; accounts and saving remain separate
+- Self-host the released PHP application with SQLite or MariaDB/MySQL; install separately from the static office-app ZIPs
 
 ### Step-Splat
 
@@ -875,7 +885,7 @@ Category: **Writing** · 22 components
 
 ## Assess & Practice
 
-Category: **Assessment** · 19 components
+Category: **Assessment** · 20 components
 
 ### Bingo Caller
 
@@ -1008,6 +1018,16 @@ Category: **Assessment** · 19 components
 - Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary
 - Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels
 
+### SplatLMS
+
+**Workspace** · [Open SplatLMS](../pages/splatlms.html)
+
+- Build and publish courses, enroll learners and organize groups
+- Use quizzes, assignments, rubrics and forums; track progress, reports, badges and certificates
+- Start with SplatWorks Educator: five modules, twenty lesson sections and five knowledge checks
+- Link SplatWorks tools from lessons and collect supported exported files through instructor-created assignments; accounts and saving remain separate
+- Self-host the released PHP application with SQLite or MariaDB/MySQL; install separately from the static office-app ZIPs
+
 ### Story Sprint
 
 **Game** · [Open Story Sprint](../games/story-sprint/)
@@ -1085,7 +1105,7 @@ Category: **Assessment** · 19 components
 
 ## Engage the Classroom
 
-Category: **Classroom** · 24 components
+Category: **Classroom** · 25 components
 
 ### Big Link
 
@@ -1294,6 +1314,16 @@ Category: **Classroom** · 24 components
 - Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX
 - Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary
 - Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels
+
+### SplatLMS
+
+**Workspace** · [Open SplatLMS](../pages/splatlms.html)
+
+- Build and publish courses, enroll learners and organize groups
+- Use quizzes, assignments, rubrics and forums; track progress, reports, badges and certificates
+- Start with SplatWorks Educator: five modules, twenty lesson sections and five knowledge checks
+- Link SplatWorks tools from lessons and collect supported exported files through instructor-created assignments; accounts and saving remain separate
+- Self-host the released PHP application with SQLite or MariaDB/MySQL; install separately from the static office-app ZIPs
 
 ### Step-Splat
 
