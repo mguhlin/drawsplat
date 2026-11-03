@@ -20,7 +20,7 @@
     "vitest": "4.1.12"
   },
   "dependencies": {
-    "docx": "^9.7.1",
+    "docx": "^9.15.0",
     "prosemirror-commands": "^1.7.2",
     "prosemirror-history": "^1.5.1",
     "prosemirror-keymap": "^1.2.3",
