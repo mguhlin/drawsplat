@@ -9,7 +9,7 @@ test('learning-management search leads from the ecosystem to the installer and t
  await page.locator('main').getByRole('link',{name:'Download SplatLMS v1.0.0',exact:true}).click();
  await expect(page).toHaveURL(/download.html#splatlms-download$/);
  const download=page.locator('#splatlms-download');
- await expect(download.getByRole('link',{name:'Download SplatLMS ZIP',exact:true})).toHaveAttribute('href','https://github.com/mguhlin/splatlms/releases/download/v1.0.0/SplatLMS-1.0.0.zip');
+ await expect(download.getByRole('link',{name:'Download SplatLMS ZIP',exact:true})).toHaveAttribute('href','https://github.com/mguhlin/splatlms/releases/download/documentation-refresh/SplatLMS-1.0.0.zip');
  await expect(download).toContainText('own installer and learner database');
  await download.getByRole('link',{name:'Installation and teaching guide',exact:true}).click();
  await expect(page.locator('main h1')).toHaveText('SplatLMS · Learning Management System');
