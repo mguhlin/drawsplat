@@ -1,6 +1,6 @@
 # LayoutSplat: illustrated feature guide
 
-**Version reviewed: 0.5.0 · Updated October 16, 2026**
+**Version reviewed: 0.5.0**
 
 [Open LayoutSplat](https://splatworks.org/layoutsplat/) · [Technical reference](https://splatworks.org/wiki/layoutsplat.html) · [Import accuracy](https://splatworks.org/wiki/layoutsplat-import-accuracy.html)
 

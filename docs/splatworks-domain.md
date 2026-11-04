@@ -1,7 +1,5 @@
 # SplatWorks.org and DrawSplat.org
 
-Updated October 15, 2026.
-
 The user purchased SplatWorks.org and started connecting it to the existing
 Cloudflare deployment. Both domains should serve the same source and application
 paths. The homepage presents SplatWorks™ as the suite, including LayoutSplat;

@@ -1,7 +1,5 @@
 # SplatWorks suite artwork
 
-Updated October 14, 2026.
-
 The shared website image, `splatworks_hero_image.png`, shows GridSplat, ShowSplat,
 WriteSplat, ListSplat, and LayoutSplat. LayoutSplat's window shows a school newsletter
 with rulers, columns, text frames, and alignment guides. These are illustrative

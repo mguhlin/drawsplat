@@ -16,8 +16,6 @@ The apple, banana, orange, and star SVG picture graph icons in `src/picturegraph
 
 ## Dependency License Posture
 
-Last checked: 2026-10-11
-
 GridSplat is intended to remain free for schools and self-hosters, with no per-seat software license or paid third-party package required for normal use.
 
 Installed direct dependencies are mostly permissive (`MIT`, `ISC`, `Apache-2.0`, or `MPL-2.0`). `hyperformula@3.3.0` publishes as `GPL-3.0-only`, so GridSplat / SplatStudio is released under `GPL-3.0-only` instead of assuming a paid commercial HyperFormula license.

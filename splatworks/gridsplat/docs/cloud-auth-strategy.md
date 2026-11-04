@@ -1,7 +1,5 @@
 # GridSplat Cloud Auth Strategy
 
-Last updated: 2026-10-15
-
 This note answers whether GridSplat can use the same OAuth setup as DrawSplat Community and the whiteboard.
 
 ## Short Answer

@@ -1,7 +1,5 @@
 # TEKS Verification
 
-Last checked: 2026-06-07
-
 Sources:
 
 - Texas Education Agency Curriculum Standards page: https://tea.texas.gov/curriculum-and-instruction/curriculum-standards-teks

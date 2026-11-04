@@ -4,7 +4,7 @@
 (`solutions/`) and games (`games/`). Companion to the existing
 `COMPLIANCE-ROADMAP.md`. Keep this file lean and edit-as-you-go.
 
-**Last updated:** 2026-05-29 — Wave 3 shipped on commit `1415a62` (Fun Quiz). All 23 widgets and games are now translated to six languages.
+Wave 3 shipped on commit `1415a62` (Fun Quiz). All 23 widgets and games are now translated to six languages.
 
 ---
 

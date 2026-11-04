@@ -1,7 +1,5 @@
 # Privacy and Tracker Audit
 
-Last checked: 2026-06-13
-
 GridSplat™ is built as a static Vite app. The production bundle contains no analytics packages, ad scripts, tracking pixels, or third-party network beacons.
 
 Checked by:
