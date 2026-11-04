@@ -1,6 +1,6 @@
 # LayoutSplat · Verification and remaining limits
 
-LayoutSplat v0.7.0, October 16, 2026. The full Chromium suite passed 90 workflows; ten focused Firefox checks, 15 LayoutSplat model checks, 51 WriteSplat unit checks and ten printer-preflight checks also passed. Tests use generated publications, bundled fonts and pinned upstream regression fixtures. Private user publications and account details are not distributed.
+LayoutSplat v0.7.0,. The full Chromium suite passed 90 workflows; ten focused Firefox checks, 15 LayoutSplat model checks, 51 WriteSplat unit checks and ten printer-preflight checks also passed. Tests use generated publications, bundled fonts and pinned upstream regression fixtures. Private user publications and account details are not distributed.
 
 ## Evidence
 

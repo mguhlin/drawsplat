@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
-The curated picker contains **59 pages**: 12 retained JPG illustrations and 47 PNG illustrations generated on September 15 and 17, 2026 using the built-in image_gen tool. New pages are 1024 × 1536 pixels. The existing project CC0 dedication applies to these assets to the extent rights exist.
+The curated picker contains **59 pages**: 12 retained JPG illustrations and 47 PNG illustrations generated and 17, 2026 using the built-in image_gen tool. New pages are 1024 × 1536 pixels. The existing project CC0 dedication applies to these assets to the extent rights exist.
 
 ## Curation
 
@@ -21,6 +21,8 @@ Inspect new artwork at native resolution and at normal board size. Use at least 
 
 Contemporary inspiration: [NASA lunar exploration](https://science.nasa.gov/moon/exploration/) and the [2026 International Year of Rangelands and Pastoralists](https://www.fao.org/rangelands-pastoralists-2026/). No generated scene claims to depict a particular real mission or event.
 
-## September 17 expansion
+<a id="september-17-expansion"></a>
+
+## expansion
 
 Added five original K–3 pages each for Space, Technology, Energy, Ocean, Sports, Farming, and Science (35 pages total). These categories now each contain six pages. Generated with the built-in image_gen tool, reviewed visually, and retained at native 1024 × 1536 resolution. Black outlines, white backgrounds, and large enclosed spaces suit digital coloring. Exact subject prompts and asset paths are recorded in `docs/coloring-image-prompts.json`.

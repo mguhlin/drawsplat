@@ -1,6 +1,6 @@
 # SplatWorks / DrawSplat — PROTECT v2.0 report cards
 
-Review date: October 15, 2026. Based on the deployed v3.1.38 controls and current policy documents.
+Based on the deployed v3.1.38 controls and current policy documents.
 
 These are conservative, provisional evidence scores. They distinguish implemented capabilities and published requirements from operational proof. They are not independent certifications, legal opinions, or final approval of a named district. The public evidence review is 9/14; the unverified self-hosted deployment-readiness baseline is 8/14. The lower district baseline reflects missing district-specific facts, not an inherent privacy disadvantage of self-hosting. Self-hosting offers the stronger control ceiling.
 

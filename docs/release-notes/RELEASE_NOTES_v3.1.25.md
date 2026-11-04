@@ -1,6 +1,5 @@
 # DrawSplat v3.1.25 — Current downloads for every package
 
-Released September 18, 2026.
 
 All twelve self-host ZIPs are refreshed from the current repository. The package
 version is independent of whiteboard v3.1.12 and individual app versions. Existing

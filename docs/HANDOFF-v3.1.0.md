@@ -1,5 +1,6 @@
-# Handoff after v3.1.0 — 2026-05-24
+<a id="handoff-after-v3-1-0-2026-05-24"></a><a id="handoff-after-v310--2026-05-24"></a>
 
+# Handoff after v3.1.0
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 

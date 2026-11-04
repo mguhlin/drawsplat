@@ -1,6 +1,6 @@
 # CipherSplat web security checklist assessment
 
-**Date:** 2026-08-01
+
 
 **Release:** CipherSplat™ v1.0.1
 
@@ -74,7 +74,9 @@ The browser is intentionally the trusted execution boundary for local encryption
 
 These limitations should remain visible; they cannot be honestly “removed” through client-side code alone.
 
-## Addendum — CipherSplat™ v1.0.2 hardening (2026-08-07)
+<a id="addendum-ciphersplat-v1-0-2-hardening-2026-08-07"></a><a id="addendum--ciphersplat-v102-hardening-2026-08-07"></a>
+
+## Addendum — CipherSplat™ v1.0.2 hardening
 
 These changes tighten the browser execution boundary further. They are defense-in-depth; the v1.0.1 controls above already met the stated threat model.
 

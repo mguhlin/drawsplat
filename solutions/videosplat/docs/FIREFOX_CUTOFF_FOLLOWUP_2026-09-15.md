@@ -1,4 +1,6 @@
-# Firefox cutoff follow-up — September 15, 2026
+<a id="firefox-cutoff-follow-up-september-15-2026"></a><a id="firefox-cutoff-follow-up--september-15-2026"></a>
+
+# Firefox cutoff follow-up
 
 The user's latest report was an early Firefox cutoff, possibly associated with generating subtitles. At the time of this investigation, the stopped operation and elapsed time were not yet confirmed. The user subsequently clarified a recording stop around ten seconds; see [the ten-second follow-up](FIREFOX_TEN_SECOND_FOLLOWUP_2026-09-15.md). This follow-up fixes a reproduced interruption path; it does not establish that this was the cause of every reported cutoff.
 

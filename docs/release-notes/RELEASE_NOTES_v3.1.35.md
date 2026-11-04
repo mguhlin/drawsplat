@@ -1,6 +1,6 @@
 # v3.1.35 — SplatWorks ecosystem and LayoutSplat v0.3
 
-October 14, 2026. All 16 app/collection download ZIPs are refreshed; LayoutSplat
+All 16 app/collection download ZIPs are refreshed; LayoutSplat
 now has its own standalone package and ships in the five-app SplatWorks suite.
 Complete district installation is refreshed separately as district-suite-v1.2.5.
 Existing school data, backend identifiers, and DrawSplat whiteboard/tools remain

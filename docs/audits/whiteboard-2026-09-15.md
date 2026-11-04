@@ -1,5 +1,6 @@
-# DrawSplat Whiteboard audit — September 15, 2026
+<a id="drawsplat-whiteboard-audit-september-15-2026"></a><a id="drawsplat-whiteboard-audit--september-15-2026"></a>
 
+# DrawSplat Whiteboard audit
 ## Scope and baseline
 
 Audited DrawSplat's main Whiteboard, `app/whiteboard.html` and its shared
@@ -27,7 +28,7 @@ Green Screen Studio; those changes are included in this delivery.
   These are outside Whiteboard and were not changed.
 - GitHub's issue API returned an empty list of open and closed issues. Historical
   evidence came from commits, README release history, release notes, guides,
-  compliance/support documentation, and the September 14 media-app audit. That
+  compliance/support documentation, and the  media-app audit. That
   media audit is not evidence that Whiteboard itself had already been tested.
 
 ## Reproducible defects and changes
@@ -71,7 +72,7 @@ export before their respective fixes.
 | `9e9d44d` separate pencil/eraser widths | Switching drawing/erasing tools | Fix exists | **Not tested** for independent width persistence; drawing, dragging and undo/redo tested separately. |
 | v3.0.13 crop/mask fit | Applying star/heart/other masks to photos | Existing centered-fit change | **Not tested** across every mask/crop combination. |
 | `ec9fdd1`, compliance notes: image approval | Student image awaits teacher moderation | Backend/placeholder/poller implemented | **Not tested** against an authenticated classroom backend. |
-| September 14 media-app audit | Long recordings, FFmpeg and transcription workflows | Other apps have fixes | **Not applicable as Whiteboard regression evidence**. No Whiteboard-specific reported failure duration was located. |
+|  media-app audit | Long recordings, FFmpeg and transcription workflows | Other apps have fixes | **Not applicable as Whiteboard regression evidence**. No Whiteboard-specific reported failure duration was located. |
 
 ## Workflow and file coverage
 

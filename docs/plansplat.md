@@ -41,7 +41,7 @@ While PlanSplat is open and authorized, task deadlines and study blocks sync aft
 
 Calendar updates replace the complete start/end pair when a deadline changes between all-day and timed, avoiding Google's invalid date/dateTime error. If another Calendar request fails, the status includes Google's diagnostic detail and Drive saving continues.
 
-The host's Google Cloud project must enable **Google Calendar API** and allow the `calendar.app.created` OAuth scope. School policy can restrict authorization. See [Google setup](google-drive.md#plansplat-calendar-setup) if permission is denied. On October 16, 2026, the project owner enabled Calendar API and a Google Workspace user confirmed that a dated task appeared in the PlanSplat calendar. Event edits, deletion/restoration and cross-device behavior also have automated API-simulation coverage; those operations have not yet been independently verified with a real account.
+The host's Google Cloud project must enable **Google Calendar API** and allow the `calendar.app.created` OAuth scope. School policy can restrict authorization. See [Google setup](google-drive.md#plansplat-calendar-setup) if permission is denied., the project owner enabled Calendar API and a Google Workspace user confirmed that a dated task appeared in the PlanSplat calendar. Event edits, deletion/restoration and cross-device behavior also have automated API-simulation coverage; those operations have not yet been independently verified with a real account.
 
 ## Language and color
 

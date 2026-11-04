@@ -1,6 +1,6 @@
 # WebBingoMaker header
 
-Generated with the built-in imagegen tool on October 27, 2026.
+Generated with the built-in imagegen tool.
 Asset: `solutions/web-bingo-maker/webbingomaker-header.png`.
 
 Prompt: Wide 3:1 website header for the exact title “WebBingoMaker”, subtitle

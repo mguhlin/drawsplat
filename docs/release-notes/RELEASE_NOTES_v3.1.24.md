@@ -1,6 +1,5 @@
 # DrawSplat v3.1.24 — See your export progress
 
-Released September 10, 2026.
 
 MediaSplat and VideoSplat show animated purple progress bars, actual percentages,
 elapsed time, and estimated remaining and total stage time in minutes or hours.

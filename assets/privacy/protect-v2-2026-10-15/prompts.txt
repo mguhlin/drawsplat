@@ -46,7 +46,7 @@ Small note under conditions:
 
 Footer full width:
 "KEY LIMIT: Local drafts are not application-encrypted. Clearing one domain does not clear the other, downloads or cloud copies."
-"Reviewed 15 Oct 2026 • Provisional desk review, not certification • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"
+"Provisional desk review, not certification • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"
 
 
 DISTRICT REPORT CARD
@@ -97,4 +97,6 @@ Six numbered concise conditions:
 
 Footer full width:
 "KEY LIMIT: Installation alone earns no final grade. Legacy name-only records, media, exports and backups need separate handling."
-"Reviewed 15 Oct 2026 • Readiness estimate; actual deployment remains ungraded • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"
+"Readiness estimate; actual deployment remains ungraded • Sources: supplied PROTECT v2.0 rubric; splatworks.org/legal/protect-review"
+
+Do not include a maintenance date, reviewed date, or update timestamp in the image.

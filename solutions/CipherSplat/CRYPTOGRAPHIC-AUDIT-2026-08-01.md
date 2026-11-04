@@ -1,6 +1,6 @@
 # CipherSplat cryptographic source audit
 
-**Date:** 2026-08-01
+
 **Auditor:** OpenAI Codex (automated source review; not an accredited laboratory or independent human assessor)
 **Repository commit:** `d81a593fdafc0839bd045de151441a3255e4eca8`
 **Application source SHA-256:** `d54ae41052eaebd98fc311b379cb00fa0e06ed4f981179abe57b4ffa438ea6be`

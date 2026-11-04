@@ -19,6 +19,8 @@ The self-host ZIP is labeled `drawsplat-selfhost-v3.1.11.zip`. It includes the s
 
 Real Hub campus folders are intentionally excluded from self-host bundles.
 
-## Whiteboard response improvements (September 17, 2026)
+<a id="whiteboard-response-improvements-september-17-2026"></a>
+
+## Whiteboard response improvements
 
 My response now uses illustrated cards with a short explanation of drawing, typing, voice, and video. The chooser respects the teacher’s lesson tools and explains when no response methods are available. Voice notes can be named before adding; names appear on audio cards, in Find an item, and in saved boards. Unfinished voice notes offer Return to my recording page and prevent adding to the wrong page.

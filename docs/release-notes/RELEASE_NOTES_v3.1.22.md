@@ -1,6 +1,5 @@
 # DrawSplat v3.1.22 — Automatic subtitles
 
-Released September 10, 2026.
 
 VideoSplat and MediaSplat now generate editable English subtitles from speech
 locally. First use downloads a roughly 42 MB public Whisper model from Hugging

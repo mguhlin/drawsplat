@@ -139,7 +139,9 @@ On phones, drawing hides the editing panel to give the PDF more room. Touch gest
 
 Browser checks include Chrome, Firefox, iPhone WebKit emulation, touch cancellation, multiple pointers, and saving/reopening ink. Physical phone/tablet testing is still unverified. [September 23 walkthrough](../../blog/touch-signing-media-acceleration.html).
 
-## Point placement and tool search (October 2026)
+<a id="point-placement-and-tool-search-october-2026"></a>
+
+## Point placement and tool search
 
 Choose **Add text**, **Add image**, or **Add signature**, then click or tap the
 PDF page to place the item. Images are chosen first; typed signatures are entered
@@ -180,7 +182,9 @@ and page-two orientation when a different page is cropped or deskewed. Existing
 scan, pen, conversion, image-resize, offline, protection, and page-management tests
 remain included.
 
-## On-page text formatting and UI languages (October 2026)
+<a id="on-page-text-formatting-and-ui-languages-october-2026"></a>
+
+## On-page text formatting and UI languages
 
 New text and typed signatures open an editor on the page after placement.
 Double-click an existing text box or choose **Edit on page** to edit it again.

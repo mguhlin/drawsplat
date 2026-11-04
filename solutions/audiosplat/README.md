@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
-Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
+Latest suite package: **v3.1.31**. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
 
 AudioSplat is DrawSplat's browser-based multitrack audio recorder and editor.
 Recording, editing, effects, autosave, project files, and audio export are

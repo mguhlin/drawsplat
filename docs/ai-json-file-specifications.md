@@ -1,6 +1,6 @@
 # SplatWorks and DrawSplat JSON file specifications for AI chatbots
 
-Reference revision 1.0 · 30 October 2026 · Application source verified at commit `7c3e452a6c82a609bd6356ccbb2415643a5c579b` (v3.1.46). File-format versions below are independent of suite/package versions.
+Reference revision 1.0 · Application source verified at commit `7c3e452a6c82a609bd6356ccbb2415643a5c579b` (v3.1.46). File-format versions below are independent of suite/package versions.
 
 Upload this **one Markdown file** to your chatbot together with your source content. Tell it the target tool, desired activity/document, learner level, and desired output filename. The chatbot should follow only the matching profile and return a separate importable JSON file. This reference is instructions; it is not itself a native project to import into an app. No account credentials, API key or subscription is needed to use the reference.
 

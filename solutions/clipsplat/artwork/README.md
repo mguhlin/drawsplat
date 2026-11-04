@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
-Generated October 5, 2026 using the built-in `image_gen.imagegen` tool via the imagegen skill. Generation mode, one call per original artwork; no reference images and no CLI/API fallback. Every call used `transparent_background: true`. The originals were copied into this directory without image editing. All three are 941 × 1672 RGBA PNGs with transparent centers.
+Generated using the built-in `image_gen.imagegen` tool via the imagegen skill. Generation mode, one call per original artwork; no reference images and no CLI/API fallback. Every call used `transparent_background: true`. The originals were copied into this directory without image editing. All three are 941 × 1672 RGBA PNGs with transparent centers.
 
 | Picker choice | Saved original |
 | --- | --- |
@@ -29,7 +29,7 @@ Use case: stylized-concept. Asset type: production transparent decorative frame 
 
 ## Additional aesthetic illustrated frames
 
-Generated October 6, 2026 with the built-in `image_gen.imagegen` tool using the imagegen skill, one call per original asset, transparent_background=true. Original new illustrations inspired by the aesthetic frame categories at https://www.magnific.com/free-photos-vectors/instagram-frame and the collage/paper treatment at https://www.renderforest.com/graphic/aesthetic-instagram-frames. No stock artwork was copied or embedded, and no reference image was sent to the generator. Originals were copied without editing, preserving generated alpha.
+Generated with the built-in `image_gen.imagegen` tool using the imagegen skill, one call per original asset, transparent_background=true. Original new illustrations inspired by the aesthetic frame categories at https://www.magnific.com/free-photos-vectors/instagram-frame and the collage/paper treatment at https://www.renderforest.com/graphic/aesthetic-instagram-frames. No stock artwork was copied or embedded, and no reference image was sent to the generator. Originals were copied without editing, preserving generated alpha.
 
 ### Scrapbook Memories
 
@@ -65,7 +65,7 @@ Use case: stylized-concept. Asset type: transparent decorative picture-frame ove
 
 ## Illustrated replacements and video frames
 
-Generated October 6, 2026 with built-in imagegen using the imagegen skill. Seven independent calls, transparent_background=true; originals copied without edits. Celebration Gala, Starlight Dreams and Artist Studio replace the simple confetti, star and paint-splat picker options. Cinema Classics, Vintage Film, Instant Classic and Instant Scrapbook also frame actual video.
+Generated with built-in imagegen using the imagegen skill. Seven independent calls, transparent_background=true; originals copied without edits. Celebration Gala, Starlight Dreams and Artist Studio replace the simple confetti, star and paint-splat picker options. Cinema Classics, Vintage Film, Instant Classic and Instant Scrapbook also frame actual video.
 
 ### Celebration Gala
 

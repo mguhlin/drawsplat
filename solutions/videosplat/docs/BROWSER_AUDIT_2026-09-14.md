@@ -1,4 +1,6 @@
-# VideoSplat browser audit — September 14, 2026
+<a id="videosplat-browser-audit-september-14-2026"></a><a id="videosplat-browser-audit--september-14-2026"></a>
+
+# VideoSplat browser audit
 
 ## Scope
 

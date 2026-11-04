@@ -4,7 +4,7 @@ The SplatWorks ecosystem provides browser applications for writing, presentation
 
 ## LayoutSplat
 
-The LayoutSplat plan was approved October 13, 2026. Current v0.6.0 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
+The LayoutSplat plan was approved. Current v0.6.0 development follows [the complete LayoutSplat plan](layoutsplat/IMPLEMENTATION_PLAN.md). Open `/layoutsplat/`; the original `/splatworks/layoutsplat/` path remains valid.
 
 | Milestone | Scope | Progress |
 | --- | --- | --- |
@@ -71,8 +71,9 @@ are implemented. WriteSplat exchange now preserves supported paragraph metrics,
 blank paragraphs and list labels. The 21-section [illustrated feature guide](../docs/layoutsplat-features.md)
 and [current progress](layoutsplat/PROGRESS.md) distinguish shipped behavior from limits.
 
-### Remaining work — October 16, 2026
+<a id="remaining-work-october-16-2026"></a><a id="remaining-work--october-16-2026"></a>
 
+### Remaining work
 The [detailed remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work)
 records acceptance criteria in priority order:
 
@@ -87,7 +88,9 @@ records acceptance criteria in priority order:
 The latest rebuilt downloads and district suite have been published; packaging is
 complete for LayoutSplat v0.6.0 in release v3.1.43. Shipped functionality above is not part of this open checklist.
 
-## October 16, 2026 — v0.5.0
+<a id="october-16-2026-v0-5-0"></a><a id="october-16-2026--v050"></a>
+
+## v0.5.0
 
 Reusable Publisher source masters and shared-text-ID linking are implemented.
 Dynamic master-page folios resolve per assigned page through page changes, native
@@ -100,7 +103,9 @@ needs external validation. See the authoritative
 [remaining-work checklist](layoutsplat/IMPLEMENTATION_PLAN.md#remaining-work).
 
 
-## October 16, 2026 — v0.6.0 ebooks
+<a id="october-16-2026-v0-6-0-ebooks"></a><a id="october-16-2026--v060-ebooks"></a>
+
+## v0.6.0 ebooks
 
 EPUB 2/3 import, reflowable/fixed-layout EPUB 3 export, three original ebook
 starters, heading navigation, metadata and reading preview are available. The

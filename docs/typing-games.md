@@ -22,7 +22,7 @@ Old `/games/road-rally/`, `/games/block-zap/`, `/games/passage-coach/`, and `/ga
 
 ## TEKS vocabulary and practice integrity
 
-`vocabulary.js` contains 72 curated terms across science, math, and social studies/history in bands 3–5, 6–8, and 9–12. These are representative vocabulary sets, not complete grade-by-grade curriculum coverage or an official TEA glossary. Each entry has an original plain-language definition, subject, band, source PDF, and section range. Terms/concepts were checked against the current TEA chapter PDFs on October 8, 2026:
+`vocabulary.js` contains 72 curated terms across science, math, and social studies/history in bands 3–5, 6–8, and 9–12. These are representative vocabulary sets, not complete grade-by-grade curriculum coverage or an official TEA glossary. Each entry has an original plain-language definition, subject, band, source PDF, and section range. Terms/concepts were checked against the current TEA chapter PDFs:
 
 - Science: [19 TAC Chapter 112](https://tea.texas.gov/laws-and-rules/texas-administrative-code/19-tac-chapter-112), subchapters A–C (elementary/middle adopted 2021 and high-school biology adopted 2020; implemented 2024–25).
 - Math: [19 TAC Chapter 111](https://tea.texas.gov/laws-and-rules/texas-administrative-code/19-tac-chapter-111), subchapters A–C.

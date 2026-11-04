@@ -1,6 +1,5 @@
 # VideoSplat Implementation Plan
 
-Date: 2026-08-18
 
 ## Current status and next delivery sequence
 

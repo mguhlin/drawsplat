@@ -1,6 +1,5 @@
 # DrawSplat v3.1.29 — Four typing adventures and current downloads
 
-October 8, 2026.
 
 - Typing Games is a menu with original hero artwork, four standalone pages, instructions, and six interface languages.
 - Cipher Chase: overhead spy driving, lane controls, civilian traffic, shields, smoke, TEKS subject/grade choices, success definitions, and an enabled-by-default sound system with playback test and error feedback.

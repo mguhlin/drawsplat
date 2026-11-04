@@ -1,6 +1,5 @@
 # v3.1.44 — LayoutSplat v0.7.0 source ebooks and composition
 
-October 16, 2026.
 
 LayoutSplat adds XHTML/CSS and visual source editing, source EPUB export, retained local fonts/footnotes/navigation, safe chapter preview, link checking and atomic resource saves. Page and source editions remain separate. Text properties add local English automatic hyphenation; pictures add alpha-contour wrapping; linked stories add frame-order controls. WriteSplat exchange now carries font files, custom tabs, hard breaks and nested list semantics.
 

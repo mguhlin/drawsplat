@@ -1,6 +1,5 @@
 # DrawSplatTM v3.1.14 Release Notes
 
-Released: 2026-06-14
 
 ## Highlights
 

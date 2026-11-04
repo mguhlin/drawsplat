@@ -1,6 +1,5 @@
 # DrawSplatTM v3.1.21 — Subtitle burn-in
 
-Released September 10, 2026.
 
 MediaSplat and VideoSplat can now burn imported SRT or VTT subtitles permanently into exported video. Media stays on the device; no account or upload is required for this workflow.
 

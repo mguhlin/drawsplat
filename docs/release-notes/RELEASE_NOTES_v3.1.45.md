@@ -1,6 +1,5 @@
 # v3.1.45 — BackdropSplat and ImageSplat replacement backgrounds
 
-October 22, 2026.
 
 - BackdropSplat: local photo cutouts (ORMBG Fast / optional BEN2 Best), white/color removal, edge/all-pixel matching, comparison, zoom, and batch exports.
 - Both tools: upload a replacement background, choose Studio Paper, Soft Lavender, Classroom Board, Splat Confetti, Mountain Morning, or Coastal Calm, or load a direct HTTPS image URL. Centered Fill/Fit and the shared compositor drive preview and PNG/JPEG/ZIP exports without repeating removal.

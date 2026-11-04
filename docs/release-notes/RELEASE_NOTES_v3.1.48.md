@@ -1,6 +1,5 @@
 # v3.1.48 — PDFSplat ODT, compact menus, and current previews
 
-October 30, 2026.
 
 ## Changes
 

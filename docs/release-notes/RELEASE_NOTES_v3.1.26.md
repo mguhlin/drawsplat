@@ -1,6 +1,6 @@
 # DrawSplat v3.1.26 — Recording fixes and current downloads
 
-Released September 24, 2026. All thirteen self-host ZIPs are refreshed from current source. Package versions are independent of whiteboard v3.1.12 and individual app versions.
+All thirteen self-host ZIPs are refreshed from current source. Package versions are independent of whiteboard v3.1.12 and individual app versions.
 
 ## VideoSplat
 

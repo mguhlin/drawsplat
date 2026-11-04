@@ -1,4 +1,6 @@
-# Short recording follow-up — September 24, 2026
+<a id="short-recording-follow-up-september-24-2026"></a><a id="short-recording-follow-up--september-24-2026"></a>
+
+# Short recording follow-up
 
 Report: a twenty-minute recording became a very short, unplayable editor clip after **Use full recording**, in Chrome and Firefox. The original file was not available for inspection, so the native capture failure is not established as resolved.
 

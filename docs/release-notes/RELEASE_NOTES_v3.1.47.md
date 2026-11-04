@@ -1,6 +1,5 @@
 # v3.1.47 — PDFSplat local OCR
 
-October 30, 2026.
 
 ## Editable text from scans and images
 

@@ -1,4 +1,6 @@
-# Whiteboard image collection review — September 15, 2026
+<a id="whiteboard-image-collection-review-september-15-2026"></a><a id="whiteboard-image-collection-review--september-15-2026"></a>
+
+# Whiteboard image collection review
 
 ## Results
 

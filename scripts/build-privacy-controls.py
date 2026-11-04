@@ -82,14 +82,14 @@ for tool in registry['tools']:
  'retention':'Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.',
  'rights':'/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.',
  'security':'Device/profile protections apply to browser storage; this is not application-level encryption at rest.',
- 'reviewed':'2026-10-31','entrySha256':hashlib.sha256((ROOT/entry).read_bytes()).hexdigest()})
+ 'entrySha256':hashlib.sha256((ROOT/entry).read_bytes()).hexdigest()})
  if tool['id']=='splatlms':
   components[-1].update({
    'data':'Public product and download information only at this destination. A separately installed SplatLMS host stores learner accounts, enrollment, assignments and progress; the public static site does not receive those LMS records.',
    'retention':'Public-site browser preferences follow the browser controls. LMS records and backups follow the school/operator retention policy on its separate host.',
    'rights':'/privacy/ handles origin-local browser data only. Contact the LMS operator for learner-record access, export or deletion.',
    'security':'The static product page does not run the PHP LMS. Configure HTTPS, account access, database protection and recovery on the separate LMS host.'})
-inventory={'version':1,'reviewed':'2026-10-31','scope':'All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.',
+inventory={'version':1,'scope':'All locally shipped destinations in data/drawsplat-tools.json. Alternate HTML routes receive the same shared controls.',
  'method':'Reproducible static source inventory plus runtime privacy-control tests. Storage literals and constants are evidence, not an exhaustive dynamic-key guarantee.',
  'publicHost':{'provider':'Cloudflare, Inc.','companyCountry':'United States','processingLocation':'Global edge network; no country-only residency commitment. Content editing remains local unless a connection is used.','data':'IP address, user agent, request URL and operational request metadata; no project-upload backend is supplied by the public site.'},
  'components':components}

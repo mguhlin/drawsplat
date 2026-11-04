@@ -21,4 +21,4 @@ VideoSplat never installs codecs or sends media to a conversion service. A file 
 the current browser cannot decode must be converted locally with another trusted
 tool before import.
 
-See [September 15 audit](BROWSER_AUDIT_2026-09-15.md) for tested versions, historical bug status, and physical-device limitations.
+See [browser audit](BROWSER_AUDIT_2026-09-15.md) for tested versions, historical bug status, and physical-device limitations.

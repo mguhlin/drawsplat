@@ -1,6 +1,6 @@
 # DrawSplat v3.1.27 — Reliable local startup
 
-September 24, 2026. All thirteen self-host packages are refreshed.
+All thirteen self-host packages are refreshed.
 
 - PDFSplat now supports opening its extracted HTML directly in tested desktop Chrome and Firefox. A bundled classic script avoids file-origin module blocking, and PDF.js rendering and encryption use local fallbacks where workers cannot load.
 - CipherSplat's dedicated offline ZIP includes its missing shared menu/language files, matching integrity metadata, and a local-server alternative.

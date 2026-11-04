@@ -12,7 +12,7 @@ accessibility, privacy, and integration work are complete.
 
 ## Implementation status
 
-AudioSplat V1 is implemented in this repository as of 2026-08-11.
+AudioSplat V1 is implemented in this repository.
 
 - Phases 0-7 are implemented: branded shell, six-language switching, local
   recording, import, multitrack waveform editing, transport/mixing, IndexedDB

@@ -1,5 +1,6 @@
-# Dependency triage · October 31, 2026
+<a id="dependency-triage-october-31-2026"></a><a id="dependency-triage--october-31-2026"></a>
 
+# Dependency triage
 Reviewed all 47 initially open requests by production risk. 4 independently tested patches merged; 6 stale requests closed because their requested versions already exist on main. 37 original requests remain held. A later backend query-parser request (#67) is also held. This is a dated snapshot, not an automatic merge policy.
 
 Framework, database, build-tool and media changes are separate validation work. Majors are not bulk merged. React/ReactDOM must remain a compatible pair; database patches still affect production data.

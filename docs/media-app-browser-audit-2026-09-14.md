@@ -1,5 +1,6 @@
-# Media app browser audit — September 14, 2026
+<a id="media-app-browser-audit-september-14-2026"></a><a id="media-app-browser-audit--september-14-2026"></a>
 
+# Media app browser audit
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 

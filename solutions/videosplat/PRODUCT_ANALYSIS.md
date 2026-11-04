@@ -1,6 +1,6 @@
 # VideoSplat Product Analysis
 
-Date: 2026-08-18
+
 
 ## Product thesis
 

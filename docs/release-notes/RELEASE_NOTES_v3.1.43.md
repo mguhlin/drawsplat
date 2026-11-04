@@ -1,6 +1,6 @@
 # v3.1.43 — LayoutSplat v0.6.0 ebooks
 
-October 16, 2026. LayoutSplat adds EPUB 2/3 import and EPUB 3 export, three
+LayoutSplat adds EPUB 2/3 import and EPUB 3 export, three
 original ebook starters, metadata, heading-based contents and a searchable reading
 preview. Text size and Paper/Sepia/Night themes help review a book before export;
 the existing visual rich-text editor handles story changes.

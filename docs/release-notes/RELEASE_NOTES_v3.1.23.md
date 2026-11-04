@@ -1,6 +1,5 @@
 # DrawSplat v3.1.23 — Automatic subtitles
 
-Released September 10, 2026.
 
 This patch permits Hugging Face’s additional model CDN download host in the
 production security policy. The preview server now applies the same policy to

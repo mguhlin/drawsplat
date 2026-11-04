@@ -1,6 +1,5 @@
 # DrawSplat v3.1.28 — Clear offline choices and root shortcuts
 
-September 25, 2026.
 
 - Renamed the download section to Individual apps and added CipherSplat’s dedicated offline download with measured ZIP/unpacked sizes.
 - Each app explains whether it opens directly from disk or requires the included local launcher (Python 3).

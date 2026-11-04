@@ -1,6 +1,6 @@
 # ListSplat v0.2.0 — classroom data and relationships
 
-October 26, 2026. This is an independent ListSplat app/module release; the general
+This is an independent ListSplat app/module release; the general
 SplatWorks suite ZIPs remain v3.1.45.
 
 - 15 classroom starters, 17 tables and 204 practice records; every template table has 12 records.

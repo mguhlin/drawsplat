@@ -1,6 +1,5 @@
 # DrawSplat v3.1.30 — Creative tools, document imports, and WebDeck v5
 
-October 9, 2026.
 
 - **ImageSplat:** reversible brightness, contrast, saturation, and warmth adjustments; presets and before/after preview. Apply updates the selected image layer; Undo restores its original pixels.
 - **PDFSplat:** click/tap placement for text, pictures, and signatures; on-page text editing with bold, italic, and left/center/right alignment; replacement text inherits detected color, background, and the closest font appearance. Export uses the nearest standard PDF font for custom embedded fonts. Interface translations cover the new controls without translating document content.

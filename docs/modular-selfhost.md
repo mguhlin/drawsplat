@@ -132,14 +132,18 @@ ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/r
 
 The full DrawSplat and Games packages include the Typing Games menu and Cipher Chase, Wordfall Reactor, Story Sprint, and Paws & Keys Adventure. Install the complete `games/`, `assets/`, and `vendor/` folders supplied in the package; individual game folders depend on shared files in `games/typing-games/`. Use the Python 3 launcher for local HTTP access or publish to a static web server. No remote word-bank service is needed. See [the game guide](typing-games.md) for language behavior, TEKS scope, and legacy redirects expiring April 8, 2027.
 
-## October 9 creative-tool updates
+<a id="october-9-creative-tool-updates"></a>
+
+## creative-tool updates
 
 Current packages include document/image import and PNG/JPG/WebP export in PDFSplat, point placement and on-page formatting, matched text appearance, preserved page rotation, ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and labelled action icons. Keep shared styles, icon folders, PDF libraries, and ShowSplat framework files together. [Details and conversion limits](release-notes/RELEASE_NOTES_v3.1.35.md).
 
 Version v3.1.35 also includes PDFSplat presentation/full-screen controls, timed looping, blank screens, and portable WebDeck v5 export in the applicable packages.
 
 
-## October 14 package refresh
+<a id="october-14-package-refresh"></a>
+
+## package refresh
 
 The v3.1.37 release includes LayoutSplat v0.4.6, 123 distinct compositions, a rich draggable editor and 96 shared whiteboard images, alongside standalone LayoutSplat, the five-app SplatWorks
 suite, official glossy SplatWorks website artwork, and current SplatWorks Wiki.
@@ -187,7 +191,7 @@ Back up projects and server configuration before replacing files. Extract the en
 
 ## Generate import files with an AI chatbot
 
-[Download the single-file SplatWorks and DrawSplat JSON specifications](ai-json-file-specifications.md). The same reference is linked from [Downloads → AI JSON file specifications](../pages/download.html#ai-json-specifications). It contains eighteen import profiles across seventeen tools, complete examples, exact markers, field types, units, cross-reference rules, format limits, and a prompt you can reuse. Revision 1.0 was verified against the October 30, 2026 application source.
+[Download the single-file SplatWorks and DrawSplat JSON specifications](ai-json-file-specifications.md). The same reference is linked from [Downloads → AI JSON file specifications](../pages/download.html#ai-json-specifications). It contains eighteen import profiles across seventeen tools, complete examples, exact markers, field types, units, cross-reference rules, format limits, and a prompt you can reuse. Revision 1.0 was verified  application source.
 
 1. Download the Markdown reference and upload that one file to your preferred chatbot.
 2. Provide your content and name the target tool, audience, and requested output filename. Use the prompt included at the beginning of the reference.

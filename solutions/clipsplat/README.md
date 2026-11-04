@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
-Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
+Latest suite package: **v3.1.31**. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
 
 A focused, private short-video recorder for Instagram: camera or local import → trim and cut → opening/closing panels → MP4. No account or Instagram API is required. Upload the resulting file manually, or use your device's share sheet when available.
 
@@ -35,7 +35,9 @@ The encoder reuses VideoSplat's existing shared engine at `/solutions/mediasplat
 
 Browser checks cover camera/microphone recording, actual MP4 exports with/without source audio, Reel/feed dimensions, skipped panels, cancellation/retry, trim limits and mobile layout. Timeline checks verify drag/numeric/keyboard selection, repeated cuts across joins, undo/reset, scrubbing and repeated playback, original import reset, and the actual colors and audio tones surviving in the exported MP4. Native ffprobe verifies codecs, dimensions, frame rate and audio. Upload into an Instagram account is not automated or tested.
 
-## Name and sources — October 5, 2026
+<a id="name-and-sources-october-5-2026"></a><a id="name-and-sources--october-5-2026"></a>
+
+## Name and sources
 
 - [Meta branding guidelines](https://www.meta.com/brand/resources/instagram/instagram-brand/) prohibit combining “Insta” or “gram” with another brand. The user selected ClipSplat instead. Instagram is used descriptively; no Meta logos or endorsement are implied.
 - The name is not unique: [CLIPSplat](https://doi.org/10.1117/1.JEI.35.2.023043) is a published 3D Gaussian-splatting research method. An exact-name search did not surface an Instagram video creator. This is not trademark clearance.
@@ -46,7 +48,9 @@ Browser checks cover camera/microphone recording, actual MP4 exports with/withou
 
 AGPL-3.0-or-later; see the repository LICENSE. The local recording/encoding approach adapts DrawSplat's VideoSplat design. Browser APIs provide capture and canvas panels. [@ffmpeg/ffmpeg](https://github.com/ffmpegwasm/ffmpeg.wasm) provides the MIT-licensed worker bridge. The existing shared core includes [FFmpeg](https://ffmpeg.org) and libx264 (GPL). [Vite](https://github.com/vitejs/vite) is MIT-licensed build tooling. The icon is an original SVG.
 
-## Preliminary U.S. trademark search — October 5, 2026
+<a id="preliminary-u-s-trademark-search-october-5-2026"></a><a id="preliminary-us-trademark-search--october-5-2026"></a>
+
+## Preliminary U.S. trademark search
 
 Direct searches in the [USPTO trademark database](https://tmsearch.uspto.gov/) returned no live or dead results for `CM:"clipsplat"`, `CM:"clip splat"`, `CM:"clip-splat"`, and `CM:/clip.*splat/`. A broad SPLAT search in software and related classes found other marks. In particular, [SPLAT, serial 88478014 / registration 6022371](https://tsdr.uspto.gov/#caseNumber=88478014&caseSearchType=US_APPLICATION&caseType=DEFAULT&searchType=statusSearch) is active, owned by RightSize Business Systems, and covers downloadable school attendance/recognition software (class 009) and associated web software (class 042). The TSDR record was checked directly. The existing CLIPSplat research use also remains relevant to a broader search.
 

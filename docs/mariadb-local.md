@@ -11,6 +11,8 @@ The user service `drawsplat-local.service` starts on login and remains available
 
 For portable district deployment, use [the district installation guide](district-selfhost.html). Both MariaDB and MySQL use `/api/drawsplat/mysql`; the provider name remains `mysql` for frontend compatibility. JSON handling accepts MariaDB text JSON and MySQL native JSON. There are no MariaDB-specific frontend credentials.
 
-## Verification completed on October 10, 2026
+<a id="verification-completed-on-october-10-2026"></a>
+
+## Verification
 
 The district Docker installation passed against MariaDB 11.8 and MySQL 8.4, including web setup, service restart, admin-only roster imports, private-file blocking, account-owned Save/Open, classroom access, submission revisions, feedback, and SQL/configuration backup restoration. A real localhost browser walkthrough also verified teacher sharing, student opening/turn-in, teacher feedback, district admin CSV preview, sign-out and phone layout. Synthetic browser accounts were removed afterwards. Google token claim checks are automated; a real district Google login still needs its client ID and authorized origin. Windows BAT launchers require acceptance testing on the district's Windows host.

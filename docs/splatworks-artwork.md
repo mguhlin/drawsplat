@@ -33,7 +33,9 @@ hides app names. No additional products, no duplicated app windows or names, no 
 watermark. Produce a finished website hero image.
 
 
-## Official glossy logo update — October 14, 2026
+<a id="official-glossy-logo-update-october-14-2026"></a><a id="official-glossy-logo-update--october-14-2026"></a>
+
+## Official glossy logo update
 
 The website brand asset is `assets/brand/SplatWorks_logo.png`, copied without
 modification from the supplied **Glossy Purple SplatWorks™ Logo.png**. SplatWorks is the ecosystem brand. DrawSplat names the whiteboard; main creative and productivity tools use their own Splat names. Existing artwork containing former names is historical and does not redefine current product scope.
@@ -58,7 +60,9 @@ all five app windows, their content, positions, size, newsletter, lower icons, d
 props, exact descriptions, wide composition, rounded styling and palette unchanged.
 Do not redesign the supplied logo, duplicate names, or add elements.
 
-## Wiki guide illustration — October 14, 2026
+<a id="wiki-guide-illustration-october-14-2026"></a><a id="wiki-guide-illustration--october-14-2026"></a>
+
+## Wiki guide illustration
 
 `assets/brand/splatworks-school-guides.png` is the 1536 × 512 version of an
 original illustration generated with the built-in image generation tool.

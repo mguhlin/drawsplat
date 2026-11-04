@@ -18,7 +18,9 @@ The self-host ZIP is labeled `drawsplat-selfhost-v3.1.10.zip`. It includes the s
 
 Real Hub campus folders are intentionally excluded from self-host bundles.
 
-## Whiteboard voice-response update (September 17, 2026)
+<a id="whiteboard-voice-response-update-september-17-2026"></a>
+
+## Whiteboard voice-response update
 
 Voice responses now use Record → Listen → Add, with Try again and Discard before any change to the board. Closing a recording releases the microphone and keeps its draft available through Finish voice while the page remains open. A one-minute countdown stops short responses automatically; adding an answer creates one undo step. Existing empty notes can be filled through the same review flow.
 

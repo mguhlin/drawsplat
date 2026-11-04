@@ -1,5 +1,6 @@
-# Firefox ten-second follow-up — September 15, 2026
+<a id="firefox-ten-second-follow-up-september-15-2026"></a><a id="firefox-ten-second-follow-up--september-15-2026"></a>
 
+# Firefox ten-second follow-up
 The user clarified that **recording stops after about ten seconds**. Capture stopping and a completed recording becoming a ten-second timeline clip are distinct symptoms. This investigation reproduced and fixes the latter under forced browser metadata failure. It does not establish the cause of the user's native Firefox capture stopping.
 
 ## Findings and fixes

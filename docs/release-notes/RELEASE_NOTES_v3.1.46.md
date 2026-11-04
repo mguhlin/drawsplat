@@ -1,6 +1,5 @@
 # v3.1.46 — ImageSplat PNG export and homepage discovery
 
-October 30, 2026.
 
 ## ImageSplat PNG export
 

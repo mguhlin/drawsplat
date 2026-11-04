@@ -1,7 +1,7 @@
 Use case: infographic-diagram.
 Create one finished high-resolution horizontal landscape infographic, aspect ratio 16:9, containing TWO report cards side by side for easy comparison. Match a professional editorial report-card design: white background, deep navy typography, teal rules and table headers, amber current-score badges, outlined teal conditional-target boxes. Crisp, spacious, legible typography. No illustrations, no certification seals, no invented logos. All supplied wording and numbers must be exact. Strong hierarchy separating provisional current evidence score from conditional target. Do not present targets as earned grades.
 Title: "PROTECT v2.0 • Deployment report cards"
-Subtitle: "SplatWorks / DrawSplat • Reviewed 15 October 2026"
+Subtitle: "SplatWorks / DrawSplat • "
 
 LEFT report card:
 Heading: "PUBLIC WEBSITES"
@@ -57,3 +57,5 @@ Shared footer:
 "SCORING: 0 Missing • 1 Partial • 2 Fully evidenced"
 "Provisional review, not certification. Actual district deployment remains ungraded until verified. A target is not an earned score."
 "Sources: supplied PROTECT v2.0 rubric • splatworks.org/legal/protect-review • splatworks.org/legal/service-providers"
+
+Do not include a maintenance date, reviewed date, or update timestamp in the image.

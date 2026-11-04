@@ -1,5 +1,6 @@
-# VideoSplat browser and historical bug audit — September 15, 2026
+<a id="videosplat-browser-and-historical-bug-audit-september-15-2026"></a><a id="videosplat-browser-and-historical-bug-audit--september-15-2026"></a>
 
+# VideoSplat browser and historical bug audit
 ## Scope
 
 Reviewed current VideoSplat and the September 14 recording/browser audits, then

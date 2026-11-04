@@ -1,4 +1,4 @@
-Security maintenance — 2026-10-27
+Security maintenance
 
 Scope: known npm advisories in tracked lockfiles, GitHub Actions references and
 permissions, dependency maintenance controls, and the checks listed below.

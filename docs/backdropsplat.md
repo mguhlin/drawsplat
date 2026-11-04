@@ -104,6 +104,8 @@ are listed in [THIRD_PARTY_NOTICES](../solutions/backdropsplat/THIRD_PARTY_NOTIC
 - Static hosting requires HTTP(S); direct file URLs do not reliably run workers.
 - Static release v3.1.45 includes BackdropSplat and the updated ImageSplat in the full DrawSplat and Tools packages. District suite v3.1.45 includes the complete ecosystem. Photo model files still download on first use; the browser engine and all six built-in backgrounds are shipped locally.
 
+<a id="verified-october-22-2026"></a>
+
 ## Verification commands
 
 ```sh
@@ -121,7 +123,7 @@ exported PNG/JPEG pixels and ZIP contents, cancellation/retry, disabled external
 connections, invalid inputs, keyboard comparison, and mobile layout. The optional
 photo test uses the real ONNX model and checks that outbound traffic is asset GETs.
 
-## Verified October 22, 2026
+## Verification
 
 Nine pixel/filename/bounds tests and eight Chromium workflows passed. Seven
 Firefox workflows passed across the core and new keyboard/paste/discovery

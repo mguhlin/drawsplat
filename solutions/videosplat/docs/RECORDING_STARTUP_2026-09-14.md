@@ -1,4 +1,6 @@
-# Recording startup follow-up — September 14, 2026
+<a id="recording-startup-follow-up-september-14-2026"></a><a id="recording-startup-follow-up--september-14-2026"></a>
+
+# Recording startup follow-up
 
 ## Report and findings
 

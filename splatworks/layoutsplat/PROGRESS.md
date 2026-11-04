@@ -1,6 +1,6 @@
 # LayoutSplat development progress
 
-## October 27, 2026 — v0.8.0 enhanced ebooks and original comics
+## v0.8.0 enhanced ebooks and original comics
 
 Local audio import, embedded audio/video in reflowable and fixed-layout EPUB,
 retained supported source-book media, and playback controls/descriptions.
@@ -12,7 +12,7 @@ Both branded short URLs were verified. The 29 targeted browser workflows,
 all-template/six-language text-fit proof, model tests, and seven independent
 EPUBCheck proofs passed. See docs/layoutsplat-ebooks.md for reader/format limits.
 
-## October 16, 2026 — v0.7.0 source ebooks and composition
+## v0.7.0 source ebooks and composition
 
 Added XHTML/CSS and visual source editing, safe preview and link checks; retained local fonts, semantic notes, nonlinear chapters and imported EPUB 3 navigation; source EPUB export. Invalid edits are atomic, valid mode/resource/close changes save, and resource edits can be discarded. Source/page editions remain independent. Local CSS imports expand within limits, obfuscated fonts are excluded individually, and export filenames avoid collisions.
 
@@ -24,7 +24,7 @@ The mixed 120-page benchmark passed under simulated CPU slowdown; unchanged layo
 
 Calibre 9.16 reader/PDF checks and a sanitized EPUB return passed. The v3.1.44 packages passed CRC, safe-path and committed-runtime checks; the standalone LayoutSplat package passed 18 workflows with external requests blocked. Thirty startup checks covered the 15 app/collection packages in Chromium and Firefox. The suite builder now includes the hub’s PlanSplat icon and keeps separately built district archives out of its regular-download count. Measured download sizes, release checksums and the machine-readable verification record accompany the release.
 
-## October 16, 2026 — v0.6.0 ebooks
+## v0.6.0 ebooks
 
 EPUB 2/3 import reads local spine content into native, paginated stories and
 pictures. Reflowable EPUB 3 exports rich reading content, heading navigation and
@@ -41,7 +41,7 @@ retain concrete conversion limits. A discovered Publisher fallback bug is fixed:
 text rendered as a bitmap no longer enters the native Quill paragraph writer.
 
 
-## October 16, 2026 — v0.5.0 Publisher interchange and dynamic masters
+## v0.5.0 Publisher interchange and dynamic masters
 
 Publication follow-up: source `3c3962f` is committed and pushed. GitHub's
 LayoutSplat publication proof, SplatWorks interoperability and support-wiki checks
@@ -98,7 +98,7 @@ tests and native-runtime/source hashes passed. The README, illustrated guide,
 technical/accuracy guides, Drive instructions, remaining-work checklist and wiki
 search are refreshed. The new screenshot depicts the actual v0.5.0 export dialog.
 
-## October 15, 2026 — v0.4.8 editable office presentations
+## v0.4.8 editable office presentations
 
 PPTX and ODP now default to native editable text, pictures, shapes and tables.
 Rich runs, paragraph metrics, RTL direction, physical positions, rotations,
@@ -153,7 +153,9 @@ ten PDF preflight checks, native-decoder inventory and app build checks passed.
 Published ZIP releases retain their existing contents; the next package refresh
 will include this code through the existing bundle scripts.
 
-## Current roadmap status — October 14, 2026
+<a id="current-roadmap-status-october-14-2026"></a><a id="current-roadmap-status--october-14-2026"></a>
+
+## Current roadmap status
 
 Milestones 1–2 are implemented. The core publishing and personalization tools in
 3–4 are implemented; advanced composition and richer conversion remain. Milestone 5
@@ -190,7 +192,7 @@ current personal-blog build and live feeds hide its future post. Its one-minute
 Cloudflare publication timer is enabled. The Desktop package retains Markdown,
 offline HTML, the exact scheduled Astro source, captions, sources and verification.
 
-## October 14, 2026 — illustrated documentation
+## illustrated documentation
 
 Added a 20-section feature inventory with 14 actual v0.4.6 production screenshots,
 covering all 18 publication types and explicit editability, native-format, media,
@@ -202,7 +204,7 @@ references. It has not been posted automatically to the personal blog.
 Five focused v0.4.6 workflows passed on production for paragraph/list exchange,
 folios, reading order, Publisher properties and binary Word formatting.
 
-## October 14, 2026 — v0.4.6 paragraph-aware WriteSplat exchange
+## v0.4.6 paragraph-aware WriteSplat exchange
 
 Native WriteSplat input now retains supported paragraph leading, spacing, indents,
 alignment, blank paragraphs and list starts/overrides as visible labels. Available
@@ -218,7 +220,7 @@ The browser workflow reopens exported JSON in real WriteSplat and checks physica
 indent/leading measurements plus styled text. Native list semantics, custom tab
 positions and page composition remain limited; labels and text are preserved.
 
-## October 14, 2026 — v0.4.5 folios, reading edition and richer document proofs
+## v0.4.5 folios, reading edition and richer document proofs
 
 Page/total folios update as pages change. Reinsert updates formats without
 creating duplicates and covers new blank pages. Story editing/import/linking
@@ -234,7 +236,7 @@ by the two field/reading checks after improving pale-ink contrast. Both
 independent PDF checks passed. Native legacy QuarkXPress v0.4.4 deployed
 and passed its real import/save/reopen test on SplatWorks.org; all CI checks passed.
 
-## October 14, 2026 — v0.4.4 legacy QuarkXPress browser import
+## v0.4.4 legacy QuarkXPress browser import
 
 A bounded WebAssembly worker with libqxp 0.0.3 reads supported QuarkXPress 3.1–4.1
 text, frame geometry and vectors. Matching local fonts and the common drawing
@@ -257,7 +259,7 @@ archive of committed `0fe6895` was redeployed directly to the same Pages project
 WriteSplat ruler fix passed on DrawSplat.org; Publisher/Office font matching passed on both public domains, and the 100-page
 linked-story print workflow passed on SplatWorks.org.
 
-## October 14, 2026 — v0.4.3 original fonts and independent print checks
+## v0.4.3 original fonts and independent print checks
 
 Publisher imports retain previously loaded font files and choose matching family
 and weight/italic variants. Office text-box imports use the same matching logic.
@@ -280,7 +282,7 @@ WriteSplat's live tests found and fixed ruler focus loss during consecutive arro
 adjustments. Canvas/ruler checks passed on SplatWorks.org; the fix is verified
 locally and will be checked again on both production domains.
 
-## October 14, 2026 — WriteSplat canvas and suite text follow-up
+## WriteSplat canvas and suite text follow-up
 
 WriteSplat v0.2.0 removes the bundled body heading from new documents, adds Letter
 page guides, units, draggable/keyboard indents and paragraph left tabs, plus Fit
@@ -294,7 +296,7 @@ and focused fixes, two physical-ruler/mobile/DOCX-round-trip browser checks and
 22 Wiki checks passed. The guides are a continuous canvas aid, not exact Word
 pagination; advanced tab alignment and ODT custom stops remain limited.
 
-## October 14, 2026 — v0.4.2 binary Word compatibility
+## v0.4.2 binary Word compatibility
 
 Native binary DOC text now decodes locally in a bounded WebAssembly worker in
 LayoutSplat and WriteSplat. Original fonts, font sizes, palette colors, combined
@@ -320,7 +322,7 @@ Next priorities remain WriteSplat page outlines/ruler and starter cleanup, print
 preflight and larger print proofs, further native layout import compatibility,
 and the next complete download refresh.
 
-## October 14, 2026 — v0.4.1 formatted Office insertion
+## v0.4.1 formatted Office insertion
 
 Shared browser DOCX/ODT conversion resolves defaults, named/inherited styles,
 OpenDocument automatic styles, supported font/character properties, Word list
@@ -346,7 +348,7 @@ service-worker regression, 21 Wiki checks plus a focused rerun after adding the
 new WriteSplat article. The private Word sample was inspected locally; source
 files and screenshots are not distributed.
 
-## October 14, 2026 — v0.4 composition, editing and performance milestone
+## v0.4 composition, editing and performance milestone
 
 123 distinct physical compositions replace color-counted variants, with 738 valid
 language models. Added bifold/trifold brochures, two ten-tab tear-off flyers,
@@ -379,7 +381,7 @@ in this session remain scheduled after this LayoutSplat milestone. Native INDD/Q
 and modern Pages IWA are still unsupported; the private Publisher benchmark still
 reports one overflowing story. The roadmap remains open.
 
-## October 14, 2026 — v0.3 templates, typography, imports, and packages
+## v0.3 templates, typography, imports, and packages
 
 305 templates (1,830 template/language models), 42 menu presets in 12 composition
 families, six business-card compositions, replaceable official SplatWorks logo
@@ -410,7 +412,7 @@ The official-logo business card and distinct café/fine-dining layouts were visu
 inspected. Production and package verification are recorded after publication.
 
 
-## October 14, 2026 — v0.2 publishing release
+## v0.2 publishing release
 
 Follow-up: File → Clear saved browser data removes the current workspace's draft
 and recovery, resets memory/undo by reloading, and keeps a blank starting state.
@@ -468,7 +470,7 @@ includes LayoutSplat and its shared media converter for the suite.
 
 [Feature guide](../../docs/layoutsplat.md) · [Third-party notices](THIRD_PARTY_NOTICES.md).
 
-## October 13 2026 initial layout proof
+##  initial layout proof
 
 Version 0.1.0 completes the first development milestone from the [approved plan](IMPLEMENTATION_PLAN.md). [SplatWorks future work](../ROADMAP.md) tracks the remaining publication features.
 
@@ -501,7 +503,9 @@ GitHub Actions runs the LayoutSplat proof workflow. Production deployment and li
 Serve the repository over HTTP(S), including a loopback server for offline use. Direct `file://` opening does not support this module-based editor. Native Publisher `.pub` conversion is a separate feasibility milestone.
 
 
-## Publication verification — October 14, 2026
+<a id="publication-verification-october-14-2026"></a><a id="publication-verification--october-14-2026"></a>
+
+## Publication verification
 
 LayoutSplat v0.3.0 is live at both SplatWorks.org and DrawSplat.org. The SplatWorks
 Wiki header, official glossy logo, Avery/accuracy articles, and new download links

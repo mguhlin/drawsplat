@@ -175,7 +175,9 @@ The checkmarks below indicate backend code exists, not validated whiteboard feat
 - Hand the OAuth Google client ID to the frontend; the backend audience-checks it.
 - For multi-instance deployments, set `DRAWSPLAT_CRON=0` on every instance except one, and front the SSE endpoint with a sticky-session load balancer (or swap `realtime.js` for Redis pub/sub).
 
-## PROTECT privacy upgrade (October 15, 2026)
+<a id="protect-privacy-upgrade-october-15-2026"></a>
+
+## PROTECT privacy upgrade
 
 The public privacy page is `/privacy/`. Existing drafts are not erased on upgrade.
 Expiry (1/7/30 days) requires an explicit choice and runs on return; all other copies

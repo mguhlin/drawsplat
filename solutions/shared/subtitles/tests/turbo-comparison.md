@@ -1,6 +1,6 @@
 # ONNX Medium vs Large v3 Turbo: browser test
 
-Date: 2026-09-12 (America/Chicago). Test machine: Intel Core i7-10700KF, 32 GB RAM, Linux. Browser: Google Chrome 153.0.8010.36.
+Test machine: Intel Core i7-10700KF, 32 GB RAM, Linux. Browser: Google Chrome 153.0.8010.36.
 
 Temporary production-built Vite harness copied the apps’ shared speech worker and cue-processing code. Both models used Transformers.js 3.8.1, WASM CPU, one thread, q8, enableCpuMemArena=false, enableMemPattern=false. Turbo was added only to the harness registry. This benchmark ran independently of production; a subsequent app integration adds Turbo with explicit English transcription.
 
