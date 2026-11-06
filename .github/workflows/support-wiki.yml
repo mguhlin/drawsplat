@@ -9,7 +9,9 @@ permissions:
   contents: read
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # The locked Playwright version supports Ubuntu 24.04, not the newer
+    # ubuntu-latest image's browser dependency packages.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
