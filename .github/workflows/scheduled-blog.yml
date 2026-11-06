@@ -2,9 +2,9 @@ name: Scheduled SplatWorks blog publication
 on:
   push:
     branches: [main]
-    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'functions/_middleware.js', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'functions/_middleware.js', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'tests/classroom-blog.test.mjs', 'assets/plansplat-blog/**', 'images/drawsplat-classroom/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
   pull_request:
-    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'functions/_middleware.js', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'assets/plansplat-blog/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
+    paths: ['functions/_lib/scheduled-blog/**', 'functions/blog/**', 'functions/_middleware.js', 'scripts/build-scheduled-blog.py', 'scripts/site_navigation.py', 'tests/scheduled-blog.test.mjs', 'tests/classroom-blog.test.mjs', 'assets/plansplat-blog/**', 'images/drawsplat-classroom/**', '_routes.json', '.github/workflows/scheduled-blog.yml']
 permissions:
   contents: read
 jobs:
@@ -22,5 +22,5 @@ jobs:
           node-version: '22'
       - run: python -m pip install 'markdown-it-py>=3,<5'
       - run: python scripts/build-scheduled-blog.py --check
-      - run: node --test tests/scheduled-blog.test.mjs
+      - run: node --test tests/scheduled-blog.test.mjs tests/classroom-blog.test.mjs
       - run: npx --yes wrangler@4 pages functions build functions --outfile /tmp/scheduled-blog-worker.js

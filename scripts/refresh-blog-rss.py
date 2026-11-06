@@ -5,6 +5,7 @@ import copy
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime, format_datetime
 import html
+import json
 from pathlib import Path
 import re
 import urllib.parse
@@ -55,13 +56,13 @@ def identity(item):
     return host + path + ('?' + url.query if url.query else '')
 
 
-def merge_feeds(current, published, curated, now):
+def merge_feeds(current, published, curated, now, migrated=()):
     entries = {}
     local = [item for item in current if item.findtext('source') in ('DrawSplat Updates', 'SplatWorks Updates')]
     for source, items in [('local', local), ('mguhlin', published), ('curated', curated), ('archive', current)]:
         for original in items:
             key, date = identity(original), publication(original)
-            if not key or not date or date > now or not original.findtext('title', '').strip() or key in entries:
+            if not key or key in migrated or not date or date > now or not original.findtext('title', '').strip() or key in entries:
                 continue
             item = copy.deepcopy(original)
             item.find('pubDate').text = format_datetime(date, usegmt=True)
@@ -81,7 +82,7 @@ def merge_feeds(current, published, curated, now):
             entries[key] = item
     root = ET.Element('rss', {'version': '2.0'})
     channel = ET.SubElement(root, 'channel')
-    for tag, value in [('title', 'SplatWorks Blog'), ('link', 'https://drawsplat.org/blog/'), ('description', 'SplatWorks ecosystem updates and published articles from MGuhlin.org.'), ('language', 'en-US')]:
+    for tag, value in [('title', 'SplatWorks Blog'), ('link', 'https://splatworks.org/blog/'), ('description', 'SplatWorks classroom ideas, ecosystem updates, and selected articles from MGuhlin.org.'), ('language', 'en-US')]:
         ET.SubElement(channel, tag).text = value
     for item in sorted(entries.values(), key=lambda value: (publication(value), identity(value)), reverse=True):
         channel.append(item)
@@ -97,7 +98,16 @@ def main():
     current = read_feed(current_bytes) if current_bytes else []
     # Fetch and validate both sources before touching the current snapshot.
     published, curated = fetch_feed(MGUHLIN_FEED), fetch_feed(RAINDROP_FEED)
-    output = merge_feeds(current, published, curated, datetime.now(timezone.utc))
+    metadata = json.loads((Path(__file__).resolve().parents[1] / 'functions/_lib/scheduled-blog/posts.json').read_text())
+    migrated = set()
+    for post in metadata:
+        if not post.get('sourceUrl'):
+            continue
+        for url in [post['sourceUrl'], post['canonical']]:
+            item = ET.Element('item')
+            ET.SubElement(item, 'link').text = url
+            migrated.add(identity(item))
+    output = merge_feeds(current, published, curated, datetime.now(timezone.utc), migrated)
     if output == current_bytes:
         print('No changes to published blog entries.')
         return

@@ -17,8 +17,14 @@ export async function scheduledBlog(context,posts,now=Date.now()){
   const headers=new Headers(context.request.headers);for(const key of ['if-none-match','if-modified-since','range','if-range'])headers.delete(key);
   const original=await context.next(new Request(context.request,{method:'GET',headers}));if(!original.ok)return original;let xml=await original.text();
   if(!xml.includes('</channel>'))return respond('Feed unavailable','text/plain; charset=utf-8',502);
-  for(const post of live){xml=xml.replace(/<item\b[^>]*>[\s\S]*?<\/item>/g,item=>[post.url,post.canonical].some(link=>item.includes('<link>'+link+'</link>'))?'':item);}
-  const sorted=[...live].sort((a,b)=>Date.parse(b.publishAt)-Date.parse(a.publishAt));xml=xml.replace(/(<channel\b[^>]*>)/,'$1'+sorted.map(p=>p.rssItem).join(''));
+  // Remove canonical and retired source copies even before publication so an
+  // upstream snapshot cannot disclose a future article or duplicate a move.
+  const aliases=new Set(posts.flatMap(post=>[post.url,post.canonical,post.sourceUrl].filter(Boolean)));
+  const items=[...xml.matchAll(/<item\b[^>]*>[\s\S]*?<\/item>/g)].map(match=>match[0]).filter(item=>!aliases.has(item.match(/<link>([^<]+)<\/link>/)?.[1]));
+  items.push(...live.map(post=>post.rssItem));
+  const stamp=item=>Date.parse(item.match(/<pubDate>([^<]+)<\/pubDate>/)?.[1]||'')||0;
+  items.sort((a,b)=>stamp(b)-stamp(a));
+  xml=xml.replace(/<item\b[^>]*>[\s\S]*?<\/item>/g,'').replace('</channel>',items.join('')+'</channel>');
   response=respond(xml,'application/rss+xml; charset=utf-8');
  }else{
   const post=posts.find(p=>[p.path,p.path.slice(0,-1),p.path.slice(0,-1)+'.html'].includes(path));

@@ -2,54 +2,9 @@
 <rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
   <channel>
     <title>SplatWorks Blog</title>
-    <link>https://drawsplat.org/blog/</link>
-    <description>SplatWorks ecosystem updates and published articles from MGuhlin.org.</description>
+    <link>https://splatworks.org/blog/</link>
+    <description>SplatWorks classroom ideas, ecosystem updates, and selected articles from MGuhlin.org.</description>
     <language>en-US</language>
-    <item>
-      <title>Where Towns Grow: A Classroom Lesson with ClipSplat</title>
-      <link>https://mguhlin.org/blog/2026-11-03-drawsplat-clipsplat-where-towns-grow/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-11-03-drawsplat-clipsplat-where-towns-grow/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-11-03-drawsplat-clipsplat-where-towns-grow.webp" alt=""&gt;A Grade 4 Social Studies lesson uses ClipSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.</description>
-      <pubDate>Tue, 03 Nov 2026 10:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-11-03-drawsplat-clipsplat-where-towns-grow.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Social Studies</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Arrays Explain the Product: A Classroom Lesson with Draw &amp; Sketch</title>
-      <link>https://mguhlin.org/blog/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product.webp" alt=""&gt;A Grade 3 Math lesson uses Draw &amp;amp; Sketch to help students represent multiplication with equal groups and arrays and determine the total.</description>
-      <pubDate>Mon, 02 Nov 2026 10:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Math</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>A Summary That Keeps the Meaning: A Classroom Lesson with Dicebreaker Creator</title>
-      <link>https://mguhlin.org/blog/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning.webp" alt=""&gt;A Grade 4 ELA/Reading lesson uses Dicebreaker Creator to help students summarize a text while preserving its meaning and logical order.</description>
-      <pubDate>Sun, 01 Nov 2026 10:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>ELA/Reading</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
     <item>
       <title>PDFSplat OCR: review the text, protect the original</title>
       <link>https://splatworks.org/blog/pdfsplat-ocr-safety.html</link>
@@ -57,21 +12,6 @@
       <description>Local English/Spanish OCR, prominent visual-cover warnings, real-redaction guidance, lower-memory mode and tested dependency maintenance.</description>
       <pubDate>Sat, 31 Oct 2026 15:00:00 GMT</pubDate>
       <source>SplatWorks Updates</source>
-    </item>
-    <item>
-      <title>What Happens When a Food Web Changes: A Classroom Lesson with RubricSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes-v2.webp" alt=""&gt;A Grade 5 Science lesson uses RubricSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.</description>
-      <pubDate>Sat, 31 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes-v2.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Science</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
       <title>PDFSplat Gets Smarter: OCR Brings New Life to Scanned Documents</title>
@@ -86,66 +26,6 @@
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
-      <title>Where Towns Grow: A Classroom Lesson with QuizSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow.webp" alt=""&gt;A Grade 4 Social Studies lesson uses QuizSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.</description>
-      <pubDate>Fri, 30 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Social Studies</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Arrays Explain the Product: A Classroom Lesson with WriteSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-29-drawsplat-writesplat-arrays-explain-the-product/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-29-drawsplat-writesplat-arrays-explain-the-product/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-29-drawsplat-writesplat-arrays-explain-the-product.webp" alt=""&gt;A Grade 3 Math lesson uses WriteSplat to help students represent multiplication with equal groups and arrays and determine the total.</description>
-      <pubDate>Thu, 29 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-29-drawsplat-writesplat-arrays-explain-the-product.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Math</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>A Summary That Keeps the Meaning: A Classroom Lesson with MarkdownSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning.webp" alt=""&gt;A Grade 4 ELA/Reading lesson uses MarkdownSplat to help students summarize a text while preserving its meaning and logical order.</description>
-      <pubDate>Wed, 28 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>ELA/Reading</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>What Happens When a Food Web Changes: A Classroom Lesson with ShowSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes-v2.webp" alt=""&gt;A Grade 5 Science lesson uses ShowSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.</description>
-      <pubDate>Tue, 27 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes-v2.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Science</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
       <title>Classroom Databases That Start with Useful Data</title>
       <link>https://splatworks.org/blog/listsplat-classroom-databases.html</link>
       <guid isPermaLink="true">https://splatworks.org/blog/listsplat-classroom-databases.html</guid>
@@ -154,66 +34,6 @@
       <category>ListSplat</category>
       <category>Classroom databases</category>
       <source url="https://splatworks.org/blog/drawsplat.rss">SplatWorks Updates</source>
-    </item>
-    <item>
-      <title>Where Towns Grow: A Classroom Lesson with MemeSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-26-drawsplat-memesplat-where-towns-grow/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-26-drawsplat-memesplat-where-towns-grow/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-26-drawsplat-memesplat-where-towns-grow.webp" alt=""&gt;A Grade 4 Social Studies lesson uses MemeSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.</description>
-      <pubDate>Mon, 26 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-26-drawsplat-memesplat-where-towns-grow.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Social Studies</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Arrays Explain the Product: A Classroom Lesson with DrawSplat Whiteboard</title>
-      <link>https://mguhlin.org/blog/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product.webp" alt=""&gt;A Grade 3 Math lesson uses DrawSplat Whiteboard to help students represent multiplication with equal groups and arrays and determine the total.</description>
-      <pubDate>Sun, 25 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Math</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>A Summary That Keeps the Meaning: A Classroom Lesson with ImageSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning.webp" alt=""&gt;A Grade 4 ELA/Reading lesson uses ImageSplat to help students summarize a text while preserving its meaning and logical order.</description>
-      <pubDate>Sat, 24 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>ELA/Reading</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>What Happens When a Food Web Changes: A Classroom Lesson with DiagramSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes-v2.webp" alt=""&gt;A Grade 5 Science lesson uses DiagramSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.</description>
-      <pubDate>Fri, 23 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes-v2.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Science</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>
     <item>
       <title>Free Image Background Removal Tool - BackdropSplat</title>
@@ -247,77 +67,6 @@
       <media:thumbnail url="https://mguhlin.org/media/2026/10/splatworks-creative-classroom-suite.webp" />
       <category>DrawSplat</category>
       <category>SplatWorks</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Where Towns Grow: A Classroom Lesson with ConceptSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-22-drawsplat-concept-map-studio-where-towns-grow/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-22-drawsplat-concept-map-studio-where-towns-grow/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-22-drawsplat-concept-map-studio-where-towns-grow.webp" alt=""&gt;A Grade 4 Social Studies lesson uses ConceptSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.</description>
-      <pubDate>Thu, 22 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-22-drawsplat-concept-map-studio-where-towns-grow.webp" />
-      <category>SplatWorks</category>
-      <category>DrawSplat</category>
-      <category>Social Studies</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Show Why Fractions Match with VideoSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-21-drawsplat-videosplat-equivalent-fractions/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-21-drawsplat-videosplat-equivalent-fractions/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-21-equivalent-fractions.webp" alt=""&gt;Grade 3 students film equal-size fraction strips and use VideoSplat to explain why one-half and two-fourths are equivalent.</description>
-      <pubDate>Wed, 21 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-21-equivalent-fractions.webp" />
-      <category>DrawSplat</category>
-      <category>Math</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Hear the Evidence: Reading Responses with AudioSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-20-drawsplat-audiosplat-text-evidence/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-20-drawsplat-audiosplat-text-evidence/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-20-reading-evidence.webp" alt=""&gt;A Grade 4 reading lesson uses AudioSplat to help students explain a text-based inference, hear their reasoning, and revise it.</description>
-      <pubDate>Tue, 20 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-20-reading-evidence.webp" />
-      <category>DrawSplat</category>
-      <category>Reading</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Make the Water Cycle Move with DrawSplat</title>
-      <link>https://mguhlin.org/blog/2026-10-19-drawsplat-gif-water-cycle/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-19-drawsplat-gif-water-cycle/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-19-water-cycle.webp" alt=""&gt;Grade 5 students use Animated GIF Maker to explain how the Sun and ocean interact in the water cycle and affect weather.</description>
-      <pubDate>Mon, 19 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-19-water-cycle.webp" />
-      <category>DrawSplat</category>
-      <category>Science</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
-      <author>Miguel Guhlin</author>
-      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
-    </item>
-    <item>
-      <title>Reveal Texas Regions with DrawSplat Meme Puzzle</title>
-      <link>https://mguhlin.org/blog/2026-10-18-drawsplat-meme-puzzle-texas-regions/</link>
-      <guid isPermaLink="true">https://mguhlin.org/blog/2026-10-18-drawsplat-meme-puzzle-texas-regions/</guid>
-      <description>&lt;img src="https://mguhlin.org/images/drawsplat-classroom/2026-10-18-texas-regions.webp" alt=""&gt;A Grade 4 geography lesson uses Meme Puzzle to make retrieval practice, map evidence, and regional comparisons visible.</description>
-      <pubDate>Sun, 18 Oct 2026 09:45:00 GMT</pubDate>
-      <media:thumbnail url="https://mguhlin.org/images/drawsplat-classroom/2026-10-18-texas-regions.webp" />
-      <category>DrawSplat</category>
-      <category>Social Studies</category>
-      <category>TEKS</category>
-      <category>TCEA ELEs</category>
       <author>Miguel Guhlin</author>
       <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
     </item>

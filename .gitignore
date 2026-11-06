@@ -29,6 +29,7 @@ dist/
 build/
 coverage/
 .cache/
+.wrangler/
 .tmp/
 temp/
 *.tsbuildinfo

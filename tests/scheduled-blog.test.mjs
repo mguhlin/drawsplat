@@ -2,7 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {scheduledBlog,privateSourceResponse} from '../functions/_lib/scheduled-blog/publication.mjs';
-import {posts} from '../functions/_lib/scheduled-blog/generated-posts.mjs';
+import {posts as allPosts} from '../functions/_lib/scheduled-blog/generated-posts.mjs';
+// Retain the original illustrated PlanSplat regression fixture alongside the
+// separately tested classroom collection.
+const posts=allPosts.filter(post=>post.slug==='plansplat-student-planner');
 const due=Date.parse('2026-10-16T18:00:00-05:00');
 const ctx=(path,method='GET',xml='<rss version="2.0"><channel><title>SplatWorks Blog</title><item><title>Existing article</title><link>https://example.org/old</link></item></channel></rss>')=>({request:new Request('https://splatworks.org'+path,{method}),next:async()=>new Response(method==='HEAD'?null:xml,{headers:{'Content-Type':'application/rss+xml'}})});
 test('the actual scheduled article uses 6 p.m. Central and is absent from every URL variant before then',async()=>{

@@ -14,6 +14,14 @@ def item(title, link, date, local=False):
     return node
 
 class BlogFeedTests(unittest.TestCase):
+    def test_moved_articles_cannot_be_reimported_from_current_source_or_curated_archives(self):
+        source=item('Moved lesson','https://mguhlin.org/blog/2026-10-18-lesson/','Sun, 18 Oct 2026 09:45:00 GMT')
+        old=item('Older link','https://mguhlin.org/2026/10/18/lesson/','Sun, 18 Oct 2026 09:45:00 GMT')
+        native=item('Native lesson','https://splatworks.org/blog/2026-10-18-lesson/','Sun, 18 Oct 2026 09:45:00 GMT',True)
+        other=item('Keep this update','https://splatworks.org/blog/other.html','Mon, 19 Oct 2026 09:45:00 GMT',True)
+        migrated={feed.identity(source),feed.identity(native)}
+        result=feed.read_feed(feed.merge_feeds([source,native,other],[source],[old],datetime(2026,11,6,tzinfo=timezone.utc),migrated))
+        self.assertEqual([entry.findtext('title') for entry in result],['Keep this update'])
     def test_source_date_deduplication_archive_and_local_preservation(self):
         old=item('Old copy','http://mguhlin.org/2026/10/14/classroom/','Thu, 15 Oct 2026 12:00:00 GMT')
         new=item('Source copy','https://mguhlin.org/blog/2026-10-11-classroom/','Wed, 14 Oct 2026 09:45:00 GMT')

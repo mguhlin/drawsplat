@@ -8,5 +8,1717 @@
     "canonical": "https://mguhlin.org/blog/plansplat-student-planner/",
     "image": "/assets/plansplat-blog/v1.2.1/01-today.webp",
     "imageAlt": "PlanSplat Today view with fictional biology and English assignments, checklists, a focus timer and upcoming deadlines."
+  },
+  {
+    "slug": "2026-10-18-drawsplat-meme-puzzle-texas-regions",
+    "title": "Reveal Texas Regions with DrawSplat Meme Puzzle",
+    "description": "A Grade 4 geography lesson uses Meme Puzzle to make retrieval practice, map evidence, and regional comparisons visible.",
+    "publishAt": "2026-10-18T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-18-drawsplat-meme-puzzle-texas-regions/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-18-drawsplat-meme-puzzle-texas-regions/",
+    "image": "/images/drawsplat-classroom/2026-10-18-texas-regions.webp",
+    "imageAlt": "Purple puzzle tablet revealing Texas landscapes.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-19-drawsplat-gif-water-cycle",
+    "title": "Make the Water Cycle Move with DrawSplat",
+    "description": "Grade 5 students use Animated GIF Maker to explain how the Sun and ocean interact in the water cycle and affect weather.",
+    "publishAt": "2026-10-19T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-19-drawsplat-gif-water-cycle/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-19-drawsplat-gif-water-cycle/",
+    "image": "/images/drawsplat-classroom/2026-10-19-water-cycle.webp",
+    "imageAlt": "Purple animation cards showing the water cycle.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-20-drawsplat-audiosplat-text-evidence",
+    "title": "Hear the Evidence: Reading Responses with AudioSplat",
+    "description": "A Grade 4 reading lesson uses AudioSplat to help students explain a text-based inference, hear their reasoning, and revise it.",
+    "publishAt": "2026-10-20T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-20-drawsplat-audiosplat-text-evidence/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-20-drawsplat-audiosplat-text-evidence/",
+    "image": "/images/drawsplat-classroom/2026-10-20-reading-evidence.webp",
+    "imageAlt": "Microphone beside a story and purple audio waveform.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "DrawSplat",
+      "Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-21-drawsplat-videosplat-equivalent-fractions",
+    "title": "Show Why Fractions Match with VideoSplat",
+    "description": "Grade 3 students film equal-size fraction strips and use VideoSplat to explain why one-half and two-fourths are equivalent.",
+    "publishAt": "2026-10-21T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-21-drawsplat-videosplat-equivalent-fractions/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-21-drawsplat-videosplat-equivalent-fractions/",
+    "image": "/images/drawsplat-classroom/2026-10-21-equivalent-fractions.webp",
+    "imageAlt": "Equal fraction strips beside a purple video timeline.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-22-drawsplat-concept-map-studio-where-towns-grow",
+    "title": "Where Towns Grow: A Classroom Lesson with ConceptSplat",
+    "description": "A Grade 4 Social Studies lesson uses ConceptSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.",
+    "publishAt": "2026-10-22T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-22-drawsplat-concept-map-studio-where-towns-grow/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-22-drawsplat-concept-map-studio-where-towns-grow/",
+    "image": "/images/drawsplat-classroom/2026-10-22-drawsplat-concept-map-studio-where-towns-grow.webp",
+    "imageAlt": "Purple classroom illustration of two Texas area maps with rivers, a small town, and a comparison notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes",
+    "title": "What Happens When a Food Web Changes: A Classroom Lesson with DiagramSplat",
+    "description": "A Grade 5 Science lesson uses DiagramSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.",
+    "publishAt": "2026-10-23T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes/",
+    "image": "/images/drawsplat-classroom/2026-10-23-drawsplat-mermaid-diagram-what-happens-when-a-food-web-changes-v2.webp",
+    "imageAlt": "Purple grassland organism cards beside a classroom notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning",
+    "title": "A Summary That Keeps the Meaning: A Classroom Lesson with ImageSplat",
+    "description": "A Grade 4 ELA/Reading lesson uses ImageSplat to help students summarize a text while preserving its meaning and logical order.",
+    "publishAt": "2026-10-24T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning/",
+    "image": "/images/drawsplat-classroom/2026-10-24-drawsplat-imagesplat-a-summary-that-keeps-the-meaning.webp",
+    "imageAlt": "Purple classroom illustration of a story page and three ordered event cards beside a student notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product",
+    "title": "Arrays Explain the Product: A Classroom Lesson with DrawSplat Whiteboard",
+    "description": "A Grade 3 Math lesson uses DrawSplat Whiteboard to help students represent multiplication with equal groups and arrays and determine the total.",
+    "publishAt": "2026-10-25T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product/",
+    "image": "/images/drawsplat-classroom/2026-10-25-drawsplat-drawsplat-whiteboard-arrays-explain-the-product.webp",
+    "imageAlt": "Purple classroom illustration of an accurately arranged four-by-six counter array with grid paper and a pencil.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-26-drawsplat-memesplat-where-towns-grow",
+    "title": "Where Towns Grow: A Classroom Lesson with MemeSplat",
+    "description": "A Grade 4 Social Studies lesson uses MemeSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.",
+    "publishAt": "2026-10-26T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-26-drawsplat-memesplat-where-towns-grow/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-26-drawsplat-memesplat-where-towns-grow/",
+    "image": "/images/drawsplat-classroom/2026-10-26-drawsplat-memesplat-where-towns-grow.webp",
+    "imageAlt": "Purple classroom illustration of two Texas area maps with rivers, a small town, and a comparison notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes",
+    "title": "What Happens When a Food Web Changes: A Classroom Lesson with ShowSplat",
+    "description": "A Grade 5 Science lesson uses ShowSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.",
+    "publishAt": "2026-10-27T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes/",
+    "image": "/images/drawsplat-classroom/2026-10-27-drawsplat-showsplat-what-happens-when-a-food-web-changes-v2.webp",
+    "imageAlt": "Purple grassland organism cards beside a classroom notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning",
+    "title": "A Summary That Keeps the Meaning: A Classroom Lesson with MarkdownSplat",
+    "description": "A Grade 4 ELA/Reading lesson uses MarkdownSplat to help students summarize a text while preserving its meaning and logical order.",
+    "publishAt": "2026-10-28T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning/",
+    "image": "/images/drawsplat-classroom/2026-10-28-drawsplat-markdown-studio-a-summary-that-keeps-the-meaning.webp",
+    "imageAlt": "Purple classroom illustration of a story page and three ordered event cards beside a student notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-29-drawsplat-writesplat-arrays-explain-the-product",
+    "title": "Arrays Explain the Product: A Classroom Lesson with WriteSplat",
+    "description": "A Grade 3 Math lesson uses WriteSplat to help students represent multiplication with equal groups and arrays and determine the total.",
+    "publishAt": "2026-10-29T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-29-drawsplat-writesplat-arrays-explain-the-product/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-29-drawsplat-writesplat-arrays-explain-the-product/",
+    "image": "/images/drawsplat-classroom/2026-10-29-drawsplat-writesplat-arrays-explain-the-product.webp",
+    "imageAlt": "Purple classroom illustration of an accurately arranged four-by-six counter array with grid paper and a pencil.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow",
+    "title": "Where Towns Grow: A Classroom Lesson with QuizSplat",
+    "description": "A Grade 4 Social Studies lesson uses QuizSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.",
+    "publishAt": "2026-10-30T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow/",
+    "image": "/images/drawsplat-classroom/2026-10-30-drawsplat-quiz-flashcard-studio-where-towns-grow.webp",
+    "imageAlt": "Purple classroom illustration of two Texas area maps with rivers, a small town, and a comparison notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes",
+    "title": "What Happens When a Food Web Changes: A Classroom Lesson with RubricSplat",
+    "description": "A Grade 5 Science lesson uses RubricSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.",
+    "publishAt": "2026-10-31T04:45:00-05:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes/",
+    "image": "/images/drawsplat-classroom/2026-10-31-drawsplat-rubric-builder-what-happens-when-a-food-web-changes-v2.webp",
+    "imageAlt": "Purple grassland organism cards beside a classroom notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning",
+    "title": "A Summary That Keeps the Meaning: A Classroom Lesson with Dicebreaker Creator",
+    "description": "A Grade 4 ELA/Reading lesson uses Dicebreaker Creator to help students summarize a text while preserving its meaning and logical order.",
+    "publishAt": "2026-11-01T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning/",
+    "image": "/images/drawsplat-classroom/2026-11-01-drawsplat-dicebreaker-creator-a-summary-that-keeps-the-meaning.webp",
+    "imageAlt": "Purple classroom illustration of a story page and three ordered event cards beside a student notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product",
+    "title": "Arrays Explain the Product: A Classroom Lesson with Draw & Sketch",
+    "description": "A Grade 3 Math lesson uses Draw & Sketch to help students represent multiplication with equal groups and arrays and determine the total.",
+    "publishAt": "2026-11-02T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product/",
+    "image": "/images/drawsplat-classroom/2026-11-02-drawsplat-draw-sketch-arrays-explain-the-product.webp",
+    "imageAlt": "Purple classroom illustration of an accurately arranged four-by-six counter array with grid paper and a pencil.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-03-drawsplat-clipsplat-where-towns-grow",
+    "title": "Where Towns Grow: A Classroom Lesson with ClipSplat",
+    "description": "A Grade 4 Social Studies lesson uses ClipSplat to help students explain how landforms and climate influence settlement and identify settlement patterns at different times.",
+    "publishAt": "2026-11-03T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-03-drawsplat-clipsplat-where-towns-grow/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-03-drawsplat-clipsplat-where-towns-grow/",
+    "image": "/images/drawsplat-classroom/2026-11-03-drawsplat-clipsplat-where-towns-grow.webp",
+    "imageAlt": "Purple classroom illustration of two Texas area maps with rivers, a small town, and a comparison notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-04-drawsplat-pdfsplat-what-happens-when-a-food-web-changes",
+    "title": "What Happens When a Food Web Changes: A Classroom Lesson with PDFSplat",
+    "description": "A Grade 5 Science lesson uses PDFSplat to help students predict how an ecosystem change affects matter cycling and energy flow in a food web.",
+    "publishAt": "2026-11-04T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-04-drawsplat-pdfsplat-what-happens-when-a-food-web-changes/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-04-drawsplat-pdfsplat-what-happens-when-a-food-web-changes/",
+    "image": "/images/drawsplat-classroom/2026-11-04-drawsplat-pdfsplat-what-happens-when-a-food-web-changes-v2.webp",
+    "imageAlt": "Purple grassland organism cards beside a classroom notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-05-drawsplat-qrsplat-studio-a-summary-that-keeps-the-meaning",
+    "title": "A Summary That Keeps the Meaning: A Classroom Lesson with QRSplat Studio",
+    "description": "A Grade 4 ELA/Reading lesson uses QRSplat Studio to help students summarize a text while preserving its meaning and logical order.",
+    "publishAt": "2026-11-05T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-05-drawsplat-qrsplat-studio-a-summary-that-keeps-the-meaning/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-05-drawsplat-qrsplat-studio-a-summary-that-keeps-the-meaning/",
+    "image": "/images/drawsplat-classroom/2026-11-05-drawsplat-qrsplat-studio-a-summary-that-keeps-the-meaning.webp",
+    "imageAlt": "Purple classroom illustration of a story page and three ordered event cards beside a student notebook.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-08-drawsplat-imagesplat-the-salt-did-not-disappear",
+    "title": "Where Did the Salt Go?",
+    "description": "Salt seems to vanish in water. Let students weigh the whole system and annotate the evidence before explaining where it went.",
+    "publishAt": "2026-11-08T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-08-drawsplat-imagesplat-the-salt-did-not-disappear/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-08-drawsplat-imagesplat-the-salt-did-not-disappear/",
+    "image": "/images/drawsplat-classroom/2026-11-08-drawsplat-imagesplat-the-salt-did-not-disappear.webp",
+    "imageAlt": "Purple classroom illustration of a clear saltwater container, salt crystals, and a classroom balance with observation cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-09-drawsplat-drawsplat-whiteboard-what-does-the-author-want-us-to-understand",
+    "title": "Same Topic, Different Message",
+    "description": "A park notice and a park opinion share a topic. Their wording helps readers explain why the authors have different messages.",
+    "publishAt": "2026-11-09T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-09-drawsplat-drawsplat-whiteboard-what-does-the-author-want-us-to-understand/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-09-drawsplat-drawsplat-whiteboard-what-does-the-author-want-us-to-understand/",
+    "image": "/images/drawsplat-classroom/2026-11-09-drawsplat-drawsplat-whiteboard-what-does-the-author-want-us-to-understand.webp",
+    "imageAlt": "Purple classroom illustration of two contrasting park information pages with highlighted phrases and a magnifying glass.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-10-drawsplat-memesplat-a-bar-graph-s-scale-matters",
+    "title": "Before You Read the Bar, Check the Scale",
+    "description": "Four drawn intervals do not always mean four votes. A practice travel graph gives students a reason to check the scale.",
+    "publishAt": "2026-11-10T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-10-drawsplat-memesplat-a-bar-graph-s-scale-matters/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-10-drawsplat-memesplat-a-bar-graph-s-scale-matters/",
+    "image": "/images/drawsplat-classroom/2026-11-10-drawsplat-memesplat-a-bar-graph-s-scale-matters.webp",
+    "imageAlt": "Purple classroom illustration of a classroom bar graph with four different-height bars and a frequency table.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-11-drawsplat-showsplat-citizens-can-make-a-difference",
+    "title": "From “We Should Help” to a Community Plan",
+    "description": "A fictional neighborhood cleanup turns civic participation into a practical question about volunteers, permission, and community benefit.",
+    "publishAt": "2026-11-11T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-11-drawsplat-showsplat-citizens-can-make-a-difference/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-11-drawsplat-showsplat-citizens-can-make-a-difference/",
+    "image": "/images/drawsplat-classroom/2026-11-11-drawsplat-showsplat-citizens-can-make-a-difference.webp",
+    "imageAlt": "Purple classroom illustration of a historic marker, a civic action planning card, and a small town illustration.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-12-drawsplat-markdown-studio-the-salt-did-not-disappear",
+    "title": "Two Clear Cups, Different Amounts of Salt",
+    "description": "Two clear saltwater samples can look alike while containing different amounts. Keep the mass readings beside the explanation.",
+    "publishAt": "2026-11-12T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-12-drawsplat-markdown-studio-the-salt-did-not-disappear/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-12-drawsplat-markdown-studio-the-salt-did-not-disappear/",
+    "image": "/images/drawsplat-classroom/2026-11-12-drawsplat-markdown-studio-the-salt-did-not-disappear.webp",
+    "imageAlt": "Purple classroom illustration of a clear saltwater container, salt crystals, and a classroom balance with observation cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-13-drawsplat-writesplat-what-does-the-author-want-us-to-understand",
+    "title": "One School Garden, Two Different Purposes",
+    "description": "A description of a school garden and a request for volunteers give young readers two different purposes to explain.",
+    "publishAt": "2026-11-13T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-13-drawsplat-writesplat-what-does-the-author-want-us-to-understand/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-13-drawsplat-writesplat-what-does-the-author-want-us-to-understand/",
+    "image": "/images/drawsplat-classroom/2026-11-13-drawsplat-writesplat-what-does-the-author-want-us-to-understand.webp",
+    "imageAlt": "Purple classroom illustration of two contrasting park information pages with highlighted phrases and a magnifying glass.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-14-drawsplat-quiz-flashcard-studio-a-bar-graph-s-scale-matters",
+    "title": "Can Your Graph Question Explain Its Own Answer?",
+    "description": "Book-category totals of 6, 10, 8, and 4 give students a small graph to question, calculate from, and explain.",
+    "publishAt": "2026-11-14T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-14-drawsplat-quiz-flashcard-studio-a-bar-graph-s-scale-matters/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-14-drawsplat-quiz-flashcard-studio-a-bar-graph-s-scale-matters/",
+    "image": "/images/drawsplat-classroom/2026-11-14-drawsplat-quiz-flashcard-studio-a-bar-graph-s-scale-matters.webp",
+    "imageAlt": "Purple classroom illustration of a classroom bar graph with four different-height bars and a frequency table.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-15-drawsplat-rubric-builder-citizens-can-make-a-difference",
+    "title": "Saving Local Stories Starts with a Workable Plan",
+    "description": "A fictional oral-history collection gives students a reason to plan voluntary service and check whose permission they need.",
+    "publishAt": "2026-11-15T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-15-drawsplat-rubric-builder-citizens-can-make-a-difference/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-15-drawsplat-rubric-builder-citizens-can-make-a-difference/",
+    "image": "/images/drawsplat-classroom/2026-11-15-drawsplat-rubric-builder-citizens-can-make-a-difference.webp",
+    "imageAlt": "Purple classroom illustration of a historic marker, a civic action planning card, and a small town illustration.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-16-drawsplat-dicebreaker-creator-the-salt-did-not-disappear",
+    "title": "The Mass Went Down. What Left the Container?",
+    "description": "A spilled-solution data set invites students to ask what left the measured system before claiming that matter disappeared.",
+    "publishAt": "2026-11-16T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-16-drawsplat-dicebreaker-creator-the-salt-did-not-disappear/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-16-drawsplat-dicebreaker-creator-the-salt-did-not-disappear/",
+    "image": "/images/drawsplat-classroom/2026-11-16-drawsplat-dicebreaker-creator-the-salt-did-not-disappear.webp",
+    "imageAlt": "Purple classroom illustration of a clear saltwater container, salt crystals, and a classroom balance with observation cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-17-drawsplat-draw-sketch-what-does-the-author-want-us-to-understand",
+    "title": "What Does This Animal Passage Want Us to Think?",
+    "description": "Compare an animal description with a conservation passage, then sketch how each message connects to the author’s words.",
+    "publishAt": "2026-11-17T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-17-drawsplat-draw-sketch-what-does-the-author-want-us-to-understand/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-17-drawsplat-draw-sketch-what-does-the-author-want-us-to-understand/",
+    "image": "/images/drawsplat-classroom/2026-11-17-drawsplat-draw-sketch-what-does-the-author-want-us-to-understand.webp",
+    "imageAlt": "Purple classroom illustration of two contrasting park information pages with highlighted phrases and a magnifying glass.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-18-drawsplat-graphsplat-a-bar-graph-s-scale-matters",
+    "title": "Every Bar Has to Match the Table",
+    "description": "A fictional lunch-choice table lets students check every bar, explain the scale, and make sense of their calculations.",
+    "publishAt": "2026-11-18T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-18-drawsplat-graphsplat-a-bar-graph-s-scale-matters/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-18-drawsplat-graphsplat-a-bar-graph-s-scale-matters/",
+    "image": "/images/drawsplat-classroom/2026-11-18-drawsplat-graphsplat-a-bar-graph-s-scale-matters-v2.webp",
+    "imageAlt": "Purple tablet with a classroom bar graph and frequency cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-19-drawsplat-pdfsplat-citizens-can-make-a-difference",
+    "title": "A Useful Civic Request Starts with a Specific Need",
+    "description": "A fictional library information sheet gives students evidence for a specific, respectful request that could help the community.",
+    "publishAt": "2026-11-19T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-19-drawsplat-pdfsplat-citizens-can-make-a-difference/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-19-drawsplat-pdfsplat-citizens-can-make-a-difference/",
+    "image": "/images/drawsplat-classroom/2026-11-19-drawsplat-pdfsplat-citizens-can-make-a-difference.webp",
+    "imageAlt": "Purple classroom illustration of a historic marker, a civic action planning card, and a small town illustration.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-20-drawsplat-qrsplat-studio-the-salt-did-not-disappear",
+    "title": "Less Water Does Not Mean Matter Vanished",
+    "description": "Evaporation data help students explain why a lower reading from an open container does not show that matter vanished.",
+    "publishAt": "2026-11-20T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-20-drawsplat-qrsplat-studio-the-salt-did-not-disappear/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-20-drawsplat-qrsplat-studio-the-salt-did-not-disappear/",
+    "image": "/images/drawsplat-classroom/2026-11-20-drawsplat-qrsplat-studio-the-salt-did-not-disappear.webp",
+    "imageAlt": "Purple classroom illustration of a clear saltwater container, salt crystals, and a classroom balance with observation cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-21-drawsplat-sketchspace-vr-what-does-the-author-want-us-to-understand",
+    "title": "A Museum Panel and an Invitation Have Different Jobs",
+    "description": "An exhibit panel and a museum invitation share a subject but ask different things of their readers. Let students explain the wording.",
+    "publishAt": "2026-11-21T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-21-drawsplat-sketchspace-vr-what-does-the-author-want-us-to-understand/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-21-drawsplat-sketchspace-vr-what-does-the-author-want-us-to-understand/",
+    "image": "/images/drawsplat-classroom/2026-11-21-drawsplat-sketchspace-vr-what-does-the-author-want-us-to-understand.webp",
+    "imageAlt": "Purple classroom illustration of two contrasting park information pages with highlighted phrases and a magnifying glass.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-22-drawsplat-concept-map-studio-a-bar-graph-s-scale-matters",
+    "title": "Change the Scale, Keep the Votes",
+    "description": "Pet-picture votes stay the same when the graph’s scale changes. Have students map the relationship between the table and display.",
+    "publishAt": "2026-11-22T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-22-drawsplat-concept-map-studio-a-bar-graph-s-scale-matters/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-22-drawsplat-concept-map-studio-a-bar-graph-s-scale-matters/",
+    "image": "/images/drawsplat-classroom/2026-11-22-drawsplat-concept-map-studio-a-bar-graph-s-scale-matters.webp",
+    "imageAlt": "Purple classroom illustration of a classroom bar graph with four different-height bars and a frequency table.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-23-drawsplat-imagesplat-railroads-changed-texas",
+    "title": "What Can a Railroad Map Actually Tell Us?",
+    "description": "Pair Texas rail maps with a written account to explain cotton transport without asking the map to prove every economic claim.",
+    "publishAt": "2026-11-23T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-23-drawsplat-imagesplat-railroads-changed-texas/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-23-drawsplat-imagesplat-railroads-changed-texas/",
+    "image": "/images/drawsplat-classroom/2026-11-23-drawsplat-imagesplat-railroads-changed-texas.webp",
+    "imageAlt": "Purple classroom illustration of a historical railway map, a small steam train, and cotton and cattle picture cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-24-drawsplat-drawsplat-whiteboard-follow-the-light",
+    "title": "Move One Card and Follow the Light",
+    "description": "Move one card in a flashlight investigation, then help students explain the blocked light path with a careful diagram.",
+    "publishAt": "2026-11-24T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-24-drawsplat-drawsplat-whiteboard-follow-the-light/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-24-drawsplat-drawsplat-whiteboard-follow-the-light/",
+    "image": "/images/drawsplat-classroom/2026-11-24-drawsplat-drawsplat-whiteboard-follow-the-light.webp",
+    "imageAlt": "Purple classroom illustration of a flashlight, mirror, pencil in a glass of water, and simple light-ray sketches.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-25-drawsplat-memesplat-an-inference-needs-a-trail",
+    "title": "“She’s Sad” Is the Start of an Explanation",
+    "description": "A character’s disappointment gives readers an inference to discuss. Two connected story details help them explain the feeling.",
+    "publishAt": "2026-11-25T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-25-drawsplat-memesplat-an-inference-needs-a-trail/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-25-drawsplat-memesplat-an-inference-needs-a-trail/",
+    "image": "/images/drawsplat-classroom/2026-11-25-drawsplat-memesplat-an-inference-needs-a-trail.webp",
+    "imageAlt": "Purple classroom illustration of a short narrative with two highlighted clues and a thought-bubble sketch.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-26-drawsplat-showsplat-perimeter-is-the-trip-around",
+    "title": "Take a Trip Around the Garden Before Using the Formula",
+    "description": "Trace a six-by-four garden boundary and connect every side to the equation before reaching for a perimeter formula.",
+    "publishAt": "2026-11-26T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-26-drawsplat-showsplat-perimeter-is-the-trip-around/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-26-drawsplat-showsplat-perimeter-is-the-trip-around/",
+    "image": "/images/drawsplat-classroom/2026-11-26-drawsplat-showsplat-perimeter-is-the-trip-around.webp",
+    "imageAlt": "Purple classroom illustration of a garden boundary on grid paper with a measuring tape and side-length cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-27-drawsplat-markdown-studio-railroads-changed-texas",
+    "title": "The Railroad Arrived. What Changed for Cattle Producers?",
+    "description": "Texas rail maps and cattle-transport accounts help students distinguish a supported economic effect from a reasonable guess.",
+    "publishAt": "2026-11-27T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-27-drawsplat-markdown-studio-railroads-changed-texas/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-27-drawsplat-markdown-studio-railroads-changed-texas/",
+    "image": "/images/drawsplat-classroom/2026-11-27-drawsplat-markdown-studio-railroads-changed-texas.webp",
+    "imageAlt": "Purple classroom illustration of a historical railway map, a small steam train, and cotton and cattle picture cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-28-drawsplat-writesplat-follow-the-light",
+    "title": "Where Does the Light Go When It Reaches a Mirror?",
+    "description": "Follow a flashlight beam at a mirror, then write an explanation that connects the observation to the reflected light path.",
+    "publishAt": "2026-11-28T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-28-drawsplat-writesplat-follow-the-light/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-28-drawsplat-writesplat-follow-the-light/",
+    "image": "/images/drawsplat-classroom/2026-11-28-drawsplat-writesplat-follow-the-light.webp",
+    "imageAlt": "Purple classroom illustration of a flashlight, mirror, pencil in a glass of water, and simple light-ray sketches.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-29-drawsplat-quiz-flashcard-studio-an-inference-needs-a-trail",
+    "title": "Why Did the Character Keep That Old Object?",
+    "description": "Why does a character keep an old object? Have students write quiz answers that explain what the story evidence supports.",
+    "publishAt": "2026-11-29T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-29-drawsplat-quiz-flashcard-studio-an-inference-needs-a-trail/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-29-drawsplat-quiz-flashcard-studio-an-inference-needs-a-trail/",
+    "image": "/images/drawsplat-classroom/2026-11-29-drawsplat-quiz-flashcard-studio-an-inference-needs-a-trail.webp",
+    "imageAlt": "Purple classroom illustration of a short narrative with two highlighted clues and a thought-bubble sketch.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-11-30-drawsplat-rubric-builder-perimeter-is-the-trip-around",
+    "title": "The Missing Side Has to Fit the Whole Boundary",
+    "description": "A perimeter of 22 units and known sides of 5, 4, and 6 give students a missing length to find and verify.",
+    "publishAt": "2026-11-30T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-11-30-drawsplat-rubric-builder-perimeter-is-the-trip-around/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-11-30-drawsplat-rubric-builder-perimeter-is-the-trip-around/",
+    "image": "/images/drawsplat-classroom/2026-11-30-drawsplat-rubric-builder-perimeter-is-the-trip-around.webp",
+    "imageAlt": "Purple classroom illustration of a garden boundary on grid paper with a measuring tape and side-length cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-01-drawsplat-dicebreaker-creator-railroads-changed-texas",
+    "title": "The Train Is Coming. Which Benefits Can We Support?",
+    "description": "A town gaining a railroad gives students a chance to separate a documented change from a benefit they are only predicting.",
+    "publishAt": "2026-12-01T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-01-drawsplat-dicebreaker-creator-railroads-changed-texas/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-01-drawsplat-dicebreaker-creator-railroads-changed-texas/",
+    "image": "/images/drawsplat-classroom/2026-12-01-drawsplat-dicebreaker-creator-railroads-changed-texas.webp",
+    "imageAlt": "Purple classroom illustration of a historical railway map, a small steam train, and cotton and cattle picture cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-02-drawsplat-draw-sketch-follow-the-light",
+    "title": "The Pencil Looks Bent. What Changed?",
+    "description": "A pencil appears bent in water but comes out straight. A simple light-path drawing gives students a way to explain the difference.",
+    "publishAt": "2026-12-02T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-02-drawsplat-draw-sketch-follow-the-light/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-02-drawsplat-draw-sketch-follow-the-light/",
+    "image": "/images/drawsplat-classroom/2026-12-02-drawsplat-draw-sketch-follow-the-light.webp",
+    "imageAlt": "Purple classroom illustration of a flashlight, mirror, pencil in a glass of water, and simple light-ray sketches.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-03-drawsplat-clipsplat-an-inference-needs-a-trail",
+    "title": "What Dialogue and Actions Tell Us About a Relationship",
+    "description": "Pair a line of dialogue with an action so students can explain a changing relationship and consider another interpretation.",
+    "publishAt": "2026-12-03T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-03-drawsplat-clipsplat-an-inference-needs-a-trail/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-03-drawsplat-clipsplat-an-inference-needs-a-trail/",
+    "image": "/images/drawsplat-classroom/2026-12-03-drawsplat-clipsplat-an-inference-needs-a-trail.webp",
+    "imageAlt": "Purple classroom illustration of a short narrative with two highlighted clues and a thought-bubble sketch.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-04-drawsplat-pdfsplat-perimeter-is-the-trip-around",
+    "title": "Different Gardens, Same Perimeter",
+    "description": "A six-by-four rectangle and a seven-by-three rectangle both have a perimeter of 20 units. Ask students to show why.",
+    "publishAt": "2026-12-04T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-04-drawsplat-pdfsplat-perimeter-is-the-trip-around/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-04-drawsplat-pdfsplat-perimeter-is-the-trip-around/",
+    "image": "/images/drawsplat-classroom/2026-12-04-drawsplat-pdfsplat-perimeter-is-the-trip-around.webp",
+    "imageAlt": "Purple classroom illustration of a garden boundary on grid paper with a measuring tape and side-length cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-05-drawsplat-qrsplat-studio-railroads-changed-texas",
+    "title": "A Rail Hub Changes More Than the Route",
+    "description": "Compare a rail hub’s effect on employment with its effect on moving goods, using source details to support each claim.",
+    "publishAt": "2026-12-05T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-05-drawsplat-qrsplat-studio-railroads-changed-texas/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-05-drawsplat-qrsplat-studio-railroads-changed-texas/",
+    "image": "/images/drawsplat-classroom/2026-12-05-drawsplat-qrsplat-studio-railroads-changed-texas.webp",
+    "imageAlt": "Purple classroom illustration of a historical railway map, a small steam train, and cotton and cattle picture cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-06-drawsplat-sketchspace-vr-follow-the-light",
+    "title": "What Happens When Light Meets a Surface?",
+    "description": "Contrasting materials give students observations to explain as they compare light reflecting from and being absorbed by surfaces.",
+    "publishAt": "2026-12-06T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-06-drawsplat-sketchspace-vr-follow-the-light/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-06-drawsplat-sketchspace-vr-follow-the-light/",
+    "image": "/images/drawsplat-classroom/2026-12-06-drawsplat-sketchspace-vr-follow-the-light.webp",
+    "imageAlt": "Purple classroom illustration of a flashlight, mirror, pencil in a glass of water, and simple light-ray sketches.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-07-drawsplat-concept-map-studio-an-inference-needs-a-trail",
+    "title": "A Prediction Needs Evidence and a Little Uncertainty",
+    "description": "A character’s next action is uncertain. Help students connect two text details to a prediction without turning it into a fact.",
+    "publishAt": "2026-12-07T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-07-drawsplat-concept-map-studio-an-inference-needs-a-trail/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-07-drawsplat-concept-map-studio-an-inference-needs-a-trail/",
+    "image": "/images/drawsplat-classroom/2026-12-07-drawsplat-concept-map-studio-an-inference-needs-a-trail.webp",
+    "imageAlt": "Purple classroom illustration of a short narrative with two highlighted clues and a thought-bubble sketch.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-08-drawsplat-mermaid-diagram-perimeter-is-the-trip-around",
+    "title": "Twenty Units of Edging: Design a Garden That Fits",
+    "description": "Twenty units of edging give students a rectangular garden to design, label, and check with a complete boundary sum.",
+    "publishAt": "2026-12-08T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-08-drawsplat-mermaid-diagram-perimeter-is-the-trip-around/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-08-drawsplat-mermaid-diagram-perimeter-is-the-trip-around/",
+    "image": "/images/drawsplat-classroom/2026-12-08-drawsplat-mermaid-diagram-perimeter-is-the-trip-around.webp",
+    "imageAlt": "Purple classroom illustration of a garden boundary on grid paper with a measuring tape and side-length cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-09-drawsplat-drawsplat-whiteboard-a-dam-has-more-than-one-story",
+    "title": "More Stored Water, but What Happens Downstream?",
+    "description": "A fictional reservoir case invites students to compare water-storage benefits with downstream habitat changes before reaching a recommendation.",
+    "publishAt": "2026-12-09T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-09-drawsplat-drawsplat-whiteboard-a-dam-has-more-than-one-story/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-09-drawsplat-drawsplat-whiteboard-a-dam-has-more-than-one-story/",
+    "image": "/images/drawsplat-classroom/2026-12-09-drawsplat-drawsplat-whiteboard-a-dam-has-more-than-one-story.webp",
+    "imageAlt": "Purple classroom illustration of a before-and-after river and reservoir map with small habitat and town cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-10-drawsplat-memesplat-why-shadows-change",
+    "title": "Follow One Place from Daylight into Darkness",
+    "description": "Keep the lamp fixed and follow one marked place into darkness so students can connect daylight changes to Earth’s rotation.",
+    "publishAt": "2026-12-10T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-10-drawsplat-memesplat-why-shadows-change/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-10-drawsplat-memesplat-why-shadows-change/",
+    "image": "/images/drawsplat-classroom/2026-12-10-drawsplat-memesplat-why-shadows-change.webp",
+    "imageAlt": "Purple classroom illustration of a purple globe beside a stationary lamp and three changing shadow photo cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-11-drawsplat-showsplat-revision-makes-the-reader-s-job-easier",
+    "title": "The Words Are Correct. Can the Reader Follow Them?",
+    "description": "A paragraph can be spelled correctly and still confuse its reader. Compare sentence orders and explain what the revision improves.",
+    "publishAt": "2026-12-11T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-11-drawsplat-showsplat-revision-makes-the-reader-s-job-easier/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-11-drawsplat-showsplat-revision-makes-the-reader-s-job-easier/",
+    "image": "/images/drawsplat-classroom/2026-12-11-drawsplat-showsplat-revision-makes-the-reader-s-job-easier.webp",
+    "imageAlt": "Purple classroom illustration of a draft paragraph with rearranged sentence strips and revision arrows.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-12-drawsplat-markdown-studio-compare-fractions-before-you-count-pieces",
+    "title": "Five Pieces or Three? First Check Their Size",
+    "description": "Equal-size wholes and matching eighths help students explain why five-eighths is greater than three-eighths.",
+    "publishAt": "2026-12-12T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-12-drawsplat-markdown-studio-compare-fractions-before-you-count-pieces/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-12-drawsplat-markdown-studio-compare-fractions-before-you-count-pieces/",
+    "image": "/images/drawsplat-classroom/2026-12-12-drawsplat-markdown-studio-compare-fractions-before-you-count-pieces.webp",
+    "imageAlt": "Purple classroom illustration of equal-length fourths and eighths fraction strips with shaded portions.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-13-drawsplat-writesplat-a-dam-has-more-than-one-story",
+    "title": "One Reservoir, Two Very Different Experiences",
+    "description": "Recreation and relocation give students two perspectives to explain in a fictional reservoir case, each supported by a detail.",
+    "publishAt": "2026-12-13T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-13-drawsplat-writesplat-a-dam-has-more-than-one-story/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-13-drawsplat-writesplat-a-dam-has-more-than-one-story/",
+    "image": "/images/drawsplat-classroom/2026-12-13-drawsplat-writesplat-a-dam-has-more-than-one-story.webp",
+    "imageAlt": "Purple classroom illustration of a before-and-after river and reservoir map with small habitat and town cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-14-drawsplat-quiz-flashcard-studio-why-shadows-change",
+    "title": "Same Object, Different Shadow",
+    "description": "Morning and afternoon photographs of one shadow give students a change to explain with a globe, a lamp, and Earth’s rotation.",
+    "publishAt": "2026-12-14T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-14-drawsplat-quiz-flashcard-studio-why-shadows-change/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-14-drawsplat-quiz-flashcard-studio-why-shadows-change/",
+    "image": "/images/drawsplat-classroom/2026-12-14-drawsplat-quiz-flashcard-studio-why-shadows-change.webp",
+    "imageAlt": "Purple classroom illustration of a purple globe beside a stationary lamp and three changing shadow photo cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-15-drawsplat-rubric-builder-revision-makes-the-reader-s-job-easier",
+    "title": "Combine the Repetition, Keep the Meaning",
+    "description": "Two sentences repeat an idea. Let students combine them, preserve the important information, and explain the benefit to the reader.",
+    "publishAt": "2026-12-15T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-15-drawsplat-rubric-builder-revision-makes-the-reader-s-job-easier/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-15-drawsplat-rubric-builder-revision-makes-the-reader-s-job-easier/",
+    "image": "/images/drawsplat-classroom/2026-12-15-drawsplat-rubric-builder-revision-makes-the-reader-s-job-easier.webp",
+    "imageAlt": "Purple classroom illustration of a draft paragraph with rearranged sentence strips and revision arrows.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-16-drawsplat-dicebreaker-creator-compare-fractions-before-you-count-pieces",
+    "title": "Two Pieces Each Does Not Mean the Same Amount",
+    "description": "Compare two-fourths with two-eighths using equal-length strips, then ask why the matching numerators do not settle the comparison.",
+    "publishAt": "2026-12-16T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-16-drawsplat-dicebreaker-creator-compare-fractions-before-you-count-pieces/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-16-drawsplat-dicebreaker-creator-compare-fractions-before-you-count-pieces/",
+    "image": "/images/drawsplat-classroom/2026-12-16-drawsplat-dicebreaker-creator-compare-fractions-before-you-count-pieces.webp",
+    "imageAlt": "Purple classroom illustration of equal-length fourths and eighths fraction strips with shaded portions.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-17-drawsplat-draw-sketch-a-dam-has-more-than-one-story",
+    "title": "A Dam May Help with Flooding. What Else Changes?",
+    "description": "Compare flood-management benefits with changes to river flow in a fictional dam case, then ask what evidence is still needed.",
+    "publishAt": "2026-12-17T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-17-drawsplat-draw-sketch-a-dam-has-more-than-one-story/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-17-drawsplat-draw-sketch-a-dam-has-more-than-one-story/",
+    "image": "/images/drawsplat-classroom/2026-12-17-drawsplat-draw-sketch-a-dam-has-more-than-one-story.webp",
+    "imageAlt": "Purple classroom illustration of a before-and-after river and reservoir map with small habitat and town cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-18-drawsplat-clipsplat-why-shadows-change",
+    "title": "Where Does Morning Begin on Our Globe?",
+    "description": "Follow a marked place from darkness into daylight and record an explanation of what the globe-and-lamp model shows and simplifies.",
+    "publishAt": "2026-12-18T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-18-drawsplat-clipsplat-why-shadows-change/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-18-drawsplat-clipsplat-why-shadows-change/",
+    "image": "/images/drawsplat-classroom/2026-12-18-drawsplat-clipsplat-why-shadows-change.webp",
+    "imageAlt": "Purple classroom illustration of a purple globe beside a stationary lamp and three changing shadow photo cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-19-drawsplat-pdfsplat-revision-makes-the-reader-s-job-easier",
+    "title": "The Claim and Detail Need a Connecting Thought",
+    "description": "A claim and detail need a connecting explanation. Have students annotate the gap, revise the paragraph, and test it with a reader.",
+    "publishAt": "2026-12-19T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-19-drawsplat-pdfsplat-revision-makes-the-reader-s-job-easier/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-19-drawsplat-pdfsplat-revision-makes-the-reader-s-job-easier/",
+    "image": "/images/drawsplat-classroom/2026-12-19-drawsplat-pdfsplat-revision-makes-the-reader-s-job-easier.webp",
+    "imageAlt": "Purple classroom illustration of a draft paragraph with rearranged sentence strips and revision arrows.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-20-drawsplat-qrsplat-studio-compare-fractions-before-you-count-pieces",
+    "title": "Six Is Bigger Than Three. Is One-Sixth Bigger Too?",
+    "description": "Equal-size wholes help students explain why one-third is greater than one-sixth even though six is the larger denominator.",
+    "publishAt": "2026-12-20T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-20-drawsplat-qrsplat-studio-compare-fractions-before-you-count-pieces/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-20-drawsplat-qrsplat-studio-compare-fractions-before-you-count-pieces/",
+    "image": "/images/drawsplat-classroom/2026-12-20-drawsplat-qrsplat-studio-compare-fractions-before-you-count-pieces.webp",
+    "imageAlt": "Purple classroom illustration of equal-length fourths and eighths fraction strips with shaded portions.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-21-drawsplat-sketchspace-vr-a-dam-has-more-than-one-story",
+    "title": "Water for Farms and Changes for Habitats",
+    "description": "A fictional dam case gives students agricultural water benefits and habitat changes to explain before recommending a position.",
+    "publishAt": "2026-12-21T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-21-drawsplat-sketchspace-vr-a-dam-has-more-than-one-story/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-21-drawsplat-sketchspace-vr-a-dam-has-more-than-one-story/",
+    "image": "/images/drawsplat-classroom/2026-12-21-drawsplat-sketchspace-vr-a-dam-has-more-than-one-story.webp",
+    "imageAlt": "Purple classroom illustration of a before-and-after river and reservoir map with small habitat and town cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Social Studies",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-22-drawsplat-concept-map-studio-why-shadows-change",
+    "title": "Daylight Here, Darkness Somewhere Else",
+    "description": "Two marked locations on a globe let students explain how one place can face the Sun while another faces away.",
+    "publishAt": "2026-12-22T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-22-drawsplat-concept-map-studio-why-shadows-change/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-22-drawsplat-concept-map-studio-why-shadows-change/",
+    "image": "/images/drawsplat-classroom/2026-12-22-drawsplat-concept-map-studio-why-shadows-change.webp",
+    "imageAlt": "Purple classroom illustration of a purple globe beside a stationary lamp and three changing shadow photo cards.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Science",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-23-drawsplat-mermaid-diagram-revision-makes-the-reader-s-job-easier",
+    "title": "Where Did the Paragraph Lose Its Thread?",
+    "description": "An unrelated sentence and a weak transition give students two specific ways to improve a paragraph’s coherence.",
+    "publishAt": "2026-12-23T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-23-drawsplat-mermaid-diagram-revision-makes-the-reader-s-job-easier/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-23-drawsplat-mermaid-diagram-revision-makes-the-reader-s-job-easier/",
+    "image": "/images/drawsplat-classroom/2026-12-23-drawsplat-mermaid-diagram-revision-makes-the-reader-s-job-easier.webp",
+    "imageAlt": "Purple classroom illustration of a draft paragraph with rearranged sentence strips and revision arrows.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "ELA/Reading",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
+  },
+  {
+    "slug": "2026-12-24-drawsplat-imagesplat-compare-fractions-before-you-count-pieces",
+    "title": "Five-Sixths or Two-Sixths? Show What You Are Counting",
+    "description": "Matching sixths and equal-size wholes let students explain why five-sixths is greater than two-sixths with an annotated model.",
+    "publishAt": "2026-12-24T04:45:00-06:00",
+    "author": "Miguel Guhlin",
+    "canonical": "https://splatworks.org/blog/2026-12-24-drawsplat-imagesplat-compare-fractions-before-you-count-pieces/",
+    "sourceUrl": "https://mguhlin.org/blog/2026-12-24-drawsplat-imagesplat-compare-fractions-before-you-count-pieces/",
+    "image": "/images/drawsplat-classroom/2026-12-24-drawsplat-imagesplat-compare-fractions-before-you-count-pieces.webp",
+    "imageAlt": "Purple classroom illustration of equal-length fourths and eighths fraction strips with shaded portions.",
+    "eyebrow": "Classroom ideas",
+    "series": "classroom-series",
+    "tags": [
+      "SplatWorks",
+      "DrawSplat",
+      "Math",
+      "TEKS",
+      "TCEA ELEs"
+    ],
+    "categories": [
+      "Education"
+    ],
+    "topics": [
+      "professional-learning"
+    ]
   }
 ]

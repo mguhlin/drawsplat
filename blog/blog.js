@@ -1,8 +1,8 @@
 /* Render the SplatWorks blog page from its automatically refreshed RSS snapshot.
    No external network requests; CSP-friendly.
 
-   The hourly publication sync preserves local updates and imports published
-   MGuhlin.org articles; browsers read the same-origin snapshot. */
+   The server adds due classroom lessons to the same-origin feed. The hourly
+   sync preserves local updates and imports other published MGuhlin.org articles. */
 (function () {
   const list = document.getElementById('blogList');
   const status = document.getElementById('blogStatus');

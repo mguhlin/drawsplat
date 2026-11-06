@@ -1,44 +1,59 @@
-# Scheduled SplatWorks blog publication
+# SplatWorks blog publication
 
-The PlanSplat walkthrough is scheduled for **October 16, 2026 at 6:00 p.m.
-America/Chicago (CDT)**, equivalent to **23:00 UTC**. Its native URL is
-`https://splatworks.org/blog/plansplat-student-planner/`, with the same route on
-DrawSplat.org. The original MGuhlin.org article has the same publication time and
-uses that site's existing scheduled-build publisher.
+The publisher serves the existing PlanSplat walkthrough and the 66 migrated
+classroom lessons: 19 previously published articles and 47 upcoming articles.
+Upcoming lessons retain their original 4:45 a.m. America/Chicago timestamps,
+with explicit timezone offsets.
 
-SplatWorks' Pages Function checks the server clock for each article and RSS
-request. Before the publication timestamp, every article URL variant returns a
-non-cacheable generic 404 and the RSS contains no scheduled title or description.
-At the timestamp, the article and its feed entry become available together,
-without a timed rebuild or GitHub cron. The blog index reads that RSS snapshot
-and lists the article on its next load. The existing hourly feed refresh continues
-for other MGuhlin.org articles; the Function removes a duplicate canonical copy of
-this post if the hourly import later adds one.
+Each article and RSS entry become available together when the server clock
+reaches `publishAt`. Before then, every article URL variant returns a generic,
+non-cacheable 404. Browser clocks and query parameters do not affect publication.
+The blog index reads `/blog/drawsplat.rss`. The feed combines due native articles
+and the retained static snapshot in publication order, removing old MGuhlin.org
+links and native duplicates before inserting the native entries.
 
-`/blog/publication-schedule.json` reports only the next timestamp and already
-published paths. It never includes future titles or article text.
+`/blog/publication-schedule.json` returns the next timestamp and published paths,
+without future titles or article text. The next classroom release is November 8,
+2026 at 4:45 a.m. Central, or `2026-11-08T10:45:00.000Z`.
 
-Source articles and metadata live in `functions/_lib/scheduled-blog/`, inside the Pages Functions source directory, which Pages excludes from static assets. `scripts/build-scheduled-blog.py` creates the server-side HTML bundle and
-an explicit `_routes.json`. Functions run only for the feed, schedule endpoint,
-and exact scheduled article paths. A middleware guard also returns a non-cacheable 404 for the former `/server/blog/` source paths and all `/functions/` source requests, before the asset cache can respond. App, image and ordinary static blog routes remain static. This requires Cloudflare Pages Functions; a static-only host
-continues to show the existing static RSS and does not run the publication gate.
+## Sources and images
 
-## Editing an article
+Markdown and `posts.json` live in `functions/_lib/scheduled-blog/`. `media.json`
+records image dimensions. Moved articles use SplatWorks canonical URLs;
+`sourceUrl` identifies the retired MGuhlin.org URL for feed deduplication. The
+separate PlanSplat walkthrough retains its existing MGuhlin.org canonical because
+that original article has not moved.
 
-1. Edit the Markdown in `functions/_lib/scheduled-blog/` and its record in `posts.json`. Use an
-   explicit timezone offset for `publishAt`; daylight Central time is `-05:00`.
-2. Add screenshots as local assets and confirm their paths. The PlanSplat tour
-   contains 21 screenshots of fictional coursework in v1.2.1.
-3. Run `python3 scripts/build-scheduled-blog.py`, then
-   `node --test tests/scheduled-blog.test.mjs`. The tests cover the exact boundary,
-   aliases, the RSS, duplicate handling, and the lack of early content exposure.
-4. Commit generated outputs with the source. Deploy with the `functions/` folder
-   available to Wrangler, along with `functions/_lib/scheduled-blog/` for bundling. Never copy those source files into static asset output. Pages does not apply the Workers `.assetsignore` file to its static uploads. Keep bundled sources under `functions/`, and verify their URLs return 404 after deployment.
-5. Verify the live schedule endpoint, the generic 404 before publication, the
-   absence of the title in RSS, and screenshot availability. The builder's output
-   can be rendered locally with a test clock at/after publication for preview.
+Classroom images live in `images/drawsplat-classroom/`. PlanSplat screenshots stay
+under `assets/plansplat-blog/`. The builder validates local paths, sets image
+sizes, and retains alt text. The editorial calendar, manifest, image prompts, and
+email drafts live in the Function's private `editorial/` directory.
 
-The canonical link in the SplatWorks copy points to the original MGuhlin.org
-article. Changing this post's scheduled date requires changing the frontmatter in
-that separate repository as well. Existing Google account credentials and planner
-content are not involved in blog publication.
+Pages excludes `functions/` from static uploads. Never copy article sources,
+metadata, editorial files, or the generated module into static output. A
+middleware guard rejects `/functions/*` and former `/server/blog/*` source URLs.
+
+## Editing and verification
+
+1. Edit the Markdown and matching `posts.json` record. Keep `publishAt` explicit
+   and use a native canonical for a moved article.
+2. Add local images and dimensions in `media.json`.
+3. Run `python3 scripts/build-scheduled-blog.py`,
+   `node --test tests/scheduled-blog.test.mjs tests/classroom-blog.test.mjs`, and
+   `python3 -m unittest discover -s tests -p 'test_blog_rss.py'`.
+4. Run the builder with `--check` and compile Pages Functions. Commit the generated
+   module and `_routes.json`. Deploy an immutable, tested commit through the
+   verified DrawSplat deployment workflow in the MGuhlin.org repository. It
+   publishes to the existing `drawsplat` Pages project serving SplatWorks.org and
+   DrawSplat.org.
+5. Verify published pages, canonical URLs, images, RSS order and deduplication,
+   the schedule, future 404s, and private-source 404s on the live domain.
+
+Date-prefixed articles use month prefixes in `_routes.json`; other scheduled
+articles use exact aliases. This stays within [Cloudflare's route limits](https://developers.cloudflare.com/pages/functions/routing/)
+without routing the apps, images, static blog index, or static feature pages
+through Functions. The exact publication guard still checks each article.
+
+The existing hourly feed refresh imports other published MGuhlin.org and curated
+articles. It excludes the moved collection by normalized identity, so archived
+or curated copies cannot restore its retired MGuhlin.org links.
