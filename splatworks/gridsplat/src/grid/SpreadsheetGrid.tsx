@@ -272,9 +272,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   function setColWidths(update:SetStateAction<number[]>){setStoredColWidths(previous=>typeof update==='function'?update(Array.from({length:colCount},(_,c)=>previous[c] ?? DEFAULT_COL_WIDTH)):update);}
   const [frozenRows, setFrozenRows] = useState(0);
   const [frozenCols, setFrozenCols] = useState(0);
-  const [freezeDragAxis, setFreezeDragAxis] = useState<FreezeDragAxis | null>(
-    null,
-  );
+  // Pointer events can arrive before a React render commits. Keep this
+  // short-lived gesture identity synchronous; pane counts remain render state.
+  const freezeDrag = useRef<{
+    axis: FreezeDragAxis;
+    pointerId: number;
+    originalCount: number;
+  } | null>(null);
   const [scrollPosition, setScrollPosition] = useState({ top: 0, left: 0 });
   const [viewportSize, setViewportSize] = useState({ width: 900, height: 620 });
   const [fileMessage, setFileMessage] = useState('');
@@ -1556,75 +1560,56 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   function updateFrozenPane(axis: FreezeDragAxis, event: PointerEvent) {
     const scroller = scrollerRef.current;
-
-    if (!scroller) {
-      return;
-    }
-
-    const scrollerBounds = scroller.getBoundingClientRect();
-
-    if (axis === 'col') {
-      const pointerX =
-        event.clientX - scrollerBounds.left + scroller.scrollLeft;
-
-      setFrozenCols(
-        clamp(
-          countFrozenItems(colWidths, columnOffsets, pointerX),
-          0,
-          colCount - 1,
-        ),
-      );
-    }
-
-    if (axis === 'row') {
-      const pointerY = event.clientY - scrollerBounds.top + scroller.scrollTop;
-
-      setFrozenRows(
-        clamp(
-          countFrozenItems(rowHeights, rowOffsets, pointerY),
-          0,
-          rowCount - 1,
-        ),
-      );
-    }
+    if (!scroller) return undefined;
+    const bounds = scroller.getBoundingClientRect();
+    const count = axis === 'col'
+      ? clamp(countFrozenItems(colWidths, columnOffsets,
+          event.clientX - bounds.left + scroller.scrollLeft), 0, colCount - 1)
+      : clamp(countFrozenItems(rowHeights, rowOffsets,
+          event.clientY - bounds.top + scroller.scrollTop), 0, rowCount - 1);
+    if (axis === 'col') setFrozenCols(count);
+    else setFrozenRows(count);
+    return count;
   }
 
   function startFreezeDrag(
     axis: FreezeDragAxis,
     event: PointerEvent<HTMLButtonElement>,
   ) {
+    if (freezeDrag.current) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
-    setFreezeDragAxis(axis);
+    freezeDrag.current = {
+      axis, pointerId: event.pointerId,
+      originalCount: axis === 'col' ? frozenCols : frozenRows,
+    };
     updateFrozenPane(axis, event);
   }
 
   function continueFreezeDrag(event: PointerEvent<HTMLButtonElement>) {
-    if (!freezeDragAxis) {
-      return;
+    const drag = freezeDrag.current;
+    if (drag && drag.pointerId === event.pointerId) {
+      updateFrozenPane(drag.axis, event);
     }
-
-    updateFrozenPane(freezeDragAxis, event);
   }
 
-  function stopFreezeDrag() {
-    if (freezeDragAxis === 'col') {
-      setFileMessage(
-        frozenCols === 0
-          ? 'No columns frozen.'
-          : `Frozen ${frozenCols} column${frozenCols === 1 ? '' : 's'}.`,
-      );
+  function stopFreezeDrag(event: PointerEvent<HTMLButtonElement>) {
+    const drag = freezeDrag.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    freezeDrag.current = null;
+    if (event.type !== 'pointerup') {
+      if (drag.axis === 'col') setFrozenCols(drag.originalCount);
+      else setFrozenRows(drag.originalCount);
+      setFileMessage('Freeze adjustment cancelled.');
+      return;
     }
-
-    if (freezeDragAxis === 'row') {
-      setFileMessage(
-        frozenRows === 0
-          ? 'No rows frozen.'
-          : `Frozen ${frozenRows} row${frozenRows === 1 ? '' : 's'}.`,
-      );
-    }
-
-    setFreezeDragAxis(null);
+    // Commit the release position even if the last move has not rendered yet.
+    const count = updateFrozenPane(drag.axis, event);
+    if (count === undefined) return;
+    const item = drag.axis === 'col' ? 'column' : 'row';
+    setFileMessage(count === 0
+      ? `No ${item}s frozen.`
+      : `Frozen ${count} ${item}${count === 1 ? '' : 's'}.`);
   }
 
   function resetSheet() {
@@ -2367,6 +2352,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               left: scrollPosition.left + freezeColBoundary,
               height: viewportSize.height,
             }}
+            onLostPointerCapture={stopFreezeDrag}
             onPointerCancel={stopFreezeDrag}
             onPointerDown={(event) => startFreezeDrag('col', event)}
             onPointerMove={continueFreezeDrag}
@@ -2382,6 +2368,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               left: scrollPosition.left,
               width: viewportSize.width,
             }}
+            onLostPointerCapture={stopFreezeDrag}
             onPointerCancel={stopFreezeDrag}
             onPointerDown={(event) => startFreezeDrag('row', event)}
             onPointerMove={continueFreezeDrag}

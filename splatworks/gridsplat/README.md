@@ -59,3 +59,9 @@ Recognized project and Office files open in the matching app in a new tab. The m
 Click a row or column header to select it; Shift-click another header to extend the selection. Apply bold, italic, alignment, colors and number formats to the selected cells. The reference box accepts cells and ranges such as `A1:D10`, `A:C`, and `2:5`. Insert/delete rows or columns, fill formulas or number series, and replace text in selected cells. Undo is available. Unmerge cells before structural changes or filling.
 
 Office exchange reads the first worksheet with common values, formulas, basic formatting and merges. Imports are limited to 20 MB, 2,000 rows, 200 columns and 100,000 cells. Keep original workbooks for advanced charts, macros and unsupported features.
+
+## Freeze-divider gestures
+
+Freeze adjustments track the active pointer synchronously, commit its release position, and restore the previous boundary when pointer capture is cancelled or lost. Later events from an old or unrelated pointer cannot continue that gesture. The status bar reports the committed count or cancellation. Browser checks exercise cancellation, a fresh drag, and both frozen axes after scrolling.
+
+The browser-test server shuts down with SIGTERM so the development wrapper can restore the deployment entrypoint. Normal shutdown and child-command failures restore synchronously; a forced SIGKILL cannot run cleanup. Check the working tree after forcibly stopping development processes.

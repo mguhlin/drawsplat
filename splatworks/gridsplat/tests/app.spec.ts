@@ -337,9 +337,8 @@ test('freezes top rows and first columns by dragging dividers', async ({
     name: 'Drag horizontal freeze divider',
   });
   const verticalBox = await verticalDivider.boundingBox();
-  const horizontalBox = await horizontalDivider.boundingBox();
 
-  if (!verticalBox || !horizontalBox) {
+  if (!verticalBox) {
     throw new Error('Expected freeze dividers to be visible');
   }
 
@@ -347,6 +346,9 @@ test('freezes top rows and first columns by dragging dividers', async ({
   await page.mouse.down();
   await page.mouse.move(verticalBox.x + 126, verticalBox.y + 80);
   await page.mouse.up();
+  await expect(page.locator('.frozen-col-layer')).toBeVisible();
+  const horizontalBox = await horizontalDivider.boundingBox();
+  if (!horizontalBox) throw new Error('Expected a visible horizontal freeze divider');
 
   await page.mouse.move(horizontalBox.x + 80, horizontalBox.y + 4);
   await page.mouse.down();
@@ -366,6 +368,35 @@ test('freezes top rows and first columns by dragging dividers', async ({
     'Frozen column',
   );
   await expect(page.locator('.frozen-row-layer')).toContainText('Frozen row');
+});
+
+test('cancelled freeze gestures restore the pane boundary and permit a fresh drag', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Pointer capture flow runs in Chromium.');
+  await dismissSplash(page);
+  const divider = page.getByRole('button', {name: 'Drag vertical freeze divider'});
+  await divider.evaluate(button => button.addEventListener('pointerdown', event => {
+    button.dataset.testPointerId = String((event as PointerEvent).pointerId);
+  }, {once: true}));
+  const box = await divider.boundingBox();
+  if (!box) throw new Error('Expected a visible freeze divider');
+  await page.mouse.move(box.x + 4, box.y + 80);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 126, box.y + 80);
+  await expect(page.locator('.frozen-col-layer')).toBeVisible();
+  await divider.evaluate(button => button.dispatchEvent(new PointerEvent('pointercancel', {
+    bubbles: true, pointerId: Number(button.dataset.testPointerId),
+  })));
+  await page.mouse.up();
+  await expect(page.locator('.frozen-col-layer')).toHaveCount(0);
+  await expect(page.getByText('Freeze adjustment cancelled.', {exact: true})).toBeVisible();
+  const fresh = await divider.boundingBox();
+  if (!fresh) throw new Error('Expected the restored freeze divider');
+  await page.mouse.move(fresh.x + 4, fresh.y + 80);
+  await page.mouse.down();
+  await page.mouse.move(fresh.x + 126, fresh.y + 80);
+  await page.mouse.up();
+  await expect(page.locator('.frozen-col-layer')).toBeVisible();
+  await expect(page.getByText('Frozen 1 column.', {exact: true})).toBeVisible();
 });
 
 test('calculates formulas live and shows friendly errors', async ({
