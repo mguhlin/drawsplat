@@ -63,9 +63,9 @@ body {
 .eyebrow {
   color: var(--purple);
   font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
 }
 .brand strong {
   font-size: 1.15rem;

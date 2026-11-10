@@ -688,7 +688,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .start-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
 .start-choice{display:flex;flex-direction:column;gap:8px;min-height:210px;padding:20px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 8px 24px #7c3aed14}
 .start-choice:hover{filter:brightness(.98)}
-.start-choice-kicker{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.start-choice-kicker{font-size:12px;font-weight:500;text-transform:none;letter-spacing:normal;color:var(--muted)}
 .start-choice strong{font-size:26px;line-height:1.1;color:var(--navy)}
 .start-choice span:last-child{color:var(--muted);line-height:1.45}
 @media(max-width:760px){.start-choice-grid{grid-template-columns:1fr}.start-choice{min-height:0}}
@@ -705,7 +705,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .landing-shell{max-width:1180px;margin:0 auto;padding:42px 24px 24px}
 .landing-hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(360px,.96fr);gap:38px;align-items:center;min-height:620px}
 .landing-hero-copy h1{font-size:58px;line-height:.98;margin:10px 0 18px;color:#101827;letter-spacing:0}
-.landing-eyebrow{margin:0;color:#7c3aed;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.landing-eyebrow{margin:0;color:#7c3aed;font-size:13px;font-weight:500;text-transform:none;letter-spacing:normal}
 .landing-lede{max-width:660px;color:#4b5563;font-size:18px;line-height:1.65;margin:0}
 .landing-actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 12px}
 .landing-cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;border-radius:999px;border:1px solid #d9ddec;background:#fff;color:#172033;text-decoration:none;font-weight:900;box-shadow:0 8px 24px #1720330d}
@@ -917,7 +917,7 @@ sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter
 .path-card strong{font-size:26px;line-height:1.08;margin:14px 0 10px;color:#7c3aed}
 .path-card.teacher strong{color:#0f766e}
 .path-card.adult strong{color:#b45309}
-.path-kicker{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#6b7280}
+.path-kicker{font-size:12px;font-weight:500;text-transform:none;letter-spacing:normal;color:#6b7280}
 .storage-section{padding-top:34px}
 .storage-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .landing-footer{max-width:1180px;margin:0 auto;padding:28px 24px 40px;display:flex;align-items:center;gap:12px;color:#5f6776;border-top:1px solid #e2e6f0}
@@ -938,7 +938,7 @@ sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter
 .pricing-card.featured{border-color:#7c3aed;box-shadow:0 22px 60px #7c3aed24}
 .pricing-card.site-license{border-color:#0f766e;box-shadow:0 22px 60px #0f766e1d}
 .pricing-card.district-license{border-color:#2563eb;box-shadow:0 22px 60px #2563eb1f}
-.pricing-kicker{margin:0;color:#7c3aed;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.pricing-kicker{margin:0;color:#7c3aed;font-size:13px;font-weight:500;text-transform:none;letter-spacing:normal}
 .pricing-card h2{font-size:46px;line-height:1.04;margin:10px 0;color:#101827;hyphens:none}
 .pricing-subtitle{margin:0;color:#5f6776;line-height:1.5}
 .pricing-list{display:grid;gap:10px;margin:0;padding:0;list-style:none;color:#334155;line-height:1.45}

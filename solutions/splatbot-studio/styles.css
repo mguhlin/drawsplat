@@ -214,9 +214,9 @@ textarea {
   margin: 0 0 2px;
   color: #a855f7;
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .eyebrow a {

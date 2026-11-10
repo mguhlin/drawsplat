@@ -15,7 +15,7 @@
     .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #eef2ff); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
     .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
     header.site .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  </style>
+</style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -46,7 +46,7 @@
     .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
     header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
     .title-block { display: grid; gap: 6px; }
-    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 500; letter-spacing: normal; text-transform: none; }
     h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
     .subtitle { margin: 0; color: var(--gray-90); font-size: 1rem; line-height: 1.45; }
     .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
@@ -66,7 +66,7 @@
     .winner-overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 101; background: rgba(15, 22, 50, 0.45); animation: winnerFade .35s ease; padding: 20px; }
     .winner-overlay.show { display: grid; }
     .winner-card { background: var(--white); border-radius: var(--radius); padding: 32px 40px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.35); border: 6px solid var(--gold); max-width: min(520px, 92vw); animation: winnerPop .55s cubic-bezier(.18,1.2,.4,1); }
-    .winner-eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .12em; font-weight: 900; font-size: .9rem; }
+    .winner-eyebrow { color: var(--gold); text-transform: none; letter-spacing: normal; font-weight: 500; font-size: .9rem; }
     .winner-name { font-size: clamp(2rem, 6vw, 3.6rem); color: var(--navy); font-weight: 900; margin: 8px 0 4px; line-height: 1; }
     .winner-phrase { color: var(--gray-90); font-size: 1.1rem; font-weight: 800; margin: 4px 0 6px; }
     .winner-sub { color: var(--gray-50); margin: 0 0 18px; font-weight: 700; }
@@ -120,7 +120,7 @@
     .message.good { color: var(--green); }
 
     .letter-section + .letter-section { margin-top: 14px; }
-    .letter-section-label { font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-50); margin-bottom: 6px; }
+    .letter-section-label { font-size: .78rem; font-weight: 500; letter-spacing: normal; text-transform: none; color: var(--gray-50); margin-bottom: 6px; }
     .letter-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
     .letter-grid.vowels { grid-template-columns: repeat(5, 1fr); }
     .letter { min-height: 38px; border: 2px solid var(--border); border-radius: 6px; background: var(--white); color: var(--navy); font-weight: 900; font-size: 1rem; }
@@ -135,7 +135,7 @@
       .letter-grid { grid-template-columns: repeat(7, 1fr); }
       .solve-row { grid-template-columns: 1fr; }
     }
-  </style>
+</style>
 <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.0" />
 <script src="../../assets/js/action-cards.js?v=1.0" defer></script>
 </head>

@@ -88,9 +88,9 @@ body.ds-directory {
 .ds-eyebrow {
   margin: 0;
   color: var(--ds-purple);
-  font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
   font-size: 0.78rem;
 }
 .ds-directory-hero h1 {
