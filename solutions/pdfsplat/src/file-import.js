@@ -1,4 +1,5 @@
 // Local document import. No remote resources, scripts, or conversion service.
+import {pptxPdf} from './pptx-import.js';
 import {odtBlocks} from './odt-import.js';
 import {standardTextFont} from './text-appearance.js';
 const LIMIT = 50 * 1024 * 1024, ZIP_LIMIT = 100 * 1024 * 1024;
@@ -109,25 +110,6 @@ async function flowPdf(blocks){
  // Avoid a trailing empty page after the last chapter/page break.
  if(doc.getPageCount()>1&&y===790)doc.removePage(doc.getPageCount()-1);return doc;
 }
-async function pptxPdf(zip){
- const {PDFDocument,rgb,degrees}=globalThis.PDFLib,doc=await PDFDocument.create(),part='ppt/presentation.xml',d=await readXml(zip,part),rels=await relationships(zip,part),sz=first(d,'sldSz'),w=(Number(sz?.getAttribute('cx'))||9144000)/12700,h=(Number(sz?.getAttribute('cy'))||6858000)/12700;
- for(const id of all(d,'sldId')){
-  const path=rels.get([...id.attributes].find(a=>a.localName==='id'&&a.namespaceURI?.includes('relationships'))?.value);if(!path)throw Error('A PowerPoint slide relationship is missing.');const slide=await readXml(zip,path),slideRels=await relationships(zip,path),canvas=document.createElement('canvas');const factor=Math.min(2,4096/Math.max(w,h));canvas.width=Math.ceil(w*factor);canvas.height=Math.ceil(h*factor);const ctx=canvas.getContext('2d');ctx.scale(factor,factor);ctx.fillStyle=hex(first(first(slide,'bg'),'srgbClr')?.getAttribute('val'),'#ffffff');ctx.fillRect(0,0,w,h);
-  const layoutPath=[...slideRels.values()].find(p=>p.includes('slideLayouts/'));const layout=layoutPath&&zip.file(layoutPath)?await readXml(zip,layoutPath):null;
-  const layoutRels=layoutPath?await relationships(zip,layoutPath):new Map(),masterPath=[...layoutRels.values()].find(p=>p.includes('slideMasters/'));const master=masterPath&&zip.file(masterPath)?await readXml(zip,masterPath):null;
-  const inherited=(shape)=>{const ph=first(shape,'ph');if(!ph)return null;for(const parent of [layout,master]){if(!parent)continue;const match=all(parent,'sp').find(n=>{const candidate=first(n,'ph');return candidate&&((ph.getAttribute('idx')&&candidate.getAttribute('idx')===ph.getAttribute('idx'))||(!ph.getAttribute('idx')&&(candidate.getAttribute('type')||'body')===(ph.getAttribute('type')||'body')));});const tx=match&&first(match,'xfrm');if(tx)return tx;}return null;};
-  let fallbackIndex=0;const tree=first(slide,'spTree');if(!tree)throw Error('A PowerPoint slide has no content tree.');
-  for(const shape of tree.children){if(!['sp','pic','graphicFrame'].includes(shape.localName))continue;const tx=first(shape,'xfrm')||inherited(shape),off=tx&&first(tx,'off'),ext=tx&&first(tx,'ext');const x=off?Number(off.getAttribute('x')||0)/12700:36,y=off?Number(off.getAttribute('y')||0)/12700:36+fallbackIndex*90,sw=Number(ext?.getAttribute('cx')||0)/12700||w-72,sh=Number(ext?.getAttribute('cy')||0)/12700||100;
-   fallbackIndex++;ctx.save();const angle=Number(tx?.getAttribute('rot')||0)/60000;if(angle){ctx.translate(x+sw/2,y+sh/2);ctx.rotate(angle*Math.PI/180);ctx.translate(-x-sw/2,-y-sh/2);}
-   if(shape.localName==='pic'){const image=await zipImage(zip,slideRels.get(attribute(first(shape,'blip'),'embed')));if(image){const url=URL.createObjectURL(new Blob([image.bytes],{type:'image/png'})),img=new Image();try{img.src=url;await img.decode();ctx.drawImage(img,x,y,sw,sh);}finally{URL.revokeObjectURL(url);}}}
-   else{const props=first(shape,'spPr'),fill=props&&[...props.children].find(n=>n.localName==='solidFill'),fillColor=fill&&first(fill,'srgbClr');if(fillColor){ctx.fillStyle=hex(fillColor.getAttribute('val'));ctx.fillRect(x,y,sw,sh);}let baseline=y+4;
-    for(const p of all(shape,'p')){const runs=all(p,'r'),text=runs.map(r=>first(r,'t')?.textContent||'').join('')||all(p,'t').map(t=>t.textContent).join('');if(!text)continue;const props=first(runs[0]||p,'rPr')||first(p,'defRPr'),size=Math.max(8,Number(props?.getAttribute('sz')||1800)/100),bold=props?.getAttribute('b')==='1',italic=props?.getAttribute('i')==='1';ctx.font=`${italic?'italic ':''}${bold?'bold ':''}${size}px ${fontFamily(first(props||p,'latin')?.getAttribute('typeface'))==='Times'?'serif':'sans-serif'}`;ctx.fillStyle=hex(first(props||p,'srgbClr')?.getAttribute('val'));const words=text.split(/\s+/);let line='';for(const word of words){if(line&&ctx.measureText(line+' '+word).width>sw-8){baseline+=size*1.25;ctx.fillText(line,x+4,baseline);line='';}line+=(line?' ':'')+word;}if(line){baseline+=size*1.25;ctx.fillText(line,x+4,baseline);}}
-   }ctx.restore();
-  }
-  const image=await doc.embedPng(Uint8Array.from(atob(canvas.toDataURL().split(',')[1]),c=>c.charCodeAt(0))),page=doc.addPage([w,h]);page.drawImage(image,{x:0,y:0,width:w,height:h});
- }
- if(!doc.getPageCount())throw Error('No slides found in this PowerPoint file.');return doc;
-}
 export async function convertToPdf(file){
  if(!file)throw Error('Choose a file to open.');const ext=file.name.split('.').pop().toLowerCase();
  if(ext==='pdf'||file.type==='application/pdf')return {file:ext==='pdf'?file:new File([file],file.name+'.pdf',{type:'application/pdf'}),converted:false};
@@ -135,7 +117,7 @@ export async function convertToPdf(file){
  let doc,notice='';const {PDFDocument}=globalThis.PDFLib;
  if(IMAGE_TYPES[ext]||file.type.startsWith('image/')){const image=await imageData(new Blob([file],{type:IMAGE_TYPES[ext]||file.type})),pdf=await PDFDocument.create(),embedded=await pdf.embedPng(image.bytes),scale=Math.min(1,14400/Math.max(image.width,image.height));pdf.addPage([image.width*scale,image.height*scale]).drawImage(embedded,{x:0,y:0,width:image.width*scale,height:image.height*scale});doc=pdf;notice='Images become PDF pages. Animated images use their first frame.';}
  else if(['md','markdown','txt'].includes(ext)){doc=await flowPdf(markdownBlocks(await file.text(),ext==='txt'));notice='Text is laid out for PDF. Linked images are not fetched.';}
- else if((['docx','odt','epub','pptx'].includes(ext)||file.type==='application/vnd.oasis.opendocument.text')){const zip=await archive(file);doc=ext==='pptx'?await pptxPdf(zip):await flowPdf(await(ext==='docx'?docxBlocks(zip):(ext==='odt'||file.type==='application/vnd.oasis.opendocument.text')?odtBlocks(zip,{readXml,zipImage,pathFrom,fontFamily}):epubBlocks(zip)));notice=ext==='pptx'?'Slides become page images. Complex layouts, themes, charts, and animations may differ.':'Document text and embedded images are reflowed. Complex layouts and styling may differ.';}
+ else if((['docx','odt','epub','pptx'].includes(ext)||file.type==='application/vnd.oasis.opendocument.text')){const zip=await archive(file);doc=ext==='pptx'?await pptxPdf(zip,{readXml,relationships,zipImage,attribute}):await flowPdf(await(ext==='docx'?docxBlocks(zip):(ext==='odt'||file.type==='application/vnd.oasis.opendocument.text')?odtBlocks(zip,{readXml,zipImage,pathFrom,fontFamily}):epubBlocks(zip)));notice=ext==='pptx'?'Slides become page images. Complex layouts, themes, charts, and animations may differ.':'Document text and embedded images are reflowed. Complex layouts and styling may differ.';}
  else throw Error('Unsupported format. Choose PDF, DOCX, ODT, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.');
  return {file:new File([await doc.save()],file.name.replace(/\.[^.]+$/, '')+'.pdf',{type:'application/pdf'}),converted:true,notice};
 }
