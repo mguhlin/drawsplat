@@ -608,3 +608,6 @@ textarea:focus-visible,
 #equationSemantics{padding:1rem;overflow:auto;max-width:100%}
 #equationMathml{font-size:1.5rem;padding:1.5rem .5rem;overflow:auto}
 #canvas[data-mode=equation]{cursor:default;min-height:0;background:var(--panel)}
+
+/* Keep intrinsic SVG/MathML widths inside narrow grid columns. */
+.studio > .controls,.studio > .preview{min-width:0}

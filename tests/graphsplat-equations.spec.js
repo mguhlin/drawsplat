@@ -197,20 +197,20 @@ test("read description uses reviewed text and can be stopped", async ({
 
 test("equation controls fit a phone and retain notation when changing language", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/solutions/graphsplat/?mode=equation");
   await ready(page);
   const tex = await page.locator("#equationTex").inputValue();
   await page.locator(".ds-language-control select").selectOption("es");
   expect(await page.locator("#equationTex").inputValue()).toBe(tex);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBeTruthy();
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    )
+    .toBeTruthy();
   await page.screenshot({
-    path: "/home/mg/.cache/splatworks-audit/equations-phone.png",
+    path: testInfo.outputPath("equations-phone.png"),
     fullPage: true,
   });
 });
