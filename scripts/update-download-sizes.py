@@ -30,7 +30,7 @@ def replace(match):
     return f'<small class="download-size" data-package="{filename}">{label}</small>'
 
 updated = re.sub(r'<small class="download-size" data-package="([^"]+)">[^<]*</small>', replace, html)
-expected = 1 if args.only_package else 16
+expected = 1 if args.only_package else 18
 if count != expected:
     raise ValueError(f'Expected {expected} package sizes, found {count}')
 if args.check:

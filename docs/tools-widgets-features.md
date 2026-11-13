@@ -167,9 +167,12 @@ Category: **Create** · 21 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
-- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces plus Equation Studio
 - [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
 - Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
+- [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
+- Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
+- Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
 
 ### ImageSplat™
 
@@ -321,9 +324,12 @@ Category: **Data** · 3 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
-- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces plus Equation Studio
 - [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
 - Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
+- [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
+- Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
+- Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
 
 ### GridSplat
 
@@ -969,9 +975,12 @@ Category: **Assessment** · 20 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
-- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces plus Equation Studio
 - [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
 - Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
+- [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
+- Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
+- Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
 
 ### Paws & Keys Adventure
 

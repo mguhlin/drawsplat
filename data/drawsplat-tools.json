@@ -1026,7 +1026,7 @@
     {
       "id": "graphsplat",
       "name": "GraphSplat",
-      "description": "Create charts from classroom or CSV data, picture graphs, coordinate plots, and interactive function graphs.",
+      "description": "Create charts, picture graphs, geometry, function graphs, and local LaTeX equations with math templates, MathML and image exports.",
       "url": "/solutions/graphsplat/",
       "icon": "/solutions/graphsplat/graphsplat-icon.svg",
       "type": "tool",
@@ -1056,7 +1056,12 @@
         "icons",
         "data",
         "csv",
-        "calculator"
+        "calculator",
+        "latex",
+        "mathml",
+        "fraction",
+        "quadratic formula",
+        "equatio alternatives"
       ],
       "aliases": [
         "chart studio",

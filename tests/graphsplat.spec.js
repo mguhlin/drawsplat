@@ -75,10 +75,10 @@ test("example library is organized by GraphSplat creation mode", async ({
 }) => {
   await page.goto("/solutions/graphsplat/");
   await page.locator("#openExamples").click();
-  await expect(page.locator("#exampleDialog .example-group")).toHaveCount(6);
+  await expect(page.locator("#exampleDialog .example-group")).toHaveCount(7);
   await expect(
     page.locator("#exampleDialog .example-thumbnail svg"),
-  ).toHaveCount(12);
+  ).toHaveCount(20);
   await expect(page.locator("#exampleDialog .lesson-link")).toHaveAttribute(
     "href",
     "lesson-plans.html",

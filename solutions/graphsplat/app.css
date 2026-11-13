@@ -355,7 +355,7 @@ body {
   background: #eee9ff;
   touch-action: none;
 }
-#canvas svg {
+#canvas > svg {
   display: block;
   width: 100%;
   height: auto;
@@ -600,3 +600,11 @@ textarea:focus-visible,
     min-height: 0;
   }
 }
+
+.equation-templates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}
+.equation-templates button{min-width:0;padding:.5rem .25rem;font-size:.85rem;overflow-wrap:anywhere}
+#equationTex{font-family:ui-monospace,monospace;min-height:7rem}
+#equationControls h2{font-size:1.15rem;margin:0}
+#equationSemantics{padding:1rem;overflow:auto;max-width:100%}
+#equationMathml{font-size:1.5rem;padding:1.5rem .5rem;overflow:auto}
+#canvas[data-mode=equation]{cursor:default;min-height:0;background:var(--panel)}

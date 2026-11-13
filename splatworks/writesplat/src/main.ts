@@ -1440,7 +1440,8 @@ function bootstrap(): void {
   let projectFonts: ProjectFonts = {};
   function useProjectFonts(fonts:ProjectFonts={}):void{projectFonts=structuredClone(fonts);void activateProjectFonts(projectFonts).then(()=>ruler?.update()).catch(()=>{getRequiredElement('saveState').textContent='A project font could not load.';});}
 
-  const saved = workspaceStorage().getItem(AUTOSAVE_KEY);
+  let saved: string | null = null;
+  try { saved = workspaceStorage().getItem(AUTOSAVE_KEY); } catch { /* File editing remains available without browser storage. */ }
   if (saved) {
     try {
       const parsed: unknown = JSON.parse(saved);
@@ -1518,14 +1519,17 @@ function bootstrap(): void {
     getRequiredElement('saveState').textContent = 'Saving...';
       getRequiredElement('statusSaved').textContent = 'Saving...';
     saveTimer = window.setTimeout(() => {
-      const file = createCurrentNativeFile();
-      workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(file));
-      if (currentLocalDocumentId) {
-        saveLocalDocument(currentLocalDocumentId, file);
+      try {
+        const file = createCurrentNativeFile();
+        workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(file));
+        if (currentLocalDocumentId) saveLocalDocument(currentLocalDocumentId, file);
+        pendingSave = false;
+        getRequiredElement('saveState').textContent = 'Saved locally';
+        getRequiredElement('statusSaved').textContent = 'Saved locally';
+      } catch {
+        getRequiredElement('saveState').textContent = 'Not saved — download a project file';
+        getRequiredElement('statusSaved').textContent = 'Not saved — use File > Save .writesplat.json';
       }
-      pendingSave = false;
-      getRequiredElement('saveState').textContent = 'Saved locally';
-      getRequiredElement('statusSaved').textContent = 'Saved locally';
     }, 600);
   }
   window.addEventListener('beforeunload', (event) => {
@@ -1738,15 +1742,20 @@ function bootstrap(): void {
       writer.setHtml(starterBody);
       refresh();
     } else if (action === 'save-local-document') {
+      try {
       const id = currentLocalDocumentId ?? crypto.randomUUID();
       const existing = currentLocalDocumentId ? loadLocalDocument(currentLocalDocumentId) ?? undefined : undefined;
       const file = createCurrentNativeFile(existing);
-      currentLocalDocumentId = id;
       saveLocalDocument(id, file);
       workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(file));
+      currentLocalDocumentId = id;
       renderLibraryList(libraryList);
       getRequiredElement('saveState').textContent = 'Saved to browser';
       getRequiredElement('statusSaved').textContent = 'Saved to browser';
+      } catch {
+        getRequiredElement('saveState').textContent = 'Not saved — download a project file';
+        getRequiredElement('statusSaved').textContent = 'Not saved — use File > Save .writesplat.json';
+      }
     } else if (action === 'open-local-library') {
       renderLibraryList(libraryList);
       libraryDialog.hidden = false;

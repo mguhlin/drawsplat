@@ -72,9 +72,26 @@ const t=(k,vars)=>WidgetI18n.t(k,vars);
 const $=id=>document.getElementById(id), roomKey=()=> 'bingo-live-'+$('room').value.trim(); let state={pool:[],called:[],current:null,started:Date.now()}, card=[];
 function nums(){let out=[];[['B',1,15],['I',16,30],['N',31,45],['G',46,60],['O',61,75]].forEach(([l,a,b])=>{for(let i=a;i<=b;i++)out.push(l+'-'+i)});return out}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function saveState(){localStorage.setItem(roomKey(),JSON.stringify(state)); try{new BroadcastChannel(roomKey()).postMessage(state)}catch(e){}}
-function loadState(){let raw=localStorage.getItem(roomKey()); if(raw) state=JSON.parse(raw); render()}
-function initGame(pool=nums()){state={pool:shuffle(pool),called:[],current:null,started:Date.now()};saveState();render()}
+const memoryStore=new Map();let roomChannel;
+function storageWarning(){
+  let notice=$('storageStatus');
+  if(!notice){notice=document.createElement('p');notice.id='storageStatus';notice.setAttribute('role','status');$('called').before(notice);}
+  notice.textContent='Browser saving is unavailable. Keep this tab open to continue this game.';
+}
+function readStored(key){if(memoryStore.has(key))return memoryStore.get(key);try{return localStorage.getItem(key)}catch{storageWarning();return null}}
+function writeStored(key,value){try{localStorage.setItem(key,value);memoryStore.delete(key)}catch{memoryStore.set(key,value);storageWarning()}}
+function validState(value){return value&&Array.isArray(value.pool)&&Array.isArray(value.called)&&value.pool.every(x=>typeof x==='string')&&value.called.every(x=>typeof x==='string')&&(value.current===null||typeof value.current==='string')}
+function connectRoom(){
+  roomChannel?.close();roomChannel=null;
+  try{roomChannel=new BroadcastChannel(roomKey());roomChannel.onmessage=e=>{if(validState(e.data)){state=e.data;writeStored(roomKey(),JSON.stringify(state));render(true)}}}catch{}
+}
+function saveState(){writeStored(roomKey(),JSON.stringify(state));try{roomChannel?.postMessage(state)}catch{}}
+function loadState(){
+  card=[];connectRoom();
+  let saved;try{saved=JSON.parse(readStored(roomKey()))}catch{}
+  if(validState(saved)){state=saved;render()}else initGame(nums());
+}
+function initGame(pool=nums()){state={pool:shuffle(pool),called:[],current:null,started:Date.now()};saveState();render();card.forEach((c,i)=>c.marked=i===12);writeStored(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard();checkWin()}
 function pick(){if(!state.pool.length){$('current').removeAttribute('data-i18n');$('current').textContent=t('stage.allCalled');return}state.current=state.pool.shift();state.called.push(state.current);saveState();render(true);speak(state.current)}
 function render(animate=false){
   const cur=$('current');
@@ -83,13 +100,13 @@ function render(animate=false){
   $('ball').textContent=state.current||'--';$('ball').classList.remove('show'); if(animate){void $('ball').offsetWidth;$('ball').classList.add('show')} $('called').innerHTML=state.called.slice().reverse().map(x=>'<div class="chip">'+esc(x)+'</div>').join(''); renderCard(); checkWin()
 }
 function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
-function makeCard(){let columns=[[],[],[],[],[]]; for(let n=1;n<=15;n++)columns[0].push('B-'+n);for(let n=16;n<=30;n++)columns[1].push('I-'+n);for(let n=31;n<=45;n++)columns[2].push('N-'+n);for(let n=46;n<=60;n++)columns[3].push('G-'+n);for(let n=61;n<=75;n++)columns[4].push('O-'+n);let grid=[];for(let r=0;r<5;r++){for(let c=0;c<5;c++){grid.push(shuffle(columns[c])[r])}}grid[12]='FREE';card=grid.map((v,i)=>({v,marked:i===12}));localStorage.setItem(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard()}
-function renderCard(){if(!card.length){let raw=localStorage.getItem(roomKey()+'-card-'+$('playerName').value); if(raw) card=JSON.parse(raw); else makeCard()}$('bcard').innerHTML=card.map((c,i)=>'<div class="cell '+(c.marked?'marked':'')+'" data-i="'+i+'">'+esc(c.v==='FREE'?t('card.free'):c.v)+'</div>').join('')}
-$('bcard').onclick=e=>{let cell=e.target.closest('.cell');if(!cell)return;let i=+cell.dataset.i;card[i].marked=!card[i].marked;localStorage.setItem(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard();checkWin()}
+function makeCard(){let columns=[[],[],[],[],[]]; for(let n=1;n<=15;n++)columns[0].push('B-'+n);for(let n=16;n<=30;n++)columns[1].push('I-'+n);for(let n=31;n<=45;n++)columns[2].push('N-'+n);for(let n=46;n<=60;n++)columns[3].push('G-'+n);for(let n=61;n<=75;n++)columns[4].push('O-'+n);columns=columns.map(shuffle);let grid=[];for(let r=0;r<5;r++){for(let c=0;c<5;c++){grid.push(columns[c][r])}}grid[12]='FREE';card=grid.map((v,i)=>({v,marked:i===12}));writeStored(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard()}
+function renderCard(){if(!card.length){let saved;try{saved=JSON.parse(readStored(roomKey()+'-card-'+$('playerName').value))}catch{}if(Array.isArray(saved)&&saved.length===25&&saved.every(c=>c&&typeof c.v==='string'&&typeof c.marked==='boolean'))card=saved;else makeCard()}$('bcard').innerHTML=card.map((c,i)=>'<div class="cell '+(c.marked?'marked':'')+'" data-i="'+i+'">'+esc(c.v==='FREE'?t('card.free'):c.v)+'</div>').join('')}
+$('bcard').onclick=e=>{let cell=e.target.closest('.cell');if(!cell)return;let i=+cell.dataset.i;card[i].marked=!card[i].marked;writeStored(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard();checkWin()}
 function checkWin(){if(!card.length)return;let wins=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],[0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],[0,6,12,18,24],[4,8,12,16,20]];let ok=wins.some(w=>w.every(i=>card[i].marked));$('winner').classList.toggle('hidden',!ok);$('winner').textContent=ok?t('winner.text'):''}
 function speak(text){if(!('speechSynthesis'in window))return;let u=new SpeechSynthesisUtterance(text.replace('-',' '));u.rate=.85; speechSynthesis.cancel(); speechSynthesis.speak(u)}
 function custom(){let arr=$('customCalls').value.split(/\n+/).map(s=>s.trim()).filter(Boolean); if(arr.length<1){alert(t('alert.needItems'));return}initGame(arr)}
-$('newGame').onclick=()=>initGame(nums());$('next').onclick=pick;$('join').onclick=makeCard;$('useCustom').onclick=custom;$('announce').onclick=()=>state.current&&speak(state.current);$('resetMarks').onclick=()=>{card.forEach((c,i)=>c.marked=i===12);renderCard();checkWin()};$('room').onchange=loadState;
+$('newGame').onclick=()=>initGame(nums());$('next').onclick=pick;$('join').onclick=makeCard;$('useCustom').onclick=custom;$('announce').onclick=()=>state.current&&speak(state.current);$('resetMarks').onclick=()=>{card.forEach((c,i)=>c.marked=i===12);writeStored(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard();checkWin()};$('room').onchange=loadState;
 // Seed the room name from the translated default unless the user has typed
 // something else. Tracked across language switches.
 let lastRoomDefault='';
@@ -99,8 +116,9 @@ function seedRoom(){
   lastRoomDefault=t('room.default');
 }
 seedRoom();
-try{const bc=new BroadcastChannel(roomKey());bc.onmessage=e=>{state=e.data;render(true)}}catch(e){}
-if(!localStorage.getItem(roomKey())) initGame(nums()); else loadState();
+loadState();
+window.addEventListener('pagehide',()=>roomChannel?.close());
+window.addEventListener('pageshow',event=>{if(event.persisted)loadState()});
 
 // Re-render on language change so winner text, FREE label, etc. refresh.
 window.addEventListener('widget-i18n:changed',()=>{seedRoom();render();});

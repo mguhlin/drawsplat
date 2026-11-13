@@ -12,9 +12,10 @@ GraphSplat consolidates DrawSplat's Graph Maker and Picture Graph Maker into one
 - Coordinate plane: click-to-plot points, labels, connected points, and linear equations
 - Expression calculator: multiple functions, parameters/sliders, draggable curve offsets, pan/zoom, roots, intersections, and a value table
 - Geometry: draggable points, segments, polygons, circles, labels, snapping, lengths, and polygon areas
+- Equation Studio: local LaTeX, math templates, eight classroom examples, MathML/LaTeX copying, PNG/SVG/JPEG export, and reading of supplied descriptions
 - Specialty charts: bubble, radar, polar, stacked bar, stacked area, and pyramid
 
-The built-in **GraphSplat Examples** library provides colorful illustrated, ready-to-edit starting points organized by these six workspaces. It also links to integrated Science and Mathematics lesson plans for grades 3–5, 6–8, and 9–12, with TEKS correlations, instructional sequences, assessments, differentiation, and extensions. The teaching collection includes a visual and text-accessible graph-analysis checklist plus six Artful Analytics classroom starters.
+The built-in **GraphSplat Examples** library provides colorful illustrated, ready-to-edit starting points organized by the six graph workspaces plus Equation Studio. It also links to integrated Science and Mathematics lesson plans for grades 3–5, 6–8, and 9–12, with TEKS correlations, instructional sequences, assessments, differentiation, and extensions. The teaching collection includes a visual and text-accessible graph-analysis checklist plus six Artful Analytics classroom starters.
 
 Graphs export as PNG, JPEG, SVG, printable PDF, or CSV. Projects can be saved locally or moved between devices as JSON. No graph data or uploaded picture is sent to a server.
 
@@ -26,3 +27,9 @@ The interaction model was informed by the capabilities described by [NCES Create
 
 - `/solutions/graph-maker/` opens GraphSplat's Coordinate Plane workspace.
 - `/solutions/picture-graph/` opens GraphSplat's Picture Graph workspace.
+
+## Equation Studio
+
+Choose Equation Studio or open `?mode=equation`. Type LaTeX or insert a template; use the fraction, algebra, geometry, statistics, calculus, aligned-step and matrix examples as editable starters. Project JSON retains the source and description. Read aloud reads the supplied description using available local browser voices; review it after editing. Voice availability depends on the browser and operating system. This does not provide handwriting recognition, speech-to-math, automatic solving, chemistry prediction, or office extensions.
+
+[Workflow and examples](../../docs/graphsplat-equations.md) · [Engine provenance and local build](MATHJAX-NOTICE.md).

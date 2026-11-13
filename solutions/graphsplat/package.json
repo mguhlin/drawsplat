@@ -1,0 +1,11 @@
+{
+  "name": "graphsplat-equation-engine",
+  "private": true,
+  "scripts": {
+    "build:equations": "node scripts/build-equations.mjs"
+  },
+  "devDependencies": {
+    "@mathjax/src": "4.1.3",
+    "esbuild": "0.25.12"
+  }
+}

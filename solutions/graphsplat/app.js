@@ -1,4 +1,9 @@
 import {
+  EQUATION_EXAMPLES,
+  EQUATION_TEMPLATES,
+  renderEquationCard,
+} from "./equations.js";
+import {
   parseRows,
   renderQuick,
   renderPicture,
@@ -207,6 +212,20 @@ const EXAMPLES = [
     title: "Project Stages",
   },
 ];
+EXAMPLES.push(...EQUATION_EXAMPLES);
+let equationResult = null,
+  renderSequence = 0;
+const imageActions = [
+  "copyPng",
+  "downloadPng",
+  "downloadSvg",
+  "downloadJpg",
+  "print",
+];
+function enableImageActions(on) {
+  for (const id of imageActions) $(id).disabled = !on;
+}
+
 let pictureRows = [
     { label: "Apples", value: 6, icon: "🍎", image: "" },
     { label: "Bananas", value: 4, icon: "🍌", image: "" },
@@ -294,6 +313,8 @@ function expressionSources() {
     .filter(Boolean);
 }
 function currentRows() {
+  if (mode() === "equation")
+    return [{ label: $("equationTex").value, values: [] }];
   if (mode() === "picture")
     return pictureRows.map((row) => ({
       label: row.label,
@@ -316,6 +337,8 @@ function currentRows() {
   );
 }
 function generatedDescription(rows) {
+  if (mode() === "equation")
+    return $("equationReading").value.trim() || $("equationTex").value.trim();
   if (mode() === "expression")
     return `Function graph with ${rows.length} expression${rows.length === 1 ? "" : "s"}: ${rows.map((row) => row.label).join(", ")}. Window x ${$("xMin").value} to ${$("xMax").value}, y ${$("yMin").value} to ${$("yMax").value}.`;
   if (!rows.length) return "Empty graph.";
@@ -329,14 +352,47 @@ function validateWindow(config) {
     throw new Error("Graph maximums must be greater than minimums.");
 }
 function render() {
+  const sequence = ++renderSequence;
+  equationResult = null;
+  $("equationSemantics").hidden = mode() !== "equation";
+  $("canvas").dataset.mode = mode();
+  for (const id of ["copyLatex", "copyMathml", "downloadLatex"])
+    $(id).disabled = true;
   try {
     const config = settings();
-    validateWindow(config);
+    if (mode() !== "equation") validateWindow(config);
     lastRows = currentRows();
     if (!$("altDescription").dataset.edited)
       $("altDescription").value = generatedDescription(lastRows);
     config.description = $("altDescription").value;
     expressionResult = null;
+    if (mode() === "equation") {
+      lastSvg = "";
+      enableImageActions(false);
+      $("canvas").textContent = "Rendering equation…";
+      $("status").textContent = "Rendering equation…";
+      renderEquationCard($("equationTex").value, config)
+        .then((result) => {
+          if (sequence !== renderSequence) return;
+          equationResult = result;
+          lastSvg = result.svg;
+          $("canvas").innerHTML = lastSvg;
+          $("equationMathml").innerHTML = result.mathml;
+          for (const id of ["copyLatex", "copyMathml", "downloadLatex"])
+            $(id).disabled = false;
+          enableImageActions(true);
+          qualityChecks(config, lastRows);
+          $("status").textContent = "Equation updated";
+        })
+        .catch((error) => {
+          if (sequence !== renderSequence) return;
+          $("canvas").textContent = error.message;
+          $("equationMathml").replaceChildren();
+          $("status").textContent = error.message;
+          $("checks").textContent = "Correct the equation before exporting.";
+        });
+      return;
+    }
     if (mode() === "quick")
       lastSvg = renderQuick($("quickType").value, lastRows, config);
     else if (mode() === "picture")
@@ -387,11 +443,13 @@ function render() {
       );
     else lastSvg = renderSpecialty($("specialtyType").value, lastRows, config);
     $("canvas").innerHTML = lastSvg;
+    enableImageActions(true);
     qualityChecks(config, lastRows);
     if (!expressionResult?.errors.length)
       $("status").textContent = "Graph updated";
   } catch (error) {
-    $("canvas").innerHTML = `<p>${error.message}</p>`;
+    $("canvas").textContent = error.message;
+    enableImageActions(false);
     $("status").textContent = error.message;
     lastSvg = "";
   }
@@ -404,7 +462,7 @@ function qualityChecks(config, rows) {
     (!config.xLabel || !config.yLabel)
   )
     warnings.push("Consider axis labels");
-  if (!config.source && mode() !== "expression")
+  if (!config.source && !["expression", "equation"].includes(mode()))
     warnings.push("Consider a source");
   if (config.background.toLowerCase() === config.colors[0].toLowerCase())
     warnings.push("Increase color contrast");
@@ -415,6 +473,7 @@ function qualityChecks(config, rows) {
   $("checks").classList.toggle("warning", Boolean(warnings.length));
 }
 function syncMode() {
+  window.speechSynthesis?.cancel();
   document
     .querySelectorAll(".mode-controls")
     .forEach((section) => (section.hidden = true));
@@ -526,9 +585,12 @@ function seedEmojiPalette() {
   });
 }
 function tableHtml(table) {
-  return `<table><thead><tr>${table[0].map((cell) => `<th>${cell}</th>`).join("")}</tr></thead><tbody>${table
+  return `<table><thead><tr>${table[0].map((cell) => `<th>${safeAttribute(cell)}</th>`).join("")}</tr></thead><tbody>${table
     .slice(1)
-    .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`)
+    .map(
+      (row) =>
+        `<tr>${row.map((cell) => `<td>${safeAttribute(cell)}</td>`).join("")}</tr>`,
+    )
     .join("")}</tbody></table>`;
 }
 function showExpressionTable() {
@@ -590,6 +652,7 @@ function download(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 async function rasterBlob(type = "image/png", quality = 0.94) {
+  if (!lastSvg) throw Error("Create a valid preview before exporting.");
   const canvas = $("raster"),
     context = canvas.getContext("2d"),
     image = new Image(),
@@ -644,11 +707,31 @@ function project() {
   };
 }
 function applyProject(item) {
-  if (item.type !== "drawsplat-graph")
+  if (!item || item.type !== "drawsplat-graph")
     throw new Error("This is not a GraphSplat project.");
+  const restoredMode = item.mode || item.controls?.mode || "quick";
+  if (
+    ![
+      "quick",
+      "picture",
+      "coordinate",
+      "expression",
+      "geometry",
+      "specialty",
+      "equation",
+    ].includes(restoredMode)
+  )
+    throw Error("Unsupported GraphSplat workspace.");
+  $("mode").value = restoredMode;
   for (const [id, value] of Object.entries(item.controls || {})) {
     const input = $(id);
-    if (!input) continue;
+    if (
+      !input ||
+      !input.matches(
+        ".controls input:not([type=file]),.controls select,.controls textarea",
+      )
+    )
+      continue;
     if (input.type === "checkbox") input.checked = Boolean(value);
     else input.value = String(value).slice(0, 50000);
   }
@@ -673,13 +756,19 @@ function applyProject(item) {
   geometryConstructions = Array.isArray(item.geometryConstructions)
     ? item.geometryConstructions.slice(0, 100)
     : [];
+  if (item.controls?.altDescription)
+    $("altDescription").dataset.edited = "true";
+  else delete $("altDescription").dataset.edited;
   renderPictureRows();
   syncLevel();
   syncMode();
 }
 function projects() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE)) || [];
+    const saved = JSON.parse(localStorage.getItem(STORAGE));
+    return Array.isArray(saved)
+      ? saved.filter((item) => item && item.type === "drawsplat-graph")
+      : [];
   } catch {
     return [];
   }
@@ -726,6 +815,12 @@ function importFile(file) {
       $("status").textContent = error.message;
     }
   };
+  reader.onerror = () => {
+    $("status").textContent = "The file could not be read. Choose it again.";
+  };
+  reader.onloadend = () => {
+    $("projectFile").value = "";
+  };
   reader.readAsText(file);
 }
 function reset() {
@@ -734,6 +829,8 @@ function reset() {
   $("pointData").value = "-4,2,Point A\n0,0,Origin\n3,5,Point B";
   $("geometryData").value = "-4,-2,A\n2,-2,B\n0,3,C";
   $("expressions").value = "sin(x)\n0.25*x^2-2";
+  $("equationTex").value = EQUATION_EXAMPLES[0].values.equationTex;
+  $("equationReading").value = EQUATION_EXAMPLES[0].values.equationReading;
   $("specialtyData").value =
     "Creativity,8,4\nCommunication,6,7\nCollaboration,9,5\nCritical thinking,7,8";
   $("title").value = "My Graph";
@@ -893,6 +990,7 @@ function loadExample(example) {
     }));
   $("title").value = example.title || example.name;
   quickColors = {};
+  delete $("altDescription").dataset.edited;
   geometryPending = [];
   $("exampleDialog").close();
   syncMode();
@@ -922,6 +1020,10 @@ function exampleThumbnail(modeId, variant) {
       `<polygon points="75,113 257,113 168,28" fill="#6d38e8" fill-opacity=".2" stroke="#6d38e8" stroke-width="6"/><g fill="#f59e0b" stroke="#fff" stroke-width="3"><circle cx="75" cy="113" r="9"/><circle cx="257" cy="113" r="9"/><circle cx="168" cy="28" r="9"/></g>`,
       `<circle cx="163" cy="77" r="52" fill="#14b8a6" fill-opacity=".18" stroke="#14b8a6" stroke-width="6"/><line x1="163" y1="77" x2="215" y2="77" stroke="#ef4444" stroke-width="6"/><circle cx="163" cy="77" r="8" fill="#6d38e8"/><circle cx="215" cy="77" r="8" fill="#f59e0b"/>`,
     ],
+    equation: [
+      `<text x="65" y="90" font-family="serif" font-size="30" fill="#4920ae">½ + ¼ = ¾</text>`,
+      `<text x="65" y="90" font-family="serif" font-size="30" fill="#4920ae">a² + b² = c²</text>`,
+    ],
     specialty: [
       `<polygon points="166,24 251,64 226,127 105,127 81,64" fill="#6d38e8" fill-opacity=".15" stroke="#c4b5fd" stroke-width="2"/><polygon points="166,39 224,68 207,110 122,116 100,70" fill="#6d38e8" fill-opacity=".38" stroke="#6d38e8" stroke-width="5"/>`,
       `<rect x="55" y="37" width="54" height="89" fill="#6d38e8"/><rect x="55" y="91" width="54" height="35" fill="#f59e0b"/><rect x="133" y="22" width="54" height="104" fill="#14b8a6"/><rect x="133" y="78" width="54" height="48" fill="#f59e0b"/><rect x="211" y="51" width="54" height="75" fill="#ef4444"/><rect x="211" y="96" width="54" height="30" fill="#f59e0b"/>`,
@@ -937,6 +1039,7 @@ function buildExampleLibrary() {
       expression: "Expression Calculator",
       geometry: "Geometry",
       specialty: "Specialty Chart",
+      equation: "Equation Studio",
     },
     library = $("exampleLibrary");
   library.replaceChildren();
@@ -1031,6 +1134,86 @@ function updateExpressionDrag(event) {
   $("status").textContent = `Expression offset: ${rounded}`;
 }
 function bind() {
+  for (const [name, template] of EQUATION_TEMPLATES) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = name;
+    button.addEventListener("click", () => {
+      const input = $("equationTex"),
+        selected = input.value.slice(input.selectionStart, input.selectionEnd);
+      const insertion = template.replace("#", selected || "x");
+      if (
+        input.value.length -
+          (input.selectionEnd - input.selectionStart) +
+          insertion.length >
+        2000
+      ) {
+        $("status").textContent = "Keep an equation under 2,000 characters.";
+        return;
+      }
+      input.setRangeText(
+        insertion,
+        input.selectionStart,
+        input.selectionEnd,
+        "end",
+      );
+      input.focus();
+      render();
+    });
+    $("equationTemplates").append(button);
+  }
+  async function copyEquation(kind) {
+    if (!equationResult) return;
+    try {
+      await navigator.clipboard.writeText(equationResult[kind]);
+      $("status").textContent =
+        kind === "tex" ? "LaTeX copied." : "MathML copied.";
+    } catch {
+      $("status").textContent =
+        "Clipboard unavailable. Select the LaTeX or use LaTeX file.";
+    }
+  }
+  $("copyLatex").onclick = () => copyEquation("tex");
+  $("copyMathml").onclick = () => copyEquation("mathml");
+  $("downloadLatex").onclick = () => {
+    if (equationResult)
+      download(
+        new Blob([equationResult.tex], { type: "text/plain;charset=utf-8" }),
+        filename("tex"),
+      );
+  };
+  $("readEquation").onclick = () => {
+    const text = $("equationReading").value.trim();
+    if (!text) {
+      $("status").textContent = "Add a read-aloud description first.";
+      return;
+    }
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+      $("status").textContent = "Read aloud is unavailable in this browser.";
+      return;
+    }
+    const voices = speechSynthesis
+      .getVoices()
+      .filter((voice) => voice.localService);
+    if (!voices.length) {
+      $("status").textContent =
+        "No local voice is ready. Try again or read the description on screen.";
+      return;
+    }
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = document.documentElement.lang || "en";
+    utterance.voice =
+      voices.find((voice) => voice.lang.startsWith(utterance.lang)) ||
+      voices[0];
+    utterance.onerror = () => {
+      $("status").textContent =
+        "Read aloud could not start. Review the description on screen.";
+    };
+    speechSynthesis.speak(utterance);
+  };
+  $("stopEquationReading").onclick = () => window.speechSynthesis?.cancel();
+  window.addEventListener("pagehide", () => window.speechSynthesis?.cancel());
   document
     .querySelectorAll(".controls input,.controls select,.controls textarea")
     .forEach((input) => {
@@ -1105,7 +1288,13 @@ function bind() {
     const item = projects().find(
       (project) => project.id === $("savedProjects").value,
     );
-    if (item) applyProject(item);
+    if (item) {
+      try {
+        applyProject(item);
+      } catch (error) {
+        $("status").textContent = error.message;
+      }
+    }
   };
   $("reset").onclick = reset;
   $("quickEditApply").onclick = applyQuickEditor;
@@ -1247,6 +1436,7 @@ if (
     "expression",
     "geometry",
     "specialty",
+    "equation",
   ].includes(requested)
 )
   $("mode").value = requested;

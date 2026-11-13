@@ -25,6 +25,8 @@ service-account*.json
 client_secret*.json
 
 # Build/test artifacts
+test-results/
+playwright-report/
 dist/
 build/
 coverage/

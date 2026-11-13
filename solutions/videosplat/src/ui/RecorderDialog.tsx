@@ -1,4 +1,5 @@
 import { saveTransfer } from "../../../shared/video-handoff/index.js";
+import { writeSessionPreference } from "../persistence/preferences";
 import { instagramCrop, type InstagramFormat } from "../recorder/instagram";
 import { recordingWarning } from "../media/recording-integrity";
 import { ChromaControls } from "./ChromaControls";
@@ -58,7 +59,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
   useEffect(() => {
-    sessionStorage.setItem("videosplat-microphone-id", microphoneDeviceId);
+    writeSessionPreference("videosplat-microphone-id", microphoneDeviceId);
     onMicrophoneChange?.(microphoneDeviceId);
   }, [microphoneDeviceId, onMicrophoneChange]);
   const [systemAudio, setSystemAudio] = useState(true);

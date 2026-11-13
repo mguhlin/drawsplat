@@ -1,0 +1,26 @@
+name: GraphSplat equations and regression checks
+on:
+  push:
+    branches: [main]
+    paths: ['solutions/graphsplat/**', 'tests/graphsplat*', '.github/workflows/graphsplat.yml']
+  pull_request:
+    paths: ['solutions/graphsplat/**', 'tests/graphsplat*', '.github/workflows/graphsplat.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts && npm run build:equations
+        working-directory: solutions/graphsplat
+      - run: git diff --exit-code -- solutions/graphsplat/vendor
+      - run: node --test tests/graphsplat-equations.test.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test tests/graphsplat.spec.js tests/graphsplat-equations.spec.js --workers=1

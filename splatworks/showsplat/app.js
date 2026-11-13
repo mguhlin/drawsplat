@@ -4,6 +4,8 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
   'use strict';
 
   const STORAGE_KEY = 'showsplat.deck.v1';
+  function readPreference(key) { try { return localStorage.getItem(key); } catch { return null; } }
+  function writePreference(key, value) { try { localStorage.setItem(key, value); } catch { /* The active view still works without saved preferences. */ } }
   const SLIDE_W = 1600;
   const SLIDE_H = 900;
   // How far objects may sit outside the slide, on the surrounding "holding area".
@@ -82,7 +84,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
   let historyIndex = -1;
   const HISTORY_LIMIT = 100;
   let cropTargetId = null;
-  let zoomLevel = Number(localStorage.getItem('showsplat.zoomLevel') || 50);
+  let zoomLevel = Number(readPreference('showsplat.zoomLevel') || 50);
   let draggedSlideIndex = null;
   let selectedSlideIds = new Set();
   let lastSlideSelectionIndex = 0;
@@ -461,7 +463,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
         setStatus('Autosaved in this browser.');
       } catch (err) {
         console.warn(err);
-        setStatus('Deck is too large for browser autosave. Use File > Save .showsplat.json.');
+        setStatus('Browser autosave is unavailable. Use File > Save .showsplat.json.');
       }
     }, 250);
   }
@@ -3384,7 +3386,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
 
   function initRailSplitter() {
     if (!els.rail || !els.railSplitter) return;
-    const savedHeight = Number(localStorage.getItem('showsplat.railHeight') || 0);
+    const savedHeight = Number(readPreference('showsplat.railHeight') || 0);
     if (savedHeight) setRailHeight(savedHeight);
     els.railSplitter.addEventListener('pointerdown', event => {
       event.preventDefault();
@@ -3398,7 +3400,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
         els.railSplitter.removeEventListener('pointermove', move);
         els.railSplitter.removeEventListener('pointerup', done);
         els.railSplitter.removeEventListener('pointercancel', done);
-        localStorage.setItem('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
+        writePreference('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
       };
       els.railSplitter.addEventListener('pointermove', move);
       els.railSplitter.addEventListener('pointerup', done);
@@ -3414,7 +3416,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
         event.preventDefault();
         setRailHeight(current + 24);
       }
-      localStorage.setItem('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
+      writePreference('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
     });
   }
 
@@ -3764,7 +3766,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
   if (els.zoomSlider) {
     els.zoomSlider.addEventListener('input', () => {
       zoomLevel = Number(els.zoomSlider.value) || 0;
-      localStorage.setItem('showsplat.zoomLevel', String(zoomLevel));
+      writePreference('showsplat.zoomLevel', String(zoomLevel));
       applyZoom();
       requestAnimationFrame(centerSlideInStage);
     });

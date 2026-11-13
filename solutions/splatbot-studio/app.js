@@ -970,14 +970,13 @@ function saveProject() {
 }
 
 function restoreProject() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return;
   try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
     applyProjectData(JSON.parse(raw));
     setRunMessage("Saved project restored.", "success");
   } catch (error) {
-    localStorage.removeItem(STORAGE_KEY);
-    setRunMessage("Saved project could not be restored.", "warn");
+    setRunMessage("Saved project could not be restored. You can open or export a project file.", "warn");
   }
 }
 
@@ -1058,13 +1057,14 @@ function importProject(file) {
 }
 
 async function loadMissionPack() {
-  const custom = localStorage.getItem(CUSTOM_MISSIONS_KEY);
+  let custom;
+  try { custom = localStorage.getItem(CUSTOM_MISSIONS_KEY); } catch { /* Use the bundled missions. */ }
   if (custom) {
     try {
       applyMissionPack(JSON.parse(custom), "Custom mission pack loaded.");
       return;
     } catch (error) {
-      localStorage.removeItem(CUSTOM_MISSIONS_KEY);
+      try { localStorage.removeItem(CUSTOM_MISSIONS_KEY); } catch { /* Continue with bundled missions. */ }
     }
   }
 

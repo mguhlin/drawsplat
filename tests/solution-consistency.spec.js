@@ -26,7 +26,7 @@ test("solution entry points use compact trademark text and expose localization",
       /data-i18n-picker|id=["'](?:language|lang|i18nSwitcher)["']|app-language\.js|pdf-language-loader\.js/.test(html);
     const compiledNativeI18n =
       /assets\/index-/.test(html) &&
-      fs.existsSync(path.join(solutions, slug, "src", "i18n.ts"));
+      ["i18n.ts", "i18n.js"].some(file => fs.existsSync(path.join(solutions, slug, "src", file)));
     if (!nativeI18n && !compiledNativeI18n) {
       failures.push(`${slug}: has no language-switcher integration`);
     }

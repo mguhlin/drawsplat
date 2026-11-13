@@ -9,6 +9,7 @@ export function saveAutosave(project: ListSplatFile): void {
 }
 
 export function loadAutosave(): ListSplatFile | null {
+  try {
   const raw = workspaceStorage().getItem(AUTOSAVE_KEY);
   if (!raw) {
     return null;
@@ -16,6 +17,10 @@ export function loadAutosave(): ListSplatFile | null {
   const parsed: unknown = JSON.parse(raw);
   assertListSplatFile(parsed);
   return parsed;
+  } catch {
+    // A blocked store or corrupt draft must not prevent opening a project file.
+    return null;
+  }
 }
 
 export function downloadFile(filename: string, content: string, type: string): void {

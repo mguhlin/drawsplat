@@ -2,7 +2,7 @@ import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../shared/file-bridge.js';
 import { parseMarkdownTables, tableFromMarkdownRows } from './io/markdown';
 import { escapeCsvCell, tableFromCsv, tableToCsv } from './io/csv';
-import { downloadFile, loadAutosave, saveAutosave } from './io/storage';
+import { downloadFile, loadAutosave, saveAutosave as persistAutosave } from './io/storage';
 import {
   addField,
   addRecord,
@@ -231,7 +231,17 @@ let activeTableId = project.schema.tables[0].id;
 const closedTableIds = new Set<string>();
 let activeRecordId = project.schema.tables[0].records[0]?.id ?? '';
 let viewMode: ViewMode = 'table';
-let saveStatus = 'Saved locally';
+let saveStatus = 'Ready';
+function saveAutosave(value: ListSplatFile): void {
+  try {
+    persistAutosave(value);
+    saveStatus = 'Saved locally';
+  } catch {
+    saveStatus = 'Not saved — use File > Save .listsplat.json';
+  }
+  const status = appRoot.querySelector<HTMLElement>('[data-save-status]');
+  if (status) status.textContent = saveStatus;
+}
 let searchQuery = '';
 let searchFieldId = 'all';
 let sortKeys: SortKey[] = [];
@@ -364,7 +374,6 @@ function setProject(nextProject: ListSplatFile): void {
   project = nextProject;
   ensureActiveRecord(activeTable());
   saveAutosave(project);
-  saveStatus = 'Saved locally';
   render();
 }
 
@@ -2832,7 +2841,7 @@ function render(): void {
         <span>${html(table.name)}: ${visibleRecords(table).length} shown of ${table.records.length} records, ${table.fields.length} fields</span>
         ${studentView ? '<span>Student view hides teacher notes and teacher tools.</span>' : ''}
         <span role="status" aria-live="polite">${html(lastMessage)}</span>
-        <span>${saveStatus}</span>
+        <span data-save-status aria-live="polite">${saveStatus}</span>
       </footer>
     </main>
     <input class="hidden-file" type="file" accept=".listsplat.json,application/json" data-open-json>
@@ -2874,7 +2883,6 @@ function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement | HTMLSe
   if (issue) { lastMessage = `Change blocked: ${issue}`; render(); return; }
   project = candidate;
   saveAutosave(project);
-  saveStatus = 'Saved locally';
   if (field?.primaryKey || relation) render();
 }
 

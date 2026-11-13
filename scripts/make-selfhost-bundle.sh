@@ -614,7 +614,7 @@ copy_tree vendor "$TOOLS_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/tools.html "$TOOLS_ROOT/pages/tools.html"
 # Keep the new tools' help and short links usable in an extracted Tools bundle.
 copy_tree wiki "$TOOLS_ROOT/wiki" "${MODULE_EXCLUDES[@]}"
-for guide in backdropsplat imagesplat-remove-color pdfsplat-ocr pdfsplat-save-as pdfsplat-odt-toolbar; do
+for guide in graphsplat-equations backdropsplat imagesplat-remove-color pdfsplat-ocr pdfsplat-save-as pdfsplat-odt-toolbar; do
   copy_file "docs/$guide.md" "$TOOLS_ROOT/docs/$guide.md"
 done
 for shortcut in backdropsplat imagesplat; do
@@ -1052,6 +1052,7 @@ rm -rf "$STAGE_DIR"
 # Also create the independent ClipSplat package with its shared encoder.
 python3 scripts/make-clipsplat-bundle.py "$VERSION_LABEL"
 python3 scripts/make-layoutsplat-bundle.py "$VERSION_LABEL"
+python3 scripts/make-plansplat-bundle.py "$VERSION_LABEL"
 
 # A single portable manifest covers every download, including ClipSplat and CipherSplat.
 python3 - "$VERSION_LABEL" <<'PY'
@@ -1060,13 +1061,13 @@ from pathlib import Path
 import sys
 version=sys.argv[1]
 packages=sorted(p for p in Path('dist').glob(f'*-{version}.zip') if not p.name.startswith('drawsplat-district-suite-')) + [Path('solutions/CipherSplat/downloads/CipherSplat-offline.zip')]
-if len(packages)!=16:
-    raise SystemExit(f'Expected 16 ZIP downloads, found {len(packages)}')
+if len(packages)!=17:
+    raise SystemExit(f'Expected 17 ZIP downloads, found {len(packages)}')
 lines=[]
 for package in packages:
     with package.open('rb') as stream:
         digest=hashlib.file_digest(stream,'sha256').hexdigest()
     lines.append(f'{digest}  {package.name}\n')
 Path(f'dist/SHA256SUMS-{version}.txt').write_text(''.join(lines))
-print(f'Portable checksums: dist/SHA256SUMS-{version}.txt (all 16 ZIPs)')
+print(f'Portable checksums: dist/SHA256SUMS-{version}.txt (all 17 ZIPs)')
 PY

@@ -90,15 +90,16 @@
   }
 
   function enterViewerPreview(){
-    sessionStorage.setItem(ACCESS_KEY,'viewer');
+    try{sessionStorage.setItem(ACCESS_KEY,'viewer')}catch(_){/* Preview can run for this page without persisting access. */}
     const input=$('adminGatePassword'); if(input) input.value='';
     applyRole('viewer');
   }
 
   function signOut(){
-    sessionStorage.removeItem(ACCESS_KEY);
+    let cleared=true;
+    try{sessionStorage.removeItem(ACCESS_KEY)}catch(_){cleared=false}
     applyRole(null);
-    setMessage('Admin access locked for this tab.','success');
+    setMessage(cleared?'Admin access locked for this tab.':'Locked on this page. Browser settings prevented clearing saved access; close this tab.','success');
   }
 
   // Defense-in-depth: even if CSS is bypassed in DevTools, swallow clicks and
@@ -117,7 +118,7 @@
   }
 
   function init(){
-    const stored=sessionStorage.getItem(ACCESS_KEY);
+    let stored;try{stored=sessionStorage.getItem(ACCESS_KEY)}catch(_){/* Start locked when access cannot be read. */}
     if(stored==='admin' || stored==='1') applyRole('admin');
     else if(stored==='viewer') applyRole('viewer');
     else applyRole(null);

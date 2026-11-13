@@ -91,7 +91,12 @@ const FUNCTIONS = {
   clamp: (value, minimum, maximum) =>
     Math.min(maximum, Math.max(minimum, value)),
   hypot: Math.hypot,
-  root: (value, degree) => Math.sign(value) * Math.abs(value) ** (1 / degree),
+  root: (value, degree) =>
+    !Number.isFinite(degree) ||
+    degree === 0 ||
+    (value < 0 && (!Number.isInteger(degree) || Math.abs(degree % 2) !== 1))
+      ? NaN
+      : Math.sign(value) * Math.abs(value) ** (1 / degree),
   factorial,
   ncr: (n, r) => factorial(n) / (factorial(r) * factorial(n - r)),
   npr: (n, r) => factorial(n) / factorial(n - r),

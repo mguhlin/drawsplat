@@ -86,7 +86,7 @@ Choose a focused tool or combine a few tools around a project.
 
 - **Make thinking visible:** use [DrawSplat](https://splatworks.org/app/whiteboard.html), [ConceptSplat](https://splatworks.org/solutions/concept-map/), and [DiagramSplat](https://splatworks.org/solutions/mermaid/) for models, explanations, and relationships.
 - **Collect and respond to learning:** build [QuizSplat](https://splatworks.org/solutions/quiz-flashcard-studio/) quizzes and flashcards or a [RubricSplat](https://splatworks.org/solutions/rubric-builder/) scoring guide.
-- **Explore mathematical evidence:** use [GraphSplat](https://splatworks.org/solutions/graphsplat/) for charts, picture graphs, coordinate plots, and function graphs, or GridSplat for a spreadsheet workflow.
+- **Explore mathematical evidence:** use [GraphSplat](https://splatworks.org/solutions/graphsplat/) for charts, picture graphs, coordinate plots, function graphs, and reusable LaTeX equations, or GridSplat for a spreadsheet workflow.
 - **Support classroom routines:** choose a timer, wheel, dice, bingo activity, or other utility from the [classroom tools guide](https://splatworks.org/guides/classroom-widgets-tools.html).
 - **Start with a scaffold:** browse [background templates](https://splatworks.org/pages/background-templates.html), then adapt the prompt and response format for your learners.
 
@@ -169,9 +169,11 @@ Storage and collaboration capabilities differ between deployments. Use the curre
 
 ## Updates and release history
 
+**v3.1.50:** GraphSplat adds Equation Studio with eight editable math examples, LaTeX/MathML copying, and local image exports. Storage-blocked startup and save recovery are improved across office, video, classroom and admin tools; Bingo Caller card and room-state bugs are fixed. [Equation guide](docs/graphsplat-equations.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.50.md).
+
 The [download page](https://splatworks.org/pages/download.html) is the reference for current full-suite and independent-app packages. The [release notes](https://splatworks.org/pages/release-notes.html) and [blog](https://splatworks.org/blog/) explain recent changes without mixing the entire history into this introduction.
 
-**Maintenance snapshot — October 31, 2026, v3.1.49:** PDFSplat adds clearer warnings that OCR covers are **not secure redaction**, plus a lower-memory mode. Review OCR spelling, accents, layout, and reading order. Four reviewed dependency patches are merged; major and sensitive upgrades remain held. [OCR and real-redaction workflow](docs/pdfsplat-ocr.md) · [Dependency review](docs/dependency-triage-2026-10-31.md).
+**v3.1.49:** PDFSplat adds clearer warnings that OCR covers are **not secure redaction**, plus a lower-memory mode. Review OCR spelling, accents, layout, and reading order. Four reviewed dependency patches are merged; major and sensitive upgrades remain held. [OCR and real-redaction workflow](docs/pdfsplat-ocr.md) · [Dependency review](docs/dependency-triage-2026-10-31.md).
 
 <details>
 <summary><strong>Looking for older release details or implementation notes?</strong></summary>

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2" />
     <link rel="stylesheet" href="../../assets/css/launcher-trigger.css" />
     <link rel="stylesheet" href="../../assets/css/app-language.css" />
-    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="app.css?v=equation-studio-1" />
   <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.2" />
 <script src="../../assets/js/action-cards.js?v=1.2" defer></script>
 </head>
@@ -43,11 +43,11 @@
     <main>
       <section class="hero">
         <div>
-          <p class="eyebrow">One graph studio. Six ways to explore.</p>
+          <p class="eyebrow">Graphs and equations for classroom thinking.</p>
           <h1>Make data visible.</h1>
           <p>
             Create playful classroom charts, pictographs, coordinate planes,
-            specialty visualizations, and interactive function graphs.
+            specialty visualizations, interactive function graphs, and reusable equations.
           </p>
         </div>
         <div class="mode-actions">
@@ -59,6 +59,7 @@
               <option value="expression">Expression calculator</option>
               <option value="geometry">Geometry</option>
               <option value="specialty">Specialty chart</option>
+              <option value="equation">Equation Studio</option>
             </select></label
           >
           <button id="openExamples" class="examples-button" type="button">
@@ -169,6 +170,29 @@ Music,7</textarea>
                   value="0"
               /></label>
             </div>
+          </section>
+
+
+          <section id="equationControls" class="mode-controls" hidden>
+            <h2>Equation Studio</h2>
+            <p class="hint">Type LaTeX or insert a template. Rendered equations stay on this device.</p>
+            <label for="equationTex">LaTeX equation</label>
+            <textarea id="equationTex" rows="5" maxlength="2000" spellcheck="false" dir="ltr">\frac{1}{2}+\frac{1}{4}=\frac{3}{4}</textarea>
+            <div id="equationTemplates" class="equation-templates" role="group" aria-label="Math templates"></div>
+            <label for="equationReading">Read-aloud description</label>
+            <textarea id="equationReading" rows="3" maxlength="2000">One half plus one quarter equals three quarters.</textarea>
+            <p class="hint">Review this description after editing. Read aloud uses your browser's available voices; it does not interpret the equation.</p>
+            <div class="button-row">
+              <button id="copyLatex" type="button">Copy LaTeX</button>
+              <button id="copyMathml" type="button">Copy MathML</button>
+              <button id="downloadLatex" type="button">LaTeX file</button>
+              <button id="readEquation" type="button">Read description</button>
+              <button id="stopEquationReading" type="button">Stop reading</button>
+            </div>
+            <details><summary>Equation help</summary>
+              <p>Use \frac{a}{b}, \sqrt{x}, x^2 and x_1. Use the examples for aligned steps and matrices. Dollar delimiters are optional. PNG and SVG can be inserted into worksheets, slides or quizzes; MathML carries structure for compatible editors.</p>
+              <p>Equation Studio formats notation. Use Expression calculator for function graphs. Handwriting recognition, speech-to-math, automatic solutions and chemistry prediction are not included.</p>
+            </details>
           </section>
 
           <section id="expressionControls" class="mode-controls" hidden>
@@ -433,6 +457,7 @@ Reflection,5,6</textarea>
           </div>
           <div id="canvas" tabindex="0" aria-label="Rendered graph"></div>
           <div id="trace" aria-live="polite"></div>
+          <details id="equationSemantics" hidden><summary>Accessible MathML preview</summary><div id="equationMathml" dir="ltr"></div></details>
           <div class="export-row">
             <button id="copyPng" class="primary" type="button">Copy PNG</button
             ><button id="downloadPng" type="button">PNG</button
@@ -512,7 +537,7 @@ Reflection,5,6</textarea>
     <footer>
       GraphSplat · Local-first graph creation · No account required
     </footer>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=equation-studio-1"></script>
     <script type="module" src="../../assets/js/tool-launcher.js?v=2"></script>
     <script src="../../assets/js/app-language.js" data-ds-language="graphsplat"></script>
   </body>

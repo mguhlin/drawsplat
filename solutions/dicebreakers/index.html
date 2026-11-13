@@ -902,13 +902,18 @@ function oauthPopup({ authUrl, name = 'oauth' }) {
 }
 
 const tokenCache = { google: null, microsoft: null, dropbox: null };
+const memoryKeys = new Map();
 
 function getKey(name) {
-  return localStorage.getItem('dicebreaker.key.' + name) || '';
+  if (memoryKeys.has(name)) return memoryKeys.get(name);
+  try { return localStorage.getItem('dicebreaker.key.' + name) || ''; } catch { return ''; }
 }
 function setKey(name, val) {
-  if (val) localStorage.setItem('dicebreaker.key.' + name, val);
-  else localStorage.removeItem('dicebreaker.key.' + name);
+  memoryKeys.set(name, val);
+  try {
+    if (val) localStorage.setItem('dicebreaker.key.' + name, val);
+    else localStorage.removeItem('dicebreaker.key.' + name);
+  } catch { /* Optional provider settings remain usable for this tab. */ }
 }
 
 async function ensureToken(service) {

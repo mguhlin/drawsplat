@@ -6,11 +6,16 @@ const TTL = 10 * 60 * 1000;
 const PARAM = 'open-file';
 const sessionKey = () => 'drawsplat.imported-tab.' + location.pathname;
 let incomingToken;
+let transferredWorkspace = false;
 if(typeof location !== 'undefined')incomingToken=new URL(location.href).searchParams.get(PARAM);
 export function isTransferredWorkspace(){
   if(typeof window==='undefined')return false;
-  if(incomingToken){sessionStorage.setItem(sessionKey(),'1');return true;}
-  return sessionStorage.getItem(sessionKey())==='1';
+  if(incomingToken)transferredWorkspace=true;
+  try{
+    if(transferredWorkspace)sessionStorage.setItem(sessionKey(),'1');
+    else transferredWorkspace=sessionStorage.getItem(sessionKey())==='1';
+  }catch{/* Keep transferred tabs isolated even when session storage is blocked. */}
+  return transferredWorkspace;
 }
 export function workspaceStorage(){return isTransferredWorkspace()?window.sessionStorage:window.localStorage;}
 export function fileOwner(name){

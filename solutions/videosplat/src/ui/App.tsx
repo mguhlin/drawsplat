@@ -1,4 +1,5 @@
 import { MarkerPanel } from "./MarkerPanel";
+import { readSessionPreference, writeSessionPreference } from "../persistence/preferences";
 import { addMarker, updateMarker, removeMarker, nearbyMarker } from "../timeline/markers";
 import { ChromaControls } from "./ChromaControls";
 import { ChromaPreview } from "./ChromaPreview";
@@ -87,17 +88,17 @@ const APP_VERSION = "v1.1";
 export function App() {
   const history = useRef(new History(createProject()));
   const [showSplash, setShowSplash] = useState(
-    () => sessionStorage.getItem("videosplat-splash-seen") !== "1",
+    () => readSessionPreference("videosplat-splash-seen") !== "1",
   );
   const [splashMode, setSplashMode] = useState<"record" | "edit">();
   const [splashPermissionStatus, setSplashPermissionStatus] = useState<string>();
   const [requestingSplashPermissions, setRequestingSplashPermissions] = useState(false);
   const [splashMicrophones, setSplashMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [recordingMicrophoneId, setRecordingMicrophoneId] = useState(
-    () => sessionStorage.getItem("videosplat-microphone-id") ?? "",
+    () => readSessionPreference("videosplat-microphone-id") ?? "",
   );
   const [splashRecordingReady, setSplashRecordingReady] = useState(
-    () => sessionStorage.getItem("videosplat-recording-permissions") === "ready",
+    () => readSessionPreference("videosplat-recording-permissions") === "ready",
   );
   const [project, setProject] = useState(history.current.value);
   const [status, setStatus] = useState(
@@ -1009,7 +1010,7 @@ export function App() {
   const finishSplash = () => {
     const control = document.querySelector<HTMLElement>(".ds-language-control");
     if (control && languageMenu.current) languageMenu.current.append(control);
-    sessionStorage.setItem("videosplat-splash-seen", "1");
+    writeSessionPreference("videosplat-splash-seen", "1");
     setShowSplash(false);
   };
 
@@ -1031,8 +1032,8 @@ export function App() {
         ?? devices[0]?.deviceId
         ?? "";
       setRecordingMicrophoneId(selected);
-      sessionStorage.setItem("videosplat-microphone-id", selected);
-      sessionStorage.setItem("videosplat-recording-permissions", "ready");
+      writeSessionPreference("videosplat-microphone-id", selected);
+      writeSessionPreference("videosplat-recording-permissions", "ready");
       setSplashRecordingReady(true);
       setSplashPermissionStatus("Permission granted. Select the microphone you want VideoSplat to record.");
     } catch (error) {
@@ -1077,7 +1078,7 @@ export function App() {
                 Microphone to record
                 <select aria-label="Splash microphone source" value={recordingMicrophoneId} onChange={(event) => {
                   setRecordingMicrophoneId(event.target.value);
-                  sessionStorage.setItem("videosplat-microphone-id", event.target.value);
+                  writeSessionPreference("videosplat-microphone-id", event.target.value);
                 }}>
                   {splashMicrophones.length ? splashMicrophones.map((device, index) => (
                     <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>
