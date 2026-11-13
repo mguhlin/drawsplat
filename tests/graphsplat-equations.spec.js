@@ -204,11 +204,40 @@ test("equation controls fit a phone and retain notation when changing language",
   const tex = await page.locator("#equationTex").inputValue();
   await page.locator(".ds-language-control select").selectOption("es");
   expect(await page.locator("#equationTex").inputValue()).toBe(tex);
-  await expect
-    .poll(() =>
-      page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
-    )
-    .toBeTruthy();
+  try {
+    await expect
+      .poll(() =>
+        page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+      )
+      .toBeTruthy();
+  } catch (error) {
+    console.log(
+      "PHONE_OVERFLOW",
+      JSON.stringify(
+        await page.evaluate(() => ({
+          width: innerWidth,
+          scroll: document.documentElement.scrollWidth,
+          items: [...document.querySelectorAll("body *")]
+            .map((el) => ({
+              tag: el.tagName,
+              id: el.id,
+              cls: typeof el.className === "string" ? el.className : "svg",
+              text: el.textContent.slice(0, 60),
+              left: el.getBoundingClientRect().left,
+              right: el.getBoundingClientRect().right,
+              width: el.getBoundingClientRect().width,
+            }))
+            .filter((e) => e.right > innerWidth + 0.5 || e.left < -0.5)
+            .slice(0, 30),
+        })),
+      ),
+    );
+    await page.screenshot({
+      path: testInfo.outputPath("overflow.png"),
+      fullPage: true,
+    });
+    throw error;
+  }
   await page.screenshot({
     path: testInfo.outputPath("equations-phone.png"),
     fullPage: true,
