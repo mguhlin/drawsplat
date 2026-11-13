@@ -22,6 +22,8 @@ Baseline source: `26b209f`. The checkout matched `origin/main`. The unrelated, u
 | Medium | Evaluate `root(-4,2)` or a zeroth root. The evaluator returned mathematically invalid real values. | Enforce the real-number domain while retaining negative odd roots. Model tests cover both accepted and rejected cases. |
 | Low | A malformed GraphSplat project index or unreadable input interfered with opening work. | Validate the saved index shape, report file-read errors, and clear the file picker for retry. |
 
+A runner-only phone-layout failure was traced to wider system-font metrics pushing the translated header navigation beyond 390 pixels. The header now wraps instead of overflowing. A diagnostic layout check and CI screenshot artifact preserve bounds and visual evidence when future regressions occur.
+
 ## Separately requested GraphSplat addition
 
 Equation Studio is an explicit feature request made during the audit. It adds local LaTeX formatting, 18 insertion templates, eight editable examples, SVG/PNG/JPEG and printable output, LaTeX/MathML copying, native project round trips, and reading of a reviewed description with a local browser voice. It does not implement handwriting recognition, speech-to-math, automatic solving, chemistry prediction, or office extensions.

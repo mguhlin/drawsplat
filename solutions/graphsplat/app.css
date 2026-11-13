@@ -611,3 +611,6 @@ textarea:focus-visible,
 
 /* Keep intrinsic SVG/MathML widths inside narrow grid columns. */
 .studio > .controls,.studio > .preview{min-width:0}
+/* Longer translated navigation labels can wrap when system fonts are wider. */
+.app-header{flex-wrap:wrap}
+.app-header nav{flex-wrap:wrap;max-width:100%;margin-inline-start:auto}
