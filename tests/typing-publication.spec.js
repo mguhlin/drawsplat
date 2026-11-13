@@ -1,8 +1,8 @@
 const {test,expect}=require('@playwright/test');
 const games=['cipher-chase','wordfall-reactor','story-sprint','paws-and-keys-adventure'];
 for(const path of ['/pages/features.html','/pages/download.html','/pages/release-notes.html','/games/','/blog/typing-games.html']){
- test(`${path}: current game menu and responsive layout`,async({page})=>{
-  await page.goto(path);await expect(page.locator('.site-nav-menu a[href$="games/index.html"]')).toHaveCount(1);
+ test(`${path}: current game menu and responsive layout`,async({page,baseURL})=>{
+  await page.goto(path);await expect(page.locator('.site-nav-menu a').filter({hasText:/^Games$/})).toHaveJSProperty("href",new URL("/games/index.html",baseURL).href);
   for(const width of [390,1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()}
  });
 }
