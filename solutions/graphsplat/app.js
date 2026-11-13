@@ -3,6 +3,9 @@ import {
   EQUATION_TEMPLATES,
   renderEquationCard,
 } from "./equations.js";
+import { bindConverters } from './converters-ui.js';
+let refreshEquationTable = () => {};
+const equationExportButtons = ['copyLatex', 'copyMathml', 'downloadLatex', 'downloadLatexDocument', 'downloadEquationMarkdown', 'downloadEquationHtml'];
 import {
   parseRows,
   renderQuick,
@@ -356,7 +359,7 @@ function render() {
   equationResult = null;
   $("equationSemantics").hidden = mode() !== "equation";
   $("canvas").dataset.mode = mode();
-  for (const id of ["copyLatex", "copyMathml", "downloadLatex"])
+  for (const id of equationExportButtons)
     $(id).disabled = true;
   try {
     const config = settings();
@@ -367,6 +370,7 @@ function render() {
     config.description = $("altDescription").value;
     expressionResult = null;
     if (mode() === "equation") {
+      refreshEquationTable();
       lastSvg = "";
       enableImageActions(false);
       $("canvas").textContent = "Rendering equation…";
@@ -378,7 +382,7 @@ function render() {
           lastSvg = result.svg;
           $("canvas").innerHTML = lastSvg;
           $("equationMathml").innerHTML = result.mathml;
-          for (const id of ["copyLatex", "copyMathml", "downloadLatex"])
+          for (const id of equationExportButtons)
             $(id).disabled = false;
           enableImageActions(true);
           qualityChecks(config, lastRows);
@@ -1134,6 +1138,18 @@ function updateExpressionDrag(event) {
   $("status").textContent = `Expression offset: ${rounded}`;
 }
 function bind() {
+  refreshEquationTable = bindConverters({
+    getResult: () => equationResult,
+    setEquation: (source) => {
+      window.speechSynthesis?.cancel();
+      $('equationTex').value = source;
+      $('equationReading').value = '';
+      $('altDescription').dataset.edited = '';
+      render();
+    },
+    status: text => { $('status').textContent = text; },
+    save: (text, extension, type) => download(new Blob([text], {type: `${type};charset=utf-8`}), filename(extension)),
+  });
   for (const [name, template] of EQUATION_TEMPLATES) {
     const button = document.createElement("button");
     button.type = "button";
@@ -1217,7 +1233,7 @@ function bind() {
   document
     .querySelectorAll(".controls input,.controls select,.controls textarea")
     .forEach((input) => {
-      if (input.type !== "file")
+      if (input.type !== "file" && !input.closest('#latexTableConverter'))
         input.addEventListener("input", () => {
           if (input === $("altDescription")) input.dataset.edited = "true";
           render();

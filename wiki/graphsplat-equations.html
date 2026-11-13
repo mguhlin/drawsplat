@@ -45,6 +45,42 @@
 <li><strong>Project JSON</strong> saves the workspace, source, reviewed read-aloud description, and styles. Open it in GraphSplat to keep editing. An exported image is finished artwork and does not restore the editing controls.</li>
 </ul>
 <p>Invalid notation disables equation artwork/source exports until corrected. The project download remains available so unfinished work can still be kept. Equations are limited to 2,000 source characters. Document commands, links, remote packages, custom macro definitions, and styling commands are excluded.</p>
+<h2 id="import-convert-and-share">Import, convert and share</h2>
+<p>Open <strong>Import and share LaTeX</strong> for three additional exports:</p>
+<ul>
+<li><strong>Complete LaTeX document</strong> wraps the current validated equation, title and reviewed description in an article with <code>amsmath</code> and <code>amssymb</code>. Compile it in a compatible TeX editor. GraphSplat previews equation notation; it does not run a full TeX compiler.</li>
+<li><strong>Markdown file</strong> keeps the equation in a <code>$$</code> display-math block for a math-aware Markdown editor. Ordinary Markdown viewers may show the source instead.</li>
+<li><strong>HTML page</strong> includes SVG artwork, structured MathML and expandable source. The downloaded page works without scripts, external fonts or network access.</li>
+</ul>
+<p><strong>Import .tex equation</strong> accepts a math snippet or a complete document containing exactly one display equation (<code>\[...\]</code>, <code>$$...$$</code>, <code>equation</code> or <code>align</code>, with starred variants). Imports are validated before replacing the current equation. Documents with several equations require copying one equation at a time. Preambles, custom macros, images and general document layout are not imported. Importing clears the old read-aloud description so an explanation cannot silently describe different math. Add a new reviewed description.</p>
+<h2 id="convert-spreadsheet-cells-to-latex">Convert spreadsheet cells to LaTeX</h2>
+<p>Open <strong>Table to LaTeX</strong>, paste comma-separated data or tab-separated cells, and choose the delimiter if automatic detection is unsuitable. Quote CSV cells containing commas, quotation marks or line breaks; doubled quotation marks represent a literal quotation mark. Rows must have matching column counts. The limits are 20,000 input characters, 100 rows and 12 columns.</p>
+<p>The HTML preview preserves literal cell text, empty cells and quoted line breaks. Check the first-row header setting and review every value. <strong>Copy table LaTeX</strong> produces a <code>tabular</code> fragment; <strong>Table LaTeX document</strong> includes the required <code>booktabs</code> package. For an existing document, load <code>booktabs</code> in its preamble. The preview checks cell layout; it is not a full TeX compilation. Cell formulas and LaTeX commands are treated as literal text, with special characters escaped. Merged cells and <code>.xlsx</code> files are not imported; paste the cells from your spreadsheet instead.</p>
+<p>Three editable <strong>Table examples</strong> demonstrate the workflow:</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Classroom use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Science measurements</td>
+<td>Present trial, distance and time in a lab report; change the measurements and export a table.</td>
+</tr>
+<tr>
+<td>Coin-toss probability</td>
+<td>Compare observed counts and probabilities, using tab-separated spreadsheet cells.</td>
+</tr>
+<tr>
+<td>Numeric matrix</td>
+<td>Insert a two-by-two matrix into Equation Studio, then edit and export the notation.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use as numeric matrix</strong> replaces the current equation with all table cells as matrix entries. It accepts numeric cells only, so remove header rows first. It preserves scientific notation as entered; it does not solve matrix operations. Inserting a matrix or importing an equation clears the old read-aloud description. Keep a project copy before replacing work. <strong>Project JSON</strong> also retains table input, delimiter and header choices; previews are regenerated when reopened.</p>
+<p>These independent features were informed by <a href="https://stylelatex.com/tools/table-to-latex">StyleLaTeX's table conversion</a> and <a href="https://stylelatex.com/">format-sharing workflows</a>. They run locally without an account. Image/PDF/handwriting recognition, AI repair, whole-document Word conversion and full TeX compilation are outside this implementation.</p>
 <h2 id="descriptions-and-reading">Descriptions and reading</h2>
 <p>Edit <strong>Read-aloud description</strong> after changing the equation. <strong>Read description</strong> reads that supplied text using an available local browser voice; it does not automatically interpret the math. Voice availability and pronunciation depend on the browser and operating system. If no local voice is ready, the app keeps the description available on screen. <strong>Stop reading</strong>, switching workspaces, or leaving the page stops current speech.</p>
 <p>The SVG includes the graph title and description. <strong>Accessible MathML preview</strong> exposes structured mathematical notation; <strong>Copy MathML</strong> preserves that structure for compatible destinations. A PNG alone does not provide the same mathematical structure. Supply a reviewed description wherever the exported image is used. Screen-reader and destination support still need human review.</p>
@@ -52,4 +88,4 @@
 <h2 id="related-tools-and-limits">Related tools and limits</h2>
 <p>The feature was informed by the typed equation, symbol, source-notation and graphics workflows in <a href="https://blog.tcea.org/free-equatio-alternatives-top-editors-for-math-teachers/">TCEA's Equatio alternatives article</a>. GraphSplat's independent implementation uses <a href="../solutions/graphsplat/MATHJAX-NOTICE.md">MathJax</a>.</p>
 <p>Handwriting recognition, speech-to-math, predictive chemistry entry, automatic solutions, and Google Docs/Forms/Slides extensions are not included. MathML and image exports can be moved into compatible tools manually.</p>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#write-and-preview-an-equation">Write and preview an equation</a></li><li><a href="#share-and-continue-editing">Share and continue editing</a></li><li><a href="#descriptions-and-reading">Descriptions and reading</a></li><li><a href="#related-tools-and-limits">Related tools and limits</a></li></ul></nav><p class="wiki-note">Current documentation</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#write-and-preview-an-equation">Write and preview an equation</a></li><li><a href="#share-and-continue-editing">Share and continue editing</a></li><li><a href="#import-convert-and-share">Import, convert and share</a></li><li><a href="#convert-spreadsheet-cells-to-latex">Convert spreadsheet cells to LaTeX</a></li><li><a href="#descriptions-and-reading">Descriptions and reading</a></li><li><a href="#related-tools-and-limits">Related tools and limits</a></li></ul></nav><p class="wiki-note">Current documentation</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

@@ -5,6 +5,107 @@ async function ready(page) {
   await expect(page.locator("#canvas svg").first()).toBeVisible();
 }
 
+test('local table converter previews literal cells, exports booktabs, recovers errors and inserts a matrix', async ({ page }) => {
+  await page.goto('/solutions/graphsplat/?mode=equation');
+  await ready(page);
+  await page.locator('#latexTableConverter summary').click();
+  for (const [name, count] of [['measurements', 4], ['probability', 3], ['matrix', 2]]) {
+    await page.locator('#latexTableExample').selectOption(name);
+    await expect(page.locator('#latexTablePreview tr')).toHaveCount(count);
+  }
+  await page.locator('#latexTableInput').fill('Name,Value\n"<img src=x onerror=alert(1)>","50% & x"');
+  await page.locator('#latexTableHeader').check();
+  await expect(page.locator('#latexTablePreview img')).toHaveCount(0);
+  await expect(page.locator('#latexTablePreview td').first()).toHaveText('<img src=x onerror=alert(1)>');
+  await expect(page.locator('#tableLatexSource')).toHaveValue(/50\\% \\& x/);
+  const downloaded = page.waitForEvent('download');
+  await page.locator('#downloadTableLatex').click();
+  const text = await fs.readFile(await (await downloaded).path(), 'utf8');
+  expect(text).toContain('booktabs'); expect(text).toContain('\\begin{tabular}');
+  await page.locator('#insertTableMatrix').click();
+  await expect(page.locator('#status')).toContainText('numeric cells only');
+  await page.locator('#latexTableInput').fill('a,b\n1');
+  await expect(page.locator('#downloadTableLatex')).toBeDisabled();
+  await expect(page.locator('#tableLatexSource')).toHaveValue('');
+  await expect(page.locator('#tableConversionStatus')).toContainText('same number');
+  await page.locator('#latexTableExample').selectOption('matrix');
+  await page.locator('#insertTableMatrix').click();
+  await ready(page);
+  await expect(page.locator('#equationMathml mtable')).toHaveCount(1);
+  await expect(page.locator('#equationReading')).toHaveValue('');
+});
+
+test('complete TeX round trip, Markdown and self-contained HTML exports retain authored math', async ({ page, context }) => {
+  await page.goto('/solutions/graphsplat/?mode=equation'); await ready(page);
+  await page.locator('#equationConversions summary').click();
+  let document;
+  for (const [id, expected] of [['downloadLatexDocument', '\\begin{document}'], ['downloadEquationMarkdown', '$$'], ['downloadEquationHtml', '<math']]) {
+    const pending = page.waitForEvent('download'); await page.locator('#'+id).click();
+    const data = await fs.readFile(await (await pending).path(), 'utf8');
+    expect(data).toContain(expected);
+    if (id === 'downloadLatexDocument') document = data;
+    if (id === 'downloadEquationHtml') {
+      const exported = await context.newPage();
+      // Loading the exported artifact with every network request blocked proves independence.
+      await exported.route('**/*', route => route.abort());
+      await exported.setContent(data);
+      await expect(exported.locator('svg path').first()).toBeAttached();
+      await expect(exported.locator('script,link,img')).toHaveCount(0);
+      await exported.close();
+    }
+  }
+  await page.locator('#equationTex').fill('a+b'); await ready(page);
+  await page.locator('#equationTexFile').setInputFiles({name:'equation.tex',mimeType:'text/plain',buffer:Buffer.from(document)});
+  await ready(page);
+  await expect(page.locator('#equationTex')).toHaveValue(String.raw`\frac{1}{2}+\frac{1}{4}=\frac{3}{4}`);
+  await page.locator('#equationTexFile').setInputFiles({name:'bad.tex',mimeType:'text/plain',buffer:Buffer.from(String.raw`\href{https://example.com}{x}`)});
+  await expect(page.locator('#status')).toContainText('LaTeX import:');
+  await expect(page.locator('#equationTex')).toHaveValue(String.raw`\frac{1}{2}+\frac{1}{4}=\frac{3}{4}`);
+  await page.locator('#equationTexFile').setInputFiles({name:'bad.tex',mimeType:'text/plain',buffer:Buffer.from('y=2x+1')});
+  await expect(page.locator('#equationTex')).toHaveValue('y=2x+1'); await ready(page);
+  await page.locator('#equationTex').fill(String.raw`\frac{1}{`);
+  for (const id of ['downloadLatexDocument','downloadEquationHtml','downloadEquationMarkdown']) await expect(page.locator('#'+id)).toBeDisabled();
+});
+
+test('table source survives project import and expanded conversion controls fit a phone', async ({ page, context }, testInfo) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/solutions/graphsplat/?mode=equation'); await ready(page);
+  await page.locator('#latexTableConverter summary').click();
+  await page.locator('#equationConversions summary').click();
+  await page.locator('#latexTableExample').selectOption('probability');
+  const pending = page.waitForEvent('download'); await page.locator('#downloadProject').click();
+  const buffer = await fs.readFile(await (await pending).path());
+  const other = await context.newPage(); await other.goto('/solutions/graphsplat/');
+  await other.locator('#projectFile').setInputFiles({name:'table.json',mimeType:'application/json',buffer}); await ready(other);
+  await expect(other.locator('#latexTableInput')).toHaveValue(/Heads\t12\t0.6/);
+  await expect(other.locator('#tableLatexSource')).toHaveValue(/Heads & 12 & 0.6/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({path:testInfo.outputPath('equations-converters-phone.png'),fullPage:true});
+});
+
+test('a delayed TeX import cannot overwrite newer edits or a changed workspace', async ({ page }) => {
+  await page.goto('/solutions/graphsplat/?mode=equation'); await ready(page);
+  await page.evaluate(() => {
+    const original = File.prototype.text;
+    File.prototype.text = function () {
+      window.importStarted = true;
+      return new Promise(resolve => { window.finishImport = () => original.call(this).then(resolve); });
+    };
+  });
+  const file = {name:'slow.tex',mimeType:'text/plain',buffer:Buffer.from('x=100')};
+  await page.locator('#equationTexFile').setInputFiles(file);
+  await expect.poll(() => page.evaluate(() => window.importStarted)).toBe(true);
+  await page.locator('#equationTex').fill('y=7');
+  await page.evaluate(() => window.finishImport());
+  await expect(page.locator('#status')).toContainText('workspace changed');
+  await expect(page.locator('#equationTex')).toHaveValue('y=7');
+  await page.locator('#equationTexFile').setInputFiles(file);
+  await page.locator('#mode').selectOption('quick');
+  await page.evaluate(() => window.finishImport());
+  await expect(page.locator('#status')).toContainText('workspace changed');
+  await expect(page.locator('#mode')).toHaveValue('quick');
+});
+
 test("Equation Studio loads only a local engine, renders all eight examples and exposes MathML", async ({
   page,
   baseURL,

@@ -1026,7 +1026,7 @@
     {
       "id": "graphsplat",
       "name": "GraphSplat",
-      "description": "Create charts, picture graphs, geometry, function graphs, and local LaTeX equations with math templates, MathML and image exports.",
+      "description": "Create charts, picture graphs, geometry, function graphs, local LaTeX equations and tables; import .tex and share MathML, images, Markdown, HTML or complete LaTeX.",
       "url": "/solutions/graphsplat/",
       "icon": "/solutions/graphsplat/graphsplat-icon.svg",
       "type": "tool",

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2" />
     <link rel="stylesheet" href="../../assets/css/launcher-trigger.css" />
     <link rel="stylesheet" href="../../assets/css/app-language.css" />
-    <link rel="stylesheet" href="app.css?v=equation-studio-1" />
+    <link rel="stylesheet" href="app.css?v=equation-converters-2" />
   <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.2" />
 <script src="../../assets/js/action-cards.js?v=1.2" defer></script>
 </head>
@@ -189,6 +189,36 @@ Music,7</textarea>
               <button id="readEquation" type="button">Read description</button>
               <button id="stopEquationReading" type="button">Stop reading</button>
             </div>
+            <details id="equationConversions"><summary>Import and share LaTeX</summary>
+              <p class="hint">Import one equation from a .tex snippet or a document with one display equation. Export a complete document for a TeX editor, a Markdown math block, or a self-contained HTML page.</p>
+              <input id="equationTexFile" type="file" accept=".tex,text/plain" hidden />
+              <div class="button-row">
+                <button id="importEquationTex" type="button">Import .tex equation</button>
+                <button id="downloadLatexDocument" type="button">Complete LaTeX document</button>
+                <button id="downloadEquationMarkdown" type="button">Markdown file</button>
+                <button id="downloadEquationHtml" type="button">HTML page</button>
+              </div>
+              <p class="hint">HTML includes equation artwork and structured MathML, with no external dependencies. Markdown needs a destination that supports math. Full LaTeX documents compile in a TeX editor; this preview renders equation notation only.</p>
+            </details>
+            <details id="latexTableConverter"><summary>Table to LaTeX</summary>
+              <p class="hint">Paste comma-separated data or cells copied from a spreadsheet. Conversion stays on this device. Cells are literal text; formulas and merged cells are not interpreted.</p>
+              <label for="latexTableExample">Table examples</label>
+              <select id="latexTableExample"><option value="">Choose an example</option><option value="measurements">Science measurements</option><option value="probability">Coin-toss probability</option><option value="matrix">Numeric matrix</option></select>
+              <label for="latexTableFormat">Cell delimiter</label>
+              <select id="latexTableFormat"><option value="auto">Automatic (tabs, otherwise commas)</option><option value="csv">Comma-separated</option><option value="tsv">Tab-separated</option></select>
+              <label for="latexTableInput">Table data</label>
+              <textarea id="latexTableInput" rows="5" maxlength="20000" spellcheck="false" dir="ltr">Trial,Distance (cm),Time (s)
+1,12.5,2
+2,25,4
+3,37.5,6</textarea>
+              <label><input id="latexTableHeader" type="checkbox" checked /> First row is a header</label>
+              <p id="tableConversionStatus" aria-live="polite"></p>
+              <div id="latexTablePreview" tabindex="0" role="region" aria-label="Table preview"></div>
+              <label for="tableLatexSource">LaTeX table source</label>
+              <textarea id="tableLatexSource" rows="6" readonly spellcheck="false" dir="ltr"></textarea>
+              <div class="button-row"><button id="copyTableLatex" type="button">Copy table LaTeX</button><button id="downloadTableLatex" type="button">Table LaTeX document</button><button id="insertTableMatrix" type="button">Use as numeric matrix</button></div>
+              <p class="hint">The table document uses booktabs. Preview checks cell layout, not a full TeX compilation. Limit: 100 rows and 12 columns. Numeric matrix replaces the current equation; headers must be removed first.</p>
+            </details>
             <details><summary>Equation help</summary>
               <p>Use \frac{a}{b}, \sqrt{x}, x^2 and x_1. Use the examples for aligned steps and matrices. Dollar delimiters are optional. PNG and SVG can be inserted into worksheets, slides or quizzes; MathML carries structure for compatible editors.</p>
               <p>Equation Studio formats notation. Use Expression calculator for function graphs. Handwriting recognition, speech-to-math, automatic solutions and chemistry prediction are not included.</p>
@@ -537,7 +567,7 @@ Reflection,5,6</textarea>
     <footer>
       GraphSplat · Local-first graph creation · No account required
     </footer>
-    <script type="module" src="app.js?v=equation-studio-1"></script>
+    <script type="module" src="app.js?v=equation-converters-2"></script>
     <script type="module" src="../../assets/js/tool-launcher.js?v=2"></script>
     <script src="../../assets/js/app-language.js" data-ds-language="graphsplat"></script>
   </body>

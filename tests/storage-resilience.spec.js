@@ -48,6 +48,8 @@ for (const [name, url, selector] of [
       await expect(page.locator("#storageStatus")).toBeVisible();
     }
     if (name === "SplatBot") {
+      // Mission options render before asynchronous Blockly/activity setup finishes.
+      await expect(page.locator("#blocklyDiv .blocklySvg").first()).toBeAttached();
       await page.locator("#skipStoryBtn").click();
       await page.locator("#roleSelect").selectOption("teacher");
       await page.locator("#wordsTab").click();

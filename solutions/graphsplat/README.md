@@ -12,6 +12,8 @@ GraphSplat consolidates DrawSplat's Graph Maker and Picture Graph Maker into one
 - Coordinate plane: click-to-plot points, labels, connected points, and linear equations
 - Expression calculator: multiple functions, parameters/sliders, draggable curve offsets, pan/zoom, roots, intersections, and a value table
 - Geometry: draggable points, segments, polygons, circles, labels, snapping, lengths, and polygon areas
+- Local table-to-LaTeX conversion: spreadsheet paste, three classroom examples, booktabs documents, numeric matrix insertion, and project retention
+- Equation exchange: validated .tex import, complete LaTeX, Markdown and self-contained HTML exports
 - Equation Studio: local LaTeX, math templates, eight classroom examples, MathML/LaTeX copying, PNG/SVG/JPEG export, and reading of supplied descriptions
 - Specialty charts: bubble, radar, polar, stacked bar, stacked area, and pyramid
 

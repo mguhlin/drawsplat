@@ -604,6 +604,10 @@ textarea:focus-visible,
 .equation-templates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}
 .equation-templates button{min-width:0;padding:.5rem .25rem;font-size:.85rem;overflow-wrap:anywhere}
 #equationTex{font-family:ui-monospace,monospace;min-height:7rem}
+#latexTablePreview{max-width:100%;overflow:auto}
+#latexTablePreview table{border-collapse:collapse;font-size:.85rem}
+#latexTablePreview th,#latexTablePreview td{border-bottom:1px solid var(--border);padding:.4rem;text-align:start;white-space:pre-wrap}
+#tableLatexSource{font-family:ui-monospace,monospace}
 #equationControls h2{font-size:1.15rem;margin:0}
 #equationSemantics{padding:1rem;overflow:auto;max-width:100%}
 #equationMathml{font-size:1.5rem;padding:1.5rem .5rem;overflow:auto}

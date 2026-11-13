@@ -169,7 +169,7 @@ Storage and collaboration capabilities differ between deployments. Use the curre
 
 ## Updates and release history
 
-**v3.1.50:** GraphSplat adds Equation Studio with eight editable math examples, LaTeX/MathML copying, and local image exports. Storage-blocked startup and save recovery are improved across office, video, classroom and admin tools; Bingo Caller card and room-state bugs are fixed. [Equation guide](docs/graphsplat-equations.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.50.md).
+**v3.1.50:** GraphSplat adds Equation Studio with eight editable math examples, LaTeX/MathML copying, local image exports, .tex import, complete document/Markdown/HTML export, and table-to-LaTeX conversion with three more classroom examples. Storage-blocked startup and save recovery are improved across office, video, classroom and admin tools; Bingo Caller card and room-state bugs are fixed. [Equation guide](docs/graphsplat-equations.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.50.md).
 
 The [download page](https://splatworks.org/pages/download.html) is the reference for current full-suite and independent-app packages. The [release notes](https://splatworks.org/pages/release-notes.html) and [blog](https://splatworks.org/blog/) explain recent changes without mixing the entire history into this introduction.
 

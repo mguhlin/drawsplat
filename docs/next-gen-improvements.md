@@ -175,6 +175,8 @@ Ship independent increments. Do not hold a reliable project-file improvement unt
 
 **Universal tagged-PDF repair and exact Office round trips:** These require substantially different document engines and validation. Continue improving HTML/EPUB alternatives and honest conversion reports first.
 
+**StyleLaTeX-style recognition and document exchange:** Consider an explicitly enabled recognition provider for photos, handwriting and selected PDF pages, with side-by-side original/source review, uncertainty markers, correction history, cancellation, clear data-transfer consent and verified exports. Whole-document Word/LaTeX conversion and actual TeX compilation need separate engines and compatibility tests. The separately requested local table converter, .tex equation import and format-sharing exports are implemented outside this proposal backlog.
+
 **Automatic handwriting, speech-to-math and computer algebra solving:** Separate recognition/solver engines, accuracy evaluation, licensing, device support and accessibility work are needed. The separately requested GraphSplat Equation Studio addresses typed equation authoring and reusable outputs first.
 
 **Real-time collaboration across all apps:** Requires shared editing models, conflict resolution, identity and service operations. Existing district features and deliberate file handoffs provide a smaller first step.

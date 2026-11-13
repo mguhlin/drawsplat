@@ -777,7 +777,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "435d3799e38c88465727b601187392ab9554bb6a18d62a4f86ff9ac5c697258e"
+      "entrySha256": "71a7788a98be7e7446ced8484e1f549c88cd9cfd41fce725053cb869273e28a9"
     },
     {
       "id": "markdown-studio",
@@ -1793,6 +1793,7 @@
         "selfpublishing.com",
         "sigil-ebook.com",
         "splatworks.org",
+        "stylelatex.com",
         "support.apple.com",
         "support.google.com",
         "thegoodocs.com",
@@ -1860,6 +1861,7 @@
         "selfpublishing.com",
         "sigil-ebook.com",
         "splatworks.org",
+        "stylelatex.com",
         "support.apple.com",
         "support.google.com",
         "thegoodocs.com",

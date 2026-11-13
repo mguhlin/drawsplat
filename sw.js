@@ -1,5 +1,5 @@
 /* DrawSplatTM offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.50-equation-studio';
+const CACHE = 'drawsplat-v3.1.50-equation-converters';
 const SHELL = [
   './',
   './index.html',

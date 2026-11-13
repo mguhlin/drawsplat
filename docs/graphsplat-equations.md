@@ -27,6 +27,34 @@ Use **Expression calculator** for graphing functions, sliders, roots, intersecti
 
 Invalid notation disables equation artwork/source exports until corrected. The project download remains available so unfinished work can still be kept. Equations are limited to 2,000 source characters. Document commands, links, remote packages, custom macro definitions, and styling commands are excluded.
 
+## Import, convert and share
+
+Open **Import and share LaTeX** for three additional exports:
+
+- **Complete LaTeX document** wraps the current validated equation, title and reviewed description in an article with `amsmath` and `amssymb`. Compile it in a compatible TeX editor. GraphSplat previews equation notation; it does not run a full TeX compiler.
+- **Markdown file** keeps the equation in a `$$` display-math block for a math-aware Markdown editor. Ordinary Markdown viewers may show the source instead.
+- **HTML page** includes SVG artwork, structured MathML and expandable source. The downloaded page works without scripts, external fonts or network access.
+
+**Import .tex equation** accepts a math snippet or a complete document containing exactly one display equation (`\[...\]`, `$$...$$`, `equation` or `align`, with starred variants). Imports are validated before replacing the current equation. Documents with several equations require copying one equation at a time. Preambles, custom macros, images and general document layout are not imported. Importing clears the old read-aloud description so an explanation cannot silently describe different math. Add a new reviewed description.
+
+## Convert spreadsheet cells to LaTeX
+
+Open **Table to LaTeX**, paste comma-separated data or tab-separated cells, and choose the delimiter if automatic detection is unsuitable. Quote CSV cells containing commas, quotation marks or line breaks; doubled quotation marks represent a literal quotation mark. Rows must have matching column counts. The limits are 20,000 input characters, 100 rows and 12 columns.
+
+The HTML preview preserves literal cell text, empty cells and quoted line breaks. Check the first-row header setting and review every value. **Copy table LaTeX** produces a `tabular` fragment; **Table LaTeX document** includes the required `booktabs` package. For an existing document, load `booktabs` in its preamble. The preview checks cell layout; it is not a full TeX compilation. Cell formulas and LaTeX commands are treated as literal text, with special characters escaped. Merged cells and `.xlsx` files are not imported; paste the cells from your spreadsheet instead.
+
+Three editable **Table examples** demonstrate the workflow:
+
+| Example | Classroom use |
+| --- | --- |
+| Science measurements | Present trial, distance and time in a lab report; change the measurements and export a table. |
+| Coin-toss probability | Compare observed counts and probabilities, using tab-separated spreadsheet cells. |
+| Numeric matrix | Insert a two-by-two matrix into Equation Studio, then edit and export the notation. |
+
+**Use as numeric matrix** replaces the current equation with all table cells as matrix entries. It accepts numeric cells only, so remove header rows first. It preserves scientific notation as entered; it does not solve matrix operations. Inserting a matrix or importing an equation clears the old read-aloud description. Keep a project copy before replacing work. **Project JSON** also retains table input, delimiter and header choices; previews are regenerated when reopened.
+
+These independent features were informed by [StyleLaTeX's table conversion](https://stylelatex.com/tools/table-to-latex) and [format-sharing workflows](https://stylelatex.com/). They run locally without an account. Image/PDF/handwriting recognition, AI repair, whole-document Word conversion and full TeX compilation are outside this implementation.
+
 ## Descriptions and reading
 
 Edit **Read-aloud description** after changing the equation. **Read description** reads that supplied text using an available local browser voice; it does not automatically interpret the math. Voice availability and pronunciation depend on the browser and operating system. If no local voice is ready, the app keeps the description available on screen. **Stop reading**, switching workspaces, or leaving the page stops current speech.

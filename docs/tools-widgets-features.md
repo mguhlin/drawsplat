@@ -173,6 +173,8 @@ Category: **Create** · 21 components
 - [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
 - Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
 - Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
+- Import one validated .tex equation; export complete LaTeX documents, math-aware Markdown or self-contained HTML
+- Convert pasted CSV/TSV cells into booktabs LaTeX; three classroom examples and numeric matrix insertion
 
 ### ImageSplat™
 
@@ -330,6 +332,8 @@ Category: **Data** · 3 components
 - [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
 - Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
 - Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
+- Import one validated .tex equation; export complete LaTeX documents, math-aware Markdown or self-contained HTML
+- Convert pasted CSV/TSV cells into booktabs LaTeX; three classroom examples and numeric matrix insertion
 
 ### GridSplat
 
@@ -981,6 +985,8 @@ Category: **Assessment** · 20 components
 - [Equation Studio](../wiki/graphsplat-equations.html) formats local LaTeX with fraction, root, power, subscript, inequality, matrix, and aligned-step templates
 - Eight equation examples cover fractions, the quadratic formula, Pythagorean theorem, slope, mean, calculus, aligned steps, and matrix/vector notation
 - Copy LaTeX or structured MathML, export equation artwork, keep source in Project JSON, and read a teacher-reviewed description with available local browser voices
+- Import one validated .tex equation; export complete LaTeX documents, math-aware Markdown or self-contained HTML
+- Convert pasted CSV/TSV cells into booktabs LaTeX; three classroom examples and numeric matrix insertion
 
 ### Paws & Keys Adventure
 
