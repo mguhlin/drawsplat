@@ -11,7 +11,8 @@ export function createBackgroundProcessor() {
   function process(source, options, onProgress = () => {}) {
     if (active) return Promise.reject(new Error('Wait for the current image to finish.'));
     validateDimensions(source.width, source.height);
-    if (options.mode === 'photo' && !allowed()) return Promise.reject(new Error('Optional connections are off. Enable them in Privacy for photo model downloads, or use White / Color locally.'));
+    const bundled=!!globalThis.SplatWorkspace?.profile?.bundledModels,local=bundled&&options.model!=='best';
+    if (options.mode === 'photo' && !allowed()&&!local) return Promise.reject(new Error('Optional connections are off. Enable them in Privacy for photo model downloads, or use White / Color locally.'));
     if (!worker) {
       worker = new Worker(new URL('./worker.mjs', import.meta.url), { type: 'module' });
       worker.onmessage = ({ data }) => {
@@ -29,9 +30,9 @@ export function createBackgroundProcessor() {
     }
     const pixels = source.getContext('2d').getImageData(0, 0, source.width, source.height), id = ++serial;
     return new Promise((resolve, reject) => {
-      const watch = options.mode === 'photo' ? setInterval(() => { if (!allowed()) cancel('Optional connections were turned off. Photo processing stopped.'); }, 250) : null;
+      const watch = options.mode === 'photo'&&!local ? setInterval(() => { if (!allowed()) cancel('Optional connections were turned off. Photo processing stopped.'); }, 250) : null;
       active = { id, resolve, reject, onProgress, watch };
-      try { worker.postMessage({ id, width: source.width, height: source.height, pixels: pixels.data.buffer, options, allowRemote: allowed() }, [pixels.data.buffer]); }
+      try { worker.postMessage({ id, width: source.width, height: source.height, pixels: pixels.data.buffer, options, bundled, allowRemote: allowed() }, [pixels.data.buffer]); }
       catch (error) { cancel(error.message); }
     });
   }

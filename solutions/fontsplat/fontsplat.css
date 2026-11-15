@@ -22,3 +22,6 @@ aside{position:sticky;top:12px;max-height:calc(100dvh - 24px);overflow-y:auto;sc
 @media(max-width:1050px) and (min-width:621px){main{grid-template-columns:310px minmax(0,1fr)}.studio{padding:20px 16px}}
 @media(max-width:620px){main{display:flex}aside{position:static;display:block;max-height:none;overflow:visible;width:100%;padding:16px}.control-group{margin-bottom:10px}.control-jumps{position:sticky;top:0;background:#fff;padding:8px 0;z-index:4}.section-title p{display:block}.studio{width:100%}}
 @media(prefers-reduced-motion:reduce){aside{scroll-behavior:auto}}
+
+/* Embedded editors hand back a still PNG layer; motion exports belong to the standalone studio. */
+body.embedded :is(#gif,#mp4,#cancelMotion,#motionPreview){display:none!important}

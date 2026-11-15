@@ -1,0 +1,25 @@
+name: Shared tool projects
+on:
+  push:
+    branches: [main]
+    paths: ['solutions/gifsplat/**','solutions/imagesplat/**','solutions/qrsplat/**','splatworks/shared/project-files.*','splatworks/shared/photo-blur.js','splatworks/shared/fontsplat-launcher.js','tests/browser-projects.spec.js','tests/qrsplat.spec.js','playwright.projects.config.cjs','.github/workflows/portable-projects.yml']
+  pull_request:
+    paths: ['solutions/gifsplat/**','solutions/imagesplat/**','solutions/qrsplat/**','splatworks/shared/project-files.*','splatworks/shared/photo-blur.js','splatworks/shared/fontsplat-launcher.js','tests/browser-projects.spec.js','tests/qrsplat.spec.js','playwright.projects.config.cjs','.github/workflows/portable-projects.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npx playwright test --config playwright.projects.config.cjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: shared-project-failure-details
+          path: test-results/

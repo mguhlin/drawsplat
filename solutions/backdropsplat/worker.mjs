@@ -5,7 +5,7 @@ const MODELS = {
   fast: { id: 'onnx-community/ormbg-ONNX', revision: '034e2d884afbab897e10e78fc5bb566b29533fd6', device: 'wasm', dtype: 'q8' },
   best: { id: 'onnx-community/BEN2-ONNX', revision: 'c552aa82688edce09f0ac9d2e31ad53d9d629010', device: 'webgpu', dtype: 'fp16' }
 };
-let library, engine, engineKey, requestId, allowRemote = false;
+let library, engine, engineKey, requestId, allowRemote = false, bundled = false;
 const fetchOriginal = globalThis.fetch.bind(globalThis);
 // The shared window privacy wrapper does not run inside a worker. Enforce the
 // same optional-network choice here and keep destinations limited to assets.
@@ -13,6 +13,7 @@ globalThis.fetch = (input, init) => {
   const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, location.href);
   if (url.origin !== location.origin && (!allowRemote || url.protocol !== 'https:' || !/(^|\.)(huggingface\.co|hf\.co)$/.test(url.hostname)))
     return Promise.reject(new Error('Model downloads are disabled or the model host is unavailable. White and color removal still work locally.'));
+  if(url.origin!==location.origin&&bundled)return fetchOriginal('/desktop/remote?url='+encodeURIComponent(url.href),{...init,credentials:'omit'});
   return fetchOriginal(input, init);
 };
 
@@ -23,7 +24,9 @@ async function getEngine(key) {
   if (engine) { await engine.dispose(); engine = null; engineKey = null; }
   progress('Loading the photo engine on this device…');
   library ||= await import('./vendor/transformers.min.js');
-  library.env.allowLocalModels = false;
+  const local=bundled&&key==='fast';
+  library.env.allowLocalModels = local;library.env.allowRemoteModels=!local&&allowRemote;
+  if(local)library.env.localModelPath=new URL('./models/',import.meta.url).href;
   library.env.useBrowserCache = true;
   library.env.backends.onnx.wasm.numThreads = 1;
   library.env.backends.onnx.wasm.proxy = false;
@@ -31,7 +34,7 @@ async function getEngine(key) {
   const model = MODELS[key];
   progress(`Preparing ${key === 'best' ? 'Best quality' : 'Fast'} photo cutout…`);
   const candidate = await library.pipeline('background-removal', model.id, {
-    revision: model.revision, device: model.device, dtype: model.dtype,
+    local_files_only:local,revision: model.revision, device: model.device, dtype: model.dtype,
     progress_callback: event => {
       if (event.status === 'progress' && event.total)
         progress(`Downloading photo model: ${(event.loaded / 1e6).toFixed(1)} of ${(event.total / 1e6).toFixed(1)} MB`);
@@ -44,7 +47,7 @@ async function getEngine(key) {
 
 self.onmessage = async ({ data: message }) => {
   const { id, width, height, options } = message;
-  requestId = id; allowRemote = message.allowRemote === true;
+  requestId = id; allowRemote = message.allowRemote === true;bundled=message.bundled===true;
   try {
     validateDimensions(width, height);
     const original = new Uint8ClampedArray(message.pixels);

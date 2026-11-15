@@ -1,6 +1,7 @@
 // Shared FontSplat editor: same-origin iframe + source/nonce checked PNG handoff.
 export function openFontSplat({text='Your words',onInsert}={}) {
  if(document.querySelector('#fontsplatEditorDialog'))return;
+ const finishEditor=globalThis.SplatWorkspace?.beginOperation();
  const requestId=crypto.randomUUID(),origin=location.origin,previous=document.activeElement,target=origin==='null'?'*':origin;
  const dialog=document.createElement('dialog');dialog.id='fontsplatEditorDialog';dialog.setAttribute('aria-label','FontSplat lettering editor');
  Object.assign(dialog.style,{width:'min(1250px,96vw)',height:'92dvh',maxWidth:'96vw',maxHeight:'94dvh',padding:'0',border:'1px solid #cdbce7',borderRadius:'13px',overflow:'hidden',background:'#f6f4fb',color:'#34205c',boxSizing:'border-box'});
@@ -21,5 +22,5 @@ export function openFontSplat({text='Your words',onInsert}={}) {
   try{const blob=await (await fetch(d.dataUrl)).blob(),bitmap=await createImageBitmap(blob);const matches=bitmap.width===d.width&&bitmap.height===d.height;bitmap.close();if(!matches)throw Error('The artwork dimensions do not match.');await onInsert?.({file:new File([blob],'FontSplat.png',{type:'image/png'}),dataUrl:d.dataUrl,width:d.width,height:d.height,alt:String(d.alt||'FontSplat text artwork').slice(0,2000)});dialog.close();}
   catch(error){status.textContent=error.message||'Artwork could not be inserted.';inserting=false;}
  }
- window.addEventListener('message',receive);dialog.addEventListener('close',()=>{window.removeEventListener('message',receive);frame.src='about:blank';dialog.remove();previous?.focus?.();},{once:true});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});dialog.showModal();close.focus();return dialog;
+ window.addEventListener('message',receive);dialog.addEventListener('close',()=>{finishEditor?.();window.removeEventListener('message',receive);frame.src='about:blank';dialog.remove();previous?.focus?.();},{once:true});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});dialog.showModal();close.focus();return dialog;
 }

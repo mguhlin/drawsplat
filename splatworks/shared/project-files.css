@@ -1,0 +1,4 @@
+.desktop-project-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:#f4f6f8;border-bottom:1px solid #cdd3da;color:#253044;font:14px/1.4 system-ui,sans-serif}
+.desktop-project-bar button{background:#fff;color:#253044;border:1px solid #a9b3c0;border-radius:5px;padding:7px 12px;font:inherit;cursor:pointer}
+.desktop-project-bar button:focus-visible{outline:3px solid #3063a0;outline-offset:2px}.desktop-project-bar button:disabled{opacity:.6;cursor:wait}
+.desktop-project-bar span{flex:1;min-width:220px;font-size:12px}

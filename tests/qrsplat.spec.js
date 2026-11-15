@@ -48,6 +48,7 @@ test('Reset clears the current QR without deleting saved designs', async ({ page
   await page.locator('#centerImage').setInputFiles('assets/brand/DrawSplat_logo_transparent.png');
   await page.locator('#centerImageSize').fill('22');
 
+  page.once('dialog',dialog=>dialog.accept());
   await page.getByRole('button', { name:'Reset' }).click();
 
   await expect(page.locator('[data-mode="standard"]')).toHaveAttribute('aria-pressed', 'true');

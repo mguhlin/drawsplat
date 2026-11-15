@@ -56,6 +56,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
   const $ = id => dialog.querySelector('#bs-' + id);
   const processor = createBackgroundProcessor(), results = sources.map(() => null);
   let busy = false, processing = false, applying = false, generation = 0, closed = false, replacement, backgroundTask;
+  if(globalThis.SplatWorkspace?.profile?.bundledModels)$('photo').querySelector('p').textContent='Fast photo removal uses the bundled model and works offline. Best quality is an optional download and needs compatible WebGPU; enable optional connections in Settings to use it.';
   const networkAllowed = () => window.SplatPrivacy?.getState().optionalConnections !== false;
   sources.forEach((source, i) => { const option = document.createElement('option'); option.value = i; option.textContent = source.name; $('layer').append(option); });
   $('mode').value = mode;
@@ -116,7 +117,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
   function invalidate() {
     results.fill(null); status('Settings changed. Process again before applying or downloading.'); update();
   }
-  async function processAll() {
+  async function processAll() {const __desktopDone=globalThis.SplatWorkspace?.beginOperation();try{
     if (busy || backgroundTask || closed) return;
     busy = processing = true; const run = ++generation; update();
     try {
@@ -131,7 +132,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
       status(`${sources.length} ${sources.length === 1 ? 'image' : 'images'} ready. Review, download, or apply. ${notes.join(' ')}`);
     } catch (error) { if (!closed && run === generation) status(error.message); }
     finally { if (!closed && run === generation) { busy = processing = false; update(); } }
-  }
+  }finally{__desktopDone?.();}}
   function stop() { if (!processing) return; ++generation; processor.cancel(); busy = processing = false; status('Processing cancelled. Completed previews remain available; original layers are unchanged.'); update(); }
   function close() { if (applying) return; dialog.close(); }
   dialog.addEventListener('cancel', event => { if (applying) event.preventDefault(); });
@@ -149,14 +150,14 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
     $('color').value = '#' + [...pixel].slice(0, 3).map(v => v.toString(16).padStart(2, '0')).join(''); invalidate();
   });
   const toBlob = (canvas, jpeg) => new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Image encoding failed.')), jpeg ? 'image/jpeg' : 'image/png', .94));
-  async function save(all) {
+  async function save(all) {const __desktopDone=globalThis.SplatWorkspace?.beginOperation();try{
     if (busy || backgroundTask || closed) return;
     busy = true; update();
     try {
       const jpeg = $('format').value === 'jpeg';
       if (!all) {
         const blob = await toBlob(composite(results[index()].canvas, jpeg), jpeg);
-        if (!closed) await download(blob, exportName(sources[index()].name, jpeg ? 'jpeg' : 'png'));
+        if (!closed && !await download(blob, exportName(sources[index()].name, jpeg ? 'jpeg' : 'png'))) { status('Save cancelled or failed. Your previews remain available.'); return; }
       }
       else {
         if (!window.JSZip) await new Promise((resolve, reject) => {
@@ -169,20 +170,20 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
           zip.file(uniqueName(exportName(sources[i].name, jpeg ? 'jpeg' : 'png'), used), await toBlob(composite(results[i].canvas, jpeg), jpeg));
         }
         const blob = await zip.generateAsync({ type: 'blob' });
-        if (!closed) await download(blob, 'imagesplat-cutouts.zip');
+        if (!closed && !await download(blob, 'imagesplat-cutouts.zip')) { status('Save cancelled or failed. Your previews remain available.'); return; }
       }
       if (!closed) status('Download ready. Original layers are unchanged until you Apply.');
     } catch (error) { if (!closed) status(error.message); }
     finally { busy = false; if (!closed) update(); }
-  }
+  }finally{__desktopDone?.();}}
   $('download').onclick = () => save(false); $('zip').onclick = () => save(true);
-  $('apply').onclick = async () => {
+  $('apply').onclick = async () => {const __desktopDone=globalThis.SplatWorkspace?.beginOperation();try{
     if (busy || backgroundTask || closed || !results.every(Boolean)) return;
     busy = applying = true; update();
     try { await apply(results.map(r => composite(r.canvas))); applying = false; close(); }
     catch (error) { status(error.message); }
     finally { applying = busy = false; if (!closed) update(); }
-  };
+  }finally{__desktopDone?.();}};
   function backgroundStatus(text) { $('bg-status').textContent = text; }
   function releaseReplacement() {
     if (replacement) { replacement.canvas.width = replacement.canvas.height = 1; replacement = null; }
@@ -192,7 +193,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
     backgroundTask = null; clearTimeout(task.timeout); task.controller.abort();
     if (!closed) { backgroundStatus(message); update(); }
   }
-  async function loadReplacement(source) {
+  async function loadReplacement(source) {const __desktopDone=globalThis.SplatWorkspace?.beginOperation();try{
     if (busy || backgroundTask || closed) return;
     if (source.kind === 'url') {
       try { source.url = onlineImageURL(source.url).href; }
@@ -226,7 +227,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
       clearTimeout(task.timeout);
       if (backgroundTask === task) { backgroundTask = null; if (!closed) update(); }
     }
-  }
+  }finally{__desktopDone?.();}}
   for (const scene of BACKGROUNDS) {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'bs-bg-choice'; button.dataset.background = scene.id;
     button.setAttribute('aria-label', scene.name); button.setAttribute('aria-pressed', 'false'); button.title = scene.description;
@@ -235,7 +236,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
     button.onclick = () => loadReplacement({ kind: 'builtin', ...scene }); $('bg-gallery').append(button);
   }
   $('bg-upload').onclick = () => $('bg-file').click();
-  $('bg-file').onchange = async () => { const file = $('bg-file').files[0]; if (file) await loadReplacement({ kind: 'file', file, name: file.name || 'Uploaded background' }); if (!closed) $('bg-file').value = ''; };
+  $('bg-file').onchange = async () => {const __desktopDone=globalThis.SplatWorkspace?.beginOperation();try{ const file = $('bg-file').files[0]; if (file) await loadReplacement({ kind: 'file', file, name: file.name || 'Uploaded background' }); if (!closed) $('bg-file').value = ''; }finally{__desktopDone?.();}};
   $('bg-form').onsubmit = event => {
     event.preventDefault(); const url = $('bg-url').value.trim(); let name = 'Online image';
     try { name += ' · ' + new URL(url).hostname; } catch { /* Validation gives the useful error. */ }
