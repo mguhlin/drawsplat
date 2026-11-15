@@ -358,7 +358,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "08261213a50876f6c63478daad0be0b1fdbd5d9433e96d50a02d3e9537435710"
+      "entrySha256": "9dc218f397405f520057bbd9c11acfe40f04254ccd82d392d6860d68512a8c21"
     },
     {
       "id": "audiosplat",
@@ -993,7 +993,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "f15eaa6ddabb2718da9060cf573480791ebbae485160d0af6053f223b9507243"
+      "entrySha256": "3c592e11566f86587313c398e4afc02524cd6bc17baa0aa8e47700e526903d13"
     },
     {
       "id": "quiz-flashcards",
@@ -1118,7 +1118,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "68b517c8942c7cc50bd65f911d3525e7a4056fde2daa281bf1cdc3d66127f120"
+      "entrySha256": "1eec3d2a7968eecd35aea463897cc97acbc52126fc46d686febdc997d34cb690"
     },
     {
       "id": "step-splat",
