@@ -17,7 +17,7 @@
     "jsdom": "29.1.1",
     "typescript": "6.0.3",
     "vite": "8.3.5",
-    "vitest": "4.1.12"
+    "vitest": "5.0.5"
   },
   "dependencies": {
     "docx": "^9.7.1",
