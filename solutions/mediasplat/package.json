@@ -17,14 +17,14 @@
     "@ffmpeg/util": "0.12.2",
     "@splat/local-subtitles": "file:../shared/subtitles",
     "react": "19.1.1",
-    "react-dom": "19.1.1"
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@playwright/test": "1.60.0",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",
     "@types/react": "19.1.10",
-    "@types/react-dom": "19.1.7",
+    "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.0",
     "jsdom": "26.1.0",
     "typescript": "7.0.2",
