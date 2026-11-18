@@ -85,10 +85,7 @@ function axisFrame(
     content += `<text x="${left - 10}" y="${y + 4}" text-anchor="end" font-size="12" fill="${ink}">${Math.round(value * 100) / 100}</text>`;
   }
   content += `<path d="M${left} ${top}V${top + h}H${left + w}" fill="none" stroke="${ink}" stroke-width="2"/>`;
-  if (settings.xLabel)
-    content += `<text x="${left + w / 2}" y="${height - 28}" text-anchor="middle" font-size="15" fill="${ink}">${esc(settings.xLabel)}</text>`;
-  if (settings.yLabel)
-    content += `<text x="20" y="${top + h / 2}" text-anchor="middle" font-size="15" fill="${ink}" transform="rotate(-90 20 ${top + h / 2})">${esc(settings.yLabel)}</text>`;
+  content += axisLabels(settings, { left, top, w, h, height });
   return {
     content,
     left,
@@ -97,6 +94,16 @@ function axisFrame(
     h,
     y: (value) => top + h - ((value - min) / (max - min || 1)) * h,
   };
+}
+
+function axisLabels(settings, { left, top, w, h, height = 620 }) {
+  const ink = settings.ink || "#172033";
+  let content = "";
+  if (settings.xLabel)
+    content += `<text x="${left + w / 2}" y="${height - 28}" text-anchor="middle" font-size="15" fill="${ink}">${esc(settings.xLabel)}</text>`;
+  if (settings.yLabel)
+    content += `<text x="20" y="${top + h / 2}" text-anchor="middle" font-size="15" fill="${ink}" transform="rotate(-90 20 ${top + h / 2})">${esc(settings.yLabel)}</text>`;
+  return content;
 }
 
 export function renderQuick(type, rows, settings) {
@@ -234,6 +241,7 @@ function renderScatter(rows, settings) {
     sy = (y) => top + h - ((y - minY) / (maxY - minY || 1)) * h,
     ink = settings.ink || "#172033";
   let body = `<path d="M${left} ${top}V${top + h}H${left + w}" fill="none" stroke="${ink}" stroke-width="2"/>`;
+  body += axisLabels(settings, { left, top, w, h });
   points.forEach((row, index) => {
     body += `<circle data-quick-row="${index}" data-quick-series="1" cx="${sx(row.values[0])}" cy="${sy(row.values[1])}" r="8" fill="${itemColor(settings, index, 1, settings.colors[index % settings.colors.length])}"/><text x="${sx(row.values[0]) + 11}" y="${sy(row.values[1]) - 8}" font-size="12" fill="${ink}">${esc(row.label)}</text>`;
   });
