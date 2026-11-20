@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=20261009-presentation">
+  <link rel="stylesheet" href="./css/app.css?v=pdf-links-1">
   <link rel="stylesheet" href="./css/branding.css?v=20261027-about">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -137,6 +137,13 @@
         <label>Color <input id="textColor" type="color" value="#172033"></label>
         <button id="deleteTextButton" class="danger" type="button">Delete text</button>
       </fieldset>
+      <fieldset id="linkProperties" hidden disabled>
+        <legend>Selected link</legend>
+        <p id="linkDestination" class="link-destination"></p>
+        <button id="editLinkButton" type="button">Edit link</button>
+        <button id="followLinkButton" type="button">Go to link</button>
+        <button id="deleteLinkButton" class="danger" type="button">Delete link</button>
+      </fieldset>
       <fieldset id="objectProperties" hidden disabled>
         <legend>Appearance</legend>
         <label id="opacityProperty">Opacity <input id="objectOpacity" type="range" min="10" max="100" value="100"></label>
@@ -149,6 +156,7 @@
         <div class="tool-grid">
           <button id="editTextButton" type="button" disabled aria-pressed="false">Edit PDF text</button>
           <button id="addTextButton" type="button" disabled>Add text</button>
+          <button id="addLinkButton" type="button" disabled aria-pressed="false">Add link</button>
           <button id="highlightButton" type="button" disabled>Highlight</button>
           <button id="drawButton" type="button" disabled>Draw</button>
           <button id="addImageButton" type="button" disabled>Add image</button>
@@ -244,6 +252,20 @@
       <p>Use a small positive or negative angle to straighten selected scanned pages.</p>
       <label class="dialog-field">Angle in degrees <input id="customRotation" type="number" min="-45" max="45" step="0.1" value="0" required></label>
       <div class="dialog-actions"><button id="customRotateCancel" type="button">Cancel</button><button class="primary" type="submit">Apply rotation</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="linkDialog" aria-labelledby="linkTitle">
+    <form id="linkForm">
+      <h2 id="linkTitle">Link destination</h2>
+      <label class="dialog-field">Link to <select id="linkKind"><option value="url">Website or file URL</option><option value="page">Page in this PDF</option></select></label>
+      <label id="linkUrlRow" class="dialog-field">URL <input id="linkUrl" type="text" required placeholder="https://example.org/resource.pdf" autocomplete="off" spellcheck="false" aria-describedby="linkFileHint"></label>
+      <label id="linkPageRow" class="dialog-field" hidden>Destination page <select id="linkPage" disabled></select></label>
+      <label class="dialog-field">Link description (optional) <input id="linkLabel" type="text" maxlength="500" placeholder="Describe where this link goes"></label>
+      <p id="linkFileHint" class="tool-hint">Use http:// or https:// for websites and shared files, or file:// for local files. Local file links depend on the reader's device and PDF viewer permissions.</p>
+      <p class="tool-hint">Link boxes are visible while editing and invisible in the exported PDF. Links to pages excluded from an extracted PDF are omitted.</p>
+      <p id="linkError" role="alert"></p>
+      <div class="dialog-actions"><button id="linkCancel" type="button">Cancel</button><button id="linkSave" class="primary" type="submit">Add link</button></div>
     </form>
   </dialog>
 
@@ -426,8 +448,8 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=pptx-layout-2"></script>
-  <script src="../../assets/js/pdf-ui-strings.js?v=20261030-v3149"></script>
+  <script src="./src/boot.js?v=pdf-links-1"></script>
+  <script src="../../assets/js/pdf-ui-strings.js?v=pdf-links-1"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>
 </html>

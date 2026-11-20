@@ -1401,3 +1401,31 @@ window.DrawSplatPdfStrings = {
     "Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.": "संपादन पूर्ववत करें, फिर PDF, चित्र या दस्तावेज़ प्रारूप में सहेजें। मूल फ़ाइल नहीं बदलती। / ترمیم کالعدم کریں، پھر PDF، تصاویر یا دستاویز کی صورت محفوظ کریں۔ اصل فائل نہیں بدلتی۔"
   }
 };
+
+// Link editing controls.
+Object.assign(window.DrawSplatPdfStrings.es, {
+  "Add link": "Agregar enlace",
+  "Selected link": "Enlace seleccionado",
+  "Edit link": "Editar enlace",
+  "Go to link": "Ir al enlace",
+  "Delete link": "Eliminar enlace",
+  "Save link": "Guardar enlace",
+  "Link destination": "Destino del enlace",
+  "Link to": "Enlazar a",
+  "Website or file URL": "URL de sitio web o archivo",
+  "Page in this PDF": "Página de este PDF",
+  "Destination page": "Página de destino",
+  "Link description (optional)": "Descripción del enlace (opcional)",
+  "Describe where this link goes": "Describa el destino de este enlace",
+  "Use http:// or https:// for websites and shared files, or file:// for local files. Local file links depend on the reader's device and PDF viewer permissions.": "Use http:// o https:// para sitios web y archivos compartidos, o file:// para archivos locales. Los enlaces locales dependen del dispositivo y de los permisos del lector de PDF.",
+  "Link boxes are visible while editing and invisible in the exported PDF. Links to pages excluded from an extracted PDF are omitted.": "Los recuadros son visibles al editar e invisibles en el PDF exportado. Se omiten enlaces a páginas que no se incluyen en un PDF extraído.",
+  "Enter a complete http://, https://, or file:// URL.": "Ingrese una URL completa que comience con http://, https:// o file://.",
+  "Enter a valid URL.": "Ingrese una URL válida.",
+  "Choose a destination page.": "Elija una página de destino.",
+  "Draw a larger link box.": "Dibuje un recuadro más grande.",
+  "Link saved. Export as PDF to use the clickable area.": "Enlace guardado. Exporte como PDF para usar el área interactiva.",
+  "Drag a box over the area to make clickable. Press Enter for a keyboard link box. Escape cancels.": "Arrastre un recuadro sobre el área que desea enlazar. Pulse Intro para insertar con el teclado. Escape cancela.",
+  "Link tool cancelled.": "Herramienta de enlace cancelada.",
+  "Destination page removed. Edit or delete this link.": "Se eliminó la página de destino. Edite o elimine este enlace.",
+  "File links open from the downloaded PDF if your PDF reader allows local files.": "Los enlaces a archivos se abren desde el PDF descargado si el lector permite archivos locales."
+});

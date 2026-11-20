@@ -125,3 +125,15 @@ body{position:fixed;inset:0}
 @media(prefers-reduced-motion:reduce){.presentation-clean .presentation-controls{transition:none}}
 
 @media(pointer:coarse){.presentation-clean .presentation-controls{position:static;opacity:1}}
+
+/* Link outlines are editor controls; PDF annotations have no visible border. */
+.annotation-layer.linking{cursor:crosshair;touch-action:none;user-select:none}
+.annotation-layer.linking .editable-object{pointer-events:none}
+.link-object,.link-box-preview{position:absolute;border:2px dashed #126a9b;background:rgb(18 106 155/.08)}
+.link-object{min-width:0;min-height:0;overflow:visible}
+.link-box-preview{pointer-events:none}
+.link-object>.resize-handle{right:0;bottom:0}
+.link-destination{grid-column:1/-1;overflow-wrap:anywhere;margin:0}
+#linkError{color:var(--danger)}
+
+@media(max-width:800px){.tools #linkProperties{grid-template-columns:repeat(3,minmax(0,1fr))}.tools #linkProperties>button{grid-column:auto;padding:.4rem;font-size:.78rem}}
