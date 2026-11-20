@@ -387,8 +387,8 @@ function queueThumbnailRefresh() {
   },180);
 }
 async function renderThumbnail(li) {
-  const index=Number(li.dataset.index), original=state.pages[index];
-  if(!original)return;
+  const original=state.pages.find(page=>page.id===li.dataset.pageId);
+  if(!original || li.parentElement!==els.thumbnails)return;
   const item=structuredClone(original),key=JSON.stringify(item);
   if(li.renderedKey===key||li.pendingThumbnailKey===key)return;
   const token=(li.thumbnailToken||0)+1;li.thumbnailToken=token;li.pendingThumbnailKey=key;
@@ -402,40 +402,55 @@ async function renderThumbnail(li) {
     } else {page=await sourcePage(item);viewport=page.getViewport({scale:.2,rotation:(page.rotate+item.rotation)%360});}
     canvas.width=Math.max(1,Math.ceil(viewport.width));canvas.height=Math.max(1,Math.ceil(viewport.height));
     await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-    if(token!==li.thumbnailToken||!li.isConnected||JSON.stringify(state.pages[index])!==key)return;
+    if(token!==li.thumbnailToken||li.parentElement!==els.thumbnails||JSON.stringify(state.pages.find(page=>page.id===item.id))!==key)return;
     const target=li.querySelector('canvas');target.width=canvas.width;target.height=canvas.height;target.getContext('2d').drawImage(canvas,0,0);
     li.renderedKey=key;delete li.dataset.previewError;
-  } catch(error) {if(li.isConnected&&state.pages[index]?.id===item.id){li.dataset.previewError=error.message;console.warn('Page preview could not refresh',error);}}
-  finally {canvas.width=canvas.height=0;if(edited)await edited.destroy();if(token===li.thumbnailToken){li.pendingThumbnailKey=null;li.removeAttribute('aria-busy');}}
+  } catch(error) {if(li.parentElement===els.thumbnails&&state.pages.some(page=>page.id===item.id)){li.dataset.previewError=error.message;console.warn('Page preview could not refresh',error);}}
+  finally {
+    canvas.width=canvas.height=0;if(edited)await edited.destroy();
+    if(token===li.thumbnailToken){
+      li.pendingThumbnailKey=null;li.removeAttribute('aria-busy');
+      const current=state.pages.find(page=>page.id===item.id),currentKey=current&&JSON.stringify(current);
+      // A changed page can invalidate an in-flight render after the debounced
+      // refresh has already fired. Observe it again instead of leaving it blank.
+      if(li.parentElement===els.thumbnails&&currentKey&&currentKey!==key&&li.renderedKey!==currentKey)
+        state.thumbnailObserver?.observe(li);
+    }
+  }
 }
 async function renderThumbnails() {
   state.thumbnailObserver?.disconnect();
-  els.thumbnails.replaceChildren();
+  const existing=new Map([...els.thumbnails.children].map(li=>[li.dataset.pageId,li]));
   state.thumbnailObserver = new IntersectionObserver(
-    (entries) => {
+    (entries, observer) => {
       for (const entry of entries)
         if (entry.isIntersecting) {
+          observer.unobserve(entry.target);
           renderThumbnail(entry.target);
-          state.thumbnailObserver.unobserve(entry.target);
         }
     },
     { root: els.sidebar, rootMargin: "240px" },
   );
   for (let index = 0; index < state.pages.length; index++) {
-    const li = document.createElement("li"),
-      canvas = document.createElement("canvas"),
-      label = document.createElement("span");
+    const item=state.pages[index],li=existing.get(item.id)||document.createElement("li");
+    existing.delete(item.id);
+    if(!li.firstElementChild){
+      const canvas=document.createElement("canvas");canvas.width=120;canvas.height=160;
+      li.append(canvas,document.createElement("span"));
+    }
+    const label=li.querySelector('span');
+    li.dataset.pageId=item.id;
     li.className = `thumbnail${state.selectedPageIds.has(state.pages[index].id) ? " selected" : ""}${index === state.current ? " current" : ""}`;
     li.draggable = true;
     li.dataset.index = index;
     li.tabIndex = 0;
     li.setAttribute("aria-label", `Page ${index + 1}`);
     li.setAttribute("aria-selected", String(state.selectedPageIds.has(state.pages[index].id)));
-    canvas.width = 120;
-    canvas.height = 160;
     label.textContent = `Page ${index + 1}`;
-    li.append(canvas, label);
-    els.thumbnails.append(li);
+    // Retain the painted canvas for unchanged pages, including pages shifted
+    // by an insertion or reorder. Selecting a page must not clear its preview.
+    if(els.thumbnails.children[index]!==li)
+      els.thumbnails.insertBefore(li,els.thumbnails.children[index]||null);
     li.onclick = (event) => selectPage(index, event);
     li.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -461,8 +476,9 @@ async function renderThumbnails() {
       e.preventDefault();
       openPageActions(index);
     };
-    state.thumbnailObserver.observe(li);
+    if(li.renderedKey!==JSON.stringify(item))state.thumbnailObserver.observe(li);
   }
+  for(const li of existing.values())li.remove();
 }
 function selectPage(index, event = {}) {
   finishInlineTextEditing();
@@ -1443,10 +1459,11 @@ els.linkForm.onsubmit=event=>{
     state.selectedId=object.id;
   });
   els.linkDialog.close();renderAnnotations();
+  els.annotationLayer.querySelector(`[data-id="${object.id}"]`)?.focus();
   announce('Link saved. Export as PDF to use the clickable area.');
 };
 els.linkCancel.onclick=()=>els.linkDialog.close();
-els.linkDialog.addEventListener('close',()=>{pendingLink=null;els.annotationLayer.focus();});
+els.linkDialog.addEventListener('close',()=>{pendingLink=null;});
 els.editLinkButton.onclick=()=>{const o=selectedObject();if(o?.type==='link')openLinkDialog(o);};
 els.deleteLinkButton.onclick=deleteSelected;
 els.followLinkButton.onclick=()=>{
