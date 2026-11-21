@@ -185,3 +185,13 @@ test('hostile Argon2id parameters are rejected before derivation', async ({ page
   });
   expect(rejected).toBe(true);
 });
+
+
+test('password strength label remains readable on its white panel', async ({page}) => {
+ const contrast = await page.locator('#strengthText').evaluate(el => {
+  const rgb = getComputedStyle(el).color.match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number).map(v=>v/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);
+  const luminance=0.2126*rgb[0]+0.7152*rgb[1]+0.0722*rgb[2];
+  return 1.05/(luminance+0.05);
+ });
+ expect(contrast).toBeGreaterThanOrEqual(4.5);
+});
