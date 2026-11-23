@@ -5,7 +5,7 @@ python3 - "${1:-$ROOT_DIR/solutions/CipherSplat}" "${2:-${1:-$ROOT_DIR/solutions
 import hashlib,json,sys
 from pathlib import Path
 root=Path(sys.argv[1]);files=set()
-for pattern in ['*.html','*.js','*.css','*.webmanifest','port-source.json','LICENSE','NOTICE.md','README.md','OFFLINE-README.txt','assets/**/*','vendor/**/*','shared/**/*']:
+for pattern in ['*.html','*.js','*.css','*.webmanifest','port-source.json','LICENSE','COPYING','NOTICE.md','README.md','OFFLINE-README.txt','assets/**/*','vendor/**/*','shared/**/*']:
  files.update(p for p in root.glob(pattern) if p.is_file() and p.name != 'playwright.config.js')
 if not (root/'shared').exists():
  for rel in ['css/privacy-controls.css','js/privacy-controls.js','css/app-language.css','js/app-language.js','css/action-cards.css','js/action-cards.js','css/action-icons.css']:

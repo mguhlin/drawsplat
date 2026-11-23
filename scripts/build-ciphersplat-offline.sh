@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export TZ=UTC
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE_DIR="$ROOT_DIR/solutions/CipherSplat"
@@ -17,7 +18,7 @@ python3 "$ROOT_DIR/scripts/pin-ciphersplat-assets.py"
 
 mkdir -p "$STAGING_DIR/CipherSplat/assets" "$OUTPUT_DIR"
 # Bundle every local workspace/help module and its pinned engines.
-for file in "$SOURCE_DIR"/*.{html,js,css,webmanifest} "$SOURCE_DIR"/{OFFLINE-README.txt,port-source.json}; do
+for file in "$SOURCE_DIR"/*.{html,js,css,webmanifest} "$SOURCE_DIR"/{OFFLINE-README.txt,port-source.json,COPYING}; do
   [ "$(basename "$file")" != "playwright.config.js" ] || continue
   [ ! -f "$file" ] || cp "$file" "$STAGING_DIR/CipherSplat/"
 done
@@ -52,6 +53,11 @@ python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" C
 sed -i 's/ integrity="sha384-[^"]*"//' "$STAGING_DIR/CipherSplat/index.html"
 "$ROOT_DIR/scripts/generate-ciphersplat-integrity.sh" "$STAGING_DIR/CipherSplat" "$STAGING_DIR/CipherSplat/integrity.json"
 
+# Normalize permissions as well as timestamps: Git checkouts and developer
+# workspaces can use different umasks. Mac/Linux launchers remain executable.
+find "$STAGING_DIR/CipherSplat" -type d -exec chmod 755 {} +
+find "$STAGING_DIR/CipherSplat" -type f -exec chmod 644 {} +
+find "$STAGING_DIR/CipherSplat" -type f \( -name "*.sh" -o -name "*.command" \) -exec chmod 755 {} +
 # Normalize timestamps and metadata so identical source produces identical ZIP bytes.
 find "$STAGING_DIR/CipherSplat" -exec touch -d '@946684800' {} +
 
