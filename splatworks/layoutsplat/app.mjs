@@ -1,3 +1,4 @@
+import {createDesktopWorkspace,desktopHost} from '../shared/desktop-workspace.js';
 import {prepareTemplate} from './template-fill.mjs';
 import {openPhotoBlur} from '../shared/photo-blur.js';
 import {openFontSplat} from '../shared/fontsplat-launcher.js';
@@ -24,6 +25,7 @@ import { importQuark } from './quark-import.mjs';
 import {refreshPageNumbers,pageContext} from './publication-fields.mjs';
 const $ = id => document.getElementById(id), t = (key, vars) => window.WidgetI18n.t(key, vars);
 const STORE = 'layoutsplat.autosave.v1', BACKUP = 'layoutsplat.recovery.v1', START_BLANK = 'layoutsplat.startBlank.v1';
+let desktopWorkspace=null;
 let doc, activePage = 0, selected = null, linking = null, unit = 'in', zoom = 0.55, baseline = false, preview = false, lastStatus = 'savedLocal', statusVars;
 let undoStack = [], redoStack = [], saveTimer, pointer, editingStoryId, lastSaved, unsaved = false;
 const measurer = createMeasurer(); let layout, issues;
@@ -51,9 +53,11 @@ function resizeMembers(originals,b,corner,dx,dy,keepRatio=false){
 function status(key, vars) { lastStatus = key; statusVars = vars; $('statusText').textContent = t(key, vars); }
 function checkpoint(snapshot = doc) { undoStack.push(clone(snapshot)); if (undoStack.length > 40) undoStack.shift(); redoStack = []; }
 function remember() {
+  if(desktopHost()){desktopWorkspace?.changed();status(desktopWorkspace?.dirty?'Unsaved changes — use Save':'Desktop workspace ready');return;}
   unsaved = true; clearTimeout(saveTimer); saveTimer = setTimeout(saveLocal, 250);
 }
 function saveLocal() {
+  if(desktopHost()){desktopWorkspace?.changed();return;}
   try {
     const storage = workspaceStorage(), json = JSON.stringify(doc);
     // Save the current draft first. Large illustrated publications can fit
@@ -236,6 +240,7 @@ async function projectBlob(publication = doc) {
   return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
 }
 async function saveProject() {
+  if(desktopWorkspace){await desktopWorkspace.save();return;}
   try { download(await projectBlob(), '.layoutsplat'); status('savedProject'); } catch { status('saveFailed'); }
 }
 async function parseProject(file, options = {}) {
@@ -260,17 +265,20 @@ async function parseProject(file, options = {}) {
   await rasterSample(result); return { doc: result, warnings };
 }
 async function openProject(file, transferred = false) {
+  const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
   const controller = new AbortController(), publisher = /\.(epub|pub|pages|ai|pdf|eps|ps|qxp|qxd|qxt)$/i.test(file.name);
   try {
     if (!transferred && !/\.(layoutsplat|epub|pub|pages|ai|eps|ps|indd|indt|qxp|qxd|qxt|idml|sla|svg|zip|pdf|html?)$/i.test(file.name) && await routeFileToApp(file, 'layoutsplat')) return;
     if (publisher) { $('mediaProgress').textContent = /\.pub$/i.test(file.name) ? t('publisherDecoding') : 'Importing layout locally…'; $('mediaCancel').onclick = () => controller.abort(); $('mediaImportDialog').showModal(); }
     const imported = await parseProject(file, { signal: controller.signal, onProgress: text => $('mediaProgress').textContent = text }), next = imported.doc;
     if (publisher) $('mediaImportDialog').close();
-    if (!transferred && !confirm(t('replaceConfirm'))) return;
+    ticket?.verify();
+    if (!desktopWorkspace&&!transferred && !confirm(t('replaceConfirm'))) return;
     checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); status(transferred ? 'isolatedDraft' : 'opened');
+    if(/\.(layoutsplat|json)$/i.test(file.name))desktopWorkspace?.acceptCurrent();
     if (imported.warnings.length) showImportReport(imported.warnings);
   } catch (error) { console.warn('LayoutSplat import:', error.message); status('invalidProject'); if (!controller.signal.aborted) showImportReport([t('mediaImportError'), error.message]); }
-  finally { if (publisher) $('mediaImportDialog').close(); }
+  finally { ticket?.finish();if (publisher) $('mediaImportDialog').close(); }
 }
 async function importPicture(file, replaceId = null, metadata = {}) {
   if (!replaceId && page().objects.length >= 200) { status('pageLimit'); return; }
@@ -310,7 +318,8 @@ async function action(name) {
   if (['deleteObject', 'duplicateObject', 'front', 'back', 'continue', 'link'].includes(name) && o?.locked) { status('lockedNotice'); return; }
   switch (name) {
     case 'starter': {
-      const next = await loadStarterPublication(); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
+      const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)break;
+      try{const next = await loadStarterPublication(); await rasterSample(next);ticket?.verify();checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember();}finally{ticket?.finish();}break;
     }
     case 'save': await saveProject(); break;
     case 'save-drive': {
@@ -326,8 +335,9 @@ async function action(name) {
       break;
     }
     case 'blank': case 'sample': {
-      if (!confirm(t('replaceConfirm'))) break;
-      const next = newPublication(name === 'blank'); await prepareTemplate(next); await rasterSample(next); checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember(); break;
+      const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)break;
+      if (!desktopWorkspace&&!confirm(t('replaceConfirm'))) break;
+      try{const next = newPublication(name === 'blank'); await prepareTemplate(next); await rasterSample(next);ticket?.verify();checkpoint(); doc = next; activePage = 0; selected = null; linking = null; publishing?.reset(); render(); remember();}finally{ticket?.finish();}break;
     }
     case 'undo': if (undoStack.length) { redoStack.push(clone(doc)); doc = undoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
     case 'redo': if (redoStack.length) { undoStack.push(clone(doc)); doc = redoStack.pop(); activePage = Math.min(activePage, doc.pages.length - 1); selected = null; linking = null; publishing?.reset(); render(); remember(); } break;
@@ -509,7 +519,7 @@ async function boot() {
   $('videoInput').onchange = async event => { const file = event.target.files[0]; if (file) await importPicture(file); event.target.value = ''; };
   $('mediaImportDialog').addEventListener('cancel', event => { event.preventDefault(); $('mediaCancel').click(); });
   setupMovableDialogs(); storyEditor = setupStoryEditor();
-  publishing = setupPublishing({ getDoc: () => doc, currentPage: page, editStory, goToObject: id => { const found=findObject(doc,id); if(found?.pageIndex>=0){activePage=found.pageIndex;linking=null;publishing.reset();select(id);} }, getSelected: () => selected, setSelected: id => selected = id, getSelectedObject: selectedObject, getLayout: () => layout, getIssues: () => issues, mutate, render, status, t, addObject, download, select, importPicture, mediaAccept: MEDIA_ACCEPT, showReport: showImportReport, replaceDoc: async next => { await rasterSample(next); checkpoint(); doc = validatePublication(next); activePage = 0; selected = null; publishing.reset(); render(); remember(); } });
+  publishing = setupPublishing({ getDoc: () => doc, currentPage: page, editStory, goToObject: id => { const found=findObject(doc,id); if(found?.pageIndex>=0){activePage=found.pageIndex;linking=null;publishing.reset();select(id);} }, getSelected: () => selected, setSelected: id => selected = id, getSelectedObject: selectedObject, getLayout: () => layout, getIssues: () => issues, mutate, render, status, t, addObject, download, select, importPicture, mediaAccept: MEDIA_ACCEPT, showReport: showImportReport, replaceDoc: async next => { const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;try{await rasterSample(next);ticket?.verify();checkpoint(); doc = validatePublication(next); activePage = 0; selected = null; publishing.reset(); render(); remember();}finally{ticket?.finish();} } });
   function transparency(event, commit) {
     const target = event.target, id = target.dataset.layerTransparency;
     if (!id && target.id !== 'propTransparency') return;
@@ -530,6 +540,7 @@ async function boot() {
   document.fonts.addEventListener('loadingdone', () => { clearTimeout(fontRefresh); fontRefresh = setTimeout(() => { if (!matchMedia('print').matches) render(); }, 50); });
   if (innerWidth <= 780) $('zoomSelect').value = 'fit';
   render();
+  desktopWorkspace=createDesktopWorkspace('layoutsplat',{snapshot:()=>doc,file:async value=>({name:(value.title||'publication')+'.layoutsplat',blob:await projectBlob(value)}),status:message=>status(message),open:()=>$('projectInput').click(),openFile:openProject,help:()=>$('helpDialog').showModal()});
   const incoming = await consumeTransferredFile('layoutsplat');
   if (incoming) await openProject(incoming, true); else if (!loaded) remember();
   // Read-only diagnostics let tests inspect the actual model and computed output.

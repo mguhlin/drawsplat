@@ -1,3 +1,4 @@
+import {createDesktopWorkspace,desktopHost,type DesktopWorkspace} from '../../../shared/desktop-workspace.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../../shared/file-bridge.js';
 import {displayCellNumber} from './numberFormat';
 import {parseRange, rangeReference, changeStructure, fillRange, replaceInRange} from './spreadsheetPower';
@@ -249,6 +250,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       return createSheet(DEFAULT_ROWS, DEFAULT_COLS);
     }
   });
+  const desktopWorkspace=useRef<DesktopWorkspace|null>(null);
+  const desktopState=useRef<{sheet:SheetData;editingCell:CellAddress|null;draftValue:string;open:(file:File)=>Promise<void>}>({sheet,editingCell:null,draftValue:'',open:async()=>{}});
   const [history, setHistory] = useState<SheetData[]>([]);
   const [future, setFuture] = useState<SheetData[]>([]);
   const [selection, setSelection] = useState<SelectionRange>(() =>
@@ -297,8 +300,18 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const [chartTitle, setChartTitle] = useState('My Chart');
   const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine;
 
+  desktopState.current={sheet,editingCell,draftValue,open:openSpreadsheetFile};
+  useEffect(()=>{
+    desktopWorkspace.current=createDesktopWorkspace('gridsplat',{
+      snapshot:()=>{const current=desktopState.current;return current.editingCell?updateCell(current.sheet,current.editingCell,current.draftValue):current.sheet;},
+      file:value=>({name:'gridsplat.gridsplat.json',blob:new Blob([exportNativeJson(value)],{type:'application/json'})}),
+      status:setFileMessage,open:()=>fileInputRef.current?.click(),openFile:file=>desktopState.current.open(file),
+    });
+  },[]);
+  useEffect(()=>{desktopWorkspace.current?.changed();},[sheet,editingCell,draftValue]);
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
+      if(desktopHost()){setFileMessage(desktopWorkspace.current?.dirty?'Unsaved changes — use Save':'Desktop workspace ready');return;}
       saveAutosave(sheet);
       setFileMessage('Autosaved in this browser.');
     }, 700);
@@ -1052,6 +1065,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   async function exportFile(format: 'json' | 'csv' | 'markdown' | 'xlsx' | 'ods') {
+    if(format==='json'&&desktopWorkspace.current){await desktopWorkspace.current.save();return;}
     if (format === 'json') {
       downloadText(
         'gridsplat.gridsplat.json',
@@ -1092,6 +1106,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   async function openSpreadsheetFile(file:File) {
+    const ticket=await desktopWorkspace.current?.beginReplace();if(desktopWorkspace.current&&!ticket)return;
 
     if (!file) {
       return;
@@ -1118,6 +1133,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                 : importCsv(text),
           );
 
+      ticket?.verify();
       remember(sheet);
       setSheet(nextSheet);
       setFrozenRows(0);setFrozenCols(0);
@@ -1131,7 +1147,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           ? `We couldn't read that file: ${error.message}`
           : "We couldn't read that file.",
       );
-    }
+    } finally {ticket?.finish();}
   }
 
   useEffect(()=>{
@@ -1141,6 +1157,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   },[]);
 
   async function saveLocalFile() {
+    if(desktopWorkspace.current){await desktopWorkspace.current.save();return;}
     setFileMessage(await saveSheetLocally(sheet));
   }
 
@@ -1615,8 +1632,9 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       : `Frozen ${count} ${item}${count === 1 ? '' : 's'}.`);
   }
 
-  function resetSheet() {
-    if (!window.confirm(strings.startOverConfirm)) {
+  async function resetSheet() {
+    if(desktopWorkspace.current){const ticket=await desktopWorkspace.current.beginReplace();if(!ticket)return;ticket.finish();}
+    if (!desktopWorkspace.current&&!window.confirm(strings.startOverConfirm)) {
       return;
     }
 

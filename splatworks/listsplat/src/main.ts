@@ -1,3 +1,4 @@
+import {createDesktopWorkspace,desktopHost,type DesktopWorkspace} from '../../shared/desktop-workspace.js';
 import { saveToGoogleDrive } from '../../shared/google-drive.js';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../shared/file-bridge.js';
 import { parseMarkdownTables, tableFromMarkdownRows } from './io/markdown';
@@ -226,6 +227,7 @@ if (!root) {
 
 const appRoot = root;
 
+let desktopWorkspace:DesktopWorkspace|null=null;
 let project = loadAutosave() ?? createStarterProject();
 let activeTableId = project.schema.tables[0].id;
 const closedTableIds = new Set<string>();
@@ -233,6 +235,7 @@ let activeRecordId = project.schema.tables[0].records[0]?.id ?? '';
 let viewMode: ViewMode = 'table';
 let saveStatus = 'Ready';
 function saveAutosave(value: ListSplatFile): void {
+  if(desktopHost()){desktopWorkspace?.changed();saveStatus=desktopWorkspace?.dirty?"Unsaved changes — use Save":"Desktop workspace ready";const label=appRoot.querySelector<HTMLElement>("[data-save-status]");if(label)label.textContent=saveStatus;return;}
   try {
     persistAutosave(value);
     saveStatus = 'Saved locally';
@@ -479,7 +482,8 @@ function updateTitle(value: string): void {
   });
 }
 
-function saveJson(which: ListSplatFile = project): void {
+async function saveJson(which: ListSplatFile = project): Promise<void> {
+  if(desktopWorkspace&&which===project){await desktopWorkspace.save();return;}
   downloadFile(
     `${which.metadata.title || 'listsplat-project'}.listsplat.json`,
     JSON.stringify(which, null, 2),
@@ -621,24 +625,16 @@ async function openIncomingFile(file:File){
   try{
     if(await routeFileToApp(file,'listsplat')){lastMessage='Opened the file in its matching SplatWorks app.';render();return;}
     await assertSupportedFile(file,'listsplat');
-    if(/\.json$/i.test(file.name))openJson(file);else importCsv(file);
+    if(/\.json$/i.test(file.name))await openJson(file);else importCsv(file);
     if(isTransferredWorkspace()){lastMessage=importedFileNotice;render();}
   }catch(error){window.alert(error instanceof Error?error.message:'Could not open that file.');}
 }
 
-function openJson(file: File): void {
-  file
-    .text()
-    .then((text) => {
-      const parsed: unknown = JSON.parse(text);
-      assertListSplatFile(parsed);
-      activeTableId = parsed.schema.tables[0].id;
-      activeRecordId = parsed.schema.tables[0].records[0]?.id ?? '';
-      setProject(parsed);
-    })
-    .catch((error: unknown) => {
-      window.alert(error instanceof Error ? error.message : 'Could not open this ListSplatTM file.');
-    });
+async function openJson(file: File): Promise<void> {
+ const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
+ try{const parsed:unknown=JSON.parse(await file.text());assertListSplatFile(parsed);ticket?.verify();activeTableId=parsed.schema.tables[0].id;activeRecordId=parsed.schema.tables[0].records[0]?.id??'';setProject(parsed);desktopWorkspace?.acceptCurrent();}
+ catch(error){window.alert(error instanceof Error?error.message:'Could not open this ListSplat file.');}
+ finally{ticket?.finish();}
 }
 
 function previewTableImport(table: ListSplatTable, fileName: string, source: string): void {
@@ -3612,7 +3608,7 @@ function readCsvMap(): void {
   });
 }
 
-appRoot.addEventListener('click', (event) => {
+appRoot.addEventListener('click', async (event) => {
   const target = event.target as HTMLElement;
   const action = target.closest<HTMLElement>('[data-action]')?.dataset.action;
   const tableId = target.closest<HTMLElement>('[data-table-id]')?.dataset.tableId;
@@ -3708,7 +3704,8 @@ appRoot.addEventListener('click', (event) => {
   closeMenus();
 
   if (action === 'new') {
-    if (!window.confirm('Start a new database? Your current one is replaced here — export it first if you want to keep a copy. You can also undo right after.')) {
+    if(desktopWorkspace&&!await desktopWorkspace.beginReplace().then(ticket=>{ticket?.finish();return !!ticket;}))return;
+    if (!desktopWorkspace && !window.confirm('Start a new database? Your current one is replaced here — export it first if you want to keep a copy. You can also undo right after.')) {
       return;
     }
     pushUndo('new database');
@@ -4641,5 +4638,6 @@ document.addEventListener('toggle', (event) => {
 }, true);
 
 render();
+desktopWorkspace=createDesktopWorkspace('listsplat',{snapshot:()=>project,file:value=>({name:(value.metadata.title||'database')+'.listsplat.json',blob:new Blob([JSON.stringify(value,null,2)],{type:'application/json'})}),status:message=>{lastMessage=message;render();},open:()=>appRoot.querySelector<HTMLInputElement>('[data-open-json]')?.click(),openFile:openIncomingFile,help:()=>{dialog='help';render();}});
 
 consumeTransferredFile('listsplat').then(file=>{if(file)void openIncomingFile(file);}).catch(error=>window.alert(error.message || String(error)));

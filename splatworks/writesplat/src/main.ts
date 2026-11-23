@@ -1,3 +1,4 @@
+import {createDesktopWorkspace,desktopHost,type DesktopWorkspace} from '../../shared/desktop-workspace.js';
 import {openFontSplat} from '../../shared/fontsplat-launcher.js';
 import {activateProjectFonts,type ProjectFonts} from './storage/projectFonts';
 import { saveToGoogleDrive } from '../../shared/google-drive.js';
@@ -1428,6 +1429,7 @@ function bootstrap(): void {
   let analysisTimer = 0;
   let saveTimer = 0;
   let pendingSave = false;
+  let desktopWorkspace:DesktopWorkspace|null=null;
   let initialHtml = starterBody;
   let markdownMode: MarkdownMode = 'wysiwyg';
   let syncingMarkdown = false;
@@ -1514,6 +1516,7 @@ function bootstrap(): void {
   }
 
   function autosave(): void {
+    if(desktopHost()){pendingSave=false;desktopWorkspace?.changed();const message=desktopWorkspace?.dirty?"Unsaved changes — use Save":"Desktop workspace ready";getRequiredElement("saveState").textContent=message;getRequiredElement("statusSaved").textContent=message;return;}
     window.clearTimeout(saveTimer);
     pendingSave = true;
     getRequiredElement('saveState').textContent = 'Saving...';
@@ -1728,6 +1731,7 @@ function bootstrap(): void {
       writer.run(action);
       refresh();
     } else if (action === 'new-document') {
+      if(desktopWorkspace){const ticket=await desktopWorkspace.beginReplace();if(!ticket)return;ticket.finish();}
       useProjectFonts();
       titleInput.value = 'Untitled Document';
       authorInput.value = '';
@@ -1742,6 +1746,7 @@ function bootstrap(): void {
       writer.setHtml(starterBody);
       refresh();
     } else if (action === 'save-local-document') {
+      if(desktopWorkspace){await desktopWorkspace.save();return;}
       try {
       const id = currentLocalDocumentId ?? crypto.randomUUID();
       const existing = currentLocalDocumentId ? loadLocalDocument(currentLocalDocumentId) ?? undefined : undefined;
@@ -1757,12 +1762,14 @@ function bootstrap(): void {
         getRequiredElement('statusSaved').textContent = 'Not saved — use File > Save .writesplat.json';
       }
     } else if (action === 'open-local-library') {
+      if(desktopWorkspace){fileInput.click();return;}
       renderLibraryList(libraryList);
       libraryDialog.hidden = false;
     } else if (action === 'close-local-library') {
       libraryDialog.hidden = true;
       writer.view.focus();
     } else if (action === 'save-json') {
+      if(desktopWorkspace){await desktopWorkspace.save();return;}
       const file = createCurrentNativeFile();
       downloadFile(`${fileSlug(file.metadata.title)}.writesplat.json`, 'application/json', `${JSON.stringify(file, null, 2)}\n`);
     } else if (action === 'save-drive') {
@@ -2180,29 +2187,30 @@ function bootstrap(): void {
     refresh();
   });
   async function openWriteFile(file:File){
+    const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
     const name = file.name;
     const baseTitle = name.replace(/\.[^.]+$/, '');
     try {
       if(await routeFileToApp(file,'writesplat')){getRequiredElement('statusSaved').textContent='Opened the file in its matching SplatWorks app.';return;}
       await assertSupportedFile(file,'writesplat');
       if(/\.json$/i.test(name)){
-        const parsed:unknown=JSON.parse(await file.text());assertWriteSplatFile(parsed);loadNativeFile(parsed);currentLocalDocumentId=null;refresh();
+        const parsed:unknown=JSON.parse(await file.text());assertWriteSplatFile(parsed);ticket?.verify();loadNativeFile(parsed);currentLocalDocumentId=null;refresh();desktopWorkspace?.acceptCurrent();
         getRequiredElement('statusSaved').textContent=`Opened ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;return;
       }
       if (/\.doc$/i.test(name)) {
-        writer.setHtml(await docToHtml(file));
+        const imported=await docToHtml(file);ticket?.verify();writer.setHtml(imported);
       } else if (/\.docx$/i.test(name)) {
-        writer.setHtml(await docxToHtml(await file.arrayBuffer()));
+        const imported=await docxToHtml(await file.arrayBuffer());ticket?.verify();writer.setHtml(imported);
       } else if (/\.odt$/i.test(name)) {
-        writer.setHtml(await odtToHtml(await file.arrayBuffer()));
+        const imported=await odtToHtml(await file.arrayBuffer());ticket?.verify();writer.setHtml(imported);
       } else if (/\.(md|markdown)$/i.test(name)) {
-        writer.setHtml(markdownToHtml(await file.text()));
+        const imported=markdownToHtml(await file.text());ticket?.verify();writer.setHtml(imported);
       } else if (/\.(html?|htm)$/i.test(name)) {
-        const parsed = new DOMParser().parseFromString(await file.text(), 'text/html');
+        const parsed = new DOMParser().parseFromString(await file.text(), 'text/html');ticket?.verify();
         parsed.querySelectorAll('script, style, link, meta').forEach((node) => node.remove());
         writer.setHtml(parsed.body.innerHTML || '<p></p>');
       } else {
-        const text = await file.text();
+        const text = await file.text();ticket?.verify();
         writer.setHtml(text.split(/\n{2,}/).map((block) => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`).join('') || '<p></p>');
       }
       titleInput.value = baseTitle || 'Imported Document';
@@ -2211,7 +2219,7 @@ function bootstrap(): void {
       getRequiredElement('statusSaved').textContent = `Imported ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;
     } catch (error) {
       window.alert(error instanceof Error ? error.message : 'Could not import that file.');
-    }
+    } finally {ticket?.finish();}
   }
   importFileInput.addEventListener('change',async()=>{const file=importFileInput.files?.[0];importFileInput.value='';if(file)await openWriteFile(file);});
   consumeTransferredFile('writesplat').then(file=>{if(file)void openWriteFile(file);}).catch(error=>window.alert(error.message || String(error)));
@@ -2316,6 +2324,7 @@ function bootstrap(): void {
     }
   });
   updateStats();
+  desktopWorkspace=createDesktopWorkspace('writesplat',{snapshot:()=>createCurrentNativeFile(),file:value=>({name:fileSlug(value.metadata.title)+'.writesplat.json',blob:new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'})}),status:message=>{getRequiredElement('saveState').textContent=message;getRequiredElement('statusSaved').textContent=message;},open:()=>fileInput.click(),openFile:openWriteFile,help:()=>root.querySelector<HTMLButtonElement>('[data-action="help"]')?.click()});
   autosave();
 
   function getCitationText(): string {

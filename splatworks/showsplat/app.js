@@ -1,3 +1,4 @@
+import {createDesktopWorkspace,desktopHost} from '../shared/desktop-workspace.js';
 import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
 import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../shared/file-bridge.js';
 (function () {
@@ -71,6 +72,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     csvFile: document.getElementById('csvFileInput')
   };
 
+  let desktopWorkspace=null;
   let deck = loadDeck();
   let activeSlide = 0;
   let selectedId = null;
@@ -458,6 +460,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     autosaveTimer = setTimeout(() => {
       const json = JSON.stringify(deck);
       recordHistory(json);
+      if(desktopWorkspace){desktopWorkspace.changed();setStatus(desktopWorkspace.dirty?'Unsaved changes — use Save':'Desktop workspace ready');return;}
       try {
         workspaceStorage().setItem(STORAGE_KEY, json);
         setStatus('Autosaved in this browser.');
@@ -1668,9 +1671,9 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     });
   }
 
-  async function importDeckFile(file, text) {
+  async function importDeckFile(file, text, ticket) {
     if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
-      deck = normalizeDeck(await pdfToDeck(text, file.name));
+      const candidate=normalizeDeck(await pdfToDeck(text,file.name));ticket?.verify();deck=candidate;
       activeSlide = 0;
       selectedId = null;
       saveSoon();
@@ -1679,7 +1682,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
       return;
     }
     if (/\.pptx$/i.test(file.name)) {
-      deck = normalizeDeck(await pptxToDeck(text, file.name));
+      const candidate=normalizeDeck(await pptxToDeck(text,file.name));ticket?.verify();deck=candidate;
       activeSlide = 0;
       selectedId = null;
       saveSoon();
@@ -1688,7 +1691,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
       return;
     }
     if (/\.odp$/i.test(file.name)) {
-      deck = normalizeDeck(await odpToDeck(text, file.name));
+      const candidate=normalizeDeck(await odpToDeck(text,file.name));ticket?.verify();deck=candidate;
       activeSlide = 0;
       selectedId = null;
       saveSoon();
@@ -1701,7 +1704,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
       const source = await resolveImportHtml(trimmed);
       const canImport = await verifyWebDeckImportPassword(source.html);
       if (!canImport) return;
-      deck = normalizeDeck(webDeckHtmlToDeck(source.html, file.name, source.baseUrl));
+      const candidate=normalizeDeck(webDeckHtmlToDeck(source.html,file.name,source.baseUrl));ticket?.verify();deck=candidate;
       activeSlide = 0;
       selectedId = null;
       saveSoon();
@@ -1709,6 +1712,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
       setStatus('Imported WebDeck HTML. Save as .showsplat.json to keep editing.');
       return;
     }
+    ticket?.verify();
     if(/\.(md|markdown)$/i.test(file.name)){deck=normalizeDeck({title:file.name.replace(/\.[^.]+$/,''),slides:markdownToSlides(trimmed)});}
     else {
       const parsed=JSON.parse(trimmed);
@@ -2951,6 +2955,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
   }
 
   function printPdf() {
+    if(desktopHost()){download((deck.title||'slides')+'-print.html',buildPrintDeck(),'text/html');setStatus('Choose where to save the print copy. Open the HTML file in your browser to print.');return;}
     const win = window.open('', '_blank');
     win.document.write(buildPrintDeck());
     win.document.close();
@@ -2965,6 +2970,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
 
   function present(startIndex) {
     const html = buildWebDeck('');
+    if(desktopHost()){download((deck.title||'presentation')+'.html',html,'text/html');setStatus('Choose where to save the WebDeck. Open the HTML file in your browser to present.');return;}
     // Route through the same-origin present.html bootstrap so the WebDeck
     // framework's presenter view can reopen present.html?presenter=1 and stay in
     // sync (a blob URL cannot carry the ?presenter=1 query). Fall back to a blob
@@ -3073,11 +3079,11 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     });
   }
 
-  function runAction(action, target) {
+  async function runAction(action, target) {
     closeMenus();
     if (action === 'undo') undo();
     if (action === 'redo') redo();
-    if (action === 'new-deck' && confirm('Start a new deck?')) {
+    if (action === 'new-deck' && (desktopWorkspace?await desktopWorkspace.beginReplace().then(ticket=>{ticket?.finish();return !!ticket;}):confirm('Start a new deck?'))) {
       deck = defaultDeck();
       activeSlide = 0;
       selectedId = null;
@@ -3085,6 +3091,7 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
       render();
     }
     if (action === 'save-deck') {
+      if(desktopWorkspace){await desktopWorkspace.save();return;}
       workspaceStorage().setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
     }
@@ -3804,13 +3811,15 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     els.globalAudioFile.value = '';
   });
   async function openShowFile(file){
+    const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
     try{
       if(await routeFileToApp(file,'showsplat')){setStatus('Opened the file in its matching SplatWorks app.');return;}
       await assertSupportedFile(file,'showsplat');
       const content=/\.(pdf|pptx|odp)$/i.test(file.name) || file.type==='application/pdf' ? await file.arrayBuffer() : await file.text();
-      await importDeckFile(file,content);
+      await importDeckFile(file,content,ticket);
+      if(/\.json$/i.test(file.name))desktopWorkspace?.acceptCurrent();
       if(isTransferredWorkspace())setStatus('Opened '+file.name+'. '+importedFileNotice);
-    }catch(error){console.warn(error);setStatus(error.message || 'Could not open that deck file.');}
+    }catch(error){console.warn(error);setStatus(error.message || 'Could not open that deck file.');}finally{ticket?.finish();}
   }
   els.deckFile.addEventListener('change',()=>{const file=els.deckFile.files[0];els.deckFile.value='';if(file)void openShowFile(file);});
   els.csvFile.addEventListener('change', () => {
@@ -3837,5 +3846,6 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
   recordHistory(JSON.stringify(deck));
   render();
   requestAnimationFrame(centerSlideInStage);
+  desktopWorkspace=createDesktopWorkspace('showsplat',{snapshot:()=>deck,file:value=>({name:(value.title||'presentation')+'.showsplat.json',blob:new Blob([JSON.stringify(value,null,2)],{type:'application/json'})}),status:setStatus,open:()=>els.deckFile.click(),openFile:openShowFile,help:()=>els.helpDialog.showModal()});
   consumeTransferredFile('showsplat').then(file=>{if(file)void openShowFile(file);}).catch(error=>setStatus(error.message || String(error)));
 })();

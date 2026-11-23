@@ -1,3 +1,4 @@
+import {desktopHost,transientStorage} from './desktop-workspace.js';
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 DrawSplat contributors. See LICENSE.txt in this directory.
 export const APP_NAMES = {writesplat:'WriteSplat',showsplat:'ShowSplat',gridsplat:'GridSplat',listsplat:'ListSplat',layoutsplat:'LayoutSplat'};
@@ -17,7 +18,7 @@ export function isTransferredWorkspace(){
   }catch{/* Keep transferred tabs isolated even when session storage is blocked. */}
   return transferredWorkspace;
 }
-export function workspaceStorage(){return isTransferredWorkspace()?window.sessionStorage:window.localStorage;}
+export function workspaceStorage(){return desktopHost()?transientStorage:isTransferredWorkspace()?window.sessionStorage:window.localStorage;}
 export function fileOwner(name){
   const value=String(name).toLowerCase();
   for(const app of Object.keys(APP_NAMES))if(value.endsWith('.'+app+'.json'))return app;
@@ -89,6 +90,7 @@ export async function routeFileToApp(file, currentApp){
   if(!owner && /\.json$/i.test(file.name) && file.size<=20_000_000){try{owner=nativeOwner(JSON.parse(await file.text()));}catch{/* The app parser supplies the invalid JSON message. */}}
   if(!owner || owner===currentApp)return false;
   if(file.size>20_000_000)throw new Error('File imports are limited to 20 MB.');
+  if(desktopHost()){await desktopHost().openWorkspaceFile(owner,file);return true;}
   if(!['http:','https:'].includes(location.protocol))throw new Error('Open SplatWorks through a local web server to transfer files between apps.');
   const target=window.open('about:blank','_blank');
   if(!target)throw new Error(`Your browser blocked the new tab. Allow popups, then choose the file again to open it in ${APP_NAMES[owner]}.`);
