@@ -27,6 +27,9 @@ cp -r "$SOURCE_DIR/vendor" "$STAGING_DIR/CipherSplat/"
 cp "$ROOT_DIR/LICENSE" "$ROOT_DIR/NOTICE.md" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/README.md" "$STAGING_DIR/CipherSplat/"
 
+cp "$ROOT_DIR/scripts/ciphersplat-offline.js" "$STAGING_DIR/CipherSplat/offline-controls.js"
+cp "$ROOT_DIR/scripts/ciphersplat-offline.css" "$STAGING_DIR/CipherSplat/offline-controls.css"
+
 # Keep all referenced language/menu assets inside the offline folder.
 mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/css" "$STAGING_DIR/CipherSplat/shared/assets/js"
 for name in action-cards app-language; do
@@ -43,7 +46,9 @@ for p in Path(sys.argv[1]).glob('*.html'):
  s=p.read_text()
  s=re.sub(r'<!-- splat-privacy:start -->.*?<!-- splat-privacy:end -->','',s,flags=re.S)
  s=re.sub(r' integrity="[^"]*"','',s)
- p.write_text(s.replace('../../assets/','./shared/assets/'))
+ s=s.replace('../../assets/','./shared/assets/').replace('../../pages/','https://splatworks.org/pages/')
+ s=s.replace('</head>','<link rel="stylesheet" href="offline-controls.css"></head>').replace('</body>','<script src="offline-controls.js"></script></body>')
+ p.write_text(s)
 PYCODE
 python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" CipherSplat 'index.html?offline=1'
 

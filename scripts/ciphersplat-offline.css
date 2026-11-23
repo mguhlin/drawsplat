@@ -1,0 +1,1 @@
+#offlineControls{display:flex;align-items:center;gap:.6rem;font-size:1rem;padding:.5rem .7rem;border:1px solid #9eb4cc;border-radius:.4rem;background:white;color:#123d70}#internetToggle{width:24px;height:24px;flex:none}a[aria-disabled=true]{color:#485d76;cursor:default;text-decoration:none}@media(max-width:800px){#offlineControls{grid-column:1/-1;justify-self:start}}
