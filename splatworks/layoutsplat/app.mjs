@@ -329,6 +329,7 @@ async function action(name) {
     }
     case 'open': $('projectInput').accept='.layoutsplat,.json,.zip,.html,.htm,.epub';$('projectInput').click(); break;
     case 'clearBrowser': {
+      if(desktopHost()){status('Desktop work stays in memory. Save a project file, or choose New to start again.');break;}
       if (!confirm(t('clearBrowserConfirm'))) break;
       try { const storage = workspaceStorage(); storage.setItem(START_BLANK, '1'); storage.removeItem(STORE); storage.removeItem(BACKUP); clearTimeout(saveTimer); unsaved = false; lastSaved = null; undoStack = []; redoStack = []; location.reload(); }
       catch { status('storageUnavailable'); }

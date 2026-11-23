@@ -131,6 +131,6 @@ window.addEventListener('widget-i18n:changed',()=>{
  if($('trashDialog').open)renderTrash();if($('conflictsDialog').open)renderConflicts();
 });
 render();updateTimer();window.PlanSplat=Object.freeze({version:'1.2.1',getPlanner:()=>structuredClone(doc),getSyncState:()=>({account:account?{id:account.id,name:account.name}:null,fileId:sync.fileId,status:$('syncState').textContent})});
-desktopWorkspace=createDesktopWorkspace('plansplat',{snapshot:()=>doc,file:value=>({name:'PlanSplat.plansplat.json',blob:new Blob([JSON.stringify(value,null,2)],{type:'application/json'})}),status:message=>{$('syncState').textContent=message;},open:()=>$('fileInput').click(),openFile:openPlannerFile,help:()=>$('dataDialog').showModal()});
+desktopWorkspace=createDesktopWorkspace('plansplat',{snapshot:()=>doc,pending:()=>{const active=['task','course','habit','block'].filter(name=>$(name+'Dialog').open);return active.length?JSON.stringify(active.map(name=>[name,[...new FormData($(name+'Form')).entries()]])):false;},file:value=>({name:'PlanSplat.plansplat.json',blob:new Blob([JSON.stringify(value,null,2)],{type:'application/json'})}),status:message=>{$('syncState').textContent=message;},open:()=>$('fileInput').click(),openFile:openPlannerFile,help:()=>$('dataDialog').showModal()});
 if(desktopWorkspace){$('syncState').textContent='Desktop workspace ready';driveMessage='Desktop workspace ready';}
 if(!desktopHost()&&'serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

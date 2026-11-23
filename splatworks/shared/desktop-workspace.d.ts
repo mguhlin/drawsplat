@@ -5,4 +5,4 @@ export interface DesktopWorkspace {
 }
 export function desktopHost():any;
 export const transientStorage:Storage;
-export function createDesktopWorkspace<T>(id:string,options:{snapshot:()=>T;file:(value:T)=>{blob:Blob;name:string}|Promise<{blob:Blob;name:string}>;status?:(message:string)=>void;open:()=>void;openFile:(file:File)=>unknown;help?:()=>void}):DesktopWorkspace|null;
+export function createDesktopWorkspace<T>(id:string,options:{snapshot:()=>T;pending?:()=>unknown;file:(value:T)=>{blob:Blob;name:string}|Promise<{blob:Blob;name:string}>;status?:(message:string)=>void;open:()=>void;openFile:(file:File)=>unknown;help?:()=>void}):DesktopWorkspace|null;

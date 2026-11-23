@@ -16,7 +16,7 @@ export function createDesktopWorkspace(id,options){
  const stamp=()=>fingerprint(options.snapshot());let saved=stamp();
  const status=message=>options.status?.(message);
  const workspace={
-  isDirty:()=>stamp()!==saved,stamp,markSaved:value=>{saved=value;},
+  isDirty:()=>stamp()!==saved||!!options.pending?.(),stamp,markSaved:value=>{saved=value;},
  };
  host.registerWorkspace(id,workspace);
  const api={
@@ -25,8 +25,9 @@ export function createDesktopWorkspace(id,options){
   acceptCurrent(){saved=stamp();host.changed(id);},
   async beginReplace(){
    if(!await host.confirmReplace(id))return null;
-   const expected=stamp(),finish=host.beginOperation();let ended=false;
-   return {verify(){if(expected!==stamp())throw Error('Your workspace changed while the file was opening. Your edits were kept; choose the file again.');},finish(){if(!ended){ended=true;finish();host.changed(id);}}};
+   const generation=()=>stamp()+JSON.stringify(options.pending?.()||false);
+   const expected=generation(),finish=host.beginOperation();let ended=false;
+   return {verify(){if(expected!==generation())throw Error('Your workspace changed while the file was opening. Your edits were kept; choose the file again.');},finish(){if(!ended){ended=true;finish();host.changed(id);}}};
   },
   async save(){
    const finish=host.beginOperation();
