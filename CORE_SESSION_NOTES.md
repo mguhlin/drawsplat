@@ -37,15 +37,16 @@ from racing that assertion.
 - Production checks passed at [ListSplat](https://splatworks.org/splatworks/listsplat/)
   and [GridSplat](https://splatworks.org/splatworks/gridsplat/) using isolated browser
   profiles and fictional data. They exercise damaged import/draft recovery and
-  merge clearing, reload and sort rejection.
+  merge clearing, reload and sort rejection. Both apps' served HTML and JavaScript
+  match the committed production bytes.
 - App bundles: `listsplat/assets/index-CwabZXy4.js` and
   `gridsplat/assets/index-DcQA343K.js`. These identify the tested application code.
 
 ## Verification and future builds
 
 153 core unit checks passed across ListSplat, GridSplat and WriteSplat, with one
-existing GridSplat skip. Production interoperability checks, the three live
-regression cases, and the app-entry/resource checker passed. GridSplat lint and
+existing GridSplat skip. Production interoperability checks, the six live desktop/mobile
+regression checks, and the app-entry/resource checker passed. GridSplat lint and
 TypeScript/production builds passed. ListSplat's TypeScript/production build passed.
 The shared interoperability workflow includes ListSplat and GridSplat regression
 files so later edits keep these safeguards exercised.
