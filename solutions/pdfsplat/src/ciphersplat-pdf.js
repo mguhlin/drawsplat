@@ -1,3 +1,5 @@
+import '../../CipherSplat/archive.js';
+
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const MAGIC = encoder.encode('CSPCS4!!');
@@ -121,7 +123,13 @@ export async function protectPdf(bytes, filename, password, onProgress = () => {
     onProgress(`Encrypting ${Math.min(100, Math.round(100 * offset / Math.max(file.size, 1)))}%…`);
     parts.push(await sealRecord(key, prefix, counter++, new Uint8Array(await file.slice(offset, offset + CHUNK_SIZE).arrayBuffer()), header));
   }
-  return new Blob(parts, { type:'application/octet-stream' });
+  const protectedFile = new Blob(parts, { type:'application/octet-stream' });
+  onProgress('Verifying the encrypted PDF before saving…');
+  const checked = await unlockPdf(new File([protectedFile], filename + '.csplat'), password);
+  const expected = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+  const actual = new Uint8Array(await crypto.subtle.digest('SHA-256', await checked.arrayBuffer()));
+  if (!expected.every((byte,index) => byte === actual[index])) throw Error('PDF verification failed. Nothing was saved.');
+  return protectedFile;
 }
 
 export async function unlockPdf(file, password, onProgress = () => {}) {
@@ -146,7 +154,8 @@ export async function unlockPdf(file, password, onProgress = () => {}) {
   let metadata;
   try { metadata = JSON.parse(decoder.decode(metadataRecord.bytes)); } catch { throw Error('Invalid encrypted metadata.'); }
   const entry = metadata?.kind === 'file' && metadata.files?.length === 1 ? metadata.files[0] : null;
-  if (!entry || typeof entry.path !== 'string' || !entry.path.toLowerCase().endsWith('.pdf') || !Number.isSafeInteger(entry.size) || entry.size < 0 || entry.chunks !== Math.ceil(entry.size / headerObject.chunkSize)) throw Error('This CipherSplat package does not contain one valid PDF.');
+  const compressed = entry && globalThis.CipherSplatArchives.isArchiveType(entry.type);
+  if (!entry || typeof entry.path !== 'string' || (!compressed && !entry.path.toLowerCase().endsWith('.pdf')) || !Number.isSafeInteger(entry.size) || entry.size < 0 || (compressed && entry.size > 256 * 1048576) || entry.chunks !== Math.ceil(entry.size / headerObject.chunkSize)) throw Error('This CipherSplat package does not contain one valid PDF.');
   const parts = [];
   let restored = 0;
   for (let index = 0; index < entry.chunks; index += 1) {
@@ -157,5 +166,11 @@ export async function unlockPdf(file, password, onProgress = () => {}) {
     parts.push(record.bytes);
   }
   if (offset !== file.size || restored !== entry.size) throw Error('Authenticated PDF size does not match package metadata.');
+  if (compressed) {
+    onProgress('Restoring the authenticated PDF from its archive…');
+    const archive = await globalThis.CipherSplatArchives.unpack(new Blob(parts));
+    if (archive.files.length !== 1 || !archive.files[0].path.toLowerCase().endsWith('.pdf')) throw Error('This CipherSplat archive must contain exactly one PDF to open here.');
+    return new File([archive.files[0].blob], archive.files[0].path.split('/').at(-1), { type:'application/pdf' });
+  }
   return new File(parts, entry.path, { type:'application/pdf' });
 }

@@ -1,4 +1,4 @@
-CipherSplat™ v1.0.2 Offline Edition
+CipherSplat™ v1.1.0 Offline Edition
 ===================================
 
 1. Keep this entire CipherSplat folder together.
@@ -15,14 +15,14 @@ work offline. Imported keys and key passphrases are held for one operation and
 are not saved. Verify recipient fingerprints through a separate trusted channel.
 
 The included integrity.json contains SHA-256 hashes for the shipped source,
-styles, images, worker, and pinned OpenPGP.js and hash-wasm dependencies.
+styles, images, worker, and pinned OpenPGP.js, hash-wasm and JSZip dependencies.
 
 Browsers cannot enforce HTML Subresource Integrity for file:// scripts because
 local files have an opaque origin. The online edition uses SRI; this downloaded
 edition omits that one HTML attribute and supplies matching SHA-256 hashes in
 integrity.json instead.
 
-If a browser blocks Web Crypto for pages opened directly from disk, start a
+If a browser blocks Web Crypto for pages opened directly from disk, start an
 included local launcher instead: START-WINDOWS.bat, START-MAC.command,
 or sh start-local.sh on Linux. Python 3 is required; no extra packages are
 needed. The launcher opens a stable 127.0.0.1 address only on this computer.

@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/mguhlin/cipherenc",
+  "revision": "bb98f93c7af2ec9dc37d089fe49e94fb6a62a523",
+  "license": "AGPL-3.0-or-later",
+  "adaptation": "CipherSplat branding, CS4/legacy compatibility, shared PDF ZIP restoration, ecosystem language/privacy assets, and native lifecycle/save adapters.",
+  "referenceFiles": {
+    "app.js": "4a8567bf01f2ea88496fa6e28576a2a109f5c0246b85110773028aec08fe0a3a",
+    "browser.js": "9cbc4c3e5a607ccf26dd33ff6943dce1ac638ff50ed9c0d8fa3799a37ff41e3a",
+    "restore.js": "f7b07cbb5ba1431a05d7da69f73664b58ef9298dade128a31d9e5073d1492d72",
+    "pgp-ui.js": "fce270d3dba809c97fa13c51c767175ec6e9c35eb0e7cac8be82abdb042b3e11",
+    "browser.css": "6f1668846f694f64f048472dd749622a411101a0b84ae11639dd9578afc0fe57",
+    "index.html": "c8fb6f2ccd09e4483624329d3ab4b618d344f20df4b14a29bdfde3ea32474a9b",
+    "help.html": "92c943101f88276679e7c50abefe4a1305641cfc40f807a43255db775655a936"
+  }
+}

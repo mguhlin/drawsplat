@@ -9,11 +9,11 @@ module.exports = defineConfig({
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-  use: { baseURL: 'http://127.0.0.1:8765' },
+  use: { baseURL: 'http://127.0.0.1:4186' },
   webServer: {
-    command: 'python3 -m http.server 8765 --bind 127.0.0.1',
+    command: 'python3 -m http.server 4186 --bind 127.0.0.1',
     cwd: '../..',
-    url: 'http://127.0.0.1:8765/solutions/CipherSplat/',
+    url: 'http://127.0.0.1:4186/solutions/CipherSplat/',
     reuseExistingServer: true,
   },
 });

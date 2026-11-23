@@ -3,175 +3,103 @@
 <head>
   <meta charset="utf-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../../assets/css/privacy-controls.css"><script src="../../assets/js/privacy-controls.js"></script><!-- splat-privacy:end -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CipherSplat™ v1.0.2 encrypts files, folders, and text locally with AES-256-GCM.">
+  <meta name="description" content="CipherSplat encrypts files, folders, and text locally with AES-256-GCM.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self'; require-trusted-types-for 'script'; trusted-types default">
-  <title>CipherSplat™ v1.0.2 — Private browser encryption</title>
-  <link rel="icon" href="assets/tools.svg" type="image/svg+xml">
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#7958f5">
+  <title>CipherSplat — Encrypt in your browser</title>
+  <link rel="icon" href="assets/ciphersplat-mark.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#1769e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="CipherSplat">
   <link rel="apple-touch-icon" href="assets/drawsplat-logo.png">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="security.css">
-  <link rel="stylesheet" href="mobile.css">
+  <link rel="stylesheet" href="styles.css" integrity="sha384-FzqOEd6RGzAa2FigH7tQVBNPYFxcbqjl9K4z1Tu2NqcKPv3xZNPvjc9sDvQN0dVk">
+  <link rel="stylesheet" href="security.css" integrity="sha384-3LDjgpvsKqQW3FOGJ/12h+AhU67Bv/tU50GO1Gzkdu4kehSy2NBxK5w+9h6p2JnN">
+  <link rel="stylesheet" href="mobile.css" integrity="sha384-WCmAGpov+SaeA/qakJHmWOT6FsZkgsorNy/Y56911n4r1jXgm/nl72Rr7+eCR96+">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
-<link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.2" />
-<script src="../../assets/js/action-cards.js?v=1.2" defer></script>
+  <link rel="stylesheet" href="browser.css" integrity="sha384-uK9gFiWKVmm99Xfkohlsknxs2hwvn0r10Nmgg0YqajtM8JXaxBo2LV440HjNnDMI">
+
+
 </head>
-<body>
+<body data-ciphersplat-mode="password">
   <a class="skip-link" href="#workspace">Skip to secure workspace</a>
-  <div class="ambient" aria-hidden="true"></div>
-  <header class="nav wrap">
-    <a class="brand" href="#" aria-label="CipherSplat trademark, version 1.0.2 home">
-      <span class="brand-mark" aria-hidden="true"><span></span></span>
-      <span>CIPHER<em>SPLAT</em><sup>™</sup> <small>v1.0.2</small></span>
-    </a>
-    <nav aria-label="Primary navigation">
-      <a href="#workspace">Workspace</a><a href="#security">Security</a><a href="#how">How it works</a>
-    </nav>
-    <a class="drawsplat-pill online-link" href="../../pages/tools.html" data-online-href="https://drawsplat.org/pages/tools" aria-label="Back to SplatWorks Tools"><img src="assets/drawsplat-logo.png" alt=""> DrawSplat Tool</a>
-    <a class="offline-download" href="downloads/CipherSplat-offline.zip" download>Download offline ↓</a>
-    <div class="local-pill"><i></i> Local engine online</div>
-  </header>
 
+  <header class="nav wrap"><a class="brand" href="../../pages/tools.html" aria-label="CipherSplat home"><img class="brand-symbol" src="assets/ciphersplat-mark.svg" alt="" width="40" height="45"><span>CipherSplat</span></a><nav aria-label="Primary navigation"><a href="../../pages/tools.html">About & downloads</a><a href="help.html" target="_blank" rel="noopener">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
   <main>
-    <section class="hero wrap">
-      <div class="eyebrow"><span>✦</span> A private-by-design DrawSplat Tool</div>
-      <img class="hero-art" src="assets/ciphersplat-hero.png" alt="A silver digital shield protecting a luminous blue data core">
-      <h1>Your data.<br><span>Your keys.</span> Your rules.</h1>
-      <p>Lock sensitive files and text with authenticated AES-256 encryption—entirely inside your browser. Nothing is uploaded. Nothing is tracked.</p>
-      <div class="hero-actions"><a class="primary" href="#workspace">Open secure workspace <b>→</b></a><a class="text-link" href="#how">See how it works ↓</a></div>
-      <div class="trust-row">
-        <div><strong>256</strong><span>BIT ENCRYPTION</span></div>
-        <div><strong>0</strong><span>BYTES UPLOADED</span></div>
-        <div><strong>100%</strong><span>CLIENT-SIDE</span></div>
-      </div>
-    </section>
-
-    <section id="workspace" class="workspace-section wrap">
-      <div class="section-heading"><div><span class="kicker">SECURE WORKSPACE</span><h2>What are we protecting?</h2></div><p>Your browser becomes the vault. Choose a mode and your data never leaves this device.</p></div>
+    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h1 id="workspaceTitle">Secure workspace</h1><p class="workspace-version">CipherSplat 1.1.0 · Browser version</p><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.<span class="workspace-openpgp">Prefer OpenPGP private/public key encryption? <a id="workspaceModeLink" href="openpgp.html" target="_blank" rel="noopener">Use OpenPGP</a> or <a href="help.html#openpgp-keys" target="_blank" rel="noopener">learn how they work</a>.</span></p>
       <div class="app-shell">
-        <div class="mode-tabs" role="tablist" aria-label="Vault input type">
-          <button id="fileTab" class="mode-tab active" data-mode="file" role="tab" aria-selected="true" aria-controls="fileInputArea" tabindex="0"><span aria-hidden="true">▱</span> File vault</button>
-          <button id="textTab" class="mode-tab" data-mode="text" role="tab" aria-selected="false" aria-controls="textInputArea" tabindex="-1"><span aria-hidden="true">¶</span> Text vault</button>
-        </div>
-
-        <div class="app-grid">
+<div class="app-grid">
           <div class="control-panel">
-            <div class="crypto-method" role="group" aria-label="Vault key method">
-              <button class="method active" data-method="password" aria-pressed="true">Password vault</button>
-              <button class="method" data-method="openpgp" aria-pressed="false">OpenPGP keys</button>
-            </div>
-            <div class="operation-toggle" role="group" aria-label="Encryption operation">
-              <button class="op active" data-op="encrypt" aria-pressed="true">Encrypt</button><button class="op" data-op="decrypt" aria-pressed="false">Decrypt</button><button class="op" data-op="verify" aria-pressed="false">Check integrity</button>
+
+<section id="openpgpKeyStep" class="hidden"><h3 class="step-heading"><span class="step-number">1</span><span>Your OpenPGP key</span></h3><p id="pgpActionHelp" class="step-hint">Public key to encrypt. Matching private key to decrypt.</p>            <div id="pgpCredentials" class="pgp-credentials">
+              <p class="step-hint">Encrypt with the recipient’s public key. Decrypt with your matching private key. Paste the key below or import an exported .asc/.pgp key file. Keys are used locally, not linked to an online account.</p>
+              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
+              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
+              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
+              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
+              <div id="pgpKeyDetails" class="key-details hidden"><strong id="pgpLoadedType"></strong><label for="pgpFingerprint">Key fingerprint — compare it with the recipient through another trusted channel</label><output id="pgpFingerprint"></output><p id="pgpKeyUse"></p></div>
+              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
             </div>
 
-            <div id="fileInputArea" role="tabpanel" aria-labelledby="fileTab">
+</section>
+            <div id="passwordCredentials">
+              <div class="password-row">
+                <label class="field-label step-heading" for="password"><span class="step-number">1</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="12" r="7"/><path d="m16 17 11 11m-6-6 3-3m0 6 3-3"/></svg><span>Vault Password</span></label>
+                <button id="generatePassword" class="mini-action" type="button">Generate a password</button>
+              </div>
+              <p class="step-hint">Set your password here. Use the same password to unlock an encrypted result.</p>
+              <div class="password-wrap"><input id="password" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
+              <div class="strength strength-0"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
+              <p class="password-note">Save this password safely. Files are ZIP-compressed before encryption. Originals stay untouched in the browser.</p>
+            </div>
+
+            <h3 class="step-heading"><span class="step-number">2</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h10l3 4h13v15H3Z"/><path d="M9 9V3h15v10M13 7h7M9 19h15M9 23h11"/></svg><span>Content to Protect or Unlock</span></h3><p class="step-hint">Choose files/folders or text. CipherSplat detects what to do automatically.</p>
+            <div id="fileInputArea">
               <div id="dropZone" class="drop-zone" aria-label="File and folder drop area">
                 <input id="fileInput" type="file" multiple hidden>
                 <input id="folderInput" type="file" webkitdirectory directory multiple hidden>
-                <span class="upload-icon">↥</span>
-                <strong id="dropTitle">Drop files or a folder into the vault</strong>
-                <small id="dropSub">recursive paths are detected automatically</small>
+                <img class="drop-brand-mark" src="assets/ciphersplat-mark.svg" alt="" width="64" height="72">
+                <strong id="dropTitle">2a) Drop files or folders here</strong>
+                <small id="dropSub">Originals are zipped and encrypted. Encrypted packages are unlocked.</small>
                 <span class="picker-actions"><button id="chooseFiles" type="button">Choose files</button><button id="chooseFolder" type="button">Choose folder</button></span>
               </div>
               <div id="fileCard" class="file-card hidden"><span class="file-icon">◆</span><div><strong id="fileName"></strong><small id="fileSize"></small></div><button id="removeFile" aria-label="Remove file">×</button></div>
             </div>
 
-            <div id="textInputArea" class="hidden" role="tabpanel" aria-labelledby="textTab">
-              <label class="field-label" for="textInput">Text to protect</label>
-              <textarea id="textInput" placeholder="Paste a private note, recovery code, or message…" spellcheck="false"></textarea>
+            <div id="textInputArea">
+              <label class="field-label" for="textInput">2b) Type or paste text</label>
+              <textarea id="textInput" placeholder="Type a private note, or paste an encrypted text package…" spellcheck="false"></textarea>
               <div class="char-count"><span id="charCount">0</span> characters</div>
             </div>
 
-            <div id="passwordCredentials">
-              <div class="password-row">
-                <label class="field-label" for="password">Vault password</label>
-                <button id="generatePassword" class="mini-action" type="button">Generate strong password</button>
-              </div>
-              <div class="password-wrap"><input id="password" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
-              <div class="strength strength-0"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
-              <p class="password-note">Your password cannot be recovered. Store it safely and test decryption before deleting the original.</p>
-            </div>
 
-            <div id="pgpCredentials" class="pgp-credentials hidden">
-              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
-              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
-              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
-              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
-              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
-            </div>
 
             <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
+            <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v17m-6-6 6 6 6-6M4 21v8h24v-8"/></svg><span>Get Your Result</span></h3><p id="resultDirections" class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .csplat file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
+            <div class="status-panel workspace-status" aria-busy="false">
+              <div hidden><span id="statusChip">READY</span><h3 id="statusTitle">Ready when you are</h3></div>
+              <p id="statusCopy">Your files stay on this device.</p>
+              <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
+            </div>
+            <p id="inputIntent" class="password-note" role="status">Add originals to encrypt, or an encrypted package to unlock.</p>
             <p id="errorMessage" class="error" role="alert"></p>
           </div>
 
-          <aside class="status-panel" aria-busy="false">
-            <div class="status-top"><span class="kicker">LIVE SECURITY MONITOR</span><span id="statusChip" class="status-chip">READY</span></div>
-            <div class="orb-wrap"><div id="orb" class="orb"><div class="orb-core">⌾</div></div><div class="orbit-dot"></div></div>
-            <div role="status" aria-live="polite" aria-atomic="true"><h3 id="statusTitle">Vault standing by</h3><p id="statusCopy">Select a file or enter text to begin. All processing stays within this tab.</p></div>
-            <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
-            <div class="checks">
-              <div><span class="check">✓</span><p><strong id="algorithmLabel">AES-256-GCM</strong><small id="algorithmCopy">Authenticated encryption</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong id="keyMethodLabel">Argon2id v1.3</strong><small id="keyMethodCopy">64 MiB · 3 passes</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong>Local processing</strong><small>Network-free by design</small></p><span class="lock">▣</span></div>
-            </div>
-          </aside>
+
         </div>
 
         <div id="resultPanel" class="result-panel hidden" role="status" aria-live="polite" tabindex="-1">
           <div class="result-badge">✓</div><div><span class="kicker">VAULT OPERATION COMPLETE</span><h3 id="resultTitle">Encryption complete</h3><p id="resultMeta"></p></div>
-          <button id="copyResult" class="secondary hidden">Copy encrypted text</button><button id="downloadResult" class="primary">Download result ↓</button>
+          <div id="textResultArea" class="hidden"><label id="textResultLabel" for="textResult">Text result</label><textarea id="textResult" readonly spellcheck="false"></textarea></div>
+          <div id="restoredFilesArea" class="hidden"><h3>Unzipped files</h3><p>Save individual files below. Supporting browsers and the desktop app can restore the complete folder tree.</p><ul id="restoredFilesList"></ul></div>
+          <button id="copyResult" class="secondary hidden">Copy result</button><button id="downloadResult" class="secondary">Save another copy</button>
         </div>
       </div>
     </section>
 
-    <section id="security" class="security wrap">
-      <div class="section-heading"><div><span class="kicker">VERIFIABLE PROTECTION</span><h2>Built like a vault.<br>Open like a window.</h2></div><p>Modern browser cryptography with clear, inspectable guarantees. No mystery server and no account required.</p></div>
-      <div class="security-grid">
-        <article class="feature-main"><div class="feature-icon">⬡</div><span>ENCRYPTION ENGINE</span><h3>AES-256-GCM</h3><p>A modern authenticated cipher that protects confidentiality and detects changes or incorrect passwords before releasing data.</p><div class="cipher"><span>KEY SIZE <b>256 bit</b></span><span>NONCE <b>96 bit</b></span><span>AUTH TAG <b>128 bit</b></span></div></article>
-        <article><div class="icon-box purple">⌁</div><h3>Password hardened</h3><p>Argon2id v1.3 uses 64 MiB of memory, 3 passes, and a unique 128-bit salt to make offline guessing substantially more expensive.</p><span class="verified">✓ MEMORY-HARD KDF</span></article>
-        <article><div class="icon-box green">◌</div><h3>Zero-knowledge flow</h3><p>Files, text, passwords, and keys stay in browser memory. The app contains no upload code.</p><span class="verified">✓ LOCAL BY DESIGN</span></article>
-        <article><div class="icon-box orange">◈</div><h3>Tamper detection</h3><p>GCM authentication rejects altered ciphertext and incorrect passwords without exposing partial content.</p><span class="verified">✓ INTEGRITY CHECKED</span></article>
-      </div>
-      <div class="security-overview" aria-labelledby="security-overview-title">
-        <div class="security-overview-head"><div><span class="kicker">SECURITY OVERVIEW</span><h2 id="security-overview-title">Exact claims. Clear limits.</h2></div><p>CipherSplat has one deployment mode: local browser processing. It has no Google, MySQL, hosted-vault, account, sync, upload, analytics, or tracking mode.</p></div>
-        <dl class="security-facts">
-          <div><dt>Password packages</dt><dd>AES-256-GCM; Argon2id v1.3 with 64 MiB, 3 passes, one lane, and a fresh 128-bit salt. Legacy PBKDF2 packages remain readable.</dd></div>
-          <div><dt>File package format</dt><dd>CS4 records use a random 64-bit IV prefix, monotonic 32-bit counter, 96-bit GCM IV, 128-bit tag, and additional data that authenticates the exact header and record counter. Legacy CS2/CS3 packages remain readable.</dd></div>
-          <div><dt>OpenPGP option</dt><dd>OpenPGP.js 6.3.1 is pinned and served locally. Encryption follows the recipient key's supported algorithm preferences; keys are never uploaded or persisted.</dd></div>
-          <div><dt>Key lifetime</dt><dd>Derived AES keys exist only inside the active operation. Passwords, imported keys, source text, and selected-file references clear after each result; downloadable results clear after 10 idle minutes.</dd></div>
-          <div><dt>Application storage</dt><dd>No cookies, localStorage, sessionStorage, IndexedDB, service API, or server database is used by CipherSplat.</dd></div>
-          <div><dt>Supply chain</dt><dd>No remote scripts, fonts, or cryptographic services. A strict CSP blocks connections and inline code; published SHA-256 hashes cover shipped code and assets.</dd></div>
-        </dl>
 
-        <div class="data-flow" aria-label="CipherSplat local data flow">
-          <div><b>1</b><strong>Your input</strong><span>File, folder, text, password, or key</span></div><i aria-hidden="true">→</i><div><b>2</b><strong>Browser memory</strong><span>Web Crypto or pinned OpenPGP.js</span></div><i aria-hidden="true">→</i><div><b>3</b><strong>Your download</strong><span>Authenticated package or restored data</span></div>
-          <p><strong>Network boundary:</strong> no application data crosses it. The downloaded edition's connection switch controls optional website links only.</p>
-        </div>
-
-        <div class="threat-grid">
-          <article><span class="kicker">PROTECTS AGAINST</span><h3>Designed security boundary</h3><ul><li>Network interception and server-side data breaches</li><li>Package tampering and incorrect passwords</li><li>Path traversal during folder restoration</li><li>Accidental persistence by the application</li></ul></article>
-          <article><span class="kicker">OUT OF SCOPE</span><h3>Device trust still matters</h3><ul><li>Malicious extensions, injected scripts, or a compromised browser</li><li>Keyloggers, screen capture, OS malware, or device administrators</li><li>Someone with access while this tab is unlocked</li><li>A modified offline copy or replaced production files</li></ul></article>
-          <article><span class="kicker">ASSURANCE STATUS</span><h3>No borrowed trust claims</h3><p>CipherSplat has automated functional checks and public source, but no current independent audit, SOC 2 attestation, paid bug bounty, or formal certification. Those are not implied by the security badges.</p></article>
-        </div>
-        <div class="security-links"><a href="integrity.json">Published source hashes</a><a class="online-link" href="../../.well-known/security.txt" data-online-href="https://drawsplat.org/.well-known/security.txt">Report a vulnerability</a><a class="online-link" href="../../SECURITY.md" data-online-href="https://drawsplat.org/SECURITY.md">Disclosure policy</a><a class="online-link" href="../../legal/combined-policy.html" data-online-href="https://drawsplat.org/legal/combined-policy.html">Annual review commitment</a></div>
-      </div>
-    </section>
-
-    <section id="how" class="how wrap">
-      <span class="kicker">THREE STEPS. ONE PRIVATE RESULT.</span><h2>How the vault works</h2>
-      <div class="steps"><article><b>01</b><h3>Choose your data</h3><p>Drop a file or paste text. It stays on your device.</p></article><i>→</i><article><b>02</b><h3>Create the key</h3><p>Your password and random salt derive a one-time vault key.</p></article><i>→</i><article><b>03</b><h3>Lock & save</h3><p>AES-GCM encrypts and authenticates your data for download.</p></article></div>
-    </section>
   </main>
-  <section id="offlineControls" class="offline-controls hidden" aria-label="Offline edition connection control">
-    <div><span class="kicker">DOWNLOADED EDITION</span><strong id="connectionLabel">Internet Connection — OFF</strong><small>Encryption never uses the network. Turn this on only to enable links to DrawSplat.org.</small></div>
-    <label class="connection-switch"><input id="internetToggle" type="checkbox" role="switch" aria-describedby="connectionHelp"><span aria-hidden="true"></span><span class="sr-only">Allow links to the internet</span></label>
-    <p id="connectionHelp" class="sr-only">This setting controls optional website links only. CipherSplat encryption is always local.</p>
-  </section>
+
   <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
     <form method="dialog" class="generator-card">
       <div class="generator-head">
@@ -207,21 +135,25 @@
       </div>
 
       <div class="generated-display">
-        <output id="generatedPassword" aria-live="polite"></output>
+        <output id="generatedPassword" aria-label="Generated password" tabindex="0" aria-live="polite"></output>
         <div><span>Password strength: <strong id="generatedStrength">Strong</strong></span><span>Estimated entropy: <strong id="generatedEntropy">—</strong></span></div>
       </div>
       <p id="generatorError" class="generator-error" role="alert"></p>
       <div class="generator-actions">
         <button id="copyGenerated" class="secondary" type="button">Copy</button>
+        <button id="selectGenerated" class="secondary" type="button">Select password</button>
         <button id="regeneratePassword" class="secondary" type="button">↻ Regenerate</button>
         <button id="useGenerated" class="primary" type="button">Use this password →</button>
       </div>
     </form>
   </dialog>
-  <footer class="wrap"><a class="brand" href="#" aria-label="CipherSplat trademark, version 1.0.2 home"><span class="brand-mark"><span></span></span><span>CIPHER<em>SPLAT</em><sup>™</sup> <small>v1.0.2</small></span></a><p>Private by architecture. Powered by Web Crypto and Argon2id.</p><a class="footer-link online-link" href="../../pages/tools.html" data-online-href="https://drawsplat.org/pages/tools">More SplatWorks Tools →</a><span>CS4 MEMORY-HARD FORMAT</span></footer>
+  <footer class="wrap"><a class="brand" href="../../pages/tools.html"><span>CipherSplat</span></a><p>CipherSplat browser encryption. Your data stays with you.</p><a href="../../pages/download.html#desktop-previews">Get the desktop appss</a></footer>
   <script src="vendor/openpgp/openpgp.min.js" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
   <script src="vendor/hash-wasm/argon2.umd.min.js" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
-  <script src="app.js" integrity="sha384-E+jUzFDwFa3EW2j8tfQPfR4qnCTr9+lye3jVrAAd0DskB01QjpuuBBEVp6wMRwyv"></script>
+  <script src="vendor/jszip/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
+  <script src="archive.js" integrity="sha384-PjWNlKShFOgKGdLv1youPNC//uZzaNB9nRERwiE9Z71Ywb1R7rXHkxB6XIlHyGx0"></script>
+  <script src="app.js" integrity="sha384-/9xaHitOjbK73zHK+W77hO+p9De8+98NahuSx5brhd0pyeSiQSUdmQ6XNtQ8ovyL"></script>
   <script src="../../assets/js/app-language.js" data-ds-language="ciphersplat" data-ds-language-storage="none"></script>
-</body>
+<script src="restore.js" integrity="sha384-vR5Qt1PPZmqu1qcdeOwOU7zhJM4M3Yk1+6LtWWQ66SdFrZYuYD2X8lljjymWYNyO"></script>
+<script src="browser.js" integrity="sha384-OZb2/dUwGFDpfPQS9ix5Icv49uLGnI7zYxkFbY7ISZqkqKr9RA3uwZBu3SXfnqwE"></script><script src="pgp-ui.js" integrity="sha384-V7Z7UH18S3phOwhU0JZdBxcTKArueD8r0YR7H/kEg73VL99Tas/gLGcBmPAnhGn4"></script></body>
 </html>

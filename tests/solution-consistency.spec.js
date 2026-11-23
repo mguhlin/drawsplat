@@ -36,7 +36,7 @@ test("solution entry points use compact trademark text and expose localization",
 });
 
 for (const [slug, english, spanish] of [
-  ["CipherSplat", "Workspace", "Espacio de trabajo"],
+  ["CipherSplat", "Secure workspace", "Espacio de trabajo seguro"],
   ["graphsplat", "Make data visible.", "Haz visibles los datos."],
   ["qrsplat", "Standard QR", "QR estándar"],
 ]) {

@@ -12,28 +12,19 @@ cleanup() {
 }
 trap cleanup EXIT
 
+python3 "$ROOT_DIR/scripts/pin-ciphersplat-assets.py"
 "$ROOT_DIR/scripts/generate-ciphersplat-integrity.sh"
 
 mkdir -p "$STAGING_DIR/CipherSplat/assets" "$OUTPUT_DIR"
-cp "$SOURCE_DIR/index.html" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/styles.css" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/security.css" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/mobile.css" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/app.js" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/argon2-worker.js" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/manifest.webmanifest" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/OFFLINE-README.txt" "$STAGING_DIR/CipherSplat/"
-cp "$SOURCE_DIR/assets/ciphersplat-hero.png" "$STAGING_DIR/CipherSplat/assets/"
-cp "$SOURCE_DIR/assets/drawsplat-logo.png" "$STAGING_DIR/CipherSplat/assets/"
-cp "$SOURCE_DIR/assets/tools.svg" "$STAGING_DIR/CipherSplat/assets/"
-mkdir -p "$STAGING_DIR/CipherSplat/vendor/openpgp"
-cp "$SOURCE_DIR/vendor/openpgp/openpgp.min.js" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
-cp "$SOURCE_DIR/vendor/openpgp/LICENSE" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
-cp "$SOURCE_DIR/vendor/openpgp/package.json" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
-mkdir -p "$STAGING_DIR/CipherSplat/vendor/hash-wasm"
-cp "$SOURCE_DIR/vendor/hash-wasm/argon2.umd.min.js" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
-cp "$SOURCE_DIR/vendor/hash-wasm/LICENSE" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
-cp "$SOURCE_DIR/vendor/hash-wasm/package.json" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
+# Bundle every local workspace/help module and its pinned engines.
+for file in "$SOURCE_DIR"/*.{html,js,css,webmanifest} "$SOURCE_DIR"/{OFFLINE-README.txt,port-source.json}; do
+  [ "$(basename "$file")" != "playwright.config.js" ] || continue
+  [ ! -f "$file" ] || cp "$file" "$STAGING_DIR/CipherSplat/"
+done
+cp -r "$SOURCE_DIR/assets/." "$STAGING_DIR/CipherSplat/assets/"
+cp -r "$SOURCE_DIR/vendor" "$STAGING_DIR/CipherSplat/"
+cp "$ROOT_DIR/LICENSE" "$ROOT_DIR/NOTICE.md" "$STAGING_DIR/CipherSplat/"
+cp "$SOURCE_DIR/README.md" "$STAGING_DIR/CipherSplat/"
 
 # Keep all referenced language/menu assets inside the offline folder.
 mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/css" "$STAGING_DIR/CipherSplat/shared/assets/js"
@@ -44,12 +35,15 @@ done
 cp "$ROOT_DIR/assets/css/action-icons.css" "$STAGING_DIR/CipherSplat/shared/assets/css/"
 mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/icons"
 cp -r "$ROOT_DIR/assets/icons/actions" "$STAGING_DIR/CipherSplat/shared/assets/icons/"
-python3 - "$STAGING_DIR/CipherSplat/index.html" <<'PY'
+python3 - "$STAGING_DIR/CipherSplat" <<'PYCODE'
 import sys,re
 from pathlib import Path
-p=Path(sys.argv[1]);s=p.read_text();p.write_text(re.sub(r'<!-- splat-privacy:start -->.*?<!-- splat-privacy:end -->','',s,flags=re.S))
-PY
-sed -i 's|../../assets/|./shared/assets/|g' "$STAGING_DIR/CipherSplat/index.html"
+for p in Path(sys.argv[1]).glob('*.html'):
+ s=p.read_text()
+ s=re.sub(r'<!-- splat-privacy:start -->.*?<!-- splat-privacy:end -->','',s,flags=re.S)
+ s=re.sub(r' integrity="[^"]*"','',s)
+ p.write_text(s.replace('../../assets/','./shared/assets/'))
+PYCODE
 python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" CipherSplat 'index.html?offline=1'
 
 # file:// scripts cannot use browser SRI because local files have an opaque

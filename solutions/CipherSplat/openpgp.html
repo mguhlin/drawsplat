@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../../assets/css/privacy-controls.css"><script src="../../assets/js/privacy-controls.js"></script><!-- splat-privacy:end -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CipherSplat encrypts files, folders, and text locally with AES-256-GCM.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self'; require-trusted-types-for 'script'; trusted-types default">
+  <title>CipherSplat OpenPGP — Public and private keys</title>
+  <link rel="icon" href="assets/ciphersplat-mark.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#1769e8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CipherSplat">
+  <link rel="apple-touch-icon" href="assets/drawsplat-logo.png">
+  <link rel="stylesheet" href="styles.css" integrity="sha384-FzqOEd6RGzAa2FigH7tQVBNPYFxcbqjl9K4z1Tu2NqcKPv3xZNPvjc9sDvQN0dVk">
+  <link rel="stylesheet" href="security.css" integrity="sha384-3LDjgpvsKqQW3FOGJ/12h+AhU67Bv/tU50GO1Gzkdu4kehSy2NBxK5w+9h6p2JnN">
+  <link rel="stylesheet" href="mobile.css" integrity="sha384-WCmAGpov+SaeA/qakJHmWOT6FsZkgsorNy/Y56911n4r1jXgm/nl72Rr7+eCR96+">
+  <link rel="stylesheet" href="../../assets/css/app-language.css">
+  <link rel="stylesheet" href="browser.css" integrity="sha384-uK9gFiWKVmm99Xfkohlsknxs2hwvn0r10Nmgg0YqajtM8JXaxBo2LV440HjNnDMI">
+
+
+</head>
+<body data-ciphersplat-mode="openpgp">
+  <a class="skip-link" href="#workspace">Skip to secure workspace</a>
+
+  <header class="nav wrap"><a class="brand" href="../../pages/tools.html" aria-label="CipherSplat home"><img class="brand-symbol" src="assets/ciphersplat-mark.svg" alt="" width="40" height="45"><span>CipherSplat</span></a><nav aria-label="Primary navigation"><a href="../../pages/tools.html">About & downloads</a><a href="help.html" target="_blank" rel="noopener">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
+  <main>
+    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h1 id="workspaceTitle">OpenPGP workspace</h1><p class="workspace-version">CipherSplat 1.1.0 · Browser version</p><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.</p><p class="workspace-mode-links"><a id="workspaceModeLink" href="index.html" target="_blank" rel="noopener">Use a password instead</a> · <a href="help.html#openpgp-keys" target="_blank" rel="noopener">How to add and use your keys</a></p>
+      <div class="app-shell">
+<div class="app-grid">
+          <div class="control-panel">
+
+<section id="openpgpKeyStep" class="hidden"><h3 class="step-heading"><span class="step-number">1</span><span>Your OpenPGP key</span></h3><p id="pgpActionHelp" class="step-hint">Public key to encrypt. Matching private key to decrypt.</p>            <div id="pgpCredentials" class="pgp-credentials">
+              <p class="step-hint">Encrypt with the recipient’s public key. Decrypt with your matching private key. Paste the key below or import an exported .asc/.pgp key file. Keys are used locally, not linked to an online account.</p>
+              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
+              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
+              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
+              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
+              <div id="pgpKeyDetails" class="key-details hidden"><strong id="pgpLoadedType"></strong><label for="pgpFingerprint">Key fingerprint — compare it with the recipient through another trusted channel</label><output id="pgpFingerprint"></output><p id="pgpKeyUse"></p></div>
+              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
+            </div>
+
+</section>
+            <div id="passwordCredentials">
+              <div class="password-row">
+                <label class="field-label step-heading" for="password"><span class="step-number">1</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="12" r="7"/><path d="m16 17 11 11m-6-6 3-3m0 6 3-3"/></svg><span>Vault Password</span></label>
+                <button id="generatePassword" class="mini-action" type="button">Generate a password</button>
+              </div>
+              <p class="step-hint">Set your password here. Use the same password to unlock an encrypted result.</p>
+              <div class="password-wrap"><input id="password" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
+              <div class="strength strength-0"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
+              <p class="password-note">Save this password safely. Files are ZIP-compressed before encryption. Originals stay untouched in the browser.</p>
+            </div>
+
+            <h3 class="step-heading"><span class="step-number">2</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h10l3 4h13v15H3Z"/><path d="M9 9V3h15v10M13 7h7M9 19h15M9 23h11"/></svg><span>Content to Protect or Unlock</span></h3><p class="step-hint">Choose files/folders or text. CipherSplat detects what to do automatically.</p>
+            <div id="fileInputArea">
+              <div id="dropZone" class="drop-zone" aria-label="File and folder drop area">
+                <input id="fileInput" type="file" multiple hidden>
+                <input id="folderInput" type="file" webkitdirectory directory multiple hidden>
+                <img class="drop-brand-mark" src="assets/ciphersplat-mark.svg" alt="" width="64" height="72">
+                <strong id="dropTitle">2a) Drop files or folders here</strong>
+                <small id="dropSub">Originals are zipped and encrypted. Encrypted packages are unlocked.</small>
+                <span class="picker-actions"><button id="chooseFiles" type="button">Choose files</button><button id="chooseFolder" type="button">Choose folder</button></span>
+              </div>
+              <div id="fileCard" class="file-card hidden"><span class="file-icon">◆</span><div><strong id="fileName"></strong><small id="fileSize"></small></div><button id="removeFile" aria-label="Remove file">×</button></div>
+            </div>
+
+            <div id="textInputArea">
+              <label class="field-label" for="textInput">2b) Type or paste text</label>
+              <textarea id="textInput" placeholder="Type a private note, or paste an encrypted text package…" spellcheck="false"></textarea>
+              <div class="char-count"><span id="charCount">0</span> characters</div>
+            </div>
+
+
+
+            <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
+            <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v17m-6-6 6 6 6-6M4 21v8h24v-8"/></svg><span>Get Your Result</span></h3><p id="resultDirections" class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .csplat file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
+            <div class="status-panel workspace-status" aria-busy="false">
+              <div hidden><span id="statusChip">READY</span><h3 id="statusTitle">Ready when you are</h3></div>
+              <p id="statusCopy">Your files stay on this device.</p>
+              <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
+            </div>
+            <p id="inputIntent" class="password-note" role="status">Add originals to encrypt, or an encrypted package to unlock.</p>
+            <p id="errorMessage" class="error" role="alert"></p>
+          </div>
+
+
+        </div>
+
+        <div id="resultPanel" class="result-panel hidden" role="status" aria-live="polite" tabindex="-1">
+          <div class="result-badge">✓</div><div><span class="kicker">VAULT OPERATION COMPLETE</span><h3 id="resultTitle">Encryption complete</h3><p id="resultMeta"></p></div>
+          <div id="textResultArea" class="hidden"><label id="textResultLabel" for="textResult">Text result</label><textarea id="textResult" readonly spellcheck="false"></textarea></div>
+          <div id="restoredFilesArea" class="hidden"><h3>Unzipped files</h3><p>Save individual files below. Supporting browsers and the desktop app can restore the complete folder tree.</p><ul id="restoredFilesList"></ul></div>
+          <button id="copyResult" class="secondary hidden">Copy result</button><button id="downloadResult" class="secondary">Save another copy</button>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
+    <form method="dialog" class="generator-card">
+      <div class="generator-head">
+        <div><span class="kicker">LOCAL PASSWORD LAB</span><h2 id="generatorTitle">Create a vault password</h2></div>
+        <button class="generator-close" value="cancel" aria-label="Close password generator">×</button>
+      </div>
+      <p class="generator-intro">Generated only on this device with cryptographically secure randomness. CipherSplat never stores or sends it.</p>
+      <fieldset class="generator-modes">
+        <legend class="sr-only">Password type</legend>
+        <label><input type="radio" name="generatorMode" value="password" checked> Password</label>
+        <label><input type="radio" name="generatorMode" value="passphrase"> Passphrase</label>
+      </fieldset>
+
+      <div id="passwordOptions" class="generator-options">
+        <label class="range-label" for="passwordLength"><span>Characters</span><output id="passwordLengthValue">24</output></label>
+        <input id="passwordLength" type="range" min="12" max="64" value="24">
+        <div class="generator-checks">
+          <label><input id="includeUpper" type="checkbox" checked> A–Z</label>
+          <label><input id="includeLower" type="checkbox" checked> a–z</label>
+          <label><input id="includeNumbers" type="checkbox" checked> 0–9</label>
+          <label><input id="includeSymbols" type="checkbox" checked> Symbols</label>
+        </div>
+      </div>
+
+      <div id="passphraseOptions" class="generator-options hidden">
+        <label class="range-label" for="wordCount"><span>Words</span><output id="wordCountValue">10</output></label>
+        <input id="wordCount" type="range" min="4" max="12" value="10">
+        <div class="generator-checks">
+          <label for="wordSeparator">Separator <select id="wordSeparator"><option value="-">Hyphen</option><option value=".">Period</option><option value=" ">Space</option></select></label>
+          <label><input id="capitalizeWords" type="checkbox"> Capitalize</label>
+          <label><input id="includeWordNumber" type="checkbox" checked> Add number</label>
+        </div>
+      </div>
+
+      <div class="generated-display">
+        <output id="generatedPassword" aria-label="Generated password" tabindex="0" aria-live="polite"></output>
+        <div><span>Password strength: <strong id="generatedStrength">Strong</strong></span><span>Estimated entropy: <strong id="generatedEntropy">—</strong></span></div>
+      </div>
+      <p id="generatorError" class="generator-error" role="alert"></p>
+      <div class="generator-actions">
+        <button id="copyGenerated" class="secondary" type="button">Copy</button>
+        <button id="selectGenerated" class="secondary" type="button">Select password</button>
+        <button id="regeneratePassword" class="secondary" type="button">↻ Regenerate</button>
+        <button id="useGenerated" class="primary" type="button">Use this password →</button>
+      </div>
+    </form>
+  </dialog>
+  <footer class="wrap"><a class="brand" href="../../pages/tools.html"><span>CipherSplat</span></a><p>CipherSplat browser encryption. Your data stays with you.</p><a href="../../pages/download.html#desktop-previews">Get the desktop appss</a></footer>
+  <script src="vendor/openpgp/openpgp.min.js" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
+  <script src="vendor/hash-wasm/argon2.umd.min.js" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
+  <script src="vendor/jszip/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
+  <script src="archive.js" integrity="sha384-PjWNlKShFOgKGdLv1youPNC//uZzaNB9nRERwiE9Z71Ywb1R7rXHkxB6XIlHyGx0"></script>
+  <script src="app.js" integrity="sha384-/9xaHitOjbK73zHK+W77hO+p9De8+98NahuSx5brhd0pyeSiQSUdmQ6XNtQ8ovyL"></script>
+  <script src="../../assets/js/app-language.js" data-ds-language="ciphersplat" data-ds-language-storage="none"></script>
+<script src="restore.js" integrity="sha384-vR5Qt1PPZmqu1qcdeOwOU7zhJM4M3Yk1+6LtWWQ66SdFrZYuYD2X8lljjymWYNyO"></script>
+<script src="browser.js" integrity="sha384-OZb2/dUwGFDpfPQS9ix5Icv49uLGnI7zYxkFbY7ISZqkqKr9RA3uwZBu3SXfnqwE"></script><script src="pgp-ui.js" integrity="sha384-V7Z7UH18S3phOwhU0JZdBxcTKArueD8r0YR7H/kEg73VL99Tas/gLGcBmPAnhGn4"></script></body>
+</html>

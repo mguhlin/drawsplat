@@ -231,6 +231,12 @@
 /pages/*
   Cache-Control: no-transform
 
+/solutions/CipherSplat/help
+  Cache-Control: no-transform
+
+/solutions/CipherSplat/openpgp
+  Cache-Control: no-transform
+
 /solutions/audiosplat/index.vite
   Cache-Control: no-transform
 

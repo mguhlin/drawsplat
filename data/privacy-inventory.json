@@ -529,22 +529,21 @@
       "path": "/solutions/CipherSplat/",
       "entry": "solutions/CipherSplat/index.html",
       "storage": {
-        "localStorage": true,
-        "sessionStorage": true,
-        "indexedDB": true,
+        "localStorage": false,
+        "sessionStorage": false,
+        "indexedDB": false,
         "literalKeys": [],
         "namedConstants": []
       },
       "literalRemoteHosts": [
-        "127.0.0.1:8765",
-        "drawsplat.org"
+        "127.0.0.1:4186"
       ],
       "remoteHostCaveat": "Static references include help links and dormant code, not proof of requests. Dynamic user URLs are not enumerable; review enabled connections.",
       "data": "User-entered content, selected files/media, settings and app-specific saved state; may contain student personal information.",
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "40f436c0d32b042013f53670069546c2d058ff0830aa83df658ee1cdf46dc0fc"
+      "entrySha256": "9571e6d84a78e94b888026413d0f147cfb0d1d76c6a29f0d2eb4b239694855bc"
     },
     {
       "id": "clock-wizard",
@@ -958,7 +957,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "806a3b08c888344728853efd5d3d6d34f20293343012067c81efdcb6353fd5e2"
+      "entrySha256": "81bd90ddc3d53570dfbe071e72ceef6e74498b3b15fcb50ac1cd12ce8f67447c"
     },
     {
       "id": "qrsplat",

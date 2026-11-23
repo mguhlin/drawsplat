@@ -1,53 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CIPHER_DIR="${1:-$ROOT_DIR/solutions/CipherSplat}"
-OUTPUT_FILE="${2:-$CIPHER_DIR/integrity.json}"
-FILES=(
-  app.js
-  argon2-worker.js
-  index.html
-  manifest.webmanifest
-  security.css
-  styles.css
-  mobile.css
-  assets/ciphersplat-hero.png
-  assets/drawsplat-logo.png
-  assets/tools.svg
-  vendor/openpgp/openpgp.min.js
-  vendor/openpgp/LICENSE
-  vendor/openpgp/package.json
-  vendor/hash-wasm/argon2.umd.min.js
-  vendor/hash-wasm/LICENSE
-  vendor/hash-wasm/package.json
-)
-
-# Include shared resources under their hosted or self-contained offline paths.
-if [ -d "$CIPHER_DIR/shared/assets" ]; then
-  for file in shared/assets/{css,js}/{action-cards,action-icons,app-language}.{css,js}; do
-    if [ -f "$CIPHER_DIR/$file" ]; then FILES+=("$file"); fi
-  done
-else
-  FILES+=(../../assets/js/privacy-controls.js ../../assets/css/privacy-controls.css ../../assets/js/app-language.js ../../assets/css/app-language.css ../../assets/js/action-cards.js ../../assets/css/action-cards.css ../../assets/css/action-icons.css)
-fi
-
-{
-  printf '{\n  "schema": "drawsplat-ciphersplat-integrity-v1",\n'
-  printf '  "application": "CipherSplat",\n'
-  printf '  "applicationVersion": "1.0.2",\n'
-  printf '  "openpgpVersion": "6.3.1",\n'
-  printf '  "argon2Version": "hash-wasm 4.12.0",\n'
-  printf '  "hashAlgorithm": "SHA-256",\n'
-  printf '  "files": {\n'
-  for index in "${!FILES[@]}"; do
-    file="${FILES[$index]}"
-    hash="$(sha256sum "$CIPHER_DIR/$file" | cut -d ' ' -f 1)"
-    comma=,
-    if (( index == ${#FILES[@]} - 1 )); then comma=; fi
-    printf '    "%s": "%s"%s\n' "$file" "$hash" "$comma"
-  done
-  printf '  }\n}\n'
-} > "$OUTPUT_FILE"
-
-echo "Generated $OUTPUT_FILE"
+python3 - "${1:-$ROOT_DIR/solutions/CipherSplat}" "${2:-${1:-$ROOT_DIR/solutions/CipherSplat}/integrity.json}" <<'PYCODE'
+import hashlib,json,sys
+from pathlib import Path
+root=Path(sys.argv[1]);files=set()
+for pattern in ['*.html','*.js','*.css','*.webmanifest','port-source.json','LICENSE','NOTICE.md','README.md','OFFLINE-README.txt','assets/**/*','vendor/**/*','shared/**/*']:
+ files.update(p for p in root.glob(pattern) if p.is_file() and p.name != 'playwright.config.js')
+if not (root/'shared').exists():
+ for rel in ['css/privacy-controls.css','js/privacy-controls.js','css/app-language.css','js/app-language.js','css/action-cards.css','js/action-cards.js','css/action-icons.css']:
+  files.add(root/'../../assets'/rel)
+import os
+result={'schema':'drawsplat-ciphersplat-integrity-v1','application':'CipherSplat','applicationVersion':'1.1.0','openpgpVersion':'6.3.1','argon2Version':'hash-wasm 4.12.0','jszipVersion':'3.10.1','hashAlgorithm':'SHA-256','files':{os.path.relpath(p,root):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}}
+Path(sys.argv[2]).write_text(json.dumps(result,indent=2)+'\n')
+print('Generated '+sys.argv[2])
+PYCODE

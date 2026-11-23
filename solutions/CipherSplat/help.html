@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><!-- splat-privacy:start --><link rel="stylesheet" href="../../assets/css/privacy-controls.css"><script src="../../assets/js/privacy-controls.js"></script><!-- splat-privacy:end -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Help with CipherSplat files, passwords, OpenPGP keys, downloads and privacy.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self'; require-trusted-types-for 'script'; trusted-types default">
+  <title>CipherSplat — Browser help and privacy</title>
+  <link rel="icon" href="assets/ciphersplat-mark.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#1769e8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CipherSplat">
+  <link rel="apple-touch-icon" href="assets/drawsplat-logo.png">
+  <link rel="stylesheet" href="styles.css" integrity="sha384-FzqOEd6RGzAa2FigH7tQVBNPYFxcbqjl9K4z1Tu2NqcKPv3xZNPvjc9sDvQN0dVk">
+  <link rel="stylesheet" href="security.css" integrity="sha384-3LDjgpvsKqQW3FOGJ/12h+AhU67Bv/tU50GO1Gzkdu4kehSy2NBxK5w+9h6p2JnN">
+  <link rel="stylesheet" href="mobile.css" integrity="sha384-WCmAGpov+SaeA/qakJHmWOT6FsZkgsorNy/Y56911n4r1jXgm/nl72Rr7+eCR96+">
+  <link rel="stylesheet" href="../../assets/css/app-language.css">
+  <link rel="stylesheet" href="browser.css" integrity="sha384-uK9gFiWKVmm99Xfkohlsknxs2hwvn0r10Nmgg0YqajtM8JXaxBo2LV440HjNnDMI">
+
+
+</head>
+<body>
+<a class="skip-link" href="#helpPageTitle">Skip to help</a>
+  <header class="nav wrap"><a class="brand" href="../../pages/tools.html" aria-label="CipherSplat home"><img class="brand-symbol" src="assets/ciphersplat-mark.svg" alt="" width="40" height="45"><span>CipherSplat</span></a><nav aria-label="Primary navigation"><a href="../../pages/tools.html">About & downloads</a><a href="index.html">Back to workspace</a></nav></header>
+<main class="help-page"><section class="wrap browser-help" aria-labelledby="helpPageTitle"><h1 id="helpPageTitle">Browser help</h1><p>CipherSplat 1.1.0 · Choose a question below, or return to the <a href="index.html">password workspace</a> or <a href="openpgp.html">OpenPGP workspace</a>.</p><details><summary>How does CipherSplat protect my data?</summary><ul><li>AES-256-GCM encrypts password-protected files and text and checks for changes when unlocking them.</li><li>Argon2id strengthens the key derived from your password.</li><li>Files, passwords and keys are processed on your device.</li></ul></details></section>
+    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle">
+      <h2 id="helpTitle">Browser FAQs</h2>
+      <details open><summary>What do I do first?</summary><ul>
+        <li>Set a strong password in Step 1.</li>
+        <li>Add files or a folder, or type/paste text in Step 2. Encrypted content is detected automatically.</li>
+        <li>Find the saved file or copy your text result in Step 3.</li>
+      </ul></details>
+      <details><summary>Where does my result go?</summary><ul>
+        <li>Encrypted files download automatically as .csplat. Your browser controls where they save.</li>
+        <li>Some browsers ask for a save location before processing. Other browsers use their normal download settings.</li>
+        <li>The browser cannot automatically save beside your original file. The desktop apps use a native destination dialog.</li>
+      </ul></details>
+      <details><summary>What happens to a folder?</summary><ul>
+        <li>Files and folders are ZIP-compressed before password encryption. Unlocking unzips them automatically.</li>
+        <li>A single restored file downloads directly. For folders, supported browsers can write a new folder; others offer individual file saves or an optional ZIP.</li>
+        <li>Folder picking varies by phone and browser. Empty folders may not be included.</li>
+      </ul></details>
+      <details><summary>Can I copy encrypted text?</summary><ul>
+        <li>Yes. Encrypted text appears in a result box with a Copy button and is saved as a .csplat file.</li>
+        <li>Paste the encrypted text with the same password to unlock it. If copying is blocked, select the text and copy it manually.</li>
+      </ul></details>
+      <details><summary>What if I forget the password or a file will not open?</summary><ul>
+        <li>Passwords cannot be recovered. Save yours securely.</li>
+        <li>Check the password and make sure the encrypted file is complete. Changed or incomplete files fail authentication.</li>
+        <li>OpenPGP messages need the <a href="openpgp.html">key workspace</a>. Packages using unsupported algorithms need the application that created them.</li>
+      </ul></details>
+      <details><summary>Are originals shredded or replaced?</summary><ul>
+        <li>No. This browser tool leaves originals untouched.</li>
+        <li>CipherSplat desktop also keeps originals. Saved files and restored folders use destinations you choose.</li>
+      </ul></details>
+      <details><summary>What stays on my device?</summary><ul>
+        <li>Your files, text, passwords and keys are processed locally. CipherSplat does not upload encryption inputs or store your keys. The ecosystem privacy controls explain website requests and preferences.</li>
+        <li>When you open this tool online, the website receives normal requests for the page and its bundled assets.</li>
+        <li>Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</li>
+      </ul></details>
+      <details><summary>What does Clear workspace do?</summary><ul>
+        <li>It releases the active inputs and results. The workspace also clears after ten idle minutes.</li>
+        <li>It does not delete downloads, clipboard contents or backups. Keep the tab open while processing, especially on phones.</li>
+      </ul></details>
+      <p><a href="../../pages/download.html#desktop-previews">Get the desktop apps</a> · <a href="openpgp.html">Use OpenPGP keys</a></p>
+    </section>
+<section id="openpgp-keys" class="wrap browser-help" aria-labelledby="keyHelpTitle">
+  <h2 id="keyHelpTitle">OpenPGP FAQs</h2>
+  <details open><summary>Which key should I use?</summary><ul>
+    <li><strong>To encrypt:</strong> use the recipient’s public key. Compare its fingerprint with them through another trusted channel.</li>
+    <li><strong>To unlock:</strong> use the private key matching the public key that encrypted the message.</li>
+    <li>If the private key is protected, enter its private-key passphrase too.</li>
+  </ul></details>
+  <details><summary>How do I add my existing key?</summary><ul>
+    <li>Export the key from your OpenPGP key manager.</li>
+    <li>In Step 1, paste the complete public/private key block or choose Import key file for its .asc/.pgp export.</li>
+    <li>Check the displayed fingerprint, then add your file or text in Step 2.</li>
+    <li>Import a key file or paste its contents; a key-server web address will not work here.</li>
+  </ul></details>
+  <details><summary>Can I encrypt folders or several files?</summary><ul>
+    <li>This workspace handles one file or text message at a time. ZIP a folder or group of files first.</li>
+    <li>Use the <a href="index.html">password workspace</a> for automatic file/folder packaging and restoration.</li>
+  </ul></details>
+  <details><summary>Where is my result?</summary><ul>
+    <li>Encrypted files download as .csplat; your browser controls the save location.</li>
+    <li>Encrypted and decrypted text appear on screen with a Copy button.</li>
+    <li>These are standard OpenPGP messages. Other OpenPGP tools may expect a .gpg or .asc filename ending.</li>
+  </ul></details>
+  <details><summary>Are my keys saved or linked to an account?</summary><ul>
+    <li>No. Keys are used in this tab and clear after success, Clear or inactivity. Import or paste them again for another operation.</li>
+    <li>CipherSplat does not create key pairs, fetch keys from servers or link to an account.</li>
+    <li>Keep your private key private and backed up. CipherSplat cannot recover a lost key or passphrase.</li>
+  </ul></details>
+  <details><summary>Does my data leave my device?</summary><ul>
+    <li>Files, text, keys and passphrases are processed locally in this tab.</li>
+    <li>The website receives normal page and asset requests.</li>
+    <li>Your browser, downloads, clipboard, backups and extensions remain under your device’s controls.</li>
+  </ul></details>
+  <details><summary>Can I use this key in the desktop app?</summary><ul>
+    <li>OpenPGP is available in the browser, standalone CipherSplat, and the PDF/Cipher desktop suite. Use the same exported keys in each edition.</li>
+    <li>For a password-protected .csplat file, open the <a href="index.html">password workspace</a>.</li>
+  </ul></details>
+</section>
+</main>
+  <footer class="wrap"><a class="brand" href="../../pages/tools.html"><span>CipherSplat</span></a><p>CipherSplat browser encryption. Your data stays with you.</p><a href="../../pages/download.html#desktop-previews">Get the desktop appss</a></footer>
+</body>
+</html>
