@@ -207,5 +207,9 @@ write_policy_aliases(ROOT)
 import subprocess, sys
 subprocess.run([sys.executable, str(ROOT/"scripts/build-site-navigation.py")], check=True)
 
+# Scheduled articles render the same navigation inside their server-side bundle.
+if (ROOT/"functions/_lib/scheduled-blog/posts.json").exists():
+ subprocess.run([sys.executable, str(ROOT/"scripts/build-scheduled-blog.py")], check=True)
+
 # Reapply the shared controls after generated HTML has been rewritten.
 subprocess.run([sys.executable, str(ROOT/"scripts/build-privacy-controls.py")], check=True)
