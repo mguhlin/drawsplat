@@ -63,3 +63,10 @@ WCAG A/AA scans with no reported violations. Wiki/navigation/privacy generation
 is repeatable. Native office integration remains in progress in the sibling
 SplatWorks Desktop checkout; the published combined suite remains rc.11 until its
 expanded candidate passes the release gates.
+
+The school resource is live and passed all 27 Chromium/Firefox/WebKit checks
+against the public deployment. The desktop download now explicitly separates
+its current PDFsplat/CipherSplat contents from the six planned core apps. That
+copy also passed a live browser check. PlanSplat's offline cache now includes
+the shared workspace adapter; all 25 browser workflows passed, including an
+offline reload preserving drafts and account separation.
