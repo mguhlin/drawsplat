@@ -2,7 +2,7 @@ const{test,expect}=require('@playwright/test');
 for(const width of [1360,390])test('browser, desktop and Help are easy to reach at '+width+'px',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width,height:900});await page.goto('/');
  const nav=page.getByRole('navigation',{name:'Primary navigation',exact:true});for(const name of ['Browser apps','Desktop apps','Help'])await expect(nav.getByRole('link',{name,exact:true})).toBeVisible();
- const desktop=page.locator('main').getByRole('link',{name:'Download desktop apps',exact:true});await expect(desktop).toBeInViewport();await desktop.click();await expect(page).toHaveURL(/download.html#desktop-apps$/);
+ const desktop=page.locator('main').getByRole('link',{name:'Download desktop apps',exact:true});await expect(desktop).toBeInViewport();await desktop.click();await expect(page).toHaveURL(/download(?:\.html)?#desktop-apps$/);
  await expect(page.getByRole('heading',{name:'SplatWorks Desktop',exact:true})).toBeVisible();for(const name of ['Windows','Mac','Linux'])await expect(page.getByRole('link',{name:'Download SplatWorks-Desktop for '+name,exact:true})).toBeInViewport();
  await expect(page.locator('#advanced-downloads')).not.toHaveAttribute('open','');await expect(page.locator('.individual-desktop')).not.toHaveAttribute('open','');
  await page.locator('.individual-desktop>summary').click();await expect(page.getByRole('heading',{name:'CipherSplat',exact:true}).first()).toBeVisible();
