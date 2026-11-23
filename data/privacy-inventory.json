@@ -169,7 +169,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "2df41b5cfe32742e2ddc03f12549bfcfbc506cc20214194509201400f9d68513"
+      "entrySha256": "3cb92cf7974e7e8cdf12e8ccf53820cbcacf9e049d452ff43e525cd3f481073f"
     },
     {
       "id": "showsplat",
@@ -336,7 +336,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "0e5087acc5277a672cdf972646cfe19f4f441de841e1637c7611a7719f22ecec"
+      "entrySha256": "e32639ee92a2733f7ef7f694dfdf8a17119339ef36b404e8081c93779c6a392c"
     },
     {
       "id": "animated-gif",
