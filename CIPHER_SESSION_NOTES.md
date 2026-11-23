@@ -70,3 +70,21 @@ its current PDFsplat/CipherSplat contents from the six planned core apps. That
 copy also passed a live browser check. PlanSplat's offline cache now includes
 the shared workspace adapter; all 25 browser workflows passed, including an
 offline reload preserving drafts and account separation.
+
+## Expanded desktop download published
+
+SplatWorks Desktop `v1.0.0-rc.14` now combines ListSplat, GridSplat, WriteSplat,
+ShowSplat, LayoutSplat, PlanSplat, PDFsplat and CipherSplat. Native build source is
+`4d6e709`, with the browser snapshot from `ccaad8a`. The release workflow
+`45242637093` passed all three platform builds, 58 native checks per platform,
+installer/archive checks, and 134 Chromium/WebKit checks. The downloaded public
+Linux runtime passed 64 additional workflow checks.
+
+All 14 distribution files matched the public release's sizes and SHA-256 digests.
+Public checksum files, the WebView2 manifest, and the Linux archive were fetched
+directly; Windows/Mac package bytes came from the successful workflow and matched
+the published digests. The desktop catalogue now points to this release, lists
+all eight included apps, and keeps a visible next-steps section for compatibility,
+offline/usability work and a signed stable release. The six smaller standalone
+apps remain at `tools-v1.0.0-rc.5`. Publisher signing and physical-device
+qualification remain open. Local website verification passed 153 checks.

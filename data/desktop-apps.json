@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/mguhlin/splatworks-desktop",
-  "coreVersion": "1.0.0-rc.11",
+  "coreVersion": "1.0.0-rc.14",
   "toolsVersion": "1.0.0-rc.5",
   "apps": [
     {
@@ -46,17 +46,17 @@
       "browser": "solutions/videosplat/"
     }
   ],
-  "coreDescription": "One desktop home for SplatWorks apps, with local editing and saving. No account required.",
+  "coreDescription": "Documents, spreadsheets, databases, presentations, publications, planning, PDFs and encryption in one local app. No account required.",
   "coreAvailableApps": [
-    "PDFsplat",
-    "CipherSplat"
-  ],
-  "corePlannedApps": [
     "ListSplat",
     "GridSplat",
     "WriteSplat",
     "ShowSplat",
     "LayoutSplat",
-    "PlanSplat"
-  ]
+    "PlanSplat",
+    "PDFsplat",
+    "CipherSplat"
+  ],
+  "corePlannedApps": [],
+  "coreNextSteps": "Continue improving file compatibility, offline workflows and usability across the core apps, and prepare a stable release with verified publisher signing and device testing."
 }

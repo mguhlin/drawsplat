@@ -20,7 +20,8 @@ test('primary download choices work without JavaScript',async({browser})=>{
 });
 
 test('the desktop download explains its current apps and the next release',async({page})=>{
- const catalog=require('../data/desktop-apps.json');await page.goto('/pages/download.html');const suite=page.locator('.desktop-suite');await expect(suite).toContainText('One desktop home for SplatWorks apps');
- for(const name of catalog.coreAvailableApps)await expect(suite.locator('.desktop-included')).toContainText(name);
+ const catalog=require('../data/desktop-apps.json');await page.goto('/pages/download.html');const suite=page.locator('.desktop-suite');await expect(suite).toContainText(catalog.coreDescription);
+ for(const name of ['ListSplat','GridSplat','WriteSplat','ShowSplat','LayoutSplat','PlanSplat','PDFsplat','CipherSplat'])await expect(suite.locator('.desktop-included')).toContainText(name);
+ if(catalog.coreNextSteps){await expect(suite.getByRole('heading',{name:'What’s planned next',exact:true})).toBeVisible();await expect(suite.locator('.desktop-roadmap')).toContainText(catalog.coreNextSteps);}
  if(catalog.corePlannedApps.length){await expect(suite.getByRole('heading',{name:'Coming to SplatWorks Desktop',exact:true})).toBeVisible();for(const name of catalog.corePlannedApps)await expect(suite.locator('.desktop-roadmap')).toContainText(name);await expect(suite.locator('.desktop-roadmap')).toContainText('being integrated and tested');}
 });

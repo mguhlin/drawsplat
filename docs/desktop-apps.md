@@ -4,9 +4,27 @@
 
 ## Choose an app
 
-**SplatWorks Desktop** is the combined desktop home for SplatWorks apps. The current preview download includes PDFsplat for PDF editing and CipherSplat for file and text encryption. You can also download GIFsplat, CipherSplat, QRSplat, ImageSplat, AudioSplat or VideoSplat separately.
+**SplatWorks Desktop** combines eight apps in one window:
 
-**Coming in the next desktop release:** ListSplat databases, GridSplat spreadsheets, WriteSplat documents, ShowSplat presentations, LayoutSplat publishing, and PlanSplat planning. These core apps are being integrated and tested. You can already open them in your browser. [Browse all browser apps](../studio/index.html).
+- **ListSplat:** lists and databases.
+- **GridSplat:** spreadsheets, formulas and charts.
+- **WriteSplat:** documents and writing.
+- **ShowSplat:** slides and presentations.
+- **LayoutSplat:** publications, books and page layouts.
+- **PlanSplat:** tasks, courses and study plans.
+- **PDFsplat:** PDF editing and local OCR.
+- **CipherSplat:** file and text encryption.
+
+Use the **Apps** menu to switch; each workspace stays open. GIFsplat, CipherSplat,
+QRSplat, ImageSplat, AudioSplat and VideoSplat are also available as separate
+smaller downloads. [Browser apps](../studio/index.html) remain available without
+installation; use those editions for Google Drive and Calendar connections.
+
+## What’s planned next
+
+Continue improving file compatibility, offline workflows and usability across
+the core apps, then prepare a stable release with verified publisher signing and
+device testing. The current downloads remain preview builds.
 
 ## Install and open
 
@@ -20,9 +38,11 @@ The desktop apps run locally after installation. You do not need an account, Pyt
 
 ## Open a file and save your work
 
-Use the app's Open or Choose files control. Use Save or Save As to choose where your work goes. Keep your original until you have checked the saved copy.
+Use the app's Open or Choose files control. Use Save or Save As to choose where your work goes. You can also press **Ctrl+S** (Windows/Linux) or **Command+S** (Mac). In PlanSplat, choose **Backups & settings → Download planner backup**, or use that shortcut. Keep your original until you have checked the saved copy. Desktop apps keep unsaved work in memory and do not create automatic recovery copies.
 
 In CipherSplat, enter a password or import an OpenPGP key, then add your content. Files are processed and saved automatically when credentials are ready. Text results can also be copied. Keep your password or private key somewhere safe; a forgotten password cannot be recovered.
+
+ShowSplat exports WebDeck HTML for presenting in a browser. Export HTML or PDF and open it in your browser to print. GridSplat project files preserve sheet data, formulas and cell formatting; export charts and picture graphs as images to keep their appearance.
 
 ## Need help?
 
