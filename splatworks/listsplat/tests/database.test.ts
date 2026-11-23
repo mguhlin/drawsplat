@@ -1,5 +1,46 @@
 import { describe, expect, it } from 'vitest';
-import { addField, addRecord, createStarterProject, duplicateRecord, duplicateRecordIds, removeDuplicateRecords, unusedFields, updateCell } from '../src/model/database';
+import { addField, addRecord, assertListSplatFile, createStarterProject, duplicateRecord, duplicateRecordIds, removeDuplicateRecords, unusedFields, updateCell } from '../src/model/database';
+import { cloneTemplateProject, listSplatTemplates } from '../src/templates/templates';
+
+describe('project file integrity', () => {
+  it('accepts every classroom template without changing its saved data', () => {
+    for (const template of listSplatTemplates) {
+      const project = createStarterProject(), cloned = cloneTemplateProject(template);
+      project.schema = { tables: cloned.tables, relationships: cloned.relationships };
+      const before = JSON.stringify(project);
+      expect(() => assertListSplatFile(project)).not.toThrow();
+      expect(JSON.stringify(project)).toBe(before);
+    }
+  });
+
+  it('retains optional annotations, saved views and unknown version-1 data', () => {
+    const project = createStarterProject(), table = project.schema.tables[0], record = table.records[0];
+    record.comments = [{ id: 'comment', author: 'Teacher', text: 'Review', at: record.createdAt }];
+    record.history = [{ at: record.createdAt, values: { ...record.values } }];
+    project.views = [{ id: 'view', name: 'Animals', tableId: table.id, mode: 'cards', search: '', searchFieldId: 'all', sortKeys: [], find: null }];
+    const saved = { ...project, futureExtension: { keep: 'original content' } };
+    const before = JSON.stringify(saved);
+    assertListSplatFile(saved);
+    expect(JSON.stringify(saved)).toBe(before);
+    // Missing references are repairable, distinct from malformed structures.
+    project.schema.relationships = [{ id: 'repair', name: 'Missing table', fromTableId: 'missing', toTableId: table.id, fromFieldId: 'missing', toFieldId: table.fields[0].id }];
+    expect(() => assertListSplatFile(project)).not.toThrow();
+  });
+
+  it.each(['metadata', 'field-type', 'options', 'values', 'comments', 'history', 'duplicate-id', 'views', 'teacher'])('rejects damaged %s before the project is used', damage => {
+    const project: any = createStarterProject(), table = project.schema.tables[0];
+    if (damage === 'metadata') project.metadata = null;
+    if (damage === 'field-type') table.fields[0].type = 'unsupported';
+    if (damage === 'options') table.fields[0].options = {};
+    if (damage === 'values') table.records[0].values = { nested: {} };
+    if (damage === 'comments') table.records[0].comments = [null];
+    if (damage === 'history') table.records[0].history = [{ at: '', values: [] }];
+    if (damage === 'duplicate-id') table.records[1].id = table.records[0].id;
+    if (damage === 'views') project.views = [{}];
+    if (damage === 'teacher') project.teacher.notes = {};
+    expect(() => assertListSplatFile(project)).toThrow(/ListSplat project/);
+  });
+});
 
 describe('maintenance helpers', () => {
   it('finds and removes duplicate records', () => {

@@ -381,6 +381,9 @@ export function sortRows(
   direction: 'ascending' | 'descending',
 ): SheetData {
   const normalized = normalizeSelection(selection);
+  if (sheet.slice(normalized.start.row, normalized.end.row + 1).some(row => row.some(cell => cell.merge || cell.hiddenBy))) {
+    throw new Error('Unmerge cells in the selected rows before sorting.');
+  }
   const sortedRows = sheet
     .slice(normalized.start.row, normalized.end.row + 1)
     .sort((firstRow, secondRow) => {
@@ -414,7 +417,7 @@ export function clearCells(
         rowIndex <= normalized.end.row &&
         colIndex >= normalized.start.col &&
         colIndex <= normalized.end.col
-          ? createCell('', cell.format)
+          ? withCellMetadata(createCell('', cell.format), cell)
           : cell,
       ),
     ),

@@ -768,16 +768,19 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   function sortSelectedRows(direction: 'ascending' | 'descending') {
-    setSheet((currentSheet) => {
-      remember(currentSheet);
+    try {
+      const next = sortRows(sheet, selection, selection.end.col, direction);
+      remember(sheet);
+      setSheet(next);
       setFileMessage(
         direction === 'ascending'
           ? 'Sorted selected rows A to Z.'
           : 'Sorted selected rows Z to A.',
       );
 
-      return sortRows(currentSheet, selection, selection.end.col, direction);
-    });
+    } catch (error) {
+      setFileMessage(error instanceof Error ? error.message : 'Could not sort the selected rows.');
+    }
   }
 
   function autoSumSelection() {

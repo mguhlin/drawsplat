@@ -492,11 +492,98 @@ export function removeBrokenRelationships(project: ListSplatFile): ListSplatFile
 }
 
 export function assertListSplatFile(value: unknown): asserts value is ListSplatFile {
-  if (!value || typeof value !== 'object') {
-    throw new Error('This is not a ListSplatTM project file.');
+  // Validate the entire candidate before it can replace the workspace or its
+  // autosave. Unknown properties are retained for version-1 compatibility.
+  function check(condition: unknown, section: string): asserts condition {
+    if (!condition) throw new Error(`This ListSplat project has invalid ${section}. Your open work has not changed.`);
   }
-  const candidate = value as Partial<ListSplatFile>;
-  if (candidate.app !== 'ListSplatTM' || candidate.version !== 1 || !candidate.schema?.tables) {
-    throw new Error('This file is not a supported .listsplat.json project.');
+  function object(input: unknown, section: string): Record<string, unknown> {
+    check(input && typeof input === 'object' && !Array.isArray(input), section);
+    return input as Record<string, unknown>;
   }
+  function strings(input: unknown): input is string[] {
+    return Array.isArray(input) && input.every(item => typeof item === 'string');
+  }
+  function entries(input: unknown, section: string): Record<string, unknown>[] {
+    check(Array.isArray(input), section);
+    return input.map(item => object(item, section));
+  }
+  function identified(input: unknown, section: string): Record<string, unknown>[] {
+    const items = entries(input, section), ids = new Set<string>();
+    for (const item of items) {
+      check(typeof item.id === 'string' && item.id.trim() && !ids.has(item.id), `${section} identifiers`);
+      ids.add(item.id);
+    }
+    return items;
+  }
+  function properties(input: Record<string, unknown>, names: string[], type: 'string' | 'boolean' | 'number', section: string): void {
+    for (const key of names) if (input[key] !== undefined) {
+      check(typeof input[key] === type && (type !== 'number' || Number.isFinite(input[key])), section);
+    }
+  }
+  function values(input: unknown): void {
+    const cells = object(input, 'record values');
+    check(Object.values(cells).every(cell => cell === null || typeof cell === 'string' || typeof cell === 'boolean' || (typeof cell === 'number' && Number.isFinite(cell))), 'record values');
+  }
+  const candidate = object(value, 'project structure');
+  check(candidate.app === 'ListSplatTM' && candidate.version === 1, 'project format or version');
+  check(typeof candidate.createdAt === 'string' && typeof candidate.updatedAt === 'string', 'project dates');
+  const metadata = object(candidate.metadata, 'project metadata');
+  check(['title', 'author', 'className'].every(key => typeof metadata[key] === 'string'), 'project metadata');
+  const schema = object(candidate.schema, 'table schema');
+  const tables = identified(schema.tables, 'tables');
+  check(tables.length > 0, 'tables');
+  for (const table of tables) {
+    check(typeof table.name === 'string', 'table names');
+    for (const field of identified(table.fields, 'fields')) {
+      check(typeof field.name === 'string' && typeof field.type === 'string' && Object.hasOwn(FIELD_DEFAULTS, field.type), 'field names or types');
+      properties(field, ['description', 'formula', 'defaultValue', 'customPattern', 'customMessage'], 'string', 'field settings');
+      properties(field, ['required', 'hidden', 'unique', 'primaryKey', 'readonly'], 'boolean', 'field settings');
+      properties(field, ['min', 'max', 'maxLength'], 'number', 'field limits');
+      if (field.options !== undefined) check(strings(field.options), 'field options');
+      if (field.pattern !== undefined) check(['none', 'email', 'url', 'phone', 'custom'].includes(String(field.pattern)), 'field patterns');
+    }
+    for (const record of identified(table.records, 'records')) {
+      check(typeof record.createdAt === 'string' && typeof record.updatedAt === 'string', 'record dates');
+      values(record.values);
+      properties(record, ['archived'], 'boolean', 'record settings');
+      if (record.comments !== undefined) for (const comment of identified(record.comments, 'comments')) {
+        check(['author', 'text', 'at'].every(key => typeof comment[key] === 'string'), 'comments');
+        properties(comment, ['teacherOnly'], 'boolean', 'comments');
+      }
+      if (record.history !== undefined) for (const version of entries(record.history, 'record history')) {
+        check(typeof version.at === 'string', 'record history');values(version.values);
+      }
+      if (record.rubricScores !== undefined) check(Object.values(object(record.rubricScores, 'rubric scores')).every(score => typeof score === 'number' && Number.isFinite(score)), 'rubric scores');
+    }
+  }
+  // Broken references and existing key violations remain repairable in the app;
+  // malformed data structures cannot safely be opened.
+  for (const relationship of identified(schema.relationships, 'relationships')) {
+    check(['name', 'fromTableId', 'fromFieldId', 'toTableId', 'toFieldId'].every(key => typeof relationship[key] === 'string'), 'relationships');
+    properties(relationship, ['enforceKeys'], 'boolean', 'relationships');
+    if (relationship.cardinality !== undefined) check(['one-to-many', 'one-to-one'].includes(String(relationship.cardinality)), 'relationship cardinality');
+  }
+  const modes = ['table', 'form', 'cards', 'gallery', 'list', 'kanban', 'calendar', 'labels', 'report'];
+  for (const layout of identified(candidate.layouts, 'layouts')) {
+    check(typeof layout.name === 'string' && typeof layout.tableId === 'string' && modes.includes(String(layout.mode)), 'layouts');
+    properties(layout, ['locked'], 'boolean', 'layouts');
+    for (const key of ['fieldOrder', 'hiddenFieldIds']) if (layout[key] !== undefined) check(strings(layout[key]), 'layout fields');
+    if (layout.columnWidths !== undefined) check(Object.values(object(layout.columnWidths, 'column widths')).every(width => typeof width === 'number' && Number.isFinite(width)), 'column widths');
+  }
+  if (candidate.views !== undefined) for (const view of identified(candidate.views, 'saved views')) {
+    check(['name', 'tableId', 'search', 'searchFieldId'].every(key => typeof view[key] === 'string') && modes.includes(String(view.mode)), 'saved views');
+    for (const key of entries(view.sortKeys, 'saved sorting')) check(typeof key.fieldId === 'string' && ['asc', 'desc'].includes(String(key.direction)), 'saved sorting');
+    if (view.find !== null) {
+      const query = object(view.find, 'saved search');
+      check(['all', 'any'].includes(String(query.match)), 'saved search');
+      for (const rule of entries(query.rules, 'saved search rules')) {
+        check(typeof rule.fieldId === 'string' && typeof rule.value === 'string' && ['contains', 'equals', 'startsWith', 'endsWith', 'greaterThan', 'lessThan', 'between', 'isEmpty', 'isNotEmpty'].includes(String(rule.operator)), 'saved search rules');
+        properties(rule, ['value2'], 'string', 'saved search rules');
+      }
+    }
+  }
+  if (candidate.rubricCriteria !== undefined) for (const criterion of identified(candidate.rubricCriteria, 'rubric criteria')) check(typeof criterion.label === 'string' && typeof criterion.max === 'number' && Number.isFinite(criterion.max), 'rubric criteria');
+  const teacher = object(candidate.teacher, 'teacher settings');
+  check(typeof teacher.studentView === 'boolean' && strings(teacher.notes) && strings(teacher.rubric), 'teacher settings');
 }

@@ -9,8 +9,10 @@ import {
   parsePastedText,
   pasteCells,
   serializeSelection,
+  sortRows,
   updateCell,
 } from './gridModel';
+import { exportNativeJson, importNativeJson } from '../io/json';
 
 describe('gridModel', () => {
   it('classifies blank, number, text, and formula cells', () => {
@@ -128,6 +130,27 @@ describe('gridModel', () => {
     expect(getColumnName(0)).toBe('A');
     expect(getColumnName(25)).toBe('Z');
     expect(getColumnName(26)).toBe('AA');
+  });
+
+  it('clears merged cell contents without losing the merge when saved and reopened', () => {
+    let sheet = mergeCells(updateCell(createSheet(4, 4), { row: 0, col: 0 }, 'Notes'), {
+      start: { row: 0, col: 0 }, end: { row: 1, col: 1 },
+    });
+    sheet = clearCells(sheet, { start: { row: 0, col: 0 }, end: { row: 0, col: 0 } });
+    expect(sheet[0][0].rawValue).toBe('');
+    expect(sheet[0][0].merge).toEqual({ rowSpan: 2, colSpan: 2 });
+    expect(importNativeJson(exportNativeJson(sheet))[1][1].hiddenBy).toEqual({ row: 0, col: 0 });
+    sheet = clearCells(sheet, { start: { row: 1, col: 1 }, end: { row: 1, col: 1 } });
+    expect(sheet[1][1].hiddenBy).toEqual({ row: 0, col: 0 });
+  });
+
+  it('rejects sorting merged rows before their covered cells become detached', () => {
+    const sheet = mergeCells(createSheet(4, 4), { start: { row: 0, col: 0 }, end: { row: 1, col: 1 } });
+    const before = structuredClone(sheet);
+    expect(() => sortRows(sheet, { start: { row: 0, col: 0 }, end: { row: 3, col: 3 } }, 0, 'ascending')).toThrow(/Unmerge/);
+    expect(sheet).toEqual(before);
+    // A separate unmerged region remains sortable.
+    expect(sortRows(sheet, { start: { row: 2, col: 0 }, end: { row: 3, col: 3 } }, 0, 'ascending')[0][0].merge).toBeDefined();
   });
 
   it('recalculates formulas after referenced cells change', () => {

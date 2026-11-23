@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 import { exportExcel } from '../src/io/excel';
-import { updateCell, createSheet } from '../src/grid/gridModel';
+import { updateCell, createSheet, mergeCells } from '../src/grid/gridModel';
+import { exportNativeJson } from '../src/io/json';
 
 test.beforeEach(async ({ context, page }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -12,6 +13,24 @@ async function dismissSplash(page: Page) {
   await page.getByRole('button', { name: 'New Sheet' }).click();
   await expect(page.getByRole('dialog', { name: 'GridSplat™' })).toBeHidden();
 }
+
+test('clearing a merged cell keeps its shape through reload and sorting fails safely', async ({page}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Merge persistence runs in Chromium.');
+  const errors: string[] = [];page.on('pageerror', error => errors.push(error.message));
+  await dismissSplash(page);
+  const sheet = mergeCells(updateCell(createSheet(20,20), {row:0,col:0}, 'Merged notes'), {
+    start:{row:0,col:0}, end:{row:1,col:1},
+  });
+  await page.getByLabel('Import spreadsheet file').setInputFiles({name:'merged.gridsplat.json',mimeType:'application/json',buffer:Buffer.from(exportNativeJson(sheet))});
+  const cell = page.getByTestId('cell-A1');await expect(cell).toContainText('Merged notes');
+  await expect(page.getByTestId('cell-B2')).toHaveCount(0);
+  await cell.click();await page.keyboard.press('Delete');await expect(cell).not.toContainText('Merged notes');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('gridsplat.autosave.v1') || '{}').sheets?.[0]?.merges)).toEqual([{row:0,col:0,rowSpan:2,colSpan:2}]);
+  await page.reload();await dismissSplash(page);await expect(page.getByTestId('cell-B2')).toHaveCount(0);
+  await cell.click();await page.getByRole('button', {name:'Sort A to Z',exact:true}).click();
+  await expect(page.locator('.file-message')).toContainText('Unmerge cells');await expect(page.getByRole('grid')).toBeVisible();
+  await expect(page.getByTestId('cell-B2')).toHaveCount(0);expect(errors).toEqual([]);
+});
 
 test('shows the welcome splash and opens toolbar help by keyboard', async ({
   page,
@@ -373,6 +392,9 @@ test('freezes top rows and first columns by dragging dividers', async ({
 test('cancelled freeze gestures restore the pane boundary and permit a fresh drag', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Pointer capture flow runs in Chromium.');
   await dismissSplash(page);
+  // Let initial autosave finish so it cannot replace the gesture's status while
+  // this test is inspecting it on a slower browser runner.
+  await expect(page.getByText('Autosaved in this browser.', {exact:true})).toBeVisible();
   const divider = page.getByRole('button', {name: 'Drag vertical freeze divider'});
   await divider.evaluate(button => button.addEventListener('pointerdown', event => {
     button.dataset.testPointerId = String((event as PointerEvent).pointerId);

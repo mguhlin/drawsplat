@@ -66,6 +66,11 @@ inside this directory says otherwise, ListSplatTM code should be GPL-3.0-only.
 
 ## Opening files from another SplatWorks app
 
+Project imports validate tables, fields, records and saved settings before replacing
+open work or its browser draft. Damaged project files are rejected with a message;
+a damaged browser draft does not prevent starting the app. Keep project-file
+backups of important work.
+
 Recognized project and Office files open in the matching app in a new tab. The matching app must be installed at the same website; allow popups if prompted. Files transfer through temporary browser storage without an upload. The imported tab uses a separate session draft: save a project file before closing it. Existing saved projects stay in place. See the [SplatWorks FAQ](https://drawsplat.org/wiki/faq#splatworks).
 
 ## Access and Base exchange

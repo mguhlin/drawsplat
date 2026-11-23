@@ -60,6 +60,10 @@ Click a row or column header to select it; Shift-click another header to extend 
 
 Office exchange reads the first worksheet with common values, formulas, basic formatting and merges. Imports are limited to 20 MB, 2,000 rows, 200 columns and 100,000 cells. Keep original workbooks for advanced charts, macros and unsupported features.
 
+Clearing cell contents preserves merged-cell shapes through saving and reopening.
+Unmerge cells in the selected rows before sorting; a rejected sort leaves the
+sheet and undo history unchanged.
+
 ## Freeze-divider gestures
 
 Freeze adjustments track the active pointer synchronously, commit its release position, and restore the previous boundary when pointer capture is cancelled or lost. Later events from an old or unrelated pointer cannot continue that gesture. The status bar reports the committed count or cancellation. Browser checks exercise cancellation, a fresh drag, and both frozen axes after scrolling.
