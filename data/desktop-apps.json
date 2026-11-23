@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/mguhlin/splatworks-desktop",
-  "coreVersion": "1.0.0-rc.15",
+  "coreVersion": "1.0.0-rc.19",
   "toolsVersion": "1.0.0-rc.5",
   "apps": [
     {

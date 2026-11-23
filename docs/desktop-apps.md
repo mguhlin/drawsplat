@@ -26,6 +26,12 @@ QRSplat, ImageSplat, AudioSplat and VideoSplat are also available as separate
 smaller downloads. [Browser apps](../studio/index.html) remain available without
 installation; use those editions for Google Drive and Calendar connections.
 
+In SplatWorks Desktop, office apps share GridSplat’s colors. Tools use AudioSplat’s **DrawSplat™ Tools** header and rainbow bar. Each app keeps its own menus, icons and editing controls.
+
+## Recording in VideoSplat
+
+In SplatWorks Desktop, choose **Record video**, then set up camera/microphone access or choose a recording mode first. Allow the requested devices in the permission prompt. If access is blocked, check your system privacy settings and retry. Turn off devices you do not need in the recorder; available recording modes depend on your computer. VideoSplat chooses a recording format your system supports.
+
 ## What’s planned next
 
 More desktop apps are planned. We’re also improving file compatibility, everyday editing and saving, and how apps work together. Additional tools will be added as their local features are ready. The current downloads remain preview builds.
@@ -34,7 +40,7 @@ More desktop apps are planned. We’re also improving file compatibility, everyd
 
 - **Windows:** download the Windows setup file, open it and follow the installer.
 - **Mac:** download the disk image, open it and drag the app to Applications. Requires macOS 14 or later; supports Intel and Apple silicon.
-- **Linux:** download the Debian package and open it with your software installer. GTK 3 and WebKitGTK 4.1 are required. Other Linux distributions can use the portable archive from “Other formats.”
+- **Linux:** download the Debian package and open it with your software installer, which adds the required system libraries. Other Linux distributions can use the portable archive from “Other formats.”
 
 These are preview builds. Windows and Mac may show publisher warnings. If your school manages the computer, ask your technology team to approve installation.
 

@@ -92,19 +92,27 @@ qualification remain open. Local website verification passed 153 checks.
 
 ## Fourteen-app desktop and Home chooser
 
-The primary desktop download is `v1.0.0-rc.15`, native source `a8f75bd`, with
-[successful release workflow](https://github.com/mguhlin/splatworks-desktop/actions/runs/45268392420).
+The primary desktop download is `v1.0.0-rc.19`, native source `0af1ab4`, with
+[successful release workflow](https://github.com/mguhlin/splatworks-desktop/actions/runs/45290400624).
 GIFsplat, QRSplat, ImageSplat, AudioSplat, VideoSplat and MediaSplat join the eight
 existing apps. Home opens with the SplatWorks logo centered among all fourteen
 choices; returning Home retains open workspaces. ImageSplat includes its Fast
 background-removal model. MediaSplat uses awaited native saves and preserves
 outputs after cancellation or failure; saving an older output preserves newer edits.
 
-The exact candidate passed 150 Chromium/WebKit checks and 157 native checks on
-each platform, plus installer and package checks. A downloaded Linux runtime
-passed another 80 interface checks through its production loopback server.
-All fourteen distribution files match public release sizes, digests and SHA-256
-sidecars. Publisher signing and physical-device qualification remain open.
+The exact application passed 188 Chromium/WebKit checks, 163 native checks on
+Linux and 157 on Windows and Mac, plus installer and package checks. All fourteen
+public distribution files match their sizes, digests, SHA-256 sidecars and
+qualified CI checksums. Publisher signing and physical-device qualification
+remain open.
+
+The combined desktop app uses GridSplat colors for office apps and AudioSplat’s
+DrawSplat™ Tools rainbow headers for tools. App controls and document colors stay
+intact. VideoSplat has recoverable permission setup, native Linux consent and an
+MP4 capture/crop fallback. Linux packages declare their recording codecs. Native
+synthetic-device checks also decode the recorded video; physical devices are not
+qualified. CipherSplat waits for its input handlers before accepting typing,
+preventing a startup race. Browser app code remains unchanged.
 
 The download catalogue and `docs/desktop-apps.md` now explain all fourteen apps,
 the Home chooser, media saving and optional speech-model downloads. Both the
