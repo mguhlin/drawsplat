@@ -1,0 +1,2 @@
+/* Existing package links keep working inside the optional reference section. */
+(()=>{function reveal(){let target;try{target=document.getElementById(decodeURIComponent(location.hash.slice(1)))}catch{return}if(!target)return;for(let p=target.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;requestAnimationFrame(()=>target.scrollIntoView({block:'start'}));}addEventListener('hashchange',reveal);if(location.hash)reveal();})();

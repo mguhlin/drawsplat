@@ -14,6 +14,7 @@ root = Path(__file__).resolve().parent.parent
 page = root / 'pages/download.html'
 html = page.read_text()
 count = 0
+measured = {}
 
 def replace(match):
     global count
@@ -27,7 +28,9 @@ def replace(match):
         unpacked = sum(item.file_size for item in package.infolist())
     count += 1
     label = f'ZIP: {archive.stat().st_size / 1_000_000:.1f} MB · Unpacked: {unpacked / 1_000_000:.1f} MB'
-    return f'<small class="download-size" data-package="{filename}">{label}</small>'
+    result = f'<small class="download-size" data-package="{filename}">{label}</small>'
+    measured[filename] = result
+    return result
 
 updated = re.sub(r'<small class="download-size" data-package="([^"]+)">[^<]*</small>', replace, html)
 expected = 1 if args.only_package else 18
@@ -40,3 +43,13 @@ if args.check:
 else:
     page.write_text(updated)
     print(f'Updated {count} package sizes (decimal MB, rounded to one decimal place).')
+
+# The optional package section is canonical source for the simple download hub.
+template = root / "templates/download-packages.html"
+if template.exists():
+    original = template.read_text()
+    refreshed = re.sub(r'<small class="download-size" data-package="([^"]+)">[^<]*</small>', lambda m: measured.get(m.group(1), m.group(0)), original)
+    if args.check and refreshed != original:
+        raise SystemExit("Package template sizes differ; regenerate them.")
+    if not args.check and refreshed != original:
+        template.write_text(refreshed)

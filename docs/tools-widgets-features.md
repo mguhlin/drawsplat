@@ -672,11 +672,13 @@ Category: **Writing** · 22 components
 
 **Tool** · [Open CipherSplat](../solutions/CipherSplat/)
 
-- Encrypt and decrypt local files, folders, or text
-- Use password-based AES-256-GCM protection
+- Encrypt and unlock local files, folders, or text in a three-step workspace
+- Detect encrypted content automatically
+- Compress, encrypt and verify files before saving
 - Generate passwords and passphrases
-- Use OpenPGP keys
-- Check file integrity
+- Import local OpenPGP key files and inspect fingerprints
+- Restore authenticated folders or download original files and a ZIP fallback
+- Copy text results and open separate Help
 - Suggested classroom uses: demonstrate encryption, passwords, keys, integrity checks, and responsible protection of files using sample data
 
 ### DiagramSplat

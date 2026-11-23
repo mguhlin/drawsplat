@@ -8,7 +8,6 @@ def nav_html(current):
         base,sep,fragment=path.partition('#')
         url=os.path.relpath(ROOT/base,(ROOT/current).parent)+('/' if base.endswith('/') else '')+(sep+fragment if sep else '')
         return '<a data-no-action-icon href="'+escape(url,quote=True)+'">'+escape(label)+'</a>'
-    apps=[('app/whiteboard.html','Whiteboard'),('studio/index.html','All apps'),('pages/tools.html','Tools and widgets'),('games/index.html','Games')]
-    suite=[('pages/splatworks.html','SplatWorks overview'),('pages/splatlms.html','SplatLMS · Learning management'),('splatworks/layoutsplat/','LayoutSplat'),('splatworks/plansplat/','PlanSplat'),('splatworks/writesplat/','WriteSplat'),('splatworks/listsplat/','ListSplat'),('splatworks/showsplat/','ShowSplat'),('splatworks/gridsplat/','GridSplat')]
+    more=[('pages/splatworks.html','SplatWorks overview'),('wiki/for-technology-admins.html','For schools and technology admins'),('wiki/about-developer.html','About the developer'),('blog/index.html','Blog'),('index.html#guestbook','Guestbook'),('legal/terms-privacy.html','Privacy')]
     def dropdown(label,items):return '<details name="drawsplat-site-menu" class="site-nav-dropdown"><summary>'+label+'</summary><div class="site-nav-menu">'+''.join(link(p,t) for p,t in items)+'</div></details>'
-    return '<nav class="site-nav" aria-label="Primary navigation">'+dropdown('Apps',apps)+dropdown('SplatWorks',suite)+link('blog/index.html','Blog')+link('index.html#guestbook','Guestbook')+link('wiki/index.html','Wiki')+link('legal/terms-privacy.html','Privacy')+'</nav>'
+    return '<nav class="site-nav" aria-label="Primary navigation">'+link('studio/index.html','Browser apps')+link('pages/download.html#desktop-apps','Desktop apps')+link('wiki/index.html','Help')+dropdown('More',more)+'</nav>'

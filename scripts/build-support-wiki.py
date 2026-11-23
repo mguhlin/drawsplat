@@ -9,6 +9,8 @@ from markdown_it import MarkdownIt
 import html, json, re, os, hashlib, runpy
 from urllib.parse import urlencode
 from site_navigation import nav_html
+from desktop_catalog import build as build_downloads, choices
+build_downloads()
 from policy_content import refresh as refresh_policy, write_aliases as write_policy_aliases
 ROOT=Path(__file__).resolve().parents[1]
 runpy.run_path(str(ROOT/'scripts/build-splatworks-short-urls.py'))
@@ -60,11 +62,12 @@ EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.htm
 runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
 EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
 GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
+GROUPS['Start here'].insert(1,('wiki/desktop-apps.html','Use desktop apps','Choose, install, open and save with Windows, Mac or Linux apps.'))
 GROUPS['Start here'].insert(2, ('wiki/google-drive.html','Save to Google Drive','App-by-app actions and file formats, authorization, reopening files, troubleshooting and district OAuth setup.'))
 GROUPS['SplatWorks'].insert(1, ('wiki/splatlms.html','SplatLMS · Learning Management System','Courses, learner accounts, assessments, progress, SplatWorks Educator and PHP installation.'))
 GROUPS['SplatWorks'].append(('pages/splatlms.html','SplatLMS product and downloads','The SplatWorks Learning Management System, installer and first course.'))
 GROUPS['For educators'].append(('wiki/graphsplat-equations.html','GraphSplat · Equation Studio','LaTeX, math templates, equation examples, PNG/SVG, MathML and read-aloud descriptions.'))
-RENDER=['graphsplat-equations','splatlms','layoutsplat-books','layoutsplat-comic-studio','photo-blur','fontsplat','backdropsplat','layoutsplat-verification','plansplat','google-drive','layoutsplat-features','writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat-ebooks','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['desktop-apps','graphsplat-equations','splatlms','layoutsplat-books','layoutsplat-comic-studio','photo-blur','fontsplat','backdropsplat','layoutsplat-verification','plansplat','google-drive','layoutsplat-features','writesplat','layoutsplat-labels','layoutsplat-import-accuracy','layoutsplat-ebooks','layoutsplat','splatworks-domain','tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())
@@ -77,7 +80,7 @@ for name in RENDER:
   frag=('#'+url.split('#',1)[1]) if '#' in url else ''
   return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+('/' if url.split('#')[0].endswith('/') else '')+frag+'"'
  body=re.sub(r'(href|src)="([^"]+)"',rel,body)
- (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Save to Google Drive' if name=='google-drive' else 'Frequently asked questions (FAQs)' if name=='faq' else 'LayoutSplat: illustrated feature guide' if name=='layoutsplat-features' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
+ (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Use desktop apps' if name=='desktop-apps' else 'Save to Google Drive' if name=='google-drive' else 'Frequently asked questions (FAQs)' if name=='faq' else 'LayoutSplat: illustrated feature guide' if name=='layoutsplat-features' else name)+' · SplatWorks Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
 def relative(path,current): return os.path.relpath(ROOT/path,(ROOT/current).parent)
 FAQ_SECTIONS=[(re.sub(r'[^a-z0-9]+','-',title.lower()).strip('-'),title) for title in re.findall(r'^## (.+)$',(ROOT/'docs/faq.md').read_text(),re.M)]
@@ -94,13 +97,15 @@ def language_html(current):
  return '<details class="wiki-language" name="drawsplat-site-menu"><summary>Read in your language</summary><div class="wiki-language-menu"><p>Google machine translation · Opens a new tab.</p><ul>'+links+'</ul><a class="wiki-language-help" href="https://support.google.com/translate/answer/2534559" target="_blank" rel="noopener noreferrer">Translation help</a></div></details>'
 
 def directory(current):
+ tasks=[('guides/saving-exporting.html','Save or reopen my work','Keep a file you can open again.'),('wiki/desktop-apps.html','Install a desktop app','Choose the right download and get started.'),('wiki/google-drive.html','Save to Google Drive','Connect Drive when you need it.'),('guides/teacher-options-quick-start.html','Use SplatWorks at school','Start a lesson and work with your classroom.')]
+ rows=''.join('<li><a href="'+relative(p,current)+'">'+html.escape(t)+'</a><p>'+html.escape(d)+'</p></li>' for p,t,d in tasks)
  blocks=[]
  for group,items in GROUPS.items():
   if group=='For educators':items=[row for row in items if row[0] in EDUCATOR_MENU]
   items=menu_rows(group,items)
-  rows=''.join('<li><a href="'+relative(p,current)+'">'+html.escape(t)+'</a><p>'+html.escape(d)+'</p></li>' for p,t,d in items if p!='wiki/index.html')
-  blocks.append('<section class="wiki-directory-group"><h2>'+html.escape(group)+'</h2><ul>'+rows+'</ul></section>')
- return '<main><article><p class="landing-eyebrow">Official documentation · SplatWorks ecosystem</p><h1>SplatWorks Wiki</h1><p class="article-lede">The reference for the whole SplatWorks ecosystem: standalone tools, classroom widgets, games, the office suite, the DrawSplat whiteboard, and SplatLMS for learning management. Find component features, complete-suite installation, teaching guidance, licensing, privacy, and technical setup.</p><div class="wiki-start"><h2>Choose where to begin</h2><ol><li><a href="'+relative('wiki/tools-widgets-features.html',current)+'">Explore tools, widgets, and features by category</a> — Media, Play, Create, Data, Writing, Assessment, Classroom, and Organize.</li><li><a href="'+relative('wiki/splatlms.html',current)+'">Teach courses with SplatLMS</a> — learning management, SplatWorks Educator, and installation.</li><li><a href="'+relative('docs/district-selfhost.html',current)+'">Install the district tools suite</a> — Docker or native, with a rerunnable Quick Start checklist.</li><li><a href="'+relative('guides/teacher-options-quick-start.html',current)+'">Get started as a teacher</a> — use your school account and open your classrooms.</li><li><a href="'+relative('legal/terms-privacy.html',current)+'">Review privacy and district agreements</a> — match controls and documents to your deployment.</li></ol></div><p>Search every article using the sidebar. Existing guide links remain valid. Installation checklists also work in downloaded packages; use the online wiki when checking the current release.</p><p class="wiki-audiences">Start with <a href="'+relative('wiki/for-educators.html',current)+'">Educators</a>, <a href="'+relative('wiki/for-technology-admins.html',current)+'">Technology admins</a>, or <a href="'+relative('wiki/for-parents-and-students.html',current)+'">Parents and students</a>.</p><div class="wiki-directory">'+''.join(blocks)+'</div></article></main>'
+  links=''.join('<li><a href="'+relative(p,current)+'">'+html.escape(t)+'</a></li>' for p,t,_ in items if p!='wiki/index.html')
+  blocks.append('<section class="wiki-directory-group"><h2>'+html.escape(group)+'</h2><ul>'+links+'</ul></section>')
+ return '<main><article class="help-start"><h1>How can we help?</h1><p class="article-lede">Choose how you want to work, or find help with a task.</p>'+choices(current)+'<section><h2>Help with everyday tasks</h2><ul class="help-tasks">'+rows+'</ul></section><p><a href="'+relative('wiki/faq.html',current)+'">Frequently asked questions</a> · <a href="'+relative('pages/contact.html',current)+'">Contact support</a></p><aside class="help-admin"><h2>Setting up a school?</h2><p><a href="'+relative('wiki/for-technology-admins.html',current)+'">Open the technology admin guide</a> for school installation, accounts and privacy review.</p></aside><details class="help-reference"><summary>All reference articles</summary><div class="wiki-directory">'+''.join(blocks)+'</div></details></article></main>'
 for current in ['wiki/index.html','pages/support.html','guides/index.html']:
  (ROOT/current).write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SplatWorks Wiki · Support and documentation</title><meta name="description" content="Explore SplatWorks ecosystem tools, widgets, games, office apps and DrawSplat whiteboard features, complete-suite installation, school classrooms, licensing and privacy."><link rel="canonical" href="https://splatworks.org/wiki/"><link rel="stylesheet" href="'+relative('assets/css/app.css',current)+'"></head><body>'+directory(current)+'</body></html>')
 
@@ -137,7 +142,7 @@ for group,items in GROUPS.items():
    main=match.group(0)
    # Regenerated decoration never becomes part of canonical article content.
    main=re.sub(r'<img[^>]*class="wiki-guide-hero"[^>]*>', '', main)
-   if path.startswith(('wiki/', 'guides/')) and group not in ['Privacy and district review', 'Licensing and free access'] and not re.search(r'<img\b', main):
+   if path not in ['wiki/index.html','guides/index.html','wiki/desktop-apps.html'] and path.startswith(('wiki/', 'guides/')) and group not in ['Privacy and district review', 'Licensing and free access'] and not re.search(r'<img\b', main):
     hero='<img class="wiki-guide-hero" src="'+relative('assets/brand/splatworks-school-guides.png',path)+'" alt="" decoding="async" width="1536" height="512">'
     main=re.sub(r'(<main\b[^>]*>)',lambda m:m.group(1)+hero,main,count=1)
    toc=[];used=set(re.findall(r'id="([^"]+)"',main))
@@ -168,16 +173,27 @@ for group,items in GROUPS.items():
      item='<li><a '+('aria-current="page" ' if active else '')+'href="'+relative(target,path)+'">'+html.escape(label)+'</a>'
      links+=item+'</li>'
     nav.append('<section><h2>'+html.escape(category)+'</h2><ul>'+links+'</ul></section>')
+   quick=[('wiki/index.html','Help home'),('pages/download.html#desktop-apps','Download desktop apps'),('studio/index.html','Use browser apps'),('wiki/faq.html','Frequently asked questions'),('pages/contact.html','Contact support')]
+   def quick_link(target,label):
+    base,_,fragment=target.partition('#')
+    return '<li><a '+('aria-current="page" ' if base==path else '')+'href="'+relative(base,path)+('#'+fragment if fragment else '')+'">'+html.escape(label)+'</a></li>'
+   reference_open=' open' if group=='For technology admins' else ''
+   nav=['<section class="wiki-quick-links"><h2>Start here</h2><ul>'+''.join(quick_link(t,l) for t,l in quick)+'</ul></section><details class="wiki-reference"'+reference_open+'><summary>Browse reference topics</summary>'+''.join(nav)+'</details>']
    source_path='docs/'+Path(path).stem+'.md' if path.startswith('wiki/') and Path(path).stem in RENDER else path
-   header='<a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="'+relative('index.html',path)+'"><img src="'+relative('assets/brand/SplatWorks_logo.png',path)+'" alt="" width="44" height="44"><span>SplatWorks <strong>Wiki</strong></span></a>'+nav_html(path)+language_html(path)+'</header>'
-   sidebar='<aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics">'+''.join(nav)+'</nav></div></details></aside>'
+   header='<a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="'+relative('index.html',path)+'"><img src="'+relative('assets/brand/SplatWorks_logo.png',path)+'" alt="" width="44" height="44"><span>SplatWorks <strong>'+('Downloads' if path=='pages/download.html' else 'Help')+'</strong></span></a>'+nav_html(path)+language_html(path)+'</header>'
+   sidebar='<aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: save a file, install, desktop" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics">'+''.join(nav)+'</nav></div></details></aside>'
    toolbar='<div class="wiki-article-bar"><span>'+html.escape(group)+'</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/'+source_path+'">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section>'
    outline='<aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul>'+''.join(toc)+'</ul></nav><p class="wiki-note">Current documentation</p><a href="'+relative('pages/contact.html',path)+'">Report a documentation issue</a></aside>'
-   shell='<!-- wiki:start -->'+header+'<div class="wiki-layout">'+sidebar+'<div class="wiki-reading">'+toolbar+'<!-- wiki:main -->'+main+'<!-- wiki:end-main --></div>'+outline+'</div><footer class="wiki-footer">SplatWorks Wiki · Official setup, support, and district reference · <a href="'+relative('wiki/licensing.html',path)+'">Licensing</a></footer><!-- wiki:end -->'
+   shell='<!-- wiki:start -->'+header+'<div class="wiki-layout">'+sidebar+'<div class="wiki-reading">'+toolbar+'<!-- wiki:main -->'+main+'<!-- wiki:end-main --></div>'+outline+'</div><footer class="wiki-footer">SplatWorks Help · <a href="'+relative('legal/terms-privacy.html',path)+'">Privacy</a> · <a href="'+relative('wiki/licensing.html',path)+'">Licensing</a></footer><!-- wiki:end -->'
    s=s[:match.start()]+shell+s[match.end():]
    s=s.replace('</body>','<script src="'+relative('assets/js/support-index.js',path)+'" defer></script><script src="'+relative('assets/js/support-wiki.js',path)+'" defer></script></body>')
    s=re.sub(r'<script[^>]*src="[^\"]*wiki-language.js[^\"]*"[^>]*></script>','',s)
    s=s.replace('</body>','<script src="'+relative('assets/js/wiki-language.js',path)+'" defer></script></body>')
+   landing=path in ['wiki/index.html','pages/support.html','guides/index.html','pages/download.html']
+   s=re.sub(r'\sdata-wiki-landing="[^"]*"','',s)
+   if landing:s=re.sub(r'<html([^>]*)>',lambda m:'<html'+m.group(1)+' data-no-consent>' if 'data-no-consent' not in m.group(1) else m.group(0),s,count=1)
+   if landing:s=s.replace('data-wiki="true"','data-wiki="true" data-wiki-landing="'+('downloads' if path=='pages/download.html' else 'help')+'"')
+   if landing and 'get-started.css' not in s:s=s.replace('</head>','<link rel="stylesheet" href="'+relative('assets/css/get-started.css',path)+'"></head>')
    p.write_text(s)
   main=re.search(r'<main\b.*?</main>',s,re.S).group(0);plain=Plain();plain.feed(main)
   entries.append({'path':path,'title':title,'category':group,'description':desc,'text':re.sub(r'\s+',' ',' '.join(plain.parts)).strip()})

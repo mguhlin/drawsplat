@@ -1,0 +1,49 @@
+{
+  "repository": "https://github.com/mguhlin/splatworks-desktop",
+  "coreVersion": "1.0.0-rc.11",
+  "toolsVersion": "1.0.0-rc.5",
+  "apps": [
+    {
+      "id": "ciphersplat",
+      "name": "CipherSplat",
+      "binary": "CipherSplat",
+      "description": "Encrypt and unlock files or private text.",
+      "browser": "solutions/CipherSplat/"
+    },
+    {
+      "id": "gifsplat",
+      "name": "GIFsplat",
+      "binary": "GIFsplat",
+      "description": "Make animated GIFs.",
+      "browser": "solutions/gifsplat/"
+    },
+    {
+      "id": "qrsplat",
+      "name": "QRSplat",
+      "binary": "QRSplat",
+      "description": "Make QR codes.",
+      "browser": "solutions/qrsplat/"
+    },
+    {
+      "id": "imagesplat",
+      "name": "ImageSplat",
+      "binary": "ImageSplat",
+      "description": "Edit pictures and remove backgrounds.",
+      "browser": "solutions/imagesplat/"
+    },
+    {
+      "id": "audiosplat",
+      "name": "AudioSplat",
+      "binary": "AudioSplat",
+      "description": "Edit and export audio.",
+      "browser": "solutions/audiosplat/"
+    },
+    {
+      "id": "videosplat",
+      "name": "VideoSplat",
+      "binary": "VideoSplat",
+      "description": "Edit and export video.",
+      "browser": "solutions/videosplat/"
+    }
+  ]
+}

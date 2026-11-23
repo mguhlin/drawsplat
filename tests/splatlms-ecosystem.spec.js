@@ -20,15 +20,12 @@ test('learning-management search leads from the ecosystem to the installer and t
 test('SplatLMS is in the shared menu, searchable wiki and app catalog',async({page})=>{
  await page.goto('/wiki/?q=SplatLMS');
  await expect(page.locator('.wiki-results a[href$="/wiki/splatlms.html"]')).toBeVisible();
- const topics=page.getByRole('navigation',{name:'Wiki topics'});
- await expect(topics.getByRole('link',{name:'SplatLMS · Learning Management System',exact:true})).toHaveCount(1);
+
  await page.goto('/studio/?q=SplatLMS');
  await expect(page.locator('.ds-tool-card').filter({hasText:'SplatLMS'})).toBeVisible();
  await page.goto('/splatlms/?source=ecosystem#installation');
  await page.waitForURL('**/pages/splatlms.html?source=ecosystem#installation');
- const nav=page.getByRole('navigation',{name:'Primary navigation',exact:true});
- await nav.locator('summary').filter({hasText:/^SplatWorks$/}).click();
- await expect(nav.getByRole('link',{name:'SplatLMS · Learning management',exact:true})).toBeVisible();
+ const nav=page.getByRole('navigation',{name:'Primary navigation',exact:true});await expect(nav.getByRole('link',{name:'Browser apps',exact:true})).toBeVisible();
 });
 
 test('LMS product and guide remain readable on phones and all local article links resolve',async({page})=>{

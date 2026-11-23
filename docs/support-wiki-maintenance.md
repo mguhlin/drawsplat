@@ -56,3 +56,9 @@ SplatWorks is the ecosystem. DrawSplat refers to the whiteboard. Main creative a
 The five office apps use GPL-3.0-only; the ecosystem brand does not relicense DrawSplat or standalone tools. Historical releases, archive filenames, and signed proposals retain their context and approved scope. New versioned packages must be rebuilt before claiming that existing downloads contain current naming or policies. The current source archive always follows the repository.
 
 After a privacy change, rebuild the combined packet and verify the local notice builder, component/service disclosures, backend-specific controls, and agreement register status. Preserve signed originals; a naming change never establishes a district signature or expands an agreement.
+
+## Simple user entry points
+
+The home page, Downloads and Help use the same browser-app and desktop-app choices. Keep Windows, Mac and Linux downloads near the top of Downloads. User-facing copy should explain how to open an app and save work; school hosting, package internals and exhaustive reference lists stay behind clearly labeled links or disclosure controls.
+
+Desktop release versions and app names live in `data/desktop-apps.json`. `scripts/desktop_catalog.py` generates the download page from that data and `templates/download-packages.html`, which preserves existing browser-package links and anchors. `docs/desktop-apps.md` is the short user guide. After changes, run `scripts/build-support-wiki.py`, then check privacy coverage and desktop/mobile navigation. Existing package fragments must reveal the optional package section.

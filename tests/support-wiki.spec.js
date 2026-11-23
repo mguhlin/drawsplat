@@ -2,8 +2,8 @@ const {test,expect}=require('@playwright/test');
 const policyLegacyLinks=require('../data/policy-legacy-links.json');
 
 test('one policy entry exposes the complete policy and prints optional details without losing reader choices',async({page})=>{
- await page.goto('/wiki/');
- const privacy=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'Privacy and district review',exact:true})});
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ const privacy=page.locator('main .wiki-directory').locator('section').filter({has:page.getByRole('heading',{name:'Privacy and district review',exact:true})});
  await expect(privacy.getByRole('link')).toHaveCount(1);
  await privacy.getByRole('link',{name:'Security, privacy and terms',exact:true}).click();
  await expect(page.locator('main h1')).toHaveText('Security, privacy and terms');await page.waitForLoadState('load');
@@ -33,7 +33,7 @@ test('legacy policy URLs retain all incoming fragments and a single canonical po
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
 });
 test('search covers article text, supports deep links and browser history',async({page})=>{
- await page.goto('/wiki/');
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
  await page.getByLabel('Search the wiki',{exact:true}).fill('bundled autofilled');
  await page.getByRole('button',{name:'Search',exact:true}).click();
  await expect(page.locator('.wiki-results')).toBeVisible();
@@ -41,7 +41,7 @@ test('search covers article text, supports deep links and browser history',async
  await expect(page).toHaveURL(/q=bundled\+autofilled/);
  await page.reload();await expect(page.locator('.wiki-results')).toBeVisible();
  await page.getByRole('button',{name:'Back to article'}).click();
- await expect(page.locator('main h1')).toHaveText('SplatWorks Wiki');
+ await expect(page.locator('main h1')).toHaveText('How can we help?');
  await page.goBack();await expect(page.locator('.wiki-results')).toBeVisible();
 });
 for(const query of ['NDPA','OAuth','AGPL','native','feedback','retention']){
@@ -59,10 +59,9 @@ test('original MySQL guide URL has wiki navigation and current district workflow
  await expect(page).toHaveURL(/#understand-the-accounts/);
  await expect(page.getByRole('navigation',{name:'Wiki topics'}).getByRole('link',{name:'MySQL / MariaDB setup'})).toHaveAttribute('aria-current','page');
 });
-test('mobile topics collapse and search remains usable without overflow',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/wiki/');
- await expect(page.locator('.wiki-topics')).not.toHaveAttribute('open','');
- await page.locator('.wiki-topics>summary').click();
+test('mobile help search stays available without overflow',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ await expect(page.locator('.wiki-topics')).toHaveAttribute('open','');
  await page.getByLabel('Search the wiki',{exact:true}).fill('CSV');await page.getByRole('button',{name:'Search',exact:true}).click();
  await expect(page.locator('.wiki-results')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
@@ -95,8 +94,8 @@ test('Wiki brand returns readers to the main DrawSplat site',async({page})=>{
  }
 });
 test('SplatWorks has dedicated searchable guides and stays inside its article column',async({page})=>{
- await page.goto('/wiki/');
- const group=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'SplatWorks',exact:true})});
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ const group=page.locator('main .wiki-directory').locator('section').filter({has:page.getByRole('heading',{name:'SplatWorks',exact:true})});
  await expect(group.getByRole('link')).toHaveCount(10);
  await expect(group.locator('a[href$="backdropsplat.html"]')).toHaveCount(1);
  await expect(group.locator('a[href*="layoutsplat"]')).toHaveCount(1);
@@ -135,8 +134,8 @@ test('one LayoutSplat entry leads to all detailed guides while existing URLs rem
  }
 });
 test('audience guides keep teaching concise and route school and family setup correctly',async({page})=>{
- await page.goto('/wiki/');
- const topics=page.getByRole('navigation',{name:'Wiki topics'});
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ const topics=page.locator('main .wiki-directory');
  const educators=topics.locator('section').filter({has:page.getByRole('heading',{name:'For educators',exact:true})});
  await expect(educators.getByRole('link')).toHaveCount(8);
  await expect(topics.getByRole('heading',{name:'For technology admins',exact:true})).toBeVisible();
@@ -155,8 +154,8 @@ test('audience guides keep teaching concise and route school and family setup co
  await page.goto('/wiki/?q=scratch');await expect(page.locator('.wiki-results a').filter({hasText:'Scratch art'})).toBeVisible();
 });
 test('FAQ is in Start here, searchable, linkable, and readable without JavaScript',async({page,browser})=>{
- await page.goto('/wiki/');
- const start=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'Start here',exact:true})});
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ const start=page.locator('main .wiki-directory').locator('section').filter({has:page.getByRole('heading',{name:'Start here',exact:true})});
  await start.getByRole('link',{name:'Frequently asked questions (FAQs)',exact:true}).click();
  await expect(page.locator('main h1')).toHaveText('Frequently asked questions (FAQs)');
  expect(await page.locator('main h3').count()).toBeGreaterThan(30);
@@ -182,8 +181,8 @@ test('developer page is last in Wiki topics and addresses project contact correc
  await page.route('**/assets/js/contact.js*',async route=>{const response=await route.fetch(),source=await response.text();if(!source.includes('location.href=draftUrl;')){await route.abort();throw Error('Contact navigation boundary changed; keep native mail apps blocked.');}await route.fulfill({response,body:source.replace('location.href=draftUrl;','window.__interceptedEmailDraft=draftUrl;')});});
  await page.addInitScript(()=>localStorage.setItem('drawsplat.googleScriptUrl','https://script.google.com/macros/s/school-example/exec'));
  let posts=0;await page.route('https://script.google.com/**',route=>{posts++;route.abort()});
- await page.goto('/wiki/');
- const links=page.getByRole('navigation',{name:'Wiki topics'}).getByRole('link');
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ const links=page.locator('main .wiki-directory').getByRole('link');
  await expect(links.last()).toHaveText('About the Developer');await links.last().click();
  await expect(page.locator('main')).toContainText('J. M. Guhlin');
  await expect(page.locator('main')).toContainText('multilingual classrooms');
@@ -202,8 +201,8 @@ test('developer page is last in Wiki topics and addresses project contact correc
  await page.goto('/wiki/?q=developer+multilingual');await expect(page.locator('.wiki-results a').filter({hasText:'About the Developer'})).toBeVisible();
 });
 test('FAQ page menu jumps to seven sections and separates Docker and native ports',async({page})=>{
- await page.goto('/wiki/');await expect(page.locator('.wiki-faq-menu')).toHaveCount(0);
- await page.getByRole('navigation',{name:'Wiki topics'}).getByRole('link',{name:'Frequently asked questions (FAQs)',exact:true}).click();
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);await expect(page.locator('.wiki-faq-menu')).toHaveCount(0);
+ await page.locator('main .wiki-directory').getByRole('link',{name:'Frequently asked questions (FAQs)',exact:true}).click();
  await page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link',{name:'Saving and sharing',exact:true}).click();
  await expect(page).toHaveURL(/faq.html#saving-and-sharing$/);
  await expect(page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link')).toHaveCount(7);
@@ -232,9 +231,9 @@ test('Wiki language menu offers opt-in public-page translations without sending 
 test('ecosystem reference covers registry components, categories, and searchable features',async({page})=>{
  const registry=require('../data/drawsplat-tools.json');
  const components=registry.tools.filter(t=>['tool','widget','game','workspace'].includes(t.type));
- await page.goto('/wiki/');
- await expect(page.locator('main')).toContainText('whole SplatWorks ecosystem');
- await page.locator('main').getByRole('link',{name:'Explore tools, widgets, and features by category'}).click();
+ await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
+ await expect(page.locator('.help-reference')).toHaveAttribute('open','');
+ await page.locator('main').getByRole('link',{name:'Ecosystem tools, widgets and features',exact:true}).click();
  for(const category of registry.categories)await expect(page.locator('main h2').filter({hasText:category.name})).toHaveCount(1);
  for(const component of components){
  const links=page.locator('main a').filter({hasText:'Open '+component.name});

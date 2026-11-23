@@ -13,7 +13,7 @@ This repository keeps its original **`mguhlin/drawsplat`** name. Existing DrawSp
 <p align="center">
   <a href="https://splatworks.org">Open SplatWorks</a> ·
   <a href="https://splatworks.org/studio/">Browse all apps</a> ·
-  <a href="https://splatworks.org/wiki/">Read the wiki</a> ·
+  <a href="https://splatworks.org/wiki/">Get help</a> ·
   <a href="https://splatworks.org/pages/download.html">Downloads</a> ·
   <a href="https://splatworks.org/docs/district-selfhost.html">District setup</a>
 </p>

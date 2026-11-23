@@ -10,7 +10,7 @@
   const script = [...document.scripts].find(s => s.src.includes('/support-wiki.js'));
   const root = script.dataset.root ? new URL(script.dataset.root) : new URL('../../', script.src);
   const topics = document.querySelector('.wiki-topics');
-  if (matchMedia('(max-width:700px)').matches) topics.open = false;
+  if (matchMedia('(max-width:700px)').matches && !document.body.dataset.wikiLanding) topics.open = false;
   const print = document.querySelector('.wiki-print');
   print.hidden = false;
   print.addEventListener('click', () => window.print());
@@ -47,7 +47,7 @@
     }
     status.textContent = matches.length ? `${matches.length} article${matches.length === 1 ? '' : 's'} matching “${query}”.` : `No articles match “${query}”. Try fewer words, or browse the topics.`;
     main.hidden = true; outline.hidden = true; results.hidden = false;
-    if (matchMedia('(max-width:700px)').matches) topics.open = false;
+    if (matchMedia('(max-width:700px)').matches && !document.body.dataset.wikiLanding) topics.open = false;
   }
   form.addEventListener('submit', event => {
     event.preventDefault(); const url = new URL(location.href);
