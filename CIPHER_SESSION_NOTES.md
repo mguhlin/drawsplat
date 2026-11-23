@@ -88,3 +88,28 @@ all eight included apps, and keeps a visible next-steps section for compatibilit
 offline/usability work and a signed stable release. The six smaller standalone
 apps remain at `tools-v1.0.0-rc.5`. Publisher signing and physical-device
 qualification remain open. Local website verification passed 153 checks.
+
+
+## Fourteen-app desktop and Home chooser
+
+The primary desktop download is `v1.0.0-rc.15`, native source `a8f75bd`, with
+[successful release workflow](https://github.com/mguhlin/splatworks-desktop/actions/runs/45268392420).
+GIFsplat, QRSplat, ImageSplat, AudioSplat, VideoSplat and MediaSplat join the eight
+existing apps. Home opens with the SplatWorks logo centered among all fourteen
+choices; returning Home retains open workspaces. ImageSplat includes its Fast
+background-removal model. MediaSplat uses awaited native saves and preserves
+outputs after cancellation or failure; saving an older output preserves newer edits.
+
+The exact candidate passed 150 Chromium/WebKit checks and 157 native checks on
+each platform, plus installer and package checks. A downloaded Linux runtime
+passed another 80 interface checks through its production loopback server.
+All fourteen distribution files match public release sizes, digests and SHA-256
+sidecars. Publisher signing and physical-device qualification remain open.
+
+The download catalogue and `docs/desktop-apps.md` now explain all fourteen apps,
+the Home chooser, media saving and optional speech-model downloads. Both the
+primary description and roadmap use user-facing language, with more desktop
+apps planned as their local features become ready. The six smaller standalone
+packages remain at `tools-v1.0.0-rc.5`. Keep the Schools & Districts privacy/DPA
+hub and all legal resources intact. Native engineering details and receipts
+remain in the sibling repository's `SESSION_NOTES.md` and ignored `output/` tree.

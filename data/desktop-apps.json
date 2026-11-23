@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/mguhlin/splatworks-desktop",
-  "coreVersion": "1.0.0-rc.14",
+  "coreVersion": "1.0.0-rc.15",
   "toolsVersion": "1.0.0-rc.5",
   "apps": [
     {
@@ -46,7 +46,7 @@
       "browser": "solutions/videosplat/"
     }
   ],
-  "coreDescription": "Documents, spreadsheets, databases, presentations, publications, planning, PDFs and encryption in one local app. No account required.",
+  "coreDescription": "Fourteen apps for office work, PDFs, encryption, images, GIFs, QR codes, audio and video. Choose an app on the new Home screen and switch without closing your work. No account required.",
   "coreAvailableApps": [
     "ListSplat",
     "GridSplat",
@@ -55,8 +55,14 @@
     "LayoutSplat",
     "PlanSplat",
     "PDFsplat",
-    "CipherSplat"
+    "CipherSplat",
+    "GIFsplat",
+    "QRSplat",
+    "ImageSplat",
+    "AudioSplat",
+    "VideoSplat",
+    "MediaSplat"
   ],
   "corePlannedApps": [],
-  "coreNextSteps": "Continue improving file compatibility, offline workflows and usability across the core apps, and prepare a stable release with verified publisher signing and device testing."
+  "coreNextSteps": "More desktop apps are planned. We\u2019re also improving file compatibility, everyday editing and saving, and how apps work together. Additional tools will be added as their local features are ready."
 }

@@ -30,8 +30,8 @@ from racing that assertion.
 
 - `f064c39`: ListSplat and GridSplat fixes, production bundles and regression tests.
 - `1597bca`: canonical privacy output and production merge checks in CI.
-- The download page links [PDF/Cipher v1.0.0-rc.10](https://github.com/mguhlin/splatworks-desktop/releases/tag/v1.0.0-rc.10)
-  and [six standalone apps tools-v1.0.0-rc.4](https://github.com/mguhlin/splatworks-desktop/releases/tag/tools-v1.0.0-rc.4).
+- The download page links [fourteen-app SplatWorks Desktop v1.0.0-rc.15](https://github.com/mguhlin/splatworks-desktop/releases/tag/v1.0.0-rc.15)
+  and [six standalone apps tools-v1.0.0-rc.5](https://github.com/mguhlin/splatworks-desktop/releases/tag/tools-v1.0.0-rc.5).
   The native repository's `SESSION_NOTES.md` records platform checks, public hashes
   and signing/device limits.
 - Production checks passed at [ListSplat](https://splatworks.org/splatworks/listsplat/)

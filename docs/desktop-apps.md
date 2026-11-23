@@ -4,7 +4,7 @@
 
 ## Choose an app
 
-**SplatWorks Desktop** combines eight apps in one window:
+**SplatWorks Desktop** combines fourteen apps in one window:
 
 - **ListSplat:** lists and databases.
 - **GridSplat:** spreadsheets, formulas and charts.
@@ -14,17 +14,21 @@
 - **PlanSplat:** tasks, courses and study plans.
 - **PDFsplat:** PDF editing and local OCR.
 - **CipherSplat:** file and text encryption.
+- **GIFsplat:** animated GIFs.
+- **QRSplat:** QR codes.
+- **ImageSplat:** images, layers and background removal.
+- **AudioSplat:** multitrack audio, recording and WAV/MP3 export.
+- **VideoSplat:** video timelines, titles, captions and local export.
+- **MediaSplat:** trim, split, join, transcribe and add subtitles.
 
-Use the **Apps** menu to switch; each workspace stays open. GIFsplat, CipherSplat,
+The app opens on **Home**, with the SplatWorks logo in the center and app choices around it. Choose an app, then return **Home** or use the **Apps** menu whenever you want to switch. Each workspace stays open. GIFsplat, CipherSplat,
 QRSplat, ImageSplat, AudioSplat and VideoSplat are also available as separate
 smaller downloads. [Browser apps](../studio/index.html) remain available without
 installation; use those editions for Google Drive and Calendar connections.
 
 ## What’s planned next
 
-Continue improving file compatibility, offline workflows and usability across
-the core apps, then prepare a stable release with verified publisher signing and
-device testing. The current downloads remain preview builds.
+More desktop apps are planned. We’re also improving file compatibility, everyday editing and saving, and how apps work together. Additional tools will be added as their local features are ready. The current downloads remain preview builds.
 
 ## Install and open
 
@@ -43,6 +47,8 @@ Use the app's Open or Choose files control. Use Save or Save As to choose where 
 In CipherSplat, enter a password or import an OpenPGP key, then add your content. Files are processed and saved automatically when credentials are ready. Text results can also be copied. Keep your password or private key somewhere safe; a forgotten password cannot be recovered.
 
 ShowSplat exports WebDeck HTML for presenting in a browser. Export HTML or PDF and open it in your browser to print. GridSplat project files preserve sheet data, formulas and cell formatting; export charts and picture graphs as images to keep their appearance.
+
+AudioSplat and VideoSplat can save portable editable projects. In MediaSplat, process the media, then save each output or **Save all as ZIP**. Keep the app open until your saves finish. MediaSplat accepts up to 256 MiB of source media at a time. ImageSplat includes the Fast background-removal model. Speech models are optional downloads: enable online connections in Settings to obtain one before using it offline.
 
 ## Need help?
 
