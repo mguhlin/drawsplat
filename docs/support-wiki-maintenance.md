@@ -47,7 +47,7 @@ Use LayoutSplat File → Clear saved browser data separately when erasing a draf
 
 ## Shared site navigation
 
-The five top-level items are Apps (including Whiteboard), SplatWorks, Blog, Guestbook, and Wiki. `scripts/site_navigation.py` defines the links; `scripts/build-site-navigation.py` applies them to public site headers. The Wiki builder runs this step automatically. Typing Games belongs in the Games directory. Educator resources belong in the Wiki’s For educators section. Do not add independent copies of the old Support, Technical, or For Educators top menus.
+The primary links are Browser apps, Desktop apps, Schools & Districts, Help, and More. `scripts/site_navigation.py` defines them; `scripts/build-site-navigation.py` applies them to public headers. Keep Schools & Districts visible without opening More or the reference directory. Its source is `docs/schools-and-districts.md`; the wiki builder publishes it at `/schools/`. Keep privacy, DPA/NDPA, FERPA/COPPA, GDPR, accessibility, and setup links explicit there. Specialized legal documents and the canonical policy remain at their existing URLs.
 
 ## Ecosystem and tool naming
 

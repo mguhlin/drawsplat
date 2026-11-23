@@ -25,6 +25,8 @@ Teachers should use the school sign-in path you set up. Do not share the distric
 
 ## Review privacy and access
 
+**[Schools & Districts: privacy, DPA, FERPA, GDPR, and school resources](../schools/)** brings the review documents and setup links together on one page.
+
 Start with [Compliance and district review](../wiki/compliance.html). It explains which controls apply to each storage path. Use the [NDPA / DPA review packet](../legal/ndpa-packet.html) when reviewing an agreement.
 
 The [Apps Script Compliance Console](../guides/compliance-guide.html) manages its own Google-backed workflows. It does not manage the district database’s private boards or classroom tables. Set and document your district’s access, retention, export, and deletion procedures.

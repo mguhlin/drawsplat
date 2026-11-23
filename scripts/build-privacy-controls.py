@@ -16,7 +16,7 @@ def write(path,content):
 # Walk only public roots, pruning dependencies/build artifacts. This also works
 # in extracted modules without a Git checkout and includes newly added routes.
 pages=[]
-public=['app','solutions','splatworks','games','studio','parents','admin','hub','legal','pages','guides','wiki','languages','community','privacy']
+public=['app','solutions','splatworks','games','studio','parents','admin','hub','legal','pages','guides','wiki','languages','community','privacy','schools']
 for folder in public:
  for directory,dirs,files in os.walk(ROOT/folder):
   dirs[:]=[d for d in dirs if d not in ['node_modules','dist','tests','test','vendor','webdeck','.tmp','src']]
@@ -38,7 +38,7 @@ for name in sorted(set(pages)):
 # Target document routes, preserving compression for large JS/WASM/media files.
 headers=(ROOT/'_headers').read_text()
 headers=re.sub(r'\n# splat-document-privacy:start\n.*?# splat-document-privacy:end\n?', '\n', headers, flags=re.S).rstrip()
-document_prefixes=['/pages/','/wiki/','/legal/','/guides/','/docs/','/blog/']
+document_prefixes=['/pages/','/wiki/','/legal/','/guides/','/docs/','/blog/','/schools/']
 routes={'/','/*/','/*.html',*(prefix+'*' for prefix in document_prefixes)}
 for name in set(pages+[str(p.relative_to(ROOT)) for p in ROOT.glob('*.html')]):
  if name.endswith('/index.html') or name=='index.html':continue

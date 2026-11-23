@@ -1,10 +1,10 @@
 const {test,expect}=require('@playwright/test');
 const policyLegacyLinks=require('../data/policy-legacy-links.json');
 
-test('one policy entry exposes the complete policy and prints optional details without losing reader choices',async({page})=>{
+test('school review links expose the complete policy and prints optional details without losing reader choices',async({page})=>{
  await page.goto('/wiki/');await page.locator('.help-reference').evaluate(e=>e.open=true);
  const privacy=page.locator('main .wiki-directory').locator('section').filter({has:page.getByRole('heading',{name:'Privacy and district review',exact:true})});
- await expect(privacy.getByRole('link')).toHaveCount(1);
+ await expect(privacy.getByRole('link',{name:'Schools & Districts · Privacy, DPA, FERPA and GDPR',exact:true})).toBeVisible();await expect(privacy.getByRole('link',{name:'District privacy review worksheet',exact:true})).toBeVisible();
  await privacy.getByRole('link',{name:'Security, privacy and terms',exact:true}).click();
  await expect(page.locator('main h1')).toHaveText('Security, privacy and terms');await page.waitForLoadState('load');
  await expect(page.getByRole('link',{name:'Manage browser data and connections',exact:true})).toBeVisible();

@@ -48,3 +48,18 @@ The published desktop suite is `v1.0.0-rc.11` and the standalone tools are
 metadata and adjacent checksums. The downloaded Linux suite and standalone
 CipherSplat each passed eight Chromium/WebKit workflow checks. The website now
 uses `data/desktop-apps.json` for its simple desktop download catalogue.
+
+## School and district resource entry point
+
+`/schools/` provides one printable overview of privacy, DPA/NDPA paperwork,
+FERPA/COPPA, GDPR/UK GDPR, security, providers, accessibility, downloads, and
+school setup. The main navigation and Help home expose it directly. Existing
+policy URLs, agreement templates, execution status, and legacy fragments remain.
+The canonical policy opens the enclosing disclosure for a linked section.
+
+Validation passed 152 wiki/navigation/privacy/Drive checks, 27 school-page checks
+across Chromium/Firefox/WebKit, all resource links and fragments, and two automated
+WCAG A/AA scans with no reported violations. Wiki/navigation/privacy generation
+is repeatable. Native office integration remains in progress in the sibling
+SplatWorks Desktop checkout; the published combined suite remains rc.11 until its
+expanded candidate passes the release gates.

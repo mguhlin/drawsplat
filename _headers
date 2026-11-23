@@ -231,6 +231,9 @@
 /pages/*
   Cache-Control: no-transform
 
+/schools/*
+  Cache-Control: no-transform
+
 /solutions/CipherSplat/help
   Cache-Control: no-transform
 
