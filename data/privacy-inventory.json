@@ -169,7 +169,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "768710cb256e2360f492ad47dc6b4323f9b7fc5add9bddd77256fac33a2a733c"
+      "entrySha256": "fe6f953369f9ae174ea90e789af597184a105bb7a83b50d4a7e3e367e6259676"
     },
     {
       "id": "showsplat",
@@ -242,7 +242,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "9ba51870fdcaacd89a4d3dfee63c7f3e7776c5cea769263722033b48935475f8"
+      "entrySha256": "5b435f2ee52af27a070adf3acfa63ac5248976dd32f344f39180bfe58aeab0e3"
     },
     {
       "id": "layoutsplat",
@@ -336,7 +336,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "385b093ba171354b4a05aa1a98341e23ef69f3f372251d007ebe99741229f736"
+      "entrySha256": "389b09b545635bf8ae7a4f27edae773e21c4a8a8c2c3e59a8fccb39b7095d774"
     },
     {
       "id": "animated-gif",
