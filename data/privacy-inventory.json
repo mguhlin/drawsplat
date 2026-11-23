@@ -543,7 +543,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "9571e6d84a78e94b888026413d0f147cfb0d1d76c6a29f0d2eb4b239694855bc"
+      "entrySha256": "37199a40f4d2276a3e6ede84171e0ddbdc24cf796492fb187deb779d40a15e85"
     },
     {
       "id": "clock-wizard",
