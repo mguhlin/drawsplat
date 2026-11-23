@@ -1,3 +1,4 @@
+import {desktopHost} from '../../shared/desktop-workspace.js';
 import {isTransferredWorkspace} from '../../shared/file-bridge.js';
 import {
   BarChart3,
@@ -193,7 +194,7 @@ function buildMenuItems(
 
 export function App() {
   const { lang, setLang, t } = useI18n();
-  const [isSplashVisible, setIsSplashVisible] = useState(!isTransferredWorkspace());
+  const [isSplashVisible, setIsSplashVisible] = useState(!desktopHost()&&!isTransferredWorkspace());
   const [toastMessage, setToastMessage] = useState('');
   const [dialogKind, setDialogKind] = useState<DialogKind>(null);
   const [sheetMatrix, setSheetMatrix] = useState<SheetMatrix | null>(null);

@@ -3811,10 +3811,11 @@ import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredW
     els.globalAudioFile.value = '';
   });
   async function openShowFile(file){
-    const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
+    let ticket;
     try{
       if(await routeFileToApp(file,'showsplat')){setStatus('Opened the file in its matching SplatWorks app.');return;}
       await assertSupportedFile(file,'showsplat');
+      ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
       const content=/\.(pdf|pptx|odp)$/i.test(file.name) || file.type==='application/pdf' ? await file.arrayBuffer() : await file.text();
       await importDeckFile(file,content,ticket);
       if(/\.json$/i.test(file.name))desktopWorkspace?.acceptCurrent();

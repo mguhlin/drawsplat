@@ -133,6 +133,6 @@ function transfer(options, mode) {
   return completion;
 }
 
-export function saveToGoogleDrive(options) { return transfer(options, 'save'); }
+export function saveToGoogleDrive(options) { if(globalThis.SplatDesktop)return Promise.reject(new Error('Use the browser edition for Google Drive connections.'));return transfer(options, 'save'); }
 export function openFromGoogleDrive(options) { return transfer(options, 'open'); }
 export function connectGoogleDrive(options) { return transfer(options, 'connect'); }

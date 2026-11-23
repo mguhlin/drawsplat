@@ -1162,6 +1162,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   async function tryCloudProvider(providerName: string) {
+    if(desktopHost()){setFileMessage('Use the browser edition for cloud connections.');return;}
     const provider = cloudProviders.find((item) => item.name === providerName);
 
     if (!provider) {
@@ -1191,6 +1192,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   async function loadCloudProvider(providerName: string) {
+    if(desktopHost()){setFileMessage('Use the browser edition for cloud connections.');return;}
     const provider = cloudProviders.find((item) => item.name === providerName);
     const fileId = provider?.getLastFileId();
 

@@ -2187,12 +2187,13 @@ function bootstrap(): void {
     refresh();
   });
   async function openWriteFile(file:File){
-    const ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
+    let ticket: import('../../shared/desktop-workspace.js').DesktopReplacement|null|undefined;
     const name = file.name;
     const baseTitle = name.replace(/\.[^.]+$/, '');
     try {
       if(await routeFileToApp(file,'writesplat')){getRequiredElement('statusSaved').textContent='Opened the file in its matching SplatWorks app.';return;}
       await assertSupportedFile(file,'writesplat');
+      ticket=await desktopWorkspace?.beginReplace();if(desktopWorkspace&&!ticket)return;
       if(/\.json$/i.test(name)){
         const parsed:unknown=JSON.parse(await file.text());assertWriteSplatFile(parsed);ticket?.verify();loadNativeFile(parsed);currentLocalDocumentId=null;refresh();desktopWorkspace?.acceptCurrent();
         getRequiredElement('statusSaved').textContent=`Opened ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;return;
