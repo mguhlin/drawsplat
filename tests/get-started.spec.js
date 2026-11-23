@@ -18,3 +18,9 @@ test('existing package fragments open the optional reference and remain usable',
 test('primary download choices work without JavaScript',async({browser})=>{
  const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto(new URL('/pages/download.html',test.info().project.use.baseURL).href);await expect(page.getByRole('link',{name:'Download SplatWorks-Desktop for Windows',exact:true})).toBeVisible();await page.locator('.individual-desktop>summary').click();await expect(page.getByRole('link',{name:'Download CipherSplat for Mac',exact:true})).toBeVisible();await context.close();
 });
+
+test('the desktop download explains its current apps and the next release',async({page})=>{
+ const catalog=require('../data/desktop-apps.json');await page.goto('/pages/download.html');const suite=page.locator('.desktop-suite');await expect(suite).toContainText('One desktop home for SplatWorks apps');
+ for(const name of catalog.coreAvailableApps)await expect(suite.locator('.desktop-included')).toContainText(name);
+ if(catalog.corePlannedApps.length){await expect(suite.getByRole('heading',{name:'Coming to SplatWorks Desktop',exact:true})).toBeVisible();for(const name of catalog.corePlannedApps)await expect(suite.locator('.desktop-roadmap')).toContainText(name);await expect(suite.locator('.desktop-roadmap')).toContainText('being integrated and tested');}
+});

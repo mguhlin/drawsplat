@@ -4,9 +4,9 @@
 
 ## Choose an app
 
-**SplatWorks Desktop** combines PDF editing with CipherSplat file and text encryption. You can also download GIFsplat, CipherSplat, QRSplat, ImageSplat, AudioSplat or VideoSplat separately.
+**SplatWorks Desktop** is the combined desktop home for SplatWorks apps. The current preview download includes PDFsplat for PDF editing and CipherSplat for file and text encryption. You can also download GIFsplat, CipherSplat, QRSplat, ImageSplat, AudioSplat or VideoSplat separately.
 
-Office apps including ListSplat, GridSplat, WriteSplat, ShowSplat, LayoutSplat and PlanSplat open in your browser. [Browse all browser apps](../studio/index.html).
+**Coming in the next desktop release:** ListSplat databases, GridSplat spreadsheets, WriteSplat documents, ShowSplat presentations, LayoutSplat publishing, and PlanSplat planning. These core apps are being integrated and tested. You can already open them in your browser. [Browse all browser apps](../studio/index.html).
 
 ## Install and open
 

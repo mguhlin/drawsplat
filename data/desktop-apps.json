@@ -45,5 +45,18 @@
       "description": "Edit and export video.",
       "browser": "solutions/videosplat/"
     }
+  ],
+  "coreDescription": "One desktop home for SplatWorks apps, with local editing and saving. No account required.",
+  "coreAvailableApps": [
+    "PDFsplat",
+    "CipherSplat"
+  ],
+  "corePlannedApps": [
+    "ListSplat",
+    "GridSplat",
+    "WriteSplat",
+    "ShowSplat",
+    "LayoutSplat",
+    "PlanSplat"
   ]
 }
