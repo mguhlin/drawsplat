@@ -1,6 +1,8 @@
-# SplatWorks Desktop PWA Plan
+# Archived proposal: SplatWorks Desktop as a PWA
 
-**Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
+**Superseded proposal:** SplatWorks Desktop now ships as a Go/Wails application with fourteen bundled apps and native file dialogs for Windows, macOS, and Linux. This earlier four-app PWA proposal is retained for design history; it does not describe the released desktop preview or its installation requirements.
+
+Use the [desktop guide](../wiki/desktop-apps.html), [current downloads](../pages/download.html#desktop-apps), and [desktop repository](https://github.com/mguhlin/splatworks-desktop) for implemented behavior and preview limits. Browser installation and service-worker caching remain separate from the native edition.
 
 
 ## Purpose

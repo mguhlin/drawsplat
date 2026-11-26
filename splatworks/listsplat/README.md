@@ -44,8 +44,9 @@ Current working surface:
 - layout designer with per-view field order, visibility, and locking
 - basic number summaries
 
-Remaining release work is limited to tagged-release ZIP publishing for the
-ListSplatTM self-host package.
+Browser and self-host packages are available from [Downloads](https://splatworks.org/pages/download.html). ListSplat also ships in the [fourteen-app desktop preview](https://splatworks.org/wiki/desktop-apps.html), whose release and native-save behavior are managed separately.
+
+Project imports validate nested tables, fields, records, settings and identifiers before replacing open work or a browser draft. Unknown version-1 properties are retained. A damaged browser draft is ignored at startup so the editor remains usable. Structural validation does not automatically repair semantic relationship problems.
 
 Target app path:
 

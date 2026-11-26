@@ -21,7 +21,11 @@ The broader DrawSplat™ whiteboard, tools, widgets, and backends remain under t
 
 Local implementation modules are addressed: foundation, UI shell, grid, formulas, CSV/JSON/Markdown/XLSX/ODS import/export, charts, picture graphs, save scaffolds, activities, presentation, help/privacy, and PWA support.
 
-Remaining release validation: provider credential checks with real Google/Dropbox/Microsoft app registrations, low-end Chromebook profiling, and production deployment validation.
+Remaining release validation includes provider credential checks with real Google/Dropbox/Microsoft app registrations and low-end Chromebook profiling. Selected production workflows are verified; this does not establish every provider or device configuration.
+
+Clearing cell values preserves merged-cell metadata through save and reopen. Sorting through merged regions is rejected before changing data or undo history; unmerge the affected cells first. Unmerged rows outside those regions remain sortable.
+
+GridSplat is also bundled in the [fourteen-app desktop preview](https://splatworks.org/wiki/desktop-apps.html). Desktop projects preserve sheet data, formulas and cell formatting; export charts and picture graphs as images to preserve their appearance. Google Drive and other browser connections are separate from native desktop saves.
 
 The modular build plan lives in [docs/plan.md](docs/plan.md). The cloud/OAuth rollout strategy lives in [docs/cloud-auth-strategy.md](docs/cloud-auth-strategy.md).
 

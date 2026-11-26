@@ -14,6 +14,23 @@ def item(title, link, date, local=False):
     return node
 
 class BlogFeedTests(unittest.TestCase):
+    def test_undated_source_feed_reports_failure_instead_of_silently_skipping_every_post(self):
+        with self.assertRaisesRegex(ValueError, 'no valid pubDate'):
+            feed.read_feed(b'<rss><channel><item><title>New feature</title><link>https://example.org/new</link></item></channel></rss>')
+        self.assertEqual(feed.read_feed(b'<rss><channel/></rss>'), [])
+
+    def test_native_full_content_and_feed_identity_survive_refresh(self):
+        local=item('New features','https://splatworks.org/blog/new-features.html','Thu, 26 Nov 2026 12:00:00 GMT')
+        ET.SubElement(local,'source').text='SplatWorks Updates'
+        ET.SubElement(local,'{'+feed.CONTENT+'}encoded').text='<p>Full article with a <a href="https://splatworks.org/wiki/">guide</a>.</p>'
+        output=feed.merge_feeds([local],[],[],datetime(2026,11,27,tzinfo=timezone.utc))
+        entries=feed.read_feed(output)
+        self.assertEqual(len(entries),1)
+        self.assertEqual(entries[0].findtext('{'+feed.CONTENT+'}encoded'),local.findtext('{'+feed.CONTENT+'}encoded'))
+        own=ET.fromstring(output).find('./channel/{'+feed.ATOM+'}link')
+        self.assertEqual(own.get('href'),'https://drawsplat.org/blog/drawsplat.rss')
+        self.assertEqual(output,feed.merge_feeds(entries,[],[],datetime(2026,11,28,tzinfo=timezone.utc)))
+
     def test_moved_articles_cannot_be_reimported_from_current_source_or_curated_archives(self):
         source=item('Moved lesson','https://mguhlin.org/blog/2026-10-18-lesson/','Sun, 18 Oct 2026 09:45:00 GMT')
         old=item('Older link','https://mguhlin.org/2026/10/18/lesson/','Sun, 18 Oct 2026 09:45:00 GMT')

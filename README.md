@@ -28,6 +28,7 @@ Choose the task or role that brought you here, just as you would in the [SplatWo
 | --- | --- |
 | Explain an idea or build a classroom activity | [DrawSplat Whiteboard](https://splatworks.org/app/whiteboard.html) · [Teacher Quick Start](https://splatworks.org/guides/teacher-options-quick-start.html) |
 | Find a tool by what it does | [Studio directory](https://splatworks.org/studio/) · [Ecosystem feature guide](https://splatworks.org/wiki/tools-widgets-features.html) |
+| Install apps on my computer | [Fourteen-app desktop suite](https://splatworks.org/pages/download.html#desktop-apps) · [Desktop guide](https://splatworks.org/wiki/desktop-apps.html) |
 | Write, present, organize records, or work with data | [SplatWorks office apps](#office-apps-and-planning) |
 | Edit images, audio, or video | [Media and creation tools](#media-and-creation) |
 | Practice typing or choose a classroom game | [Typing and games](#typing-and-games) |
@@ -96,7 +97,7 @@ For a complete classroom workflow, read [For educators](https://splatworks.org/w
 
 [**SplatLMS**](https://github.com/mguhlin/splatlms) is a separate, PHP-based LMS product with **SplatWorks Educator** as its first course. The course combines ecosystem exploration with instructional strategies, practice, feedback, and classroom transfer. Its synthetic narrated slide overviews are optional and include captions and transcripts.
 
-[SplatLMS introduction](https://mguhlin.github.io/splatlms/) · [Installer and releases](https://github.com/mguhlin/splatlms/releases/latest)
+[SplatLMS introduction](https://splatworks.org/pages/splatlms.html) · [Installer and releases](https://github.com/mguhlin/splatlms/releases/latest)
 
 ## Typing and games
 
@@ -140,6 +141,14 @@ python3 -m http.server 8000
 
 Visit `http://localhost:8000/` for the ecosystem homepage or `http://localhost:8000/app/whiteboard.html` for DrawSplat. No root npm installation is needed to serve the checked-in static apps. A local server avoids the restrictions that browsers apply to `file://` pages.
 
+### Install SplatWorks Desktop
+
+[SplatWorks Desktop](https://splatworks.org/pages/download.html#desktop-apps) brings **fourteen apps** into one window for Windows, macOS, and Linux: ListSplat, GridSplat, WriteSplat, ShowSplat, LayoutSplat, PlanSplat, PDFsplat, CipherSplat, GIFsplat, QRSplat, ImageSplat, AudioSplat, VideoSplat, and MediaSplat. Start on Home and switch apps while keeping workspaces open. Six smaller standalone downloads are also available.
+
+The combined suite is **v1.0.0-rc.19**; standalone tools remain **tools-v1.0.0-rc.5**. These are unsigned evaluation candidates; publisher signing, Apple notarization, and physical-device qualification remain open. Ordinary bundled editing works offline after installation. Saves use native destination dialogs; unsaved work stays in memory, with no automatic recovery copies. Use browser editions for Google Drive and Calendar connections. Recording depends on device permissions, codecs, and the system webview.
+
+[Install and save](https://splatworks.org/wiki/desktop-apps.html) · [Desktop source and platform requirements](https://github.com/mguhlin/splatworks-desktop) · [Browser/desktop differences](docs/splatworks-desktop-parity.md)
+
 ### Install for a school or district
 
 Download the [complete district suite](https://splatworks.org/pages/download.html#district-suite), extract it, and open **`start-here.html`**. The Quick Start provides Docker and native installation paths, component choices, administrator setup, classrooms, backup, and recovery guidance.
@@ -169,9 +178,13 @@ Storage and collaboration capabilities differ between deployments. Use the curre
 
 ## Updates and release history
 
+**Desktop and core-app improvements:** the fourteen-app desktop preview adds Home, native saves, bundled image background removal, portable audio/video projects, clearer recording permissions, and a shared appearance. Browser ListSplat validates project imports before replacing work; GridSplat preserves merged cells when clearing values and prevents sorts through merged regions. [Feature walkthrough](https://splatworks.org/blog/splatworks-create-and-keep-your-work.html) · [Desktop release](https://github.com/mguhlin/splatworks-desktop/releases/tag/v1.0.0-rc.19).
+
 **v3.1.50:** GraphSplat adds Equation Studio with eight editable math examples, LaTeX/MathML copying, local image exports, .tex import, complete document/Markdown/HTML export, and table-to-LaTeX conversion with three more classroom examples. Storage-blocked startup and save recovery are improved across office, video, classroom and admin tools; Bingo Caller card and room-state bugs are fixed. [Equation guide](docs/graphsplat-equations.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.50.md).
 
 The [download page](https://splatworks.org/pages/download.html) is the reference for current full-suite and independent-app packages. The [release notes](https://splatworks.org/pages/release-notes.html) and [blog](https://splatworks.org/blog/) explain recent changes without mixing the entire history into this introduction.
+
+Subscribe to the [DrawSplat/SplatWorks RSS feed](https://drawsplat.org/blog/drawsplat.rss) for feature posts and published classroom lessons. The [SplatWorks-domain feed](https://splatworks.org/blog/drawsplat.rss) serves the same collection.
 
 **v3.1.49:** PDFSplat adds clearer warnings that OCR covers are **not secure redaction**, plus a lower-memory mode. Review OCR spelling, accents, layout, and reading order. Four reviewed dependency patches are merged; major and sensitive upgrades remain held. [OCR and real-redaction workflow](docs/pdfsplat-ocr.md) · [Dependency review](docs/dependency-triage-2026-10-31.md).
 

@@ -13,8 +13,8 @@ and the retained static snapshot in publication order, removing old MGuhlin.org
 links and native duplicates before inserting the native entries.
 
 `/blog/publication-schedule.json` returns the next timestamp and published paths,
-without future titles or article text. The next classroom release is November 8,
-2026 at 4:45 a.m. Central, or `2026-11-08T10:45:00.000Z`.
+without future titles or article text. Read that endpoint for the next release;
+do not copy a dated status into this guide.
 
 ## Sources and images
 
@@ -57,3 +57,29 @@ through Functions. The exact publication guard still checks each article.
 The existing hourly feed refresh imports other published MGuhlin.org and curated
 articles. It excludes the moved collection by normalized identity, so archived
 or curated copies cannot restore its retired MGuhlin.org links.
+
+## Feature posts and RSS troubleshooting
+
+Publish static feature articles under `blog/`, add their featured card to
+`blog/index.html`, and insert an entry in `blog/drawsplat.rss`. Use a stable link
+and GUID, the actual article `pubDate`, and `SplatWorks Updates` as the source
+marker so refreshes retain the entry. Full article HTML can use `content:encoded`
+with absolute links and image URLs for feed readers. The Atom self link keeps
+the established subscription at `https://drawsplat.org/blog/drawsplat.rss`.
+`https://splatworks.org/blog/drawsplat.rss` serves the same combined collection.
+
+Article publication times are required RSS data, not maintenance timestamps.
+The upstream `https://mguhlin.org/drawsplat/rss.xml` must emit each source
+article's original `pubDate`; without it, import ordering and future-publication
+checks cannot work. A nonempty feed with no valid publication dates now fails
+the refresh rather than silently dropping every entry. No replacement dates
+are guessed from URLs or assigned from the refresh time.
+
+The refresh workflow updates the GitHub Pages snapshot. Publish the resulting
+tested commit to the existing Cloudflare project as well to update the custom
+domains. Verify the actual subscription response, including an RSS request with
+old conditional headers, rather than relying on a successful snapshot commit.
+The live feed combines the snapshot with due classroom articles and sends
+`Cache-Control: no-store, no-transform`. Its publication dates determine sorting;
+the date of a featured card on the blog homepage does not identify the newest
+feed entry.

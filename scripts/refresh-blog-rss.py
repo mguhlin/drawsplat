@@ -15,7 +15,11 @@ import xml.etree.ElementTree as ET
 MGUHLIN_FEED = 'https://mguhlin.org/drawsplat/rss.xml'
 RAINDROP_FEED = 'https://raindrop.io/collection/71392298/feed'
 MEDIA = 'http://search.yahoo.com/mrss/'
+CONTENT = 'http://purl.org/rss/1.0/modules/content/'
+ATOM = 'http://www.w3.org/2005/Atom'
 ET.register_namespace('media', MEDIA)
+ET.register_namespace('content', CONTENT)
+ET.register_namespace('atom', ATOM)
 
 
 def read_feed(data):
@@ -24,7 +28,10 @@ def read_feed(data):
     root = ET.fromstring(data)
     if root.tag != 'rss' or root.find('channel') is None:
         raise ValueError('Expected an RSS channel; keeping the existing snapshot.')
-    return root.find('channel').findall('item')
+    items = root.find('channel').findall('item')
+    if items and not any(publication(item) for item in items):
+        raise ValueError('RSS entries have no valid pubDate; keeping the existing snapshot. Restore article publication dates in the source feed.')
+    return items
 
 
 def fetch_feed(url):
@@ -84,6 +91,7 @@ def merge_feeds(current, published, curated, now, migrated=()):
     channel = ET.SubElement(root, 'channel')
     for tag, value in [('title', 'SplatWorks Blog'), ('link', 'https://splatworks.org/blog/'), ('description', 'SplatWorks classroom ideas, ecosystem updates, and selected articles from MGuhlin.org.'), ('language', 'en-US')]:
         ET.SubElement(channel, tag).text = value
+    ET.SubElement(channel, '{' + ATOM + '}link', {'href': 'https://drawsplat.org/blog/drawsplat.rss', 'rel': 'self', 'type': 'application/rss+xml'})
     for item in sorted(entries.values(), key=lambda value: (publication(value), identity(value)), reverse=True):
         channel.append(item)
     ET.indent(root, space='  ')
