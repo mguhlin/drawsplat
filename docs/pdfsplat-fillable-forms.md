@@ -32,3 +32,5 @@ The [OasisPDF fillable-form page](https://oasispdf.com/make-pdf-fillable/) infor
 | Provider's measured detection accuracy and hosted infrastructure | Not adopted or claimed |
 
 The same maintained modules ship in the browser edition and the Go/Wails desktop snapshot. Browser tests cover Chrome/Firefox and a direct-file offline round trip. Desktop release evidence identifies the actual packaged build separately.
+
+The password engine embeds a compressed local WASM payload, keeping each hosted asset below 25 MiB. It requires the system WebView/browser Compression Streams API; an older runtime receives an update message. No network decompression service is used.

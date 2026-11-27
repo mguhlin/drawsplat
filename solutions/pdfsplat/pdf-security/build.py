@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Rebuild the pinned, local-only Go/pdfcpu WebAssembly security worker."""
-import base64,json,subprocess,tempfile,hashlib
+import base64,json,subprocess,tempfile,hashlib,gzip
 from pathlib import Path
 root=Path(__file__).resolve().parent
 with tempfile.TemporaryDirectory() as temporary:
@@ -15,7 +15,9 @@ self.onmessage=async({data})=>{
  if(busy)return;busy=true;
  try{
   const binary=atob(encoded),bytes=new Uint8Array(binary.length);for(let i=0;i<bytes.length;i++)bytes[i]=binary.charCodeAt(i);
-  const go=new Go(),module=await WebAssembly.instantiate(bytes,go.importObject);void go.run(module.instance);
+  if(typeof DecompressionStream==='undefined')throw Error('Update your system WebView or browser to load the local PDF security engine.');
+  const wasm=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  const go=new Go(),module=await WebAssembly.instantiate(wasm,go.importObject);void go.run(module.instance);
   const result=globalThis.pdfSplatCrypt(data.operation,new Uint8Array(data.bytes),data.password);
   data.password='';
   if(result.error)self.postMessage({error:result.error});else self.postMessage({bytes:result.bytes.buffer},[result.bytes.buffer]);
@@ -23,7 +25,7 @@ self.onmessage=async({data})=>{
 };
 }
 '''
- output=worker+'\nconst pdfSecurityWasm='+json.dumps(base64.b64encode(wasm.read_bytes()).decode())+';\nif(typeof document!=="undefined"){globalThis.PDFSplatSecurityWorkerCode="("+pdfSecurityWorkerMain.toString()+")("+JSON.stringify(pdfSecurityWasm)+");";}else pdfSecurityWorkerMain(pdfSecurityWasm);\n'
+ output=worker+'\nconst pdfSecurityWasm='+json.dumps(base64.b64encode(gzip.compress(wasm.read_bytes(),mtime=0)).decode())+';\nif(typeof document!=="undefined"){globalThis.PDFSplatSecurityWorkerCode="("+pdfSecurityWorkerMain.toString()+")("+JSON.stringify(pdfSecurityWasm)+");";}else pdfSecurityWorkerMain(pdfSecurityWasm);\n'
  (root.parent/'pdf-security-worker.js').write_text(output)
  (root/'engine-manifest.json').write_text(json.dumps({'go':subprocess.check_output(['go','version'],text=True).strip(),'pdfcpu':'v0.16.3','wasm_sha256':hashlib.sha256(wasm.read_bytes()).hexdigest(),'worker_sha256':hashlib.sha256(output.encode()).hexdigest(),'input_limit_bytes':16<<20,'output_limit_bytes':32<<20,'runtime':'isolated one-operation worker; in-memory stateless configuration'},indent=2)+'\n')
 # Preserve all runtime dependency licenses alongside the engine.
