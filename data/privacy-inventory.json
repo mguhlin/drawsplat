@@ -957,7 +957,7 @@
       "retention": "Browser data: preserved until user clearing unless explicit 1-, 7-, or 30-day expiry is enabled; clear on next visit after enabled expiry. Native exports and connected copies follow the separate retention schedule.",
       "rights": "/privacy/ for origin-local inspection/export/clear; school privacy contact for server, cloud and exported records.",
       "security": "Device/profile protections apply to browser storage; this is not application-level encryption at rest.",
-      "entrySha256": "81bd90ddc3d53570dfbe071e72ceef6e74498b3b15fcb50ac1cd12ce8f67447c"
+      "entrySha256": "9cb10708cc8428b7a7d716ce4515d0334b90680dfbd584dfbca73199e77605c6"
     },
     {
       "id": "qrsplat",
