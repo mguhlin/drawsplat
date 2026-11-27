@@ -134,7 +134,7 @@ function translateNode(node, map) {
   const element=node.nodeType===Node.TEXT_NODE?node.parentElement:node;
   if(element?.closest?.("#canvas,#equationMathml,#equationTex,#equationReading,#latexTablePreview,svg,canvas,textarea,[contenteditable]"))return;
   if (node.nodeType === Node.TEXT_NODE) {
-    if (!node.parentElement || node.parentElement.closest(".ds-language-control,script,style")) return;
+    if (!node.parentElement || node.parentElement.closest(".ds-language-control,script,style,[data-pdf-content]")) return;
     if (app === "pdfsplat" && !node.parentElement.closest(pdfUI)) return;
     if (!originals.has(node) || (app === "pdfsplat" && rendered.get(node) !== node.nodeValue)) originals.set(node, node.nodeValue);
     const source = originals.get(node); const trimmed = source.trim();
@@ -144,7 +144,7 @@ function translateNode(node, map) {
     rendered.set(node, node.nodeValue);
     return;
   }
-  if (!(node instanceof Element) || node.closest(".ds-language-control")) return;
+  if (!(node instanceof Element) || node.closest(".ds-language-control,[data-pdf-content]")) return;
   for (const attr of (app !== "pdfsplat" || node.closest(pdfUI) ? ["aria-label", "title", "placeholder"] : [])) {
     if (!node.hasAttribute(attr)) continue;
     const dataName = `data-ds-original-${attr.replace("aria-label", "aria")}`;

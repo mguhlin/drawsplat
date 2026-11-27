@@ -1,0 +1,9 @@
+{
+  "go": "go version go1.27.4 linux/amd64",
+  "pdfcpu": "v0.16.3",
+  "wasm_sha256": "f530738bf05fe79b26d7f34724b938749c5ee2625306b2366b151b4ce4319259",
+  "worker_sha256": "a91ca18a3108298749d50aa377aea8ccc77a71b395d968b8afab066ea6b9f60c",
+  "input_limit_bytes": 16777216,
+  "output_limit_bytes": 33554432,
+  "runtime": "isolated one-operation worker; in-memory stateless configuration"
+}

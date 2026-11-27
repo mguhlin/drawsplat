@@ -17,28 +17,11 @@ export function appendPdfLinks(document, items, geometries) {
       const target = link.targetPageId ? items.findIndex(p => p.id === link.targetPageId) : -1;
       // A separately extracted page cannot jump to a page outside its new PDF.
       if (link.targetPageId && target < 0) continue;
-      let corners = [[link.x,link.y],[link.x+link.w,link.y],[link.x,link.y+link.h],[link.x+link.w,link.y+link.h]]
-        .map(([x,y]) => geometry.viewport.convertToPdfPoint(x*geometry.viewport.width,y*geometry.viewport.height));
-      if (item.crop || item.fineRotation) {
-        const box = geometry.box, radians = -geometry.rotation*Math.PI/180;
-        const rotate = ([x,y],r) => [x*Math.cos(r)-y*Math.sin(r),x*Math.sin(r)+y*Math.cos(r)];
-        const bounds = [[0,0],[box.width,0],[0,box.height],[box.width,box.height]].map(p=>rotate(p,radians));
-        const minX = Math.min(...bounds.map(p=>p[0])), minY = Math.min(...bounds.map(p=>p[1]));
-        const width = Math.max(...bounds.map(p=>p[0]))-minX, height = Math.max(...bounds.map(p=>p[1]))-minY;
-        const crop = item.crop || {left:0,bottom:0,right:0,top:0};
-        const left=crop.left*width, bottom=crop.bottom*height, w=width*(1-crop.left-crop.right), h=height*(1-crop.top-crop.bottom);
-        corners = corners.map(([x,y])=>rotate([x-box.x,y-box.y],radians)).map(([x,y])=>[x-minX-left,y-minY-bottom]);
-        const x0=Math.max(0,Math.min(...corners.map(p=>p[0]))), y0=Math.max(0,Math.min(...corners.map(p=>p[1])));
-        const x1=Math.min(w,Math.max(...corners.map(p=>p[0]))), y1=Math.min(h,Math.max(...corners.map(p=>p[1])));
-        if (x1<=x0 || y1<=y0) continue;
-        const fine=(item.fineRotation||0)*Math.PI/180;
-        const finalBounds=[[0,0],[w,0],[0,h],[w,h]].map(p=>rotate(p,fine));
-        const fx=Math.min(...finalBounds.map(p=>p[0])), fy=Math.min(...finalBounds.map(p=>p[1]));
-        corners=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]].map(p=>rotate(p,fine)).map(([x,y])=>[x-fx,y-fy]);
-      }
+      const rect = pdfAnnotationRectangle(item,geometry,link);
+      if (!rect) continue;
       const annotation = {
         Type:'Annot', Subtype:'Link', Border:[0,0,0],
-        Rect:[Math.min(...corners.map(p=>p[0])),Math.min(...corners.map(p=>p[1])),Math.max(...corners.map(p=>p[0])),Math.max(...corners.map(p=>p[1]))],
+        Rect:rect,
         Contents:PDFHexString.fromText(link.label || (target>=0 ? `Page ${target+1}` : link.url)),
         ...(target>=0 ? {Dest:[document.getPage(target).ref,...(link.destination || [{name:'Fit'}]).map(value=>value?.name ? PDFName.of(value.name) : value)]} : {A:{Type:'Action',S:'URI',URI:PDFString.of(normalizeLinkUrl(link.url))}}),
       };
@@ -81,4 +64,28 @@ export function removeImportedPdfLinks(page, ids) {
     const id=`${ref.objectNumber}R${ref.generationNumber || ''}`;
     if(ids.includes(id))page.node.removeAnnot(ref);
   }
+}
+
+export function pdfAnnotationRectangle(item,geometry,shape) {
+  let corners = [[shape.x,shape.y],[shape.x+shape.w,shape.y],[shape.x,shape.y+shape.h],[shape.x+shape.w,shape.y+shape.h]]
+        .map(([x,y]) => geometry.viewport.convertToPdfPoint(x*geometry.viewport.width,y*geometry.viewport.height));
+      if (item.crop || item.fineRotation) {
+        const box = geometry.box, radians = -geometry.rotation*Math.PI/180;
+        const rotate = ([x,y],r) => [x*Math.cos(r)-y*Math.sin(r),x*Math.sin(r)+y*Math.cos(r)];
+        const bounds = [[0,0],[box.width,0],[0,box.height],[box.width,box.height]].map(p=>rotate(p,radians));
+        const minX = Math.min(...bounds.map(p=>p[0])), minY = Math.min(...bounds.map(p=>p[1]));
+        const width = Math.max(...bounds.map(p=>p[0]))-minX, height = Math.max(...bounds.map(p=>p[1]))-minY;
+        const crop = item.crop || {left:0,bottom:0,right:0,top:0};
+        const left=crop.left*width, bottom=crop.bottom*height, w=width*(1-crop.left-crop.right), h=height*(1-crop.top-crop.bottom);
+        corners = corners.map(([x,y])=>rotate([x-box.x,y-box.y],radians)).map(([x,y])=>[x-minX-left,y-minY-bottom]);
+        const x0=Math.max(0,Math.min(...corners.map(p=>p[0]))), y0=Math.max(0,Math.min(...corners.map(p=>p[1])));
+        const x1=Math.min(w,Math.max(...corners.map(p=>p[0]))), y1=Math.min(h,Math.max(...corners.map(p=>p[1])));
+        if (x1<=x0 || y1<=y0) return null;
+        const fine=(item.fineRotation||0)*Math.PI/180;
+        const finalBounds=[[0,0],[w,0],[0,h],[w,h]].map(p=>rotate(p,fine));
+        const fx=Math.min(...finalBounds.map(p=>p[0])), fy=Math.min(...finalBounds.map(p=>p[1]));
+        corners=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]].map(p=>rotate(p,fine)).map(([x,y])=>[x-fx,y-fy]);
+      }
+
+  return [Math.min(...corners.map(p=>p[0])),Math.min(...corners.map(p=>p[1])),Math.max(...corners.map(p=>p[0])),Math.max(...corners.map(p=>p[1]))];
 }

@@ -1,3 +1,5 @@
+import {setupPdfPassword} from './pdf-password.js';
+import {setupForms, readPdfForms, removePdfWidgets, appendPdfForms} from './pdf-forms.js';
 import { normalizeLinkUrl, appendPdfLinks, readPdfLinks, removeImportedPdfLinks } from './pdf-links.js';
 import {setupToolbar} from './toolbar.js';
 import {setupOcr, OCR_LIMITS} from './ocr.js';
@@ -22,6 +24,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 const $ = (id) => document.getElementById(id);
 const ids = ["saveDriveButton", "openButton", "presentButton", "fullscreenButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 ids.push("textSaveLayout", "textSaveLayoutRow", "epubLayout", "textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
+ids.push("formFieldsButton", "pdfPasswordButton");
 ids.push("ocrButton", "addLinkButton", "linkProperties", "linkDestination", "editLinkButton", "followLinkButton", "deleteLinkButton", "linkDialog", "linkForm", "linkKind", "linkUrlRow", "linkUrl", "linkPageRow", "linkPage", "linkLabel", "linkError", "linkCancel", "linkSave");
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
@@ -45,6 +48,8 @@ const state = {
 };
 
 let imageRequest = 0;
+let forms;
+let pdfSecurity;
 let ocr;
 const placement = setupPlacement({
   layer: els.annotationLayer, bar: $('placementTools'), message: $('placementMessage'),
@@ -60,6 +65,9 @@ const placement = setupPlacement({
     if (object.type === 'text') startInlineTextEditing(object, true);
   },
 });
+pdfSecurity = setupPdfPassword({buildPdf,state,downloadBytes,announce});
+forms = setupForms({state,currentPage,sourcePage,mutate,renderAnnotations,announce,uid,selectedPageIndexes,setMode,openFile});
+
 function beginPlacement(object, label, options) {
   setMode('place'); state.selectedId = null; renderAnnotations();
   placement.begin(object, label, options);
@@ -122,7 +130,7 @@ function restore(value) {
 }
 function setEnabled(on) {
   if (els.saveDriveButton) els.saveDriveButton.disabled = !on;
-  ["ocrButton", "presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "addLinkButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["pdfPasswordButton", "formFieldsButton", "ocrButton", "presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "addLinkButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -162,9 +170,18 @@ function setMode(mode) {
 
 async function loadSource(file) {
   if (!file || !file.name.toLowerCase().endsWith(".pdf")) throw Error("Choose a PDF file.");
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const pdf = await pdfjs.getDocument({ data: bytes.slice(), fontExtraProperties: true }).promise;
-  return { id: uid(), name: file.name, bytes, pdf, links: await readPdfLinks(pdf) };
+  let bytes = new Uint8Array(await file.arrayBuffer());
+  let task=pdfjs.getDocument({data:bytes.slice(),fontExtraProperties:true}),pdf;
+  try { pdf=await task.promise; }
+  catch(error) {
+    await task.destroy();
+    if(error.name!=='PasswordException')throw error;
+    bytes=await pdfSecurity.unlock(file);
+    task=pdfjs.getDocument({data:bytes.slice(),fontExtraProperties:true});pdf=await task.promise;
+  }
+  try {return {id:uid(),name:file.name,bytes,pdf,links:await readPdfLinks(pdf),fields:await readPdfForms(pdf)};}
+  catch(error){await pdf.destroy();throw error;}
+
 }
 function pagesFor(source) {
   const pages = Array.from({ length: source.pdf.numPages }, (_, sourceIndex) => ({
@@ -173,6 +190,7 @@ function pagesFor(source) {
   pages.forEach((page,index)=>{
     const links=source.links[index] || [];
     page.importedLinkIds=links.map(link=>link.sourceLinkId);
+    page.fields=(source.fields[index]||[]).map(field=>({...field,id:uid()}));
     page.annotations=links.map(({targetIndex,...link})=>({...link,id:uid(),targetPageId:pages[targetIndex]?.id}));
   });
   return pages;
@@ -183,6 +201,8 @@ async function openFile(input) {
   const files = input instanceof File ? [input] : [...(input || [])];
   if (!files.length) return false;
   ocr?.reset();
+  forms?.reset();
+  pdfSecurity?.reset();
   const token = ++importToken;
   try {
     const prepared = await prepareFiles(files, name => { if (token === importToken) announce(`Opening ${name}…`); });
@@ -588,7 +608,7 @@ function submitMovePages(event) {
 function rotateLinkBoxes(item, source, angle) {
   const before=source.getViewport({scale:1,rotation:source.rotate+item.rotation+(item.fineRotation||0)});
   const after=source.getViewport({scale:1,rotation:angle});
-  for(const link of item.annotations.filter(o=>o.type==='link')){
+  for(const link of [...item.annotations.filter(o=>o.type==='link'),...(item.fields||[])]){
     const points=[[link.x,link.y],[link.x+link.w,link.y],[link.x,link.y+link.h],[link.x+link.w,link.y+link.h]]
       .map(([x,y])=>before.convertToPdfPoint(x*before.width,y*before.height))
       .map(([x,y])=>after.convertToViewportPoint(x,y));
@@ -762,6 +782,7 @@ function duplicatePage() {
     const copies = indexes.map((index) => {
       const copy = structuredClone(state.pages[index]);
       copy.id = uid();
+      copy.fields?.forEach(f=>{f.id=uid();f.name+=' copy';});
       copy.annotations.forEach((o) => { o.id = uid(); if(o.targetPageId===state.pages[index].id)o.targetPageId=copy.id; });
       return copy;
     });
@@ -933,6 +954,7 @@ function renderAnnotations() {
   }
   updateProperties();
   placement.render();
+  forms?.render();
 }
 function selectObject(id) {
   state.selectedId = id;
@@ -1504,6 +1526,7 @@ async function buildPdf(items, {finishEditing=true} = {}) {
   for (const item of items) {
     if (!docs.has(item.sourceId)) docs.set(item.sourceId, await PDFDocument.load(state.sources.get(item.sourceId).bytes));
     removeImportedPdfLinks(docs.get(item.sourceId).getPage(item.sourceIndex), item.importedLinkIds);
+    removePdfWidgets(docs.get(item.sourceId).getPage(item.sourceIndex));
     const [page] = await output.copyPages(docs.get(item.sourceId), [item.sourceIndex]);
     output.addPage(page);
     if (item.rotation) page.setRotation(degrees((page.getRotation().angle + item.rotation) % 360));
@@ -1587,6 +1610,7 @@ async function buildPdf(items, {finishEditing=true} = {}) {
   }
   if (!items.some((item) => item.crop || item.fineRotation)) {
     appendPdfLinks(output, items, linkGeometries);
+    appendPdfForms(output, items, linkGeometries);
     return output.save();
   }
   const baseBytes = await output.save();
@@ -1629,6 +1653,7 @@ async function buildPdf(items, {finishEditing=true} = {}) {
       .drawPage(embedded,{x:-x,y:-y,width:croppedWidth,height:croppedHeight,rotate:degrees(angle)});
   }
   appendPdfLinks(transformed, items, linkGeometries);
+  appendPdfForms(transformed, items, linkGeometries);
   return transformed.save();
 }
 function downloadBytes(bytes, name, type = "application/pdf") {

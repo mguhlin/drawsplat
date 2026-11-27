@@ -3,7 +3,7 @@
 **Current documentation:** [SplatWorks Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, free apps, OAuth, and district privacy review.
 
 
-Standalone package: **pdfsplat-selfhost-v3.1.50.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.51.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -86,11 +86,11 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 ## Honest limitations
 
 - CipherSplat™ protection creates an encrypted `.csplat` package; it does not set a standard PDF-open password.
-- Password-protected source PDFs are not opened in this release.
-- Added objects are flattened during export and are no longer editable after reopening.
+- Password-protected PDFs up to 16 MiB can be unlocked locally; standard AES-256 PDF output is available alongside CipherSplat protection.
+- Text/image/ink annotations are flattened during export. Standard form fields remain interactive and editable after reopening.
 - Existing PDF text is not edited semantically.
 - Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages can use **Recognize text (OCR)**; outlined text, missing character maps, and complex font/layout runs may need OCR or manual boxes and review.
-- Secure content-removing redaction, form authoring, search, compression, and accessibility certification are not claimed. OCR recognizes printed English/Spanish with approximate fonts and covers; it does not reconstruct handwriting, equations, or complex layouts.
+- Secure content-removing redaction, search, compression, and accessibility certification are not claimed. OCR recognizes printed English/Spanish with approximate fonts and covers; it does not reconstruct handwriting, equations, or complex layouts.
 - EPUB conversion works best with searchable, single-column PDFs. Scans require OCR first, and complex columns, tables, equations, vector artwork, and fixed layouts may be simplified or omitted. Reflowable EPUB now includes embedded raster images alongside selectable text.
 - Remove area is visual removal only. It does not delete underlying PDF content and must not be treated as secure redaction.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
@@ -274,3 +274,9 @@ Page thumbnails render current annotations and crop/rotation edits, refresh afte
 ## OCR safety and lower-memory mode · v3.1.49
 
 **Visual covers are not secure redaction: original content can remain recoverable.** For sensitive/FERPA-protected records, use the [real redaction workflow](../../docs/pdfsplat-ocr.md#sensitive-records-and-real-redaction), then independently verify the saved copy. Review OCR spelling, accents, layout and reading order. Lower memory use caps recognition at 5 pages / 500 lines / 2 MP per page, with a quality tradeoff. Physical Chromebook/ChromeVox and constrained-device testing remains [tracked](https://github.com/mguhlin/drawsplat/issues/66).
+
+## Fillable forms and PDF passwords
+
+Use **Fillable form fields → Make it fillable** to detect candidate lines, boxes, checkboxes and character rows, or add fields manually. Review labels, positions and reading order. Save as PDF retains standard fields. **Save password-protected PDF** exports standard AES-256 PDFs using the pinned local Go/pdfcpu worker; Open prompts for protected-input passwords. [Full workflow, limits, reference comparison and evidence](../../docs/pdfsplat-fillable-forms.md).
+
+The engine uses pdfcpu v0.16.3 (Apache-2.0) and Go 1.27.4. Its reproducible build, resource limits, manifest and all dependency notices are in `pdf-security/`; the generated `pdf-security-worker.js` is shipped locally. No OasisPDF source or measurement claims are reused.

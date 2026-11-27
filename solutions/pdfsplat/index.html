@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=pdf-links-1">
+  <link rel="stylesheet" href="./css/app.css?v=fillable-pdf-1">
   <link rel="stylesheet" href="./css/branding.css?v=20261027-about">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -82,6 +82,7 @@
           <button id="websiteStartButton" type="button">Capture an open tab or window</button>
           <button id="scanStartButton" type="button">Scan paper or photos</button>
           <button id="chooseButton" class="primary" type="button">Choose files</button>
+        <button id="sampleFormButton" type="button">Try a sample form</button>
           <section class="quick-start" aria-labelledby="quickStartTitle">
             <h2 id="quickStartTitle">Quick start</h2>
             <ol>
@@ -156,6 +157,8 @@
         <div class="tool-grid">
           <button id="editTextButton" type="button" disabled aria-pressed="false">Edit PDF text</button>
           <button id="addTextButton" type="button" disabled>Add text</button>
+          <button id="pdfPasswordButton" type="button" disabled>Save password-protected PDF</button>
+          <button id="formFieldsButton" type="button" disabled>Fillable form fields</button>
           <button id="addLinkButton" type="button" disabled aria-pressed="false">Add link</button>
           <button id="highlightButton" type="button" disabled>Highlight</button>
           <button id="drawButton" type="button" disabled>Draw</button>
@@ -448,8 +451,8 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=cipher-workspace-1"></script>
-  <script src="../../assets/js/pdf-ui-strings.js?v=pdf-links-1"></script>
+  <script src="./src/boot.js?v=fillable-pdf-1"></script>
+  <script src="../../assets/js/pdf-ui-strings.js?v=fillable-pdf-1"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>
 </html>
